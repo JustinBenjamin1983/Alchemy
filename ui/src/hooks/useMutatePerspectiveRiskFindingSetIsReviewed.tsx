@@ -10,7 +10,7 @@ export function useMutatePerspectiveRiskFindingSetIsReviewed() {
     perspective_risk_finding_id: string;
   }) {
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-perspectiveriskfindingisreviewed",
+      url: "/dd-perspectiveriskfindingisreviewed",
       method: "PUT",
       data,
     };

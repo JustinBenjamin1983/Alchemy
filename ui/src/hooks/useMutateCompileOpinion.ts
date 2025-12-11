@@ -29,7 +29,7 @@ export function useMutateCompileOpinion() {
   return useMutation({
     mutationFn: (data: CompilePayload) =>
       axios({
-        url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/compile_opinion",
+        url: "/compile_opinion",
         method: "POST",
         data,
       }),

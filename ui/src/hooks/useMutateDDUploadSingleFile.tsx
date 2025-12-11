@@ -23,7 +23,7 @@ export function useMutateDDUploadSingleFile() {
       );
     }
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-fileupload",
+      url: "/dd-fileupload",
       method: "POST",
       data: fd,
     };

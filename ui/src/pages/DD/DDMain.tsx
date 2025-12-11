@@ -36,7 +36,7 @@ import { DDProjectWizard } from "./Wizard/DDProjectWizard";
 import { DDProjectSetup } from "./Wizard/types";
 import { useGetDDListing } from "@/hooks/useGetDDListing";
 import { AppSidebar } from "../OpinionWriter/AppSideBar";
-import { Loader2 } from "lucide-react";
+import { Loader2, Clock, Trash2, FileEdit } from "lucide-react";
 import { useMutateDDJoin } from "@/hooks/useMutateDDJoin";
 import { DocListing } from "./Files/DocListing";
 import Questions from "./Questions";
@@ -54,12 +54,19 @@ import { generateDDReport } from "@/utils/reportGenerator";
 import { useGetDDRiskResults } from "@/hooks/useGetDDRiskResults";
 import { useGetDDRisks } from "@/hooks/useGetDDRisks";
 import { DEV_MODE } from "@/authConfig";
+import { useGetWizardDrafts, useDeleteWizardDraft, WizardDraftData } from "@/hooks/useWizardDraft";
+import { DDProcessingDashboard } from "./Processing";
 
 export function DDMain() {
   const navigate = useNavigate();
   const [isDraggingFile, setIsDraggingFile] = useState<boolean>(false);
   const startDD = useMutateDDStart();
   const mutateDDDelete = useMutateDDDelete();
+
+  // Wizard draft state
+  const [selectedDraft, setSelectedDraft] = useState<WizardDraftData | null>(null);
+  const { data: wizardDrafts, isLoading: draftsLoading } = useGetWizardDrafts();
+  const deleteWizardDraft = useDeleteWizardDraft();
   const generateSAS = useGenerateSAS();
   const { data: dds } = useGetDDListing("im_not_a_member");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -139,11 +146,29 @@ export function DDMain() {
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const id = query.get("id");
+    const resumeDraftId = query.get("resumeDraft");
+
+    // Handle resuming a wizard draft from sidebar click
+    if (resumeDraftId && wizardDrafts) {
+      const draftToResume = wizardDrafts.find((d) => d.id === resumeDraftId);
+      if (draftToResume) {
+        setSelectedDraft(draftToResume);
+        setScreenState("Wizard-NewProject");
+        // Clear the URL parameter
+        const params = new URLSearchParams(location.search);
+        params.delete("resumeDraft");
+        navigate(`${location.pathname}${params.toString() ? '?' + params.toString() : ''}`, { replace: true });
+        return;
+      }
+    }
+
     if (!id) return;
 
     setSelectedDDID(id);
-    setScreenState("Documents");
-  }, [location.search]);
+    // Only change to Documents if we're not already in a wizard state
+    // This prevents the wizard from being kicked out when wizardDrafts updates
+    setScreenState((prev) => prev.startsWith("Wizard") ? prev : "Documents");
+  }, [location.search, wizardDrafts]);
 
   const handleButtonClick = () => {
     if (fileInputRef.current) {
@@ -377,6 +402,7 @@ Key Regulators: ${setup.keyRegulators.length > 0 ? setup.keyRegulators.join(", "
     | "Questions"
     | "DocumentChanges"
     | "ShowReport"
+    | "Processing"
   >("Wizard-Chooser");
 
   const handleGenerateReport = async () => {
@@ -401,9 +427,18 @@ Key Regulators: ${setup.keyRegulators.length > 0 ? setup.keyRegulators.join(", "
     }
   };
 
+  // Handler for resuming wizard draft from sidebar
+  const handleResumeWizardDraft = (draftId: string) => {
+    const draftToResume = wizardDrafts?.find((d) => d.id === draftId);
+    if (draftToResume) {
+      setSelectedDraft(draftToResume);
+      setScreenState("Wizard-NewProject");
+    }
+  };
+
   return (
     <SidebarProvider>
-      <AppSidebar isOpinion={false} />
+      <AppSidebar isOpinion={false} onResumeWizardDraft={handleResumeWizardDraft} />
       <SidebarInset>
         <Dialog
           open={screenState.startsWith("Wizard")}
@@ -419,8 +454,15 @@ Key Regulators: ${setup.keyRegulators.length > 0 ? setup.keyRegulators.join(", "
             </DialogHeader>
             {screenState == "Wizard-NewProject" && (
               <DDProjectWizard
-                onComplete={handleWizardComplete}
-                onCancel={() => setScreenState("Wizard-Chooser")}
+                onComplete={(setup) => {
+                  setSelectedDraft(null);
+                  handleWizardComplete(setup);
+                }}
+                onCancel={() => {
+                  setSelectedDraft(null);
+                  setScreenState("Wizard-Chooser");
+                }}
+                initialDraft={selectedDraft}
               />
             )}
             {screenState == "Wizard-JoinProject" && (
@@ -493,35 +535,109 @@ Key Regulators: ${setup.keyRegulators.length > 0 ? setup.keyRegulators.join(", "
               </div>
             )}
             {screenState == "Wizard-Chooser" && (
-              <div className="grid grid-cols-2 gap-6 p-6">
-                <Card className="rounded-2xl shadow-md">
-                  <CardContent className="p-6 flex flex-col gap-4">
-                    <h2 className="text-xl font-semibold">
-                      Start a new project
-                    </h2>
-                    <p className="text-sm text-muted-foreground">
-                      Set up and configure the Virtual Data Room for your
-                      colleagues.
-                    </p>
-                    <Button onClick={() => setScreenState("Wizard-NewProject")}>
-                      Start Now
-                    </Button>
-                  </CardContent>
-                </Card>
+              <div className="space-y-6 p-6">
+                {/* Saved Drafts Section */}
+                {wizardDrafts && wizardDrafts.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <FileEdit className="h-5 w-5" />
+                      Resume Saved Drafts
+                    </h3>
+                    <div className="space-y-2">
+                      {wizardDrafts.map((draft) => (
+                        <Card key={draft.id} className="rounded-lg border">
+                          <CardContent className="p-4 flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="font-medium">
+                                {draft.transactionName || "Untitled Project"}
+                              </div>
+                              <div className="text-sm text-muted-foreground flex items-center gap-3">
+                                <span className="flex items-center gap-1">
+                                  <Clock className="h-3 w-3" />
+                                  Step {draft.currentStep} of 5
+                                </span>
+                                {draft.transactionType && (
+                                  <span>• {draft.transactionType}</span>
+                                )}
+                                {draft.updatedAt && (
+                                  <span>
+                                    • Last saved:{" "}
+                                    {new Date(draft.updatedAt).toLocaleDateString()}{" "}
+                                    {new Date(draft.updatedAt).toLocaleTimeString([], {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedDraft(draft);
+                                  setScreenState("Wizard-NewProject");
+                                }}
+                              >
+                                Resume
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  if (draft.id) {
+                                    deleteWizardDraft.mutate(draft.id);
+                                  }
+                                }}
+                                disabled={deleteWizardDraft.isPending}
+                              >
+                                <Trash2 className="h-4 w-4 text-muted-foreground hover:text-red-500" />
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-                <Card className="rounded-2xl shadow-md">
-                  <CardContent className="p-6 flex flex-col gap-4">
-                    <h2 className="text-xl font-semibold">Join a project</h2>
-                    <p className="text-sm text-muted-foreground">
-                      Connect to an existing Alchemy Virtual Data Room
-                    </p>
-                    <Button
-                      onClick={() => setScreenState("Wizard-JoinProject")}
-                    >
-                      Browse
-                    </Button>
-                  </CardContent>
-                </Card>
+                {/* Main Options */}
+                <div className="grid grid-cols-2 gap-6">
+                  <Card className="rounded-2xl shadow-md">
+                    <CardContent className="p-6 flex flex-col gap-4">
+                      <h2 className="text-xl font-semibold">
+                        Start a new project
+                      </h2>
+                      <p className="text-sm text-muted-foreground">
+                        Set up and configure the Virtual Data Room for your
+                        colleagues.
+                      </p>
+                      <Button
+                        onClick={() => {
+                          setSelectedDraft(null);
+                          setScreenState("Wizard-NewProject");
+                        }}
+                      >
+                        Start Now
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="rounded-2xl shadow-md">
+                    <CardContent className="p-6 flex flex-col gap-4">
+                      <h2 className="text-xl font-semibold">Join a project</h2>
+                      <p className="text-sm text-muted-foreground">
+                        Connect to an existing Alchemy Virtual Data Room
+                      </p>
+                      <Button
+                        onClick={() => setScreenState("Wizard-JoinProject")}
+                      >
+                        Browse
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
             )}
             <DialogFooter>
@@ -583,6 +699,7 @@ Key Regulators: ${setup.keyRegulators.length > 0 ? setup.keyRegulators.join(", "
               {screenState === "Risks" && "Risks"}
               {screenState === "Questions" && "Questions"}
               {screenState === "ShowReport" && "Generate Report"}
+              {screenState === "Processing" && "Processing Dashboard"}
             </div>
             <div className="">
               {screenState === "Documents" && (
@@ -602,6 +719,9 @@ Key Regulators: ${setup.keyRegulators.length > 0 ? setup.keyRegulators.join(", "
               )}
               {screenState === "ShowReport" && (
                 <div>Report generation feature coming soon...</div>
+              )}
+              {screenState === "Processing" && (
+                <DDProcessingDashboard ddId={selectedDDID} />
               )}
             </div>
           </div>

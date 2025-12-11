@@ -15,7 +15,7 @@ export function useMutateSaveDraft() {
     version_name: string;
   }) {
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/save_draft",
+      url: "/save_draft",
       method: "POST",
       data: {
         opinion_id,

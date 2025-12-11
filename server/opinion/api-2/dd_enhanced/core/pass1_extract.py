@@ -11,8 +11,16 @@ Extracts structured data from all documents:
 This creates a structured index that informs later analysis.
 """
 from typing import List, Dict, Any
+import os
+import sys
+
+# Ensure dd_enhanced is in path for imports
+_dd_enhanced_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _dd_enhanced_path not in sys.path:
+    sys.path.insert(0, _dd_enhanced_path)
+
 from .claude_client import ClaudeClient
-from ..prompts.extraction import EXTRACTION_SYSTEM_PROMPT, build_extraction_prompt
+from prompts.extraction import EXTRACTION_SYSTEM_PROMPT, build_extraction_prompt
 
 
 def run_pass1_extraction(

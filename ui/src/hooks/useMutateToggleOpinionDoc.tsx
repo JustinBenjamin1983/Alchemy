@@ -14,7 +14,7 @@ export function useMutateToggleOpinionDoc() {
     doc_id: string;
   }) {
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/opinion_doc",
+      url: "/opinion_doc",
       method: "PUT",
       data: {
         opinion_id,

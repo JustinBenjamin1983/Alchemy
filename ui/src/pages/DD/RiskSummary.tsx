@@ -47,6 +47,7 @@ import { useGetDDRisks } from "@/hooks/useGetDDRisks";
 import { useGetDD } from "@/hooks/useGetDD";
 import EnhancedRiskManager from "./EnhancedRiskManager";
 import { generateDDReport } from "@/utils/reportGenerator";
+import { useAxiosWithAuth } from "@/hooks/useAxiosWithAuth";
 
 type DocRef = {
   id: string;
@@ -149,6 +150,8 @@ export function RiskSummary() {
   const mutateAddRisk = useMutateDDRiskAdd();
   const mutateEditRisk = useMutateDDRiskEdit();
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const [isExportingReport, setIsExportingReport] = useState(false);
+  const axios = useAxiosWithAuth();
 
   const handleGenerateReport = async () => {
     if (!dd || filteredFindings.length === 0) {
@@ -474,45 +477,47 @@ export function RiskSummary() {
     navigator.clipboard.writeText(text);
   };
 
-  const exportFindings = () => {
-    const exportData = {
-      exportDate: new Date().toISOString(),
-      dueDiligence: dd?.name || selectedDDID,
-      summary: {
-        total: filteredFindings.length,
-        positive: filteredFindings.filter((f) => f.finding_type === "positive")
-          .length,
-        negative: filteredFindings.filter((f) => f.finding_type === "negative")
-          .length,
-        gaps: filteredFindings.filter((f) => f.finding_type === "gap").length,
-        requiresAction: filteredFindings.filter((f) => f.requires_action)
-          .length,
-      },
-      findings: filteredFindings.map((f) => ({
-        category: f.category,
-        question: f.detail,
-        type: f.finding_type,
-        status: f.finding_status,
-        confidence: f.confidence_score,
-        answer: f.direct_answer || f.phrase,
-        evidence: f.evidence_quote,
-        document: f.document.original_file_name,
-        page: f.page_number,
-        requiresAction: f.requires_action,
-        actionItems: f.action_items ? JSON.parse(f.action_items) : [],
-      })),
-    };
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `due-diligence-findings-${selectedDDID}-${
-      new Date().toISOString().split("T")[0]
-    }.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const exportFindings = async () => {
+    if (!selectedDDID) {
+      alert("No DD selected");
+      return;
+    }
+
+    setIsExportingReport(true);
+    try {
+      // Call backend endpoint to generate Word document
+      const response = await axios({
+        url: `/dd-export-report?dd_id=${selectedDDID}`,
+        method: "GET",
+        responseType: "blob",
+      });
+
+      // Get filename from Content-Disposition header or generate one
+      const contentDisposition = response.headers["content-disposition"];
+      let filename = `DD_Report_${dd?.name || selectedDDID}_${new Date().toISOString().split("T")[0]}.docx`;
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (match) {
+          filename = match[1];
+        }
+      }
+
+      // Create download link
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Failed to export report:", error);
+      alert("Failed to export report. Please try again.");
+    } finally {
+      setIsExportingReport(false);
+    }
   };
 
   // Render finding card (keeping original implementation)
@@ -926,9 +931,14 @@ export function RiskSummary() {
                 Add Questions
               </Button>
               {/* Export Button */}
-              <Button variant="outline" onClick={exportFindings} size="sm">
+              <Button
+                variant="outline"
+                onClick={exportFindings}
+                size="sm"
+                disabled={isExportingReport}
+              >
                 <Download className="w-4 h-4 mr-2" />
-                Export
+                {isExportingReport ? "Generating Report..." : "Export Report"}
               </Button>
             </div>
           </div>

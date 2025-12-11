@@ -46,7 +46,7 @@ export function useMutateChat() {
     }
 
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-chat",
+      url: "/dd-chat",
       method: "PUT",
       data: requestData,
     };

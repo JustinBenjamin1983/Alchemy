@@ -7,7 +7,7 @@ export function useMutateDDFileRename() {
 
   async function _mutateFileRename({ dd_id, doc_id, new_doc_name }) {
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-filerename",
+      url: "/dd-filerename",
       method: "PUT",
       data: { dd_id, doc_id, new_doc_name },
     };

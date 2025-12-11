@@ -64,47 +64,45 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-semibold mb-2">Transaction Type</h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          Select the type of transaction to load the appropriate DD blueprint and document checklist.
-        </p>
+        <h3 className="text-sm font-medium text-muted-foreground mb-2">Transaction Type</h3>
         <TransactionTypeSelector
           selected={data.transactionType}
           onSelect={(type: TransactionTypeCode) =>
             onChange({ transactionType: type })
           }
         />
+        {data.transactionType && (
+          <div className="mt-2">
+            <BlueprintSummary transactionType={data.transactionType} />
+          </div>
+        )}
       </div>
 
-      {data.transactionType && (
-        <BlueprintSummary transactionType={data.transactionType} />
-      )}
-
-      <div className="grid gap-4">
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="projectName" className="text-right">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-3">
+        <div className="col-span-2">
+          <Label htmlFor="projectName" className="text-xs text-muted-foreground mb-1 block">
             Project Name
           </Label>
           <Input
             id="projectName"
-            className="col-span-3"
+            className="h-9"
             placeholder="e.g., Project Karoo - Mining Acquisition"
             value={data.transactionName}
             onChange={(e) => onChange({ transactionName: e.target.value })}
           />
         </div>
 
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="clientRole" className="text-right">
-            Your Client's Role
+        <div>
+          <Label htmlFor="clientRole" className="text-xs text-muted-foreground mb-1 block">
+            Client Role
           </Label>
           <Select
             value={data.clientRole || ""}
             onValueChange={(v: ClientRole) => onChange({ clientRole: v })}
           >
-            <SelectTrigger className="col-span-3 bg-white">
+            <SelectTrigger className="bg-white h-9 w-full">
               <SelectValue placeholder="Select client role" />
             </SelectTrigger>
             <SelectContent className="bg-white">
@@ -116,15 +114,15 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
           </Select>
         </div>
 
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="dealStructure" className="text-right">
+        <div>
+          <Label htmlFor="dealStructure" className="text-xs text-muted-foreground mb-1 block">
             Deal Structure
           </Label>
           <Select
             value={data.dealStructure || ""}
             onValueChange={(v: DealStructure) => onChange({ dealStructure: v })}
           >
-            <SelectTrigger className="col-span-3 bg-white">
+            <SelectTrigger className="bg-white h-9 w-full">
               <SelectValue placeholder="Select deal structure" />
             </SelectTrigger>
             <SelectContent className="bg-white">
@@ -136,14 +134,14 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
           </Select>
         </div>
 
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="estimatedValue" className="text-right">
+        <div>
+          <Label htmlFor="estimatedValue" className="text-xs text-muted-foreground mb-1 block">
             Estimated Value (ZAR)
           </Label>
           <Input
             id="estimatedValue"
             type="text"
-            className="col-span-3"
+            className="h-9"
             placeholder="e.g., R500,000,000"
             value={valueInput}
             onChange={handleValueChange}
@@ -152,14 +150,14 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
           />
         </div>
 
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="targetClosingDate" className="text-right">
+        <div>
+          <Label htmlFor="targetClosingDate" className="text-xs text-muted-foreground mb-1 block">
             Target Closing Date
           </Label>
           <Input
             id="targetClosingDate"
             type="date"
-            className="col-span-3"
+            className="h-9"
             value={
               data.targetClosingDate
                 ? data.targetClosingDate.toISOString().split("T")[0]

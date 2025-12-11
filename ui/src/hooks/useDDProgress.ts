@@ -30,7 +30,7 @@ export function useDDProgress(ddId?: string) {
   /** GET /dd/:id — same call your `useGetDD` hook makes */
   const fetchDD = async () => {
     const { data } = await axios({
-      url: `https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-get?dd_id=${ddId}`,
+      url: `/dd-get?dd_id=${ddId}`,
       method: "GET",
     });
     return data as { folders?: Folder[]; name?: string };

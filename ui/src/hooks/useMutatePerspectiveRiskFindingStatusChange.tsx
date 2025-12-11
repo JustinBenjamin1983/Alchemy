@@ -11,7 +11,7 @@ export function useMutatePerspectiveRiskFindingStatusChange() {
     status: string; // 'New', 'Red', 'Amber', 'Deleted'
   }) {
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-perspectiveriskfindingstatus",
+      url: "/dd-perspectiveriskfindingstatus",
       method: "PUT",
       data,
     };

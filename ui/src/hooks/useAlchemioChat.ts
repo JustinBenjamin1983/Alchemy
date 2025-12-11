@@ -33,7 +33,7 @@ export const useAlchemioChat = () => {
     };
 
     const axiosOptions = {
-      url: `https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/alchemiochat`,
+      url: `/alchemiochat`,
       method: "POST",
       data: enhancedRequest,
     };

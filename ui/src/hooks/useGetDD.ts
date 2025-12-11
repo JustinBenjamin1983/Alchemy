@@ -7,7 +7,7 @@ export function useGetDD(dd_id, enabled = true) {
 
   const getDD = async () => {
     const axiosOptions = {
-      url: `https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-get?dd_id=${dd_id}`,
+      url: `/dd-get?dd_id=${dd_id}`,
       method: "GET",
     };
 

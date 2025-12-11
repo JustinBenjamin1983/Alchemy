@@ -51,7 +51,7 @@ export function useMutateDDRiskAdd() {
     }
 
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-risk-add",
+      url: "/dd-risk-add",
       method: "POST",
       data: requestData,
     };

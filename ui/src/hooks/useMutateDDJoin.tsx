@@ -9,7 +9,7 @@ export function useMutateDDJoin() {
 
   async function _mutateJoinDD({ dd_id, lens, risks }) {
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-join",
+      url: "/dd-join",
       method: "PUT",
       data: { dd_id, lens, risks },
     };

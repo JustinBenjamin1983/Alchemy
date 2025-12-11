@@ -9,7 +9,7 @@ export function useGetDDRiskResults(dd_id) {
 
   const getDDRiskResults = async () => {
     const axiosOptions = {
-      url: `https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-risks-results?dd_id=${dd_id}`,
+      url: `/dd-risks-results?dd_id=${dd_id}`,
       method: "GET",
     };
 

@@ -6,7 +6,7 @@ export function useMutateGetOpinionDraft() {
   const axios = useAxiosWithAuth();
   async function _mutateGetOpinionDraft({ opinion_id, draft_id }) {
     const axiosOptions = {
-      url: `https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/get_draft?opinion_id=${opinion_id}&draft_id=${draft_id}`,
+      url: `/get_draft?opinion_id=${opinion_id}&draft_id=${draft_id}`,
       method: "GET",
     };
 

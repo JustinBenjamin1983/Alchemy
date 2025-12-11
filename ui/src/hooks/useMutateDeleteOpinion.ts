@@ -23,7 +23,7 @@ export const useMutateDeleteOpinion = () => {
   }: DeleteOpinionParams): Promise<DeleteOpinionResponse> => {
     try {
       const response = await axios({
-        url: `https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/opiniondelete/${opinion_id}`,
+        url: `/opiniondelete/${opinion_id}`,
         method: "DELETE",
       });
 

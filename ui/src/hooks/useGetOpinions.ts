@@ -7,7 +7,7 @@ export function useGetOpinions() {
 
   const getOpinions = async () => {
     const axiosOptions = {
-      url: `https://apim-func-test-123123123412.azure-api.net/aishop-test-32434/opinions`,
+      url: `/opinions`,
       method: "GET",
     };
 

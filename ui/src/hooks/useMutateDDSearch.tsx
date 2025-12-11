@@ -6,7 +6,7 @@ export function useMutateDDSearch() {
 
   async function _mutateDDSearch({ folder_id, dd_id, prompt, keyword_only }) {
     const axiosOptions = {
-      url: `https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-search`,
+      url: `/dd-search`,
       method: "PUT",
       data: {
         folder_id,

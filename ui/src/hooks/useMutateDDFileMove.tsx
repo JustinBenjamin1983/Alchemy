@@ -12,7 +12,7 @@ export function useMutateDDFileMove() {
     folder_to_id,
   }) {
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-filemove",
+      url: "/dd-filemove",
       method: "PUT",
       data: { dd_id, doc_id, folder_from_id, folder_to_id },
     };

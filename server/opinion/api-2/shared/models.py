@@ -1,7 +1,7 @@
 # File: server/opinion/api_2/shared/models.py
 
 from sqlalchemy import (
-    Column, String, Boolean, Text, ForeignKey, DateTime, Integer, Float,BigInteger, ForeignKeyConstraint, UniqueConstraint
+    Column, String, Boolean, Text, ForeignKey, DateTime, Integer, Float, BigInteger, ForeignKeyConstraint, UniqueConstraint, JSON
 )
 from sqlalchemy.dialects.postgresql import ENUM, UUID
 from sqlalchemy.inspection import inspect
@@ -26,6 +26,14 @@ ActionPriorityEnum = ENUM(
 QuestionTypeEnum = ENUM(
     'compliance_check', 'risk_search', 'information_gathering', 'verification',
     name='question_type_enum',
+    create_type=True
+)
+
+# Enhanced DD: Deal impact classification for findings
+DealImpactEnum = ENUM(
+    'deal_blocker', 'condition_precedent', 'price_chip', 'warranty_indemnity',
+    'post_closing', 'noted', 'none',
+    name='deal_impact_enum',
     create_type=True
 )
 
@@ -207,7 +215,16 @@ class PerspectiveRiskFinding(BaseModel):
     evidence_quote = Column(Text)
     missing_documents = Column(Text)
     action_items = Column(Text)
-    
+
+    # Enhanced DD fields for deal impact and financial exposure
+    deal_impact = Column(DealImpactEnum, default="none")
+    financial_exposure_amount = Column(Float, nullable=True)
+    financial_exposure_currency = Column(String(10), default="ZAR")
+    financial_exposure_calculation = Column(Text, nullable=True)  # "Show your working"
+    clause_reference = Column(Text, nullable=True)  # e.g., "Clause 15.2.1"
+    cross_doc_source = Column(Text, nullable=True)  # For cross-doc findings: "MOI vs Board Resolution"
+    analysis_pass = Column(Integer, default=2)  # Which pass generated this: 2=per-doc, 3=cross-doc
+
     # Relationships
     perspective_risk = relationship("PerspectiveRisk", backref="findings")
     document = relationship("Document", backref="doc_findings")
@@ -245,3 +262,115 @@ class DDQuestionReferencedDoc(BaseModel):
 
     # Relationships
     question = relationship("DDQuestion", back_populates="referenced_documents")
+
+
+class DDWizardDraft(BaseModel):
+    """Stores in-progress DD wizard configurations that users can resume later."""
+    __tablename__ = "dd_wizard_draft"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    owned_by = Column(Text, nullable=False)  # email of the user who created the draft
+    current_step = Column(Integer, default=1)  # 1-5 for the wizard steps
+
+    # Step 1: Transaction Basics
+    transaction_type = Column(Text)
+    transaction_name = Column(Text)
+    client_role = Column(Text)
+    deal_structure = Column(Text)
+    estimated_value = Column(Float)
+    target_closing_date = Column(DateTime)
+
+    # Step 2: Deal Context
+    deal_rationale = Column(Text)
+    known_concerns = Column(Text)  # JSON array stored as text
+
+    # Step 3: Focus Areas
+    critical_priorities = Column(Text)  # JSON array stored as text
+    known_deal_breakers = Column(Text)  # JSON array stored as text
+    deprioritized_areas = Column(Text)  # JSON array stored as text
+
+    # Step 4: Key Parties
+    target_company_name = Column(Text)
+    key_persons = Column(Text)  # JSON array stored as text
+    counterparties = Column(Text)  # JSON array stored as text
+    key_lenders = Column(Text)  # JSON array stored as text
+    key_regulators = Column(Text)  # JSON array stored as text
+
+    # Metadata
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+
+# Processing checkpoint status enum
+ProcessingStatusEnum = ENUM(
+    'pending', 'processing', 'completed', 'failed', 'paused',
+    name='processing_status_enum',
+    create_type=True
+)
+
+
+class DDProcessingCheckpoint(BaseModel):
+    """
+    Tracks progress of enhanced DD processing pipeline.
+    Enables resume capability if processing is interrupted.
+    """
+    __tablename__ = "dd_processing_checkpoint"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    dd_id = Column(UUID(as_uuid=True), ForeignKey("due_diligence.id", ondelete="CASCADE"), nullable=False, unique=True)
+
+    # Current processing state
+    current_pass = Column(Integer, default=1)  # 1-4 for the pipeline passes
+    current_stage = Column(String(100))  # e.g., "pass3_financial_cluster"
+    status = Column(ProcessingStatusEnum, default="pending")
+
+    # Pass 1 outputs (stored for reuse in later passes)
+    pass1_extractions = Column(JSON)  # {doc_id: extraction_data}
+
+    # Progress tracking
+    documents_processed = Column(Integer, default=0)
+    total_documents = Column(Integer)
+    clusters_processed = Column(JSON)  # ["corporate_governance", "financial", ...]
+    questions_processed = Column(Integer, default=0)
+    total_questions = Column(Integer)
+
+    # Granular pass progress (0-100)
+    pass1_progress = Column(Integer, default=0)
+    pass2_progress = Column(Integer, default=0)
+    pass3_progress = Column(Integer, default=0)
+    pass4_progress = Column(Integer, default=0)
+
+    # Current item being processed (for UI display)
+    current_document_id = Column(UUID(as_uuid=True), nullable=True)
+    current_document_name = Column(Text, nullable=True)
+    current_question = Column(Text, nullable=True)
+
+    # Finding counts (updated as findings are created)
+    findings_total = Column(Integer, default=0)
+    findings_critical = Column(Integer, default=0)
+    findings_high = Column(Integer, default=0)
+    findings_medium = Column(Integer, default=0)
+    findings_low = Column(Integer, default=0)
+    findings_deal_blockers = Column(Integer, default=0)
+    findings_cps = Column(Integer, default=0)
+
+    # Cluster info
+    clusters_total = Column(Integer, default=0)
+
+    # Cost tracking (accumulated across all passes)
+    total_input_tokens = Column(Integer, default=0)
+    total_output_tokens = Column(Integer, default=0)
+    estimated_cost_usd = Column(Float, default=0.0)
+    cost_by_model = Column(JSON)  # {"haiku": {input: X, output: Y}, "sonnet": {...}}
+
+    # Timestamps
+    started_at = Column(DateTime, default=datetime.datetime.utcnow)
+    last_updated = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    completed_at = Column(DateTime, nullable=True)
+
+    # Error handling
+    last_error = Column(Text, nullable=True)
+    retry_count = Column(Integer, default=0)
+
+    # Relationships
+    dd = relationship("DueDiligence", backref="processing_checkpoints")

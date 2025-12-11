@@ -18,6 +18,28 @@ import requests
 
 
 FORBIDDEN_FILES = ["__MACOSX", ".DS_Store"]
+
+def write_to_local_storage(key: str, blob: bytes, meta_data: dict = None):
+    """Write file to local storage for dev mode."""
+    local_storage_path = os.environ.get("LOCAL_STORAGE_PATH", "/tmp/dd_storage")
+    os.makedirs(local_storage_path, exist_ok=True)
+
+    # Create subdirectory for extracted docs
+    docs_path = os.path.join(local_storage_path, "docs")
+    os.makedirs(docs_path, exist_ok=True)
+
+    file_path = os.path.join(docs_path, key)
+    with open(file_path, "wb") as f:
+        f.write(blob)
+
+    # Save metadata as JSON sidecar file
+    if meta_data:
+        meta_path = f"{file_path}.meta.json"
+        with open(meta_path, "w") as f:
+            json.dump(meta_data, f)
+
+    logging.info(f"[DEV MODE] Saved file to {file_path}")
+    return file_path
 def inject_hierarchy(folders_dict: dict):
     # Step 1: Build a folder name → ID lookup table
     name_to_id = {
@@ -212,13 +234,25 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 logging.info(f"{structure_with_hierarchy=}")
                 
                 # save original ZIP
-                write_to_blob_storage(
-                        os.environ["DD_DOCS_BLOB_STORAGE_CONNECTION_STRING"], 
-                        os.environ["DD_DOCS_STORAGE_CONTAINER_NAME"], 
-                        new_dd["original_file_doc_id"], 
-                        uploaded_file_content, 
+                if DEV_MODE:
+                    write_to_local_storage(
+                        new_dd["original_file_doc_id"],
+                        uploaded_file_content,
                         {
-                            "original_file_name" : safe_filename, 
+                            "original_file_name" : safe_filename,
+                            "extension" : extension,
+                            "is_dd": "True",
+                            "doc_id": new_dd["original_file_doc_id"],
+                            "dd_id": new_dd["id"]
+                        })
+                else:
+                    write_to_blob_storage(
+                        os.environ["DD_DOCS_BLOB_STORAGE_CONNECTION_STRING"],
+                        os.environ["DD_DOCS_STORAGE_CONTAINER_NAME"],
+                        new_dd["original_file_doc_id"],
+                        uploaded_file_content,
+                        {
+                            "original_file_name" : safe_filename,
                             "extension" : extension,
                             "is_dd": "True",
                             "doc_id": new_dd["original_file_doc_id"],
@@ -273,22 +307,26 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         with open(file_path, "rb") as f:
                             file_bytes = f.read()
                             item["size_in_bytes"] = len(file_bytes)
-                            logging.info("writing to blob")
-                            write_to_blob_storage(
-                                os.environ["DD_DOCS_BLOB_STORAGE_CONNECTION_STRING"], 
-                                os.environ["DD_DOCS_STORAGE_CONTAINER_NAME"], 
-                                item['id'], 
-                                file_bytes, 
-                                {
-                                    "original_file_name" : item['original_file_name'], 
-                                    "extension" : item['type'],
-                                    "is_dd": "True",
-                                    "doc_id": item['id'],
-                                    "dd_id": new_dd["id"],
-                                    "next_chunk_to_process" : "0", 
-                                },
-                                overwrite=True)
-                            logging.info("send to eventgrid")
+                            logging.info("writing to storage")
+                            file_metadata = {
+                                "original_file_name" : item['original_file_name'],
+                                "extension" : item['type'],
+                                "is_dd": "True",
+                                "doc_id": item['id'],
+                                "dd_id": new_dd["id"],
+                                "next_chunk_to_process" : "0",
+                            }
+                            if DEV_MODE:
+                                write_to_local_storage(item['id'], file_bytes, file_metadata)
+                            else:
+                                write_to_blob_storage(
+                                    os.environ["DD_DOCS_BLOB_STORAGE_CONNECTION_STRING"],
+                                    os.environ["DD_DOCS_STORAGE_CONTAINER_NAME"],
+                                    item['id'],
+                                    file_bytes,
+                                    file_metadata,
+                                    overwrite=True)
+                            logging.info("file saved")
                            
                             docs.append(Document(
                                 id=uuid.UUID(item['id']),
@@ -322,12 +360,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 session.commit()
 
                 # add first doc to queue for processing
-                logging.info(f"send_custom_event_to_eventgrid subject:{event_subject} data {event_data=}")
-                send_custom_event_to_eventgrid(os.environ["INDEXING_DD_DOC_METADATA_CHANGED_TOPIC_ENDPOINT"],
-                        topic_key = os.environ["INDEXING_DD_DOC_METADATA_CHANGED_TOPIC_KEY"],
-                        subject = event_subject, # doc_id
-                        data = event_data, # {doc_id", "dd_id"}
-                        event_type = "AIShop.DD.BlobMetadataUpdated")
+                if DEV_MODE:
+                    logging.info(f"[DEV MODE] Skipping EventGrid notification. Would send: subject:{event_subject} data:{event_data}")
+                else:
+                    logging.info(f"send_custom_event_to_eventgrid subject:{event_subject} data {event_data=}")
+                    send_custom_event_to_eventgrid(os.environ["INDEXING_DD_DOC_METADATA_CHANGED_TOPIC_ENDPOINT"],
+                            topic_key = os.environ["INDEXING_DD_DOC_METADATA_CHANGED_TOPIC_KEY"],
+                            subject = event_subject, # doc_id
+                            data = event_data, # {doc_id", "dd_id"}
+                            event_type = "AIShop.DD.BlobMetadataUpdated")
 
                 new_dd["files"] = structure_with_hierarchy
                 

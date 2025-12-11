@@ -8,9 +8,17 @@ ALWAYS included in the context, so analysis can validate against
 constitutional requirements.
 """
 from typing import List, Dict, Any, Optional
+import os
+import sys
+
+# Ensure dd_enhanced is in path for imports
+_dd_enhanced_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _dd_enhanced_path not in sys.path:
+    sys.path.insert(0, _dd_enhanced_path)
+
 from .claude_client import ClaudeClient
 from .document_loader import LoadedDocument
-from ..prompts.analysis import ANALYSIS_SYSTEM_PROMPT, build_analysis_prompt
+from prompts.analysis import get_analysis_system_prompt, build_analysis_prompt
 
 
 # Default transaction context for Karoo Mining
@@ -32,12 +40,15 @@ def run_pass2_analysis(
     blueprint: Optional[Dict],
     client: ClaudeClient,
     transaction_context: str = DEFAULT_TRANSACTION_CONTEXT,
+    prioritized_questions: Optional[List[Dict]] = None,
     verbose: bool = True
 ) -> List[Dict]:
     """
     Run Pass 2: Analyze each document with reference context.
 
-    KEY IMPROVEMENT: Reference documents are always in context.
+    KEY IMPROVEMENTS:
+    - Reference documents are always in context
+    - Prioritized questions from question_prioritizer guide the analysis
 
     Args:
         documents: List of document dicts
@@ -45,6 +56,7 @@ def run_pass2_analysis(
         blueprint: DD blueprint with risk categories (optional)
         client: Claude API client
         transaction_context: Context about the transaction
+        prioritized_questions: Tier 1-3 questions from question_prioritizer (optional)
         verbose: Print progress
 
     Returns:
@@ -71,20 +83,24 @@ def run_pass2_analysis(
         if verbose:
             print(f"  [{i}/{len(documents)}] Analyzing {filename}...")
 
-        # Build analysis prompt with reference context
+        # Build analysis prompt with reference context, blueprint, and prioritized questions
         prompt = build_analysis_prompt(
             document_text=doc["text"][:40000],  # Limit per-doc text
             document_name=filename,
             doc_type=doc_type,
             reference_docs_text=ref_context,
-            transaction_context=transaction_context
+            transaction_context=transaction_context,
+            blueprint=blueprint,  # Pass blueprint for question injection
+            prioritized_questions=prioritized_questions  # NEW: Pass prioritized questions
         )
 
-        # Call Claude
-        response = client.complete(
+        # Get blueprint-aware system prompt
+        system_prompt = get_analysis_system_prompt(blueprint)
+
+        # Call Claude (uses complete_analysis which uses Sonnet)
+        response = client.complete_analysis(
             prompt=prompt,
-            system=ANALYSIS_SYSTEM_PROMPT,
-            json_mode=True,
+            system=system_prompt,
             max_tokens=8192,
             temperature=0.1
         )

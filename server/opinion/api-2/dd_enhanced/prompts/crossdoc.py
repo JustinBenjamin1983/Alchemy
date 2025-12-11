@@ -9,9 +9,23 @@ These prompts put ALL documents in context together to find:
 - Cascade effects across contracts
 - Authorization gaps
 - Consent matrices
-"""
 
-CROSSDOC_SYSTEM_PROMPT = """You are a senior M&A partner conducting final review of due diligence.
+BLUEPRINT-DRIVEN: The cross-doc prompts now dynamically include:
+- cross_doc_validations from each risk category
+- deal_blockers definitions
+- conditions_precedent_patterns
+"""
+from typing import Optional, Dict, List
+
+
+def get_crossdoc_system_prompt(blueprint: Optional[Dict] = None) -> str:
+    """Generate system prompt, optionally customized based on blueprint."""
+    transaction_type = blueprint.get("transaction_type", "corporate acquisition") if blueprint else "corporate acquisition"
+    jurisdiction = blueprint.get("jurisdiction", "South Africa") if blueprint else "South Africa"
+
+    return f"""You are a senior M&A partner conducting final review of due diligence for a {transaction_type}.
+
+Jurisdiction: {jurisdiction}
 
 Your task is to look ACROSS all documents to find issues that only become
 apparent when comparing multiple documents together:
@@ -23,14 +37,97 @@ apparent when comparing multiple documents together:
 This cross-document analysis is what separates thorough DD from checkbox DD."""
 
 
-def build_conflict_detection_prompt(all_documents_text: str) -> str:
+# Legacy constant for backwards compatibility
+CROSSDOC_SYSTEM_PROMPT = get_crossdoc_system_prompt()
+
+
+def _build_cross_doc_validations_section(blueprint: Optional[Dict]) -> str:
+    """Build cross-document validations section from blueprint."""
+    if not blueprint:
+        return ""
+
+    validations = []
+    for category in blueprint.get("risk_categories", []):
+        cat_name = category.get("name", "")
+        for validation in category.get("cross_doc_validations", []):
+            check = validation.get("check", "")
+            desc = validation.get("description", "")
+            validations.append(f"- {check}: {desc}")
+
+    if not validations:
+        return ""
+
+    return f"""
+TRANSACTION-SPECIFIC CROSS-DOCUMENT VALIDATIONS:
+(Check these specific cross-references for this transaction type)
+
+{chr(10).join(validations[:20])}
+"""
+
+
+def _build_deal_blockers_awareness_section(blueprint: Optional[Dict]) -> str:
+    """Build deal blockers section from blueprint for cross-doc awareness."""
+    if not blueprint or not blueprint.get("deal_blockers"):
+        return ""
+
+    blockers = blueprint.get("deal_blockers", [])
+    blocker_lines = []
+
+    for blocker in blockers[:10]:
+        desc = blocker.get("description", "")
+        severity = blocker.get("severity", "conditional")
+        consequence = blocker.get("consequence", "")
+
+        marker = "[ABSOLUTE]" if severity == "absolute" else "[CONDITIONAL]"
+        blocker_lines.append(f"- {marker} {desc}")
+        if consequence:
+            blocker_lines.append(f"    → {consequence}")
+
+    return f"""
+DEAL BLOCKER DEFINITIONS:
+(Flag as DEAL_BLOCKER if cross-document analysis reveals any of these)
+
+{chr(10).join(blocker_lines)}
+"""
+
+
+def _build_cp_patterns_section(blueprint: Optional[Dict]) -> str:
+    """Build conditions precedent patterns section from blueprint."""
+    if not blueprint or not blueprint.get("conditions_precedent_patterns"):
+        return ""
+
+    patterns = blueprint.get("conditions_precedent_patterns", [])
+    pattern_lines = []
+
+    for p in patterns[:10]:
+        pattern = p.get("pattern", "")
+        cp_type = p.get("cp_type", "")
+        pattern_lines.append(f"- Pattern: \"{pattern}\" → {cp_type}")
+
+    return f"""
+CONDITION PRECEDENT PATTERNS TO IDENTIFY:
+(Look for these patterns across documents)
+
+{chr(10).join(pattern_lines)}
+"""
+
+
+def build_conflict_detection_prompt(
+    all_documents_text: str,
+    blueprint: Optional[Dict] = None
+) -> str:
     """
     Prompt to detect conflicts between documents.
 
     KEY IMPROVEMENT: All documents in single context.
+    BLUEPRINT-DRIVEN: Includes cross_doc_validations from blueprint.
     """
+    cross_doc_section = _build_cross_doc_validations_section(blueprint)
+    deal_blockers_section = _build_deal_blockers_awareness_section(blueprint)
 
     return f"""Review ALL documents below and identify CONFLICTS between them.
+{cross_doc_section}
+{deal_blockers_section}
 
 A CONFLICT exists when:
 1. Document A requires something that Document B shows wasn't done
@@ -75,14 +172,39 @@ IMPORTANT: Look specifically for:
 4. Financial terms that don't reconcile"""
 
 
-def build_cascade_mapping_prompt(all_documents_text: str, trigger_event: str = "100% share acquisition") -> str:
+def build_cascade_mapping_prompt(
+    all_documents_text: str,
+    trigger_event: str = "100% share acquisition",
+    blueprint: Optional[Dict] = None
+) -> str:
     """
     Prompt to map how a trigger event cascades across all documents.
 
     KEY IMPROVEMENT: Links related findings as a single cascade.
+    BLUEPRINT-DRIVEN: Includes deal_blockers and CP patterns from blueprint.
     """
+    deal_blockers_section = _build_deal_blockers_awareness_section(blueprint)
+    cp_patterns_section = _build_cp_patterns_section(blueprint)
+
+    # Get calculations from blueprint for financial exposure guidance
+    calculation_guidance = ""
+    if blueprint:
+        calcs = []
+        for category in blueprint.get("risk_categories", []):
+            for calc in category.get("calculations", []):
+                name = calc.get("name", "")
+                formula = calc.get("formula", calc.get("description", ""))
+                calcs.append(f"- {name}: {formula}")
+        if calcs:
+            calculation_guidance = f"""
+CALCULATION TEMPLATES FOR THIS TRANSACTION TYPE:
+{chr(10).join(calcs[:10])}
+"""
 
     return f"""This is an acquisition where {trigger_event} will occur.
+{deal_blockers_section}
+{cp_patterns_section}
+{calculation_guidance}
 
 Map how this change of control event CASCADES through ALL contracts and documents.
 
@@ -148,15 +270,32 @@ IMPORTANT CALCULATIONS:
 Show your calculation working for any financial exposure figures."""
 
 
-def build_authorization_check_prompt(all_documents_text: str) -> str:
+def build_authorization_check_prompt(
+    all_documents_text: str,
+    blueprint: Optional[Dict] = None
+) -> str:
     """
     Prompt to validate that governance actions comply with constitutional documents.
 
     KEY IMPROVEMENT: Validates Board Resolution against MOI/SHA requirements.
+    BLUEPRINT-DRIVEN: Includes deal_blockers related to authorization.
     """
+    deal_blockers_section = _build_deal_blockers_awareness_section(blueprint)
+
+    # Get reference documents that should always be present
+    ref_docs_guidance = ""
+    if blueprint and blueprint.get("reference_documents", {}).get("always_include"):
+        refs = blueprint["reference_documents"]["always_include"]
+        ref_lines = [f"- {r.get('pattern', '')}: {r.get('reason', '')}" for r in refs]
+        ref_docs_guidance = f"""
+KEY REFERENCE DOCUMENTS FOR THIS TRANSACTION TYPE:
+{chr(10).join(ref_lines)}
+"""
 
     return f"""Verify that governance actions (Board Resolutions, shareholder actions) comply with
 constitutional documents (MOI, Shareholders Agreement).
+{deal_blockers_section}
+{ref_docs_guidance}
 
 This is a critical cross-document check: Does the Board Resolution properly authorize
 what the MOI and Shareholders Agreement require?
@@ -216,12 +355,35 @@ PAY SPECIAL ATTENTION TO:
 4. Whether conditions in the resolution have been or can be met"""
 
 
-def build_consent_matrix_prompt(all_documents_text: str) -> str:
+def build_consent_matrix_prompt(
+    all_documents_text: str,
+    blueprint: Optional[Dict] = None
+) -> str:
     """
     Prompt to build a comprehensive consent matrix.
+
+    BLUEPRINT-DRIVEN: Includes CP patterns for consent identification.
     """
+    cp_patterns_section = _build_cp_patterns_section(blueprint)
+    deal_blockers_section = _build_deal_blockers_awareness_section(blueprint)
+
+    # Get critical documents that typically require consents
+    critical_docs_guidance = ""
+    if blueprint and blueprint.get("reference_documents", {}).get("critical_documents"):
+        docs = blueprint["reference_documents"]["critical_documents"]
+        doc_lines = [f"- {d.get('type', '')}: {d.get('description', '')}" for d in docs if d.get("required")]
+        if doc_lines:
+            critical_docs_guidance = f"""
+CRITICAL DOCUMENTS FOR THIS TRANSACTION TYPE:
+(These documents often contain consent requirements)
+
+{chr(10).join(doc_lines)}
+"""
 
     return f"""Build a comprehensive CONSENT MATRIX for this transaction.
+{cp_patterns_section}
+{deal_blockers_section}
+{critical_docs_guidance}
 
 Identify every consent, approval, or notification required across all documents.
 

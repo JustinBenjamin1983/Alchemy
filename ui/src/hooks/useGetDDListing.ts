@@ -14,7 +14,7 @@ export function useGetDDListing(
 
   const getDDListing = async () => {
     const axiosOptions = {
-      url: `https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-list?filter_type=${filter}`,
+      url: `/dd-list?filter_type=${filter}`,
       method: "GET",
     };
 

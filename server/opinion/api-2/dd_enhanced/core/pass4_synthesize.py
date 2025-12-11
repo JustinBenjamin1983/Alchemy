@@ -13,8 +13,16 @@ This produces the actionable DD output.
 from typing import List, Dict, Any, Optional
 from decimal import Decimal
 import json
+import os
+import sys
+
+# Ensure dd_enhanced is in path for imports
+_dd_enhanced_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _dd_enhanced_path not in sys.path:
+    sys.path.insert(0, _dd_enhanced_path)
+
 from .claude_client import ClaudeClient
-from ..prompts.synthesis import SYNTHESIS_SYSTEM_PROMPT, build_synthesis_prompt
+from prompts.synthesis import SYNTHESIS_SYSTEM_PROMPT, build_synthesis_prompt
 
 
 def run_pass4_synthesis(

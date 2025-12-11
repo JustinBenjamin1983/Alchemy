@@ -7,7 +7,7 @@ export function useMutateCreateOpinion() {
 
   async function _mutateCreateOpinion(data: any) {
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/aishop-test-32434/addopinion",
+      url: "/addopinion",
       method: "POST",
       data,
     };

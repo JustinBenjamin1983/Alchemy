@@ -14,7 +14,7 @@ export function useMutateUploadFile() {
       );
     }
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/upload",
+      url: "/upload",
       method: "POST",
       data: fd,
     };

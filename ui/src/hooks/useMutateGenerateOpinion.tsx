@@ -10,7 +10,7 @@ export function useMutateGenerateOpinion() {
 
   async function _mutateGenerateOpinion(data: any) {
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/generateopinion",
+      url: "/generateopinion",
       method: "PUT",
       data,
     };

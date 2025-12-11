@@ -7,7 +7,7 @@ export function useMutateDDRiskEdit() {
 
   async function _mutateRiskEdit({ dd_id, perspective_risk_id, detail }) {
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-risk-update",
+      url: "/dd-risk-update",
       method: "PUT",
       data: { perspective_risk_id, detail, dd_id },
     };

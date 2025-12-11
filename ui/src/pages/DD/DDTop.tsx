@@ -2,7 +2,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DDProgressBar } from "@/components/DDProgressBar";
-import { Trash2, Loader2 } from "lucide-react";
+import { Trash2, Loader2, Play, Activity } from "lucide-react";
 import { useState } from "react";
 import {
   Dialog,
@@ -12,6 +12,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { DEV_MODE } from "@/authConfig";
+import { useProcessAllDocuments } from "@/hooks/useProcessAllDocuments";
 
 type ScreenState =
   | "Documents"
@@ -23,7 +25,8 @@ type ScreenState =
   | "Risks"
   | "Questions"
   | "DocumentChanges"
-  | "ShowReport";
+  | "ShowReport"
+  | "Processing";
 
 interface DDTopProps {
   ddId: string;
@@ -49,6 +52,8 @@ export function DDTop({
   isGeneratingReport = false,
 }: DDTopProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showProcessDialog, setShowProcessDialog] = useState(false);
+  const processAllDocs = useProcessAllDocuments(ddId);
 
   const handleDeleteClick = () => {
     setShowDeleteDialog(true);
@@ -145,11 +150,41 @@ export function DDTop({
                 Questions
               </Button>
               <Button
+                className={
+                  screenState === "Processing"
+                    ? "bg-alchemyPrimaryGoldenWeb"
+                    : ""
+                }
+                variant="outline"
+                onClick={() => setScreenState("Processing")}
+              >
+                <Activity className="mr-2 h-4 w-4" />
+                Processing
+              </Button>
+              <Button
                 variant="outline"
                 onClick={() => setScreenState("Wizard-Chooser")}
               >
                 Start / join
               </Button>
+              {DEV_MODE && (
+                <Button
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                  variant="outline"
+                  onClick={() => {
+                    console.log("[DDTop] Process All Docs clicked, ddId:", ddId, "isPending:", processAllDocs.isPending);
+                    processAllDocs.mutate();
+                  }}
+                  disabled={processAllDocs.isPending}
+                >
+                  {processAllDocs.isPending ? (
+                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                  ) : (
+                    <Play className="mr-2 h-4 w-4" />
+                  )}
+                  {processAllDocs.isPending ? "Processing..." : "Process All Docs"}
+                </Button>
+              )}
               <Button
                 className="bg-alchemyPrimaryNavyBlue text-white"
                 variant="outline"

@@ -8,7 +8,7 @@ export function useMutateSaveOpinion() {
 
   async function _mutateSaveOpinion(data: any) {
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/aishop-test-32434/opinion",
+      url: "/opinion",
       method: "PUT",
       data,
     };

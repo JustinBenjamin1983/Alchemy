@@ -1,5 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import {
   TransactionTypeCode,
@@ -33,40 +31,21 @@ export function TransactionTypeSelector({
   });
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
       {types.map((type) => (
-        <Card
+        <div
           key={type.code}
           className={cn(
-            "cursor-pointer transition-all hover:shadow-md",
+            "cursor-pointer transition-all rounded-md border px-2 py-1.5 flex items-center gap-1.5",
             selected === type.code
-              ? "ring-2 ring-alchemyPrimaryOrange bg-orange-50"
-              : "hover:bg-gray-50"
+              ? "border-alchemyPrimaryOrange bg-orange-50 shadow-sm"
+              : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
           )}
           onClick={() => onSelect(type.code)}
         >
-          <CardContent className="p-4 text-center">
-            <div className="text-3xl mb-2">{type.icon}</div>
-            <h3 className="font-semibold text-sm">{type.name}</h3>
-            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-              {type.description}
-            </p>
-            {(type.documentCount || type.questionCount) && (
-              <div className="flex gap-1 justify-center mt-2 flex-wrap">
-                {type.documentCount && (
-                  <Badge variant="secondary" className="text-xs">
-                    {type.documentCount} docs
-                  </Badge>
-                )}
-                {type.questionCount && (
-                  <Badge variant="outline" className="text-xs">
-                    {type.questionCount} Q's
-                  </Badge>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+          <span className="text-sm flex-shrink-0">{type.icon}</span>
+          <span className="font-medium text-xs truncate">{type.name}</span>
+        </div>
       ))}
     </div>
   );
@@ -83,55 +62,24 @@ export function BlueprintSummary({ transactionType }: BlueprintSummaryProps) {
   if (!typeData) return null;
 
   return (
-    <div className="bg-gray-50 rounded-lg p-4 mt-4">
-      <div className="flex items-center gap-4">
-        <div className="text-3xl">
-          {TRANSACTION_TYPE_INFO[transactionType]?.icon}
-        </div>
-        <div className="flex-1">
-          <h4 className="font-semibold">{typeData.name}</h4>
-          <p className="text-sm text-muted-foreground">
-            {typeData.blueprint?.description || TRANSACTION_TYPE_INFO[transactionType]?.description}
-          </p>
-        </div>
-        <div className="flex gap-4 text-center">
-          <div>
-            <div className="text-2xl font-bold text-alchemyPrimaryOrange">
-              {typeData.document_count}
-            </div>
-            <div className="text-xs text-muted-foreground">Expected Docs</div>
-          </div>
-          {typeData.blueprint && (
-            <>
-              <div>
-                <div className="text-2xl font-bold text-alchemyPrimaryNavyBlue">
-                  {typeData.blueprint.risk_categories}
-                </div>
-                <div className="text-xs text-muted-foreground">Risk Areas</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-alchemyPrimaryGoldenWeb">
-                  {typeData.blueprint.total_questions}
-                </div>
-                <div className="text-xs text-muted-foreground">Questions</div>
-              </div>
-            </>
-          )}
-        </div>
+    <div className="flex items-center gap-4 px-3 py-2 bg-gray-50 rounded-lg border border-gray-100">
+      <span className="text-xl">{TRANSACTION_TYPE_INFO[transactionType]?.icon}</span>
+      <span className="font-medium text-sm">{typeData.name}</span>
+      <div className="flex gap-3 ml-auto text-xs">
+        <span className="text-muted-foreground">
+          <span className="font-semibold text-alchemyPrimaryOrange">{typeData.document_count}</span> docs
+        </span>
+        {typeData.blueprint && (
+          <>
+            <span className="text-muted-foreground">
+              <span className="font-semibold text-alchemyPrimaryNavyBlue">{typeData.blueprint.risk_categories}</span> risk areas
+            </span>
+            <span className="text-muted-foreground">
+              <span className="font-semibold text-alchemyPrimaryGoldenWeb">{typeData.blueprint.total_questions}</span> questions
+            </span>
+          </>
+        )}
       </div>
-      {typeData.priority_counts && (
-        <div className="flex gap-2 mt-3">
-          <Badge variant="destructive">
-            {typeData.priority_counts.critical} Critical
-          </Badge>
-          <Badge variant="secondary">
-            {typeData.priority_counts.required} Required
-          </Badge>
-          <Badge variant="outline">
-            {typeData.priority_counts.recommended} Recommended
-          </Badge>
-        </div>
-      )}
     </div>
   );
 }

@@ -27,7 +27,7 @@ export function useGetDDQuestions(ddId?: string) {
 
   const fetchDDQuestions = async (): Promise<DDQuestion[]> => {
     const { data } = await axios({
-      url: `https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-questions?dd_id=${ddId}`,
+      url: `/dd-questions?dd_id=${ddId}`,
       method: "GET",
     });
     return data;

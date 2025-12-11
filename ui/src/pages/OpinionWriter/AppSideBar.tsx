@@ -3,7 +3,7 @@
 "use client";
 
 import * as React from "react";
-import { SquareTerminal } from "lucide-react";
+import { SquareTerminal, FileEdit } from "lucide-react";
 
 import {
   Sidebar,
@@ -18,18 +18,63 @@ import { useGetUser } from "@/hooks/useGetUser";
 import { useGetOpinions } from "@/hooks/useGetOpinions";
 import { useNavigate } from "react-router-dom";
 import { useGetDDListing } from "@/hooks/useGetDDListing";
+import { useGetWizardDrafts } from "@/hooks/useWizardDraft";
 
 export function AppSidebar({
   isOpinion = true,
+  onResumeWizardDraft,
   ...props
 }: {
   isOpinion?: boolean;
+  onResumeWizardDraft?: (draftId: string) => void;
 } & React.ComponentProps<typeof Sidebar>) {
   const { data: user } = useGetUser();
   const { data: opinions } = useGetOpinions();
   const { data: dds } = useGetDDListing("involves_me");
+  const { data: wizardDrafts } = useGetWizardDrafts();
   console.log("dds", dds);
   const navigate = useNavigate();
+
+  // Build DD items - completed projects + incomplete wizard drafts
+  const ddItems = React.useMemo(() => {
+    const items: { title: string; id: string; isDraft?: boolean; onClick: (id: string) => void }[] = [];
+
+    // Add completed DD projects
+    if (dds?.due_diligences) {
+      dds.due_diligences.forEach((dd) => {
+        items.push({
+          title: dd.name,
+          id: dd.id,
+          isDraft: false,
+          onClick: (evtData) => {
+            navigate(`/dd?id=${evtData}`);
+          },
+        });
+      });
+    }
+
+    // Add incomplete wizard drafts (with visual indicator)
+    if (wizardDrafts && wizardDrafts.length > 0) {
+      wizardDrafts.forEach((draft) => {
+        items.push({
+          title: `📝 ${draft.transactionName || "Untitled Draft"} (Draft)`,
+          id: draft.id!,
+          isDraft: true,
+          onClick: (evtData) => {
+            // Navigate to DD page with draft parameter to trigger wizard
+            if (onResumeWizardDraft) {
+              onResumeWizardDraft(evtData);
+            } else {
+              navigate(`/dd?resumeDraft=${evtData}`);
+            }
+          },
+        });
+      });
+    }
+
+    return items;
+  }, [dds, wizardDrafts, navigate, onResumeWizardDraft]);
+
   const data = {
     user: {
       name: (user as any)?.name,
@@ -52,15 +97,7 @@ export function AppSidebar({
                 },
               };
             })
-          : dds?.due_diligences.map((dd) => {
-              return {
-                title: dd.name,
-                id: dd.id,
-                onClick: (evtData) => {
-                  navigate(`/dd?id=${evtData}`);
-                },
-              };
-            }),
+          : ddItems,
       },
     ],
   };

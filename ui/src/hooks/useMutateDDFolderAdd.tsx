@@ -7,7 +7,7 @@ export function useMutateDDFolderAdd() {
 
   async function _mutateFolderAdd({ dd_id, folder_name, parent_folder_id }) {
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-folder",
+      url: "/dd-folder",
       method: "POST",
       data: { dd_id, folder_name, parent_folder_id },
     };

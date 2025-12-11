@@ -6,13 +6,15 @@ import azure.functions as func
 from shared.utils import auth_get_email
 from shared.models import (
     DueDiligence, DueDiligenceMember, Folder, Document, DocumentHistory,
-    Perspective, PerspectiveRisk, PerspectiveRiskFinding, 
+    Perspective, PerspectiveRisk, PerspectiveRiskFinding,
     DDQuestion, DDQuestionReferencedDoc
 )
 from shared.session import transactional_session
 from shared.uploader import delete_from_blob_storage
 from sqlalchemy.orm import joinedload
 import requests
+
+DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
 
 
 def delete_from_dd_search_index_by_dd_id(dd_id: str):
@@ -71,19 +73,19 @@ def delete_from_dd_search_index_by_dd_id(dd_id: str):
 def delete_due_diligence(dd_id: str, requesting_user_email: str):
     """
     Deletes a due diligence and all associated data.
-    
+
     Args:
         dd_id: UUID of the due diligence to delete
         requesting_user_email: Email of user requesting deletion (for authorization)
     """
-    
+
     with transactional_session() as session:
-        # 1. Verify permissions - user must own the DD
+        # 1. Verify permissions - user must own the DD (skip in dev mode)
         dd = session.query(DueDiligence).filter(DueDiligence.id == dd_id).first()
         if not dd:
             raise ValueError("Due diligence not found")
-        
-        if dd.owned_by != requesting_user_email:
+
+        if not DEV_MODE and dd.owned_by != requesting_user_email:
             raise ValueError("Only the owner can delete a due diligence")
         
         logging.info(f"Starting deletion of DD: {dd_id} owned by: {dd.owned_by}")
@@ -144,31 +146,62 @@ def delete_due_diligence(dd_id: str, requesting_user_email: str):
         logging.info("Database deletion completed successfully")
         
         # 5. Clean up external resources (after DB commit succeeds)
-        
-        # Delete from blob storage
+
+        # Delete from blob storage or local storage
         blob_delete_errors = []
-        for blob_key in blob_keys_to_delete:
+        if DEV_MODE:
+            # In dev mode, delete from local storage
+            local_storage_path = os.environ.get(
+                "LOCAL_STORAGE_PATH",
+                "/Users/jbenjamin/Web-Dev-Projects/Alchemy/server/opinion/api-2/.local_storage"
+            )
+            docs_path = os.path.join(local_storage_path, "docs")
+            for blob_key in blob_keys_to_delete:
+                try:
+                    file_path = os.path.join(docs_path, blob_key)
+                    meta_path = f"{file_path}.meta.json"
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+                        logging.info(f"Deleted local file: {file_path}")
+                    if os.path.exists(meta_path):
+                        os.remove(meta_path)
+                        logging.info(f"Deleted local meta file: {meta_path}")
+                except Exception as e:
+                    error_msg = f"Failed to delete local file {blob_key}: {e}"
+                    logging.error(error_msg)
+                    blob_delete_errors.append(error_msg)
+        else:
+            for blob_key in blob_keys_to_delete:
+                try:
+                    delete_from_blob_storage(
+                        os.environ["DD_DOCS_BLOB_STORAGE_CONNECTION_STRING"],
+                        os.environ["DD_DOCS_STORAGE_CONTAINER_NAME"],
+                        blob_key
+                    )
+                    logging.info(f"Deleted blob: {blob_key}")
+                except Exception as e:
+                    error_msg = f"Failed to delete blob {blob_key}: {e}"
+                    logging.error(error_msg)
+                    blob_delete_errors.append(error_msg)
+                    # Continue with other deletions even if one fails
+
+        # 6. Clean up search index (skip in dev mode as we use local search)
+        if DEV_MODE:
+            # Clean up local search index
             try:
-                delete_from_blob_storage(
-                    os.environ["DD_DOCS_BLOB_STORAGE_CONNECTION_STRING"],
-                    os.environ["DD_DOCS_STORAGE_CONTAINER_NAME"],
-                    blob_key
-                )
-                logging.info(f"Deleted blob: {blob_key}")
+                from shared.dev_adapters.local_search import clear_index
+                clear_index(f"dd_{dd_id}")
+                logging.info(f"Removed local search index for DD {dd_id}")
             except Exception as e:
-                error_msg = f"Failed to delete blob {blob_key}: {e}"
+                logging.warning(f"Failed to remove local search index for DD {dd_id}: {e}")
+        else:
+            try:
+                delete_from_dd_search_index_by_dd_id(dd_id)
+                logging.info(f"Removed DD {dd_id} from search index")
+            except Exception as e:
+                error_msg = f"Failed to remove DD {dd_id} from search index: {e}"
                 logging.error(error_msg)
-                blob_delete_errors.append(error_msg)
-                # Continue with other deletions even if one fails
-        
-        # 6. Clean up search index
-        try:
-            delete_from_dd_search_index_by_dd_id(dd_id)
-            logging.info(f"Removed DD {dd_id} from search index")
-        except Exception as e:
-            error_msg = f"Failed to remove DD {dd_id} from search index: {e}"
-            logging.error(error_msg)
-            # Don't fail the whole operation for search index errors
+                # Don't fail the whole operation for search index errors
         
         # 7. Clean up any table storage entries (if applicable)
         try:
@@ -195,16 +228,20 @@ def delete_due_diligence(dd_id: str, requesting_user_email: str):
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    if req.headers.get('function-key') != os.environ["FUNCTION_KEY"]:
+    if not DEV_MODE and req.headers.get('function-key') != os.environ.get("FUNCTION_KEY"):
         logging.info("Invalid function key provided")
         return func.HttpResponse("", status_code=401)
-    
+
     try:
-        # Authenticate user
-        email, err = auth_get_email(req)
-        if err:
-            return err
-        
+        # Authenticate user - in dev mode use a mock email
+        if DEV_MODE:
+            email = "dev@localhost"
+            logging.info(f"[DEV MODE] Using mock email: {email}")
+        else:
+            email, err = auth_get_email(req)
+            if err:
+                return err
+
         req_body = req.get_json()
         dd_id_str = req_body.get("dd_id")
         

@@ -7,7 +7,7 @@ export function useMutateDDDelete() {
 
   async function _mutateDDDelete({ dd_id }: { dd_id: string }) {
     const axiosOptions = {
-      url: "https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/dd-delete",
+      url: "/dd-delete",
       method: "POST",
       data: { dd_id },
     };
@@ -18,9 +18,15 @@ export function useMutateDDDelete() {
   return useMutation({
     mutationFn: _mutateDDDelete,
     onSuccess: (data, variables) => {
-      // Invalidate DD listing to refresh the list
+      // Invalidate DD listing to refresh the sidebar - matches useGetDDListing query key pattern
       aishopQueryClient.invalidateQueries({
-        queryKey: ["get-dd-listing"],
+        queryKey: ["get-dds-involves_me"],
+      });
+      aishopQueryClient.invalidateQueries({
+        queryKey: ["get-dds-owned_by_me"],
+      });
+      aishopQueryClient.invalidateQueries({
+        queryKey: ["get-dds-im_a_member"],
       });
       // Invalidate the specific DD query
       aishopQueryClient.invalidateQueries({

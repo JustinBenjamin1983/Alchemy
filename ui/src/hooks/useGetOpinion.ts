@@ -10,7 +10,7 @@ export function useGetOpinion(opinionId: string | null) {
     console.log("🔄 Fetching opinion:", opinionId);
 
     const axiosOptions = {
-      url: `https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/opinion?id=${opinionId}`,
+      url: `/opinion?id=${opinionId}`,
       method: "GET",
     };
 

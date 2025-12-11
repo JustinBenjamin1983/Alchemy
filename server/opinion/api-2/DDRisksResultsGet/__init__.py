@@ -9,9 +9,11 @@ from shared.models import DueDiligence, PerspectiveRisk, PerspectiveRiskFinding,
 
 from collections import defaultdict
 
+DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    if req.headers.get('function-key') != os.environ["FUNCTION_KEY"]:
+    # Skip function-key check in dev mode
+    if not DEV_MODE and req.headers.get('function-key') != os.environ.get("FUNCTION_KEY"):
         logging.info("no matching value in header")
         return func.HttpResponse("", status_code=401)
     

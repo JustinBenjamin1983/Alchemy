@@ -15,7 +15,7 @@ export const useMutateExportQuestions = () => {
   }: ExportQuestionsParams): Promise<void> => {
     try {
       const response = await axios({
-        url: `https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/DDQuestionsExport/${dd_id}`,
+        url: `/DDQuestionsExport/${dd_id}`,
         method: "GET",
         responseType: "blob", // This is crucial for file downloads
       });

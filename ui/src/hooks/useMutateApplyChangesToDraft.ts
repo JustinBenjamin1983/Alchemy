@@ -21,7 +21,7 @@ export const useMutateApplyChangesToDraft = () => {
 
   const applyChangesToDraft = async (request: ApplyChangesToDraftRequest) => {
     const axiosOptions = {
-      url: `https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/apply_changes`,
+      url: `/apply_changes`,
       method: "POST",
       data: request,
     };

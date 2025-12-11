@@ -13,9 +13,17 @@ This pass puts ALL documents in context together to find:
 This is what separates thorough DD from checkbox DD.
 """
 from typing import List, Dict, Any, Optional
+import os
+import sys
+
+# Ensure dd_enhanced is in path for imports
+_dd_enhanced_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _dd_enhanced_path not in sys.path:
+    sys.path.insert(0, _dd_enhanced_path)
+
 from .claude_client import ClaudeClient
-from ..prompts.crossdoc import (
-    CROSSDOC_SYSTEM_PROMPT,
+from prompts.crossdoc import (
+    get_crossdoc_system_prompt,
     build_conflict_detection_prompt,
     build_cascade_mapping_prompt,
     build_authorization_check_prompt,
@@ -69,17 +77,20 @@ def run_pass3_crossdoc_synthesis(
         total_chars = len(doc_context)
         print(f"  Total context size: {total_chars:,} characters (~{total_chars//4:,} tokens)")
 
+    # Get blueprint-aware system prompt
+    system_prompt = get_crossdoc_system_prompt(blueprint)
+
     # 3.1 Conflict Detection
     if verbose:
         print("  [3.1] Detecting cross-document conflicts...")
-    results["conflicts"] = _detect_conflicts(doc_context, client)
+    results["conflicts"] = _detect_conflicts(doc_context, client, blueprint, system_prompt)
     if verbose:
         print(f"       Found {len(results['conflicts'])} conflicts")
 
     # 3.2 Change of Control Cascade Mapping
     if verbose:
         print("  [3.2] Mapping change of control cascade...")
-    results["cascade_analysis"] = _map_coc_cascade(doc_context, client)
+    results["cascade_analysis"] = _map_coc_cascade(doc_context, client, blueprint, system_prompt)
     cascade_items = results["cascade_analysis"].get("cascade_items", [])
     if verbose:
         print(f"       Mapped {len(cascade_items)} cascade items")
@@ -87,14 +98,14 @@ def run_pass3_crossdoc_synthesis(
     # 3.3 Authorization Validation (MOI vs Board Resolution)
     if verbose:
         print("  [3.3] Validating governance authorizations...")
-    results["authorization_issues"] = _validate_authorizations(doc_context, client)
+    results["authorization_issues"] = _validate_authorizations(doc_context, client, blueprint, system_prompt)
     if verbose:
         print(f"       Found {len(results['authorization_issues'])} authorization issues")
 
     # 3.4 Consent Matrix
     if verbose:
         print("  [3.4] Building consent matrix...")
-    results["consent_matrix"] = _build_consent_matrix(doc_context, client)
+    results["consent_matrix"] = _build_consent_matrix_result(doc_context, client, blueprint, system_prompt)
     if verbose:
         print(f"       Identified {len(results['consent_matrix'])} consent requirements")
 
@@ -136,14 +147,19 @@ WORDS: {doc.get('word_count', len(doc.get('text', '').split())):,}
     return "\n\n".join(sections)
 
 
-def _detect_conflicts(doc_context: str, client: ClaudeClient) -> List[Dict]:
+def _detect_conflicts(
+    doc_context: str,
+    client: ClaudeClient,
+    blueprint: Optional[Dict],
+    system_prompt: str
+) -> List[Dict]:
     """Detect conflicts between documents."""
 
-    prompt = build_conflict_detection_prompt(doc_context)
+    prompt = build_conflict_detection_prompt(doc_context, blueprint)
 
     response = client.complete_critical(
         prompt=prompt,
-        system=CROSSDOC_SYSTEM_PROMPT,
+        system=system_prompt,
         json_mode=True,
         max_tokens=4096
     )
@@ -155,17 +171,23 @@ def _detect_conflicts(doc_context: str, client: ClaudeClient) -> List[Dict]:
     return response.get("conflicts", [])
 
 
-def _map_coc_cascade(doc_context: str, client: ClaudeClient) -> Dict[str, Any]:
+def _map_coc_cascade(
+    doc_context: str,
+    client: ClaudeClient,
+    blueprint: Optional[Dict],
+    system_prompt: str
+) -> Dict[str, Any]:
     """Map how change of control cascades across all documents."""
 
     prompt = build_cascade_mapping_prompt(
         doc_context,
-        trigger_event="100% share acquisition"
+        trigger_event="100% share acquisition",
+        blueprint=blueprint
     )
 
     response = client.complete_critical(
         prompt=prompt,
-        system=CROSSDOC_SYSTEM_PROMPT,
+        system=system_prompt,
         json_mode=True,
         max_tokens=8192
     )
@@ -177,14 +199,19 @@ def _map_coc_cascade(doc_context: str, client: ClaudeClient) -> Dict[str, Any]:
     return response
 
 
-def _validate_authorizations(doc_context: str, client: ClaudeClient) -> List[Dict]:
+def _validate_authorizations(
+    doc_context: str,
+    client: ClaudeClient,
+    blueprint: Optional[Dict],
+    system_prompt: str
+) -> List[Dict]:
     """Check if Board Resolution authorizes what MOI/SHA require."""
 
-    prompt = build_authorization_check_prompt(doc_context)
+    prompt = build_authorization_check_prompt(doc_context, blueprint)
 
     response = client.complete_critical(
         prompt=prompt,
-        system=CROSSDOC_SYSTEM_PROMPT,
+        system=system_prompt,
         json_mode=True,
         max_tokens=4096
     )
@@ -206,14 +233,19 @@ def _validate_authorizations(doc_context: str, client: ClaudeClient) -> List[Dic
     return gaps
 
 
-def _build_consent_matrix(doc_context: str, client: ClaudeClient) -> List[Dict]:
+def _build_consent_matrix_result(
+    doc_context: str,
+    client: ClaudeClient,
+    blueprint: Optional[Dict],
+    system_prompt: str
+) -> List[Dict]:
     """Build comprehensive consent matrix."""
 
-    prompt = build_consent_matrix_prompt(doc_context)
+    prompt = build_consent_matrix_prompt(doc_context, blueprint)
 
     response = client.complete_critical(
         prompt=prompt,
-        system=CROSSDOC_SYSTEM_PROMPT,
+        system=system_prompt,
         json_mode=True,
         max_tokens=4096
     )

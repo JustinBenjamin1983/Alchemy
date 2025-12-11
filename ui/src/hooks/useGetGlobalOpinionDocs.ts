@@ -7,7 +7,7 @@ export function useGetGlobalOpinionDocs() {
 
   const getGlobalOpinionDocs = async () => {
     const axiosOptions = {
-      url: `https://apim-func-test-123123123412.azure-api.net/alchemy-aishop-func-app-test-docker/global_opinion_docs`,
+      url: `/global_opinion_docs`,
       method: "GET",
     };
 

@@ -1,0 +1,641 @@
+# Document registry for Restructuring & Insolvency transactions
+# Covers: Business rescue, liquidations, schemes of arrangement, debt restructuring
+
+transaction_type: "Restructuring & Insolvency"
+
+folder_structure:
+  - name: "01. Insolvency Proceedings"
+    subfolders:
+      - name: "1.1 Business Rescue"
+      - name: "1.2 Liquidation"
+      - name: "1.3 Court Filings"
+  - name: "02. Creditor Information"
+    subfolders:
+      - name: "2.1 Creditor Claims"
+      - name: "2.2 Security Documents"
+      - name: "2.3 Meetings"
+  - name: "03. Business Rescue Plan"
+    subfolders:
+      - name: "3.1 Plan Drafts"
+      - name: "3.2 Funding"
+  - name: "04. Asset Information"
+    subfolders:
+      - name: "4.1 Valuations"
+      - name: "4.2 Asset Register"
+  - name: "05. Financial Information"
+    subfolders:
+      - name: "5.1 Historical Financials"
+      - name: "5.2 Projections"
+  - name: "06. Employee Matters"
+    subfolders:
+      - name: "6.1 Employee Information"
+      - name: "6.2 Section 189"
+  - name: "07. Contracts"
+    subfolders:
+      - name: "7.1 Material Contracts"
+      - name: "7.2 Leases"
+  - name: "08. Director & Management"
+  - name: "09. Transaction Documents"
+  - name: "10. Legal & Tax"
+  - name: "99. Other Documents"
+
+categories:
+  - name: "Business Rescue"
+    description: "Business rescue proceedings documents"
+    folder: "01. Insolvency Proceedings/1.1 Business Rescue"
+
+  - name: "Creditor"
+    description: "Creditor claims and security"
+    folder: "02. Creditor Information"
+
+  - name: "Plan"
+    description: "Business rescue plan documents"
+    folder: "03. Business Rescue Plan"
+
+  - name: "Assets"
+    description: "Asset information and valuations"
+    folder: "04. Asset Information"
+
+  - name: "Financial"
+    description: "Financial statements and projections"
+    folder: "05. Financial Information"
+
+  - name: "Employment"
+    description: "Employee matters and retrenchments"
+    folder: "06. Employee Matters"
+
+  - name: "Contracts"
+    description: "Material contracts and leases"
+    folder: "07. Contracts"
+
+  - name: "Director"
+    description: "Director conduct and related matters"
+    folder: "08. Director & Management"
+
+documents:
+  # Business Rescue Proceedings
+  - name: "Business Rescue Resolution"
+    category: "Business Rescue"
+    folder: "01. Insolvency Proceedings/1.1 Business Rescue"
+    priority: critical
+    description: "Board resolution commencing business rescue"
+    classification_patterns:
+      - "br.*resolution"
+      - "business.*rescue.*resolution"
+      - "section.*129"
+    content_keywords:
+      - "business rescue"
+      - "section 129"
+      - "resolved"
+    request_template: "Board resolution commencing business rescue proceedings"
+
+  - name: "BRP Appointment Letter"
+    category: "Business Rescue"
+    folder: "01. Insolvency Proceedings/1.1 Business Rescue"
+    priority: critical
+    description: "Business rescue practitioner appointment"
+    classification_patterns:
+      - "brp.*appointment"
+      - "practitioner.*appointment"
+    content_keywords:
+      - "business rescue practitioner"
+      - "appointed"
+    request_template: "Appointment letter for business rescue practitioner"
+
+  - name: "BRP CIPC Registration"
+    category: "Business Rescue"
+    folder: "01. Insolvency Proceedings/1.1 Business Rescue"
+    priority: critical
+    description: "BRP registration and qualification evidence"
+    classification_patterns:
+      - "brp.*registration"
+      - "cipc.*registration"
+      - "practitioner.*registration"
+    content_keywords:
+      - "registered"
+      - "CIPC"
+      - "practitioner"
+    request_template: "Evidence of BRP registration with CIPC"
+
+  - name: "Notice of Commencement"
+    category: "Business Rescue"
+    folder: "01. Insolvency Proceedings/1.1 Business Rescue"
+    priority: critical
+    description: "Filing notice to CIPC and affected persons"
+    classification_patterns:
+      - "commencement.*notice"
+      - "section.*129.*notice"
+      - "notice.*business.*rescue"
+    content_keywords:
+      - "notice"
+      - "commencement"
+      - "business rescue"
+    request_template: "Notice of commencement filed with CIPC"
+
+  - name: "BRP Status Reports"
+    category: "Business Rescue"
+    folder: "01. Insolvency Proceedings/1.1 Business Rescue"
+    priority: required
+    description: "Practitioner's periodic status reports"
+    classification_patterns:
+      - "brp.*report"
+      - "status.*report"
+      - "practitioner.*report"
+    content_keywords:
+      - "status"
+      - "report"
+      - "practitioner"
+    request_template: "All BRP status reports issued to date"
+
+  - name: "Moratorium Notice"
+    category: "Business Rescue"
+    folder: "01. Insolvency Proceedings/1.1 Business Rescue"
+    priority: required
+    description: "Notice of moratorium to creditors"
+    classification_patterns:
+      - "moratorium"
+      - "stay.*notice"
+    content_keywords:
+      - "moratorium"
+      - "stay"
+      - "legal proceedings"
+    request_template: "Moratorium notices issued to creditors"
+
+  # Creditor Information
+  - name: "Creditor Register"
+    category: "Creditor"
+    folder: "02. Creditor Information/2.1 Creditor Claims"
+    priority: critical
+    description: "Complete register of all creditors"
+    classification_patterns:
+      - "creditor.*register"
+      - "creditor.*list"
+    content_keywords:
+      - "creditor"
+      - "claims"
+      - "register"
+    request_template: "Complete register of all creditors and amounts owed"
+
+  - name: "Proof of Claims"
+    category: "Creditor"
+    folder: "02. Creditor Information/2.1 Creditor Claims"
+    priority: critical
+    description: "Submitted proofs of claim"
+    classification_patterns:
+      - "proof.*claim"
+      - "claim.*form"
+    content_keywords:
+      - "proof"
+      - "claim"
+      - "creditor"
+    request_template: "All proofs of claim received from creditors"
+
+  - name: "Claims Verification Report"
+    category: "Creditor"
+    folder: "02. Creditor Information/2.1 Creditor Claims"
+    priority: critical
+    description: "BRP's verification of claims"
+    classification_patterns:
+      - "claims.*verification"
+      - "claim.*analysis"
+      - "verified.*claims"
+    content_keywords:
+      - "verified"
+      - "claims"
+      - "analysis"
+    request_template: "BRP's claims verification report"
+
+  - name: "Priority Creditor Schedule"
+    category: "Creditor"
+    folder: "02. Creditor Information/2.1 Creditor Claims"
+    priority: critical
+    description: "Schedule showing creditor priority ranking"
+    classification_patterns:
+      - "priority.*schedule"
+      - "ranking"
+      - "creditor.*priority"
+    content_keywords:
+      - "priority"
+      - "ranking"
+      - "secured"
+    request_template: "Schedule of creditors by priority ranking"
+
+  - name: "Security Documents"
+    category: "Creditor"
+    folder: "02. Creditor Information/2.2 Security Documents"
+    priority: critical
+    description: "Security agreements and registrations"
+    classification_patterns:
+      - "security"
+      - "mortgage"
+      - "pledge"
+      - "cession"
+    content_keywords:
+      - "security"
+      - "mortgage"
+      - "pledge"
+    request_template: "All security documents held by creditors"
+
+  - name: "Creditor Meeting Minutes"
+    category: "Creditor"
+    folder: "02. Creditor Information/2.3 Meetings"
+    priority: required
+    description: "Minutes of creditor meetings"
+    classification_patterns:
+      - "meeting.*minutes"
+      - "creditor.*minutes"
+    content_keywords:
+      - "minutes"
+      - "meeting"
+      - "resolved"
+    request_template: "Minutes of all creditor meetings"
+
+  - name: "Voting Records"
+    category: "Creditor"
+    folder: "02. Creditor Information/2.3 Meetings"
+    priority: required
+    description: "Records of creditor voting on plan"
+    classification_patterns:
+      - "voting"
+      - "ballot"
+    content_keywords:
+      - "vote"
+      - "ballot"
+      - "adopted"
+    request_template: "Voting records for plan adoption"
+
+  # Business Rescue Plan
+  - name: "Business Rescue Plan"
+    category: "Plan"
+    folder: "03. Business Rescue Plan/3.1 Plan Drafts"
+    priority: critical
+    description: "Published business rescue plan"
+    classification_patterns:
+      - "business.*rescue.*plan"
+      - "br.*plan"
+    content_keywords:
+      - "business rescue plan"
+      - "affected persons"
+      - "implementation"
+    request_template: "Published business rescue plan"
+
+  - name: "Viability Analysis"
+    category: "Plan"
+    folder: "03. Business Rescue Plan/3.1 Plan Drafts"
+    priority: critical
+    description: "Analysis supporting reasonable prospect of rescue"
+    classification_patterns:
+      - "viability"
+      - "feasibility"
+    content_keywords:
+      - "viable"
+      - "reasonable prospect"
+      - "rescue"
+    request_template: "Analysis demonstrating viability of business rescue"
+
+  - name: "Comparative Analysis (vs Liquidation)"
+    category: "Plan"
+    folder: "03. Business Rescue Plan/3.1 Plan Drafts"
+    priority: critical
+    description: "Comparison of outcomes under plan vs liquidation"
+    classification_patterns:
+      - "comparative"
+      - "liquidation.*comparison"
+    content_keywords:
+      - "comparative"
+      - "liquidation"
+      - "better return"
+    request_template: "Analysis comparing plan returns vs liquidation"
+
+  - name: "Post-Commencement Funding Agreements"
+    category: "Plan"
+    folder: "03. Business Rescue Plan/3.2 Funding"
+    priority: critical
+    description: "PCF agreements and commitments"
+    classification_patterns:
+      - "pcf"
+      - "post.*commencement"
+      - "funding.*agreement"
+    content_keywords:
+      - "post-commencement"
+      - "funding"
+      - "super-priority"
+    request_template: "All post-commencement funding agreements"
+
+  # Asset Information
+  - name: "Asset Valuation Report"
+    category: "Assets"
+    folder: "04. Asset Information/4.1 Valuations"
+    priority: critical
+    description: "Independent valuation of assets"
+    classification_patterns:
+      - "valuation"
+      - "asset.*valuation"
+    content_keywords:
+      - "valuation"
+      - "market value"
+      - "forced sale"
+    request_template: "Independent valuation of company assets"
+
+  - name: "Liquidation Valuation"
+    category: "Assets"
+    folder: "04. Asset Information/4.1 Valuations"
+    priority: critical
+    description: "Estimated value in liquidation scenario"
+    classification_patterns:
+      - "liquidation.*value"
+      - "forced.*sale"
+    content_keywords:
+      - "liquidation value"
+      - "forced sale"
+      - "realisation"
+    request_template: "Estimated values in forced sale/liquidation scenario"
+
+  - name: "Asset Register"
+    category: "Assets"
+    folder: "04. Asset Information/4.2 Asset Register"
+    priority: critical
+    description: "Complete register of company assets"
+    classification_patterns:
+      - "asset.*register"
+      - "fixed.*assets"
+    content_keywords:
+      - "assets"
+      - "register"
+      - "schedule"
+    request_template: "Complete register of all company assets"
+
+  - name: "Encumbered Assets Schedule"
+    category: "Assets"
+    folder: "04. Asset Information/4.2 Asset Register"
+    priority: required
+    description: "Schedule of assets subject to security"
+    classification_patterns:
+      - "encumbered"
+      - "secured.*assets"
+    content_keywords:
+      - "encumbered"
+      - "security"
+      - "charged"
+    request_template: "Schedule of assets subject to security interests"
+
+  # Financial Information
+  - name: "Management Accounts (Recent)"
+    category: "Financial"
+    folder: "05. Financial Information/5.1 Historical Financials"
+    priority: critical
+    description: "Recent management accounts"
+    classification_patterns:
+      - "management.*account"
+      - "monthly"
+    content_keywords:
+      - "management accounts"
+      - "unaudited"
+    request_template: "Latest management accounts"
+
+  - name: "Cash Flow Actual vs Budget"
+    category: "Financial"
+    folder: "05. Financial Information/5.1 Historical Financials"
+    priority: required
+    description: "Cash flow performance during rescue"
+    classification_patterns:
+      - "cash.*flow"
+      - "actual.*vs.*budget"
+    content_keywords:
+      - "cash flow"
+      - "actual"
+      - "budget"
+    request_template: "Cash flow actual vs budget during business rescue"
+
+  - name: "Cash Flow Projections"
+    category: "Financial"
+    folder: "05. Financial Information/5.2 Projections"
+    priority: critical
+    description: "Forward-looking cash flow projections"
+    classification_patterns:
+      - "projection"
+      - "forecast"
+      - "cashflow"
+    content_keywords:
+      - "projected"
+      - "forecast"
+      - "cash flow"
+    request_template: "Cash flow projections supporting rescue plan"
+
+  - name: "Turnaround Projections"
+    category: "Financial"
+    folder: "05. Financial Information/5.2 Projections"
+    priority: required
+    description: "Financial projections under rescue plan"
+    classification_patterns:
+      - "turnaround"
+      - "business.*plan"
+    content_keywords:
+      - "turnaround"
+      - "recovery"
+      - "projections"
+    request_template: "Financial projections demonstrating turnaround"
+
+  # Employee Matters
+  - name: "Employee List"
+    category: "Employment"
+    folder: "06. Employee Matters/6.1 Employee Information"
+    priority: critical
+    description: "Complete list of employees"
+    classification_patterns:
+      - "employee.*list"
+      - "staff.*list"
+    content_keywords:
+      - "employees"
+      - "staff"
+      - "headcount"
+    request_template: "Complete list of all employees"
+
+  - name: "Employee Liability Schedule"
+    category: "Employment"
+    folder: "06. Employee Matters/6.1 Employee Information"
+    priority: critical
+    description: "Schedule of employee claims and liabilities"
+    classification_patterns:
+      - "employee.*liability"
+      - "staff.*claims"
+    content_keywords:
+      - "employee claims"
+      - "liability"
+      - "leave"
+      - "severance"
+    request_template: "Schedule of all employee-related liabilities"
+
+  - name: "Section 189 Notice"
+    category: "Employment"
+    folder: "06. Employee Matters/6.2 Section 189"
+    priority: critical
+    description: "Notice of intended retrenchments"
+    classification_patterns:
+      - "s189"
+      - "section.*189"
+      - "retrenchment.*notice"
+    content_keywords:
+      - "section 189"
+      - "retrenchment"
+      - "consultation"
+    request_template: "Section 189 notice and related documentation"
+
+  - name: "Consultation Records"
+    category: "Employment"
+    folder: "06. Employee Matters/6.2 Section 189"
+    priority: required
+    description: "Records of consultation with employees/unions"
+    classification_patterns:
+      - "consultation"
+      - "union.*meeting"
+    content_keywords:
+      - "consultation"
+      - "union"
+      - "employee representatives"
+    request_template: "Records of consultation with employees and unions"
+
+  # Contracts
+  - name: "Material Contracts Schedule"
+    category: "Contracts"
+    folder: "07. Contracts/7.1 Material Contracts"
+    priority: critical
+    description: "Schedule of material contracts"
+    classification_patterns:
+      - "contract.*schedule"
+      - "material.*contracts"
+    content_keywords:
+      - "contracts"
+      - "schedule"
+      - "material"
+    request_template: "Schedule of all material contracts"
+
+  - name: "Ipso Facto Analysis"
+    category: "Contracts"
+    folder: "07. Contracts/7.1 Material Contracts"
+    priority: critical
+    description: "Analysis of ipso facto clauses"
+    classification_patterns:
+      - "ipso.*facto"
+      - "termination.*analysis"
+    content_keywords:
+      - "ipso facto"
+      - "insolvency"
+      - "termination"
+    request_template: "Analysis of ipso facto clauses in key contracts"
+
+  - name: "Lease Agreements"
+    category: "Contracts"
+    folder: "07. Contracts/7.2 Leases"
+    priority: required
+    description: "Property and equipment lease agreements"
+    classification_patterns:
+      - "lease"
+      - "rental"
+    content_keywords:
+      - "lease"
+      - "rental"
+      - "premises"
+    request_template: "All lease agreements"
+
+  # Director & Management
+  - name: "Director Declarations"
+    category: "Director"
+    folder: "08. Director & Management"
+    priority: critical
+    description: "Directors' declarations of interests and solvency"
+    classification_patterns:
+      - "director.*declaration"
+      - "solvency.*declaration"
+    content_keywords:
+      - "director"
+      - "declare"
+      - "solvency"
+    request_template: "Directors' declarations and interest disclosures"
+
+  - name: "Related Party Transaction Schedule"
+    category: "Director"
+    folder: "08. Director & Management"
+    priority: critical
+    description: "Schedule of related party transactions"
+    classification_patterns:
+      - "related.*party"
+      - "rpt"
+    content_keywords:
+      - "related party"
+      - "transaction"
+      - "director"
+    request_template: "Schedule of all related party transactions"
+
+  - name: "Voidable Transaction Analysis"
+    category: "Director"
+    folder: "08. Director & Management"
+    priority: critical
+    description: "Analysis of potential voidable dispositions"
+    classification_patterns:
+      - "voidable"
+      - "preference"
+      - "disposition"
+    content_keywords:
+      - "voidable"
+      - "preference"
+      - "disposition"
+    request_template: "Analysis of potentially voidable transactions"
+
+  - name: "D&O Insurance Policy"
+    category: "Insurance"
+    folder: "08. Director & Management"
+    priority: required
+    description: "Directors and officers liability insurance"
+    classification_patterns:
+      - "d&o"
+      - "directors.*insurance"
+    content_keywords:
+      - "directors"
+      - "officers"
+      - "liability"
+    request_template: "D&O insurance policy details"
+
+  # Transaction Documents
+  - name: "Sale Agreement"
+    category: "Transaction"
+    folder: "09. Transaction Documents"
+    priority: critical
+    description: "Agreement for sale of business/assets (if applicable)"
+    classification_patterns:
+      - "sale.*agreement"
+      - "purchase.*agreement"
+    content_keywords:
+      - "sale"
+      - "purchase"
+      - "seller"
+    request_template: "Sale agreement for business or assets"
+
+  - name: "Indicative Offers"
+    category: "Transaction"
+    folder: "09. Transaction Documents"
+    priority: required
+    description: "Non-binding offers from potential acquirers"
+    classification_patterns:
+      - "indicative.*offer"
+      - "expression.*of.*interest"
+    content_keywords:
+      - "indicative"
+      - "non-binding"
+      - "offer"
+    request_template: "All indicative offers received"
+
+  # Legal & Tax
+  - name: "SARS Claims"
+    category: "Tax"
+    folder: "10. Legal & Tax"
+    priority: required
+    description: "Details of SARS claims"
+    classification_patterns:
+      - "sars.*claim"
+      - "tax.*claim"
+    content_keywords:
+      - "SARS"
+      - "claim"
+      - "assessment"
+    request_template: "Details of all SARS claims against the company"

@@ -1,0 +1,411 @@
+# Document registry for Energy & Power transactions
+
+transaction_type: "Energy & Power"
+
+folder_structure:
+  - name: "01. Corporate"
+    subfolders:
+      - name: "1.1 Constitutional"
+      - name: "1.2 Board & Shareholders"
+      - name: "1.3 Group Structure"
+
+  - name: "02. Financial"
+    subfolders:
+      - name: "2.1 Financial Statements"
+      - name: "2.2 Financial Model"
+      - name: "2.3 Debt & Banking"
+
+  - name: "03. Regulatory"
+    subfolders:
+      - name: "3.1 Generation License"
+      - name: "3.2 NERSA Correspondence"
+      - name: "3.3 Other Permits"
+
+  - name: "04. Project Contracts"
+    subfolders:
+      - name: "4.1 PPA"
+      - name: "4.2 Grid Connection"
+      - name: "4.3 REIPPPP"
+      - name: "4.4 Implementation Agreement"
+
+  - name: "05. Construction"
+    subfolders:
+      - name: "5.1 EPC"
+      - name: "5.2 O&M"
+      - name: "5.3 Equipment Supply"
+      - name: "5.4 Warranties"
+
+  - name: "06. Land & Property"
+    subfolders:
+      - name: "6.1 Title/Lease"
+      - name: "6.2 Servitudes"
+
+  - name: "07. Environmental"
+    subfolders:
+      - name: "7.1 Environmental Authorization"
+      - name: "7.2 Water Use"
+      - name: "7.3 Monitoring"
+
+  - name: "08. Technical"
+    subfolders:
+      - name: "8.1 Resource Assessment"
+      - name: "8.2 Performance Data"
+      - name: "8.3 Equipment Specs"
+
+  - name: "09. Economic Development"
+    subfolders:
+      - name: "9.1 ED Obligations"
+      - name: "9.2 Community"
+      - name: "9.3 Local Content"
+
+  - name: "10. Insurance"
+
+  - name: "99. Other Documents"
+
+categories:
+  - name: "Regulatory"
+    description: "Generation license and NERSA matters"
+    folder: "03. Regulatory"
+
+  - name: "PPA"
+    description: "Power purchase agreement"
+    folder: "04. Project Contracts/4.1 PPA"
+
+  - name: "Grid"
+    description: "Grid connection arrangements"
+    folder: "04. Project Contracts/4.2 Grid Connection"
+
+  - name: "REIPPPP"
+    description: "Renewable energy IPP programme"
+    folder: "04. Project Contracts/4.3 REIPPPP"
+
+  - name: "Construction"
+    description: "EPC and O&M contracts"
+    folder: "05. Construction"
+
+  - name: "Technical"
+    description: "Technical and performance data"
+    folder: "08. Technical"
+
+  - name: "ED"
+    description: "Economic development obligations"
+    folder: "09. Economic Development"
+
+documents:
+  # Regulatory
+  - name: "Generation License"
+    category: "Regulatory"
+    folder: "03. Regulatory/3.1 Generation License"
+    priority: critical
+    description: "NERSA generation license"
+    classification_patterns:
+      - "generation.*license"
+      - "nersa.*license"
+      - "electricity.*license"
+    content_keywords:
+      - "national energy regulator"
+      - "electricity regulation act"
+      - "licensed capacity"
+    request_template: "NERSA generation license with all conditions and amendments"
+
+  - name: "License Conditions"
+    category: "Regulatory"
+    folder: "03. Regulatory/3.1 Generation License"
+    priority: critical
+    description: "Conditions attached to license"
+    classification_patterns:
+      - "license.*condition"
+      - "nersa.*condition"
+    request_template: "Full license conditions document"
+
+  - name: "NERSA Correspondence"
+    category: "Regulatory"
+    folder: "03. Regulatory/3.2 NERSA Correspondence"
+    priority: required
+    description: "Correspondence with NERSA"
+    classification_patterns:
+      - "nersa.*correspondence"
+      - "nersa.*letter"
+    request_template: "All NERSA correspondence in last 3 years"
+
+  # PPA
+  - name: "Power Purchase Agreement"
+    category: "PPA"
+    folder: "04. Project Contracts/4.1 PPA"
+    priority: critical
+    description: "PPA with offtaker"
+    classification_patterns:
+      - "power.*purchase.*agreement"
+      - "ppa"
+      - "offtake.*agreement"
+    content_keywords:
+      - "seller"
+      - "buyer"
+      - "contracted capacity"
+      - "tariff"
+      - "deemed energy"
+    request_template: "Power Purchase Agreement with all schedules and amendments"
+
+  - name: "PPA Amendments"
+    category: "PPA"
+    folder: "04. Project Contracts/4.1 PPA"
+    priority: critical
+    description: "PPA amendments and consents"
+    classification_patterns:
+      - "ppa.*amendment"
+      - "ppa.*variation"
+    request_template: "All PPA amendments and variation agreements"
+
+  - name: "Direct Agreement (Lenders)"
+    category: "PPA"
+    folder: "04. Project Contracts/4.1 PPA"
+    priority: critical
+    description: "Direct agreement with lenders"
+    classification_patterns:
+      - "direct.*agreement"
+      - "lender.*direct"
+      - "step.*in"
+    request_template: "Direct agreement between offtaker and lenders"
+
+  # Grid
+  - name: "Grid Connection Agreement"
+    category: "Grid"
+    folder: "04. Project Contracts/4.2 Grid Connection"
+    priority: critical
+    description: "Grid connection with Eskom/municipality"
+    classification_patterns:
+      - "grid.*connection"
+      - "connection.*agreement"
+      - "use.*of.*system"
+    content_keywords:
+      - "connection point"
+      - "contracted capacity"
+      - "grid charges"
+    request_template: "Grid connection/use-of-system agreement with Eskom"
+
+  - name: "Grid Access"
+    category: "Grid"
+    folder: "04. Project Contracts/4.2 Grid Connection"
+    priority: required
+    description: "Grid access and wheeling"
+    classification_patterns:
+      - "wheeling"
+      - "grid.*access"
+      - "transmission"
+    request_template: "Wheeling agreement if applicable"
+
+  # REIPPPP
+  - name: "REIPPPP Bid Documents"
+    category: "REIPPPP"
+    folder: "04. Project Contracts/4.3 REIPPPP"
+    priority: critical
+    description: "Original bid submission"
+    classification_patterns:
+      - "reipppp"
+      - "reippp"
+      - "bid.*submission"
+      - "preferred.*bidder"
+    request_template: "Original REIPPPP bid documents and preferred bidder letter"
+
+  - name: "Implementation Agreement"
+    category: "REIPPPP"
+    folder: "04. Project Contracts/4.4 Implementation Agreement"
+    priority: critical
+    description: "IA with government"
+    classification_patterns:
+      - "implementation.*agreement"
+      - "\\bia\\b"
+      - "dpe"
+      - "doe"
+    request_template: "Implementation Agreement with DOE/DMRE"
+
+  - name: "ED Commitments Schedule"
+    category: "REIPPPP"
+    folder: "04. Project Contracts/4.3 REIPPPP"
+    priority: critical
+    description: "Economic development commitments"
+    classification_patterns:
+      - "ed.*commitment"
+      - "economic.*development.*schedule"
+    request_template: "Schedule of ED commitments as per bid"
+
+  # Construction
+  - name: "EPC Contract"
+    category: "Construction"
+    folder: "05. Construction/5.1 EPC"
+    priority: critical
+    description: "Engineering procurement construction"
+    classification_patterns:
+      - "epc.*contract"
+      - "turnkey"
+      - "engineering.*procurement"
+    content_keywords:
+      - "contractor"
+      - "completion"
+      - "liquidated damages"
+      - "warranty"
+    request_template: "EPC contract with all schedules, variations, and completion certificates"
+
+  - name: "O&M Agreement"
+    category: "Construction"
+    folder: "05. Construction/5.2 O&M"
+    priority: critical
+    description: "Operations and maintenance"
+    classification_patterns:
+      - "o&m"
+      - "operations.*maintenance"
+      - "oma"
+    request_template: "O&M agreement with performance requirements"
+
+  - name: "Equipment Warranties"
+    category: "Construction"
+    folder: "05. Construction/5.4 Warranties"
+    priority: critical
+    description: "Turbine/panel warranties"
+    classification_patterns:
+      - "warranty"
+      - "equipment.*warranty"
+      - "manufacturer.*warranty"
+    request_template: "All equipment warranties (turbines, panels, inverters)"
+
+  - name: "Completion Certificate"
+    category: "Construction"
+    folder: "05. Construction/5.1 EPC"
+    priority: critical
+    description: "COD/completion certificates"
+    classification_patterns:
+      - "completion.*cert"
+      - "cod"
+      - "commercial.*operation"
+      - "taking.*over"
+    request_template: "Commercial operation date certificate and taking-over certificate"
+
+  # Technical
+  - name: "Resource Assessment"
+    category: "Technical"
+    folder: "08. Technical/8.1 Resource Assessment"
+    priority: critical
+    description: "Wind/solar resource study"
+    classification_patterns:
+      - "resource.*assessment"
+      - "wind.*study"
+      - "solar.*resource"
+      - "irradiation"
+    request_template: "Bankable resource assessment (wind/solar study)"
+
+  - name: "P50/P90 Analysis"
+    category: "Technical"
+    folder: "08. Technical/8.1 Resource Assessment"
+    priority: critical
+    description: "Production probability analysis"
+    classification_patterns:
+      - "p50"
+      - "p90"
+      - "production.*estimate"
+      - "energy.*yield"
+    request_template: "P50/P90 energy yield analysis"
+
+  - name: "Performance Data"
+    category: "Technical"
+    folder: "08. Technical/8.2 Performance Data"
+    priority: critical
+    description: "Historical generation data"
+    classification_patterns:
+      - "generation.*data"
+      - "performance.*data"
+      - "availability"
+      - "capacity.*factor"
+    request_template: "Monthly generation and availability data since COD"
+
+  - name: "Technical Specifications"
+    category: "Technical"
+    folder: "08. Technical/8.3 Equipment Specs"
+    priority: required
+    description: "Equipment technical specs"
+    classification_patterns:
+      - "technical.*spec"
+      - "data.*sheet"
+      - "equipment.*spec"
+    request_template: "Technical specifications for major equipment"
+
+  # ED
+  - name: "ED Compliance Reports"
+    category: "ED"
+    folder: "09. Economic Development/9.1 ED Obligations"
+    priority: critical
+    description: "ED compliance status"
+    classification_patterns:
+      - "ed.*compliance"
+      - "ed.*report"
+      - "economic.*development.*report"
+    request_template: "Annual ED compliance reports to IPP Office"
+
+  - name: "Community Trust Deed"
+    category: "ED"
+    folder: "09. Economic Development/9.2 Community"
+    priority: critical
+    description: "Community ownership structure"
+    classification_patterns:
+      - "community.*trust"
+      - "community.*ownership"
+      - "community.*benefit"
+    request_template: "Community trust/ownership documentation"
+
+  - name: "Local Content Evidence"
+    category: "ED"
+    folder: "09. Economic Development/9.3 Local Content"
+    priority: required
+    description: "Local content verification"
+    classification_patterns:
+      - "local.*content"
+      - "sabs.*cert"
+      - "local.*manufacture"
+    request_template: "Local content certificates and verification"
+
+  # Environmental
+  - name: "Environmental Authorization"
+    category: "Environmental"
+    folder: "07. Environmental/7.1 Environmental Authorization"
+    priority: critical
+    description: "EA for the project"
+    classification_patterns:
+      - "environmental.*author"
+      - "\\bea\\b"
+      - "eia"
+      - "empr"
+    request_template: "Environmental Authorization with conditions"
+
+  - name: "Bird/Bat Monitoring"
+    category: "Environmental"
+    folder: "07. Environmental/7.3 Monitoring"
+    priority: required
+    description: "Wildlife monitoring (wind)"
+    classification_patterns:
+      - "bird.*monitor"
+      - "bat.*monitor"
+      - "avifauna"
+      - "fatality"
+    request_template: "Bird/bat monitoring reports for wind projects"
+
+  # Land
+  - name: "Land Lease Agreement"
+    category: "Property"
+    folder: "06. Land & Property/6.1 Title/Lease"
+    priority: critical
+    description: "Land lease for project"
+    classification_patterns:
+      - "land.*lease"
+      - "surface.*lease"
+      - "site.*lease"
+    request_template: "Land/surface lease agreement for project site"
+
+  - name: "Servitude Agreements"
+    category: "Property"
+    folder: "06. Land & Property/6.2 Servitudes"
+    priority: required
+    description: "Grid line servitudes"
+    classification_patterns:
+      - "servitude"
+      - "wayleave"
+      - "transmission.*line"
+    request_template: "Servitude agreements for grid connection infrastructure"

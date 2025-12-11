@@ -1,0 +1,28 @@
+# DD Enhanced POC Requirements
+# Install with: pip install -r requirements.txt
+
+# Claude API
+anthropic>=0.39.0
+
+# Document processing
+python-docx>=1.1.0
+
+# Configuration
+pyyaml>=6.0
+
+# Environment variable loading
+python-dotenv>=1.0.0
+
+# Nice terminal output (optional but recommended)
+rich>=13.0.0
+
+# Standard library dependencies (no install needed):
+# - json
+# - pathlib
+# - dataclasses
+# - typing
+# - decimal
+# - enum
+# - datetime
+# - re
+# - uuid

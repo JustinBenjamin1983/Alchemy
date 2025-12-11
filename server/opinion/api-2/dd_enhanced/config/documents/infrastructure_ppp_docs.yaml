@@ -1,0 +1,401 @@
+# Document registry for Infrastructure & PPP transactions
+
+transaction_type: "Infrastructure & PPP"
+
+folder_structure:
+  - name: "01. Corporate"
+    subfolders:
+      - name: "1.1 Constitutional"
+      - name: "1.2 Board & Shareholders"
+      - name: "1.3 SPV Structure"
+
+  - name: "02. Financial"
+    subfolders:
+      - name: "2.1 Financial Statements"
+      - name: "2.2 Financial Model"
+      - name: "2.3 Project Finance"
+
+  - name: "03. Concession Documents"
+    subfolders:
+      - name: "3.1 Concession Agreement"
+      - name: "3.2 Variations"
+      - name: "3.3 Correspondence"
+
+  - name: "04. Treasury Approvals"
+    subfolders:
+      - name: "4.1 TA I"
+      - name: "4.2 TA IIA"
+      - name: "4.3 TA IIB"
+      - name: "4.4 TA III"
+
+  - name: "05. Revenue & Tariffs"
+    subfolders:
+      - name: "5.1 Tariff Schedule"
+      - name: "5.2 Indexation"
+      - name: "5.3 Deductions"
+
+  - name: "06. Construction"
+    subfolders:
+      - name: "6.1 Construction Contract"
+      - name: "6.2 Completion"
+      - name: "6.3 Defects"
+
+  - name: "07. Operations"
+    subfolders:
+      - name: "7.1 O&M Agreement"
+      - name: "7.2 Performance"
+      - name: "7.3 Lifecycle"
+
+  - name: "08. Assets"
+    subfolders:
+      - name: "8.1 Asset Register"
+      - name: "8.2 Condition Reports"
+      - name: "8.3 Handback"
+
+  - name: "09. BEE & Transformation"
+
+  - name: "10. Insurance"
+
+  - name: "11. Lender Documents"
+    subfolders:
+      - name: "11.1 Facility Agreement"
+      - name: "11.2 Security"
+      - name: "11.3 Direct Agreements"
+
+  - name: "99. Other Documents"
+
+categories:
+  - name: "Concession"
+    description: "Concession and PPP agreements"
+    folder: "03. Concession Documents"
+
+  - name: "Treasury"
+    description: "Treasury approvals and correspondence"
+    folder: "04. Treasury Approvals"
+
+  - name: "Revenue"
+    description: "Tariffs and payment mechanisms"
+    folder: "05. Revenue & Tariffs"
+
+  - name: "Construction"
+    description: "Construction contracts and completion"
+    folder: "06. Construction"
+
+  - name: "Operations"
+    description: "O&M and performance"
+    folder: "07. Operations"
+
+  - name: "Assets"
+    description: "Infrastructure assets and handback"
+    folder: "08. Assets"
+
+  - name: "Lenders"
+    description: "Project finance documents"
+    folder: "11. Lender Documents"
+
+documents:
+  # Concession
+  - name: "Concession Agreement"
+    category: "Concession"
+    folder: "03. Concession Documents/3.1 Concession Agreement"
+    priority: critical
+    description: "Main concession/PPP agreement"
+    classification_patterns:
+      - "concession.*agreement"
+      - "ppp.*agreement"
+      - "project.*agreement"
+    content_keywords:
+      - "concessionaire"
+      - "authority"
+      - "concession period"
+      - "unitary payment"
+    request_template: "Concession/PPP agreement with all schedules"
+
+  - name: "Concession Variations"
+    category: "Concession"
+    folder: "03. Concession Documents/3.2 Variations"
+    priority: critical
+    description: "Variations to concession"
+    classification_patterns:
+      - "variation"
+      - "amendment"
+      - "modification"
+    request_template: "All variations and amendments to concession agreement"
+
+  - name: "Authority Correspondence"
+    category: "Concession"
+    folder: "03. Concession Documents/3.3 Correspondence"
+    priority: required
+    description: "Correspondence with authority"
+    classification_patterns:
+      - "authority.*correspondence"
+      - "municipality.*letter"
+      - "government.*letter"
+    request_template: "Key correspondence with contracting authority"
+
+  # Treasury
+  - name: "Treasury Approval I"
+    category: "Treasury"
+    folder: "04. Treasury Approvals/4.1 TA I"
+    priority: critical
+    description: "TA I - Project registration"
+    classification_patterns:
+      - "treasury.*approval.*i"
+      - "ta.*i"
+      - "ta1"
+    request_template: "Treasury Approval I documentation"
+
+  - name: "Treasury Approval IIA"
+    category: "Treasury"
+    folder: "04. Treasury Approvals/4.2 TA IIA"
+    priority: critical
+    description: "TA IIA - Feasibility study"
+    classification_patterns:
+      - "treasury.*approval.*iia"
+      - "ta.*iia"
+      - "feasibility"
+    request_template: "Treasury Approval IIA and feasibility study"
+
+  - name: "Treasury Approval IIB"
+    category: "Treasury"
+    folder: "04. Treasury Approvals/4.3 TA IIB"
+    priority: critical
+    description: "TA IIB - Procurement documents"
+    classification_patterns:
+      - "treasury.*approval.*iib"
+      - "ta.*iib"
+      - "procurement"
+    request_template: "Treasury Approval IIB and procurement documents"
+
+  - name: "Treasury Approval III"
+    category: "Treasury"
+    folder: "04. Treasury Approvals/4.4 TA III"
+    priority: critical
+    description: "TA III - Final agreement"
+    classification_patterns:
+      - "treasury.*approval.*iii"
+      - "ta.*iii"
+      - "ta3"
+    request_template: "Treasury Approval III and conditions"
+
+  # Revenue
+  - name: "Tariff/Payment Schedule"
+    category: "Revenue"
+    folder: "05. Revenue & Tariffs/5.1 Tariff Schedule"
+    priority: critical
+    description: "Tariff or unitary payment terms"
+    classification_patterns:
+      - "tariff.*schedule"
+      - "payment.*schedule"
+      - "unitary.*payment"
+      - "availability.*payment"
+    request_template: "Tariff/payment schedule with current and projected payments"
+
+  - name: "Indexation Mechanism"
+    category: "Revenue"
+    folder: "05. Revenue & Tariffs/5.2 Indexation"
+    priority: critical
+    description: "Tariff escalation terms"
+    classification_patterns:
+      - "indexation"
+      - "escalation"
+      - "cpi.*adjustment"
+    request_template: "Tariff indexation mechanism and historical adjustments"
+
+  - name: "Deduction Regime"
+    category: "Revenue"
+    folder: "05. Revenue & Tariffs/5.3 Deductions"
+    priority: critical
+    description: "Performance deduction terms"
+    classification_patterns:
+      - "deduction"
+      - "penalty"
+      - "performance.*payment"
+    request_template: "Deduction regime and historical deductions applied"
+
+  - name: "Payment History"
+    category: "Revenue"
+    folder: "05. Revenue & Tariffs/5.1 Tariff Schedule"
+    priority: critical
+    description: "Historical payment track record"
+    classification_patterns:
+      - "payment.*history"
+      - "invoice.*schedule"
+    request_template: "Payment history showing all invoices and receipts"
+
+  # Construction
+  - name: "Construction Contract"
+    category: "Construction"
+    folder: "06. Construction/6.1 Construction Contract"
+    priority: critical
+    description: "D&C or EPC contract"
+    classification_patterns:
+      - "construction.*contract"
+      - "d&c"
+      - "epc"
+      - "design.*build"
+    request_template: "Design and construction contract with completion certificates"
+
+  - name: "Completion Certificates"
+    category: "Construction"
+    folder: "06. Construction/6.2 Completion"
+    priority: critical
+    description: "Practical/final completion"
+    classification_patterns:
+      - "completion.*cert"
+      - "practical.*completion"
+      - "final.*completion"
+    request_template: "All completion certificates"
+
+  - name: "Outstanding Defects"
+    category: "Construction"
+    folder: "06. Construction/6.3 Defects"
+    priority: required
+    description: "Defects liability status"
+    classification_patterns:
+      - "defect"
+      - "snag.*list"
+      - "punch.*list"
+    request_template: "Outstanding defects list and defects liability status"
+
+  # Operations
+  - name: "O&M Agreement"
+    category: "Operations"
+    folder: "07. Operations/7.1 O&M Agreement"
+    priority: critical
+    description: "Operations and maintenance contract"
+    classification_patterns:
+      - "o&m"
+      - "operations.*maintenance"
+      - "fm.*contract"
+      - "facilities.*management"
+    request_template: "O&M/FM contract with performance requirements"
+
+  - name: "Performance Reports"
+    category: "Operations"
+    folder: "07. Operations/7.2 Performance"
+    priority: critical
+    description: "KPI and performance data"
+    classification_patterns:
+      - "performance.*report"
+      - "kpi"
+      - "service.*level"
+      - "availability"
+    request_template: "Monthly/quarterly performance reports for last 3 years"
+
+  - name: "Lifecycle Plan"
+    category: "Operations"
+    folder: "07. Operations/7.3 Lifecycle"
+    priority: critical
+    description: "Lifecycle replacement planning"
+    classification_patterns:
+      - "lifecycle"
+      - "major.*maintenance"
+      - "replacement"
+      - "capex.*plan"
+    request_template: "Lifecycle/major maintenance plan and reserve fund status"
+
+  # Assets
+  - name: "Asset Register"
+    category: "Assets"
+    folder: "08. Assets/8.1 Asset Register"
+    priority: critical
+    description: "Infrastructure asset register"
+    classification_patterns:
+      - "asset.*register"
+      - "fixed.*asset"
+      - "infrastructure.*register"
+    request_template: "Complete asset register with condition ratings"
+
+  - name: "Condition Assessment"
+    category: "Assets"
+    folder: "08. Assets/8.2 Condition Reports"
+    priority: critical
+    description: "Recent condition assessment"
+    classification_patterns:
+      - "condition.*assessment"
+      - "condition.*report"
+      - "structural.*report"
+      - "engineering.*assessment"
+    request_template: "Recent independent condition assessment of infrastructure"
+
+  - name: "Handback Requirements"
+    category: "Assets"
+    folder: "08. Assets/8.3 Handback"
+    priority: required
+    description: "End of concession handback"
+    classification_patterns:
+      - "handback"
+      - "hand.*back"
+      - "reversion"
+      - "terminal.*condition"
+    request_template: "Handback condition requirements and current gap analysis"
+
+  # Lenders
+  - name: "Senior Facility Agreement"
+    category: "Lenders"
+    folder: "11. Lender Documents/11.1 Facility Agreement"
+    priority: critical
+    description: "Project finance facility"
+    classification_patterns:
+      - "senior.*facility"
+      - "project.*finance"
+      - "loan.*agreement"
+      - "common.*terms"
+    request_template: "Senior facility agreement and common terms agreement"
+
+  - name: "Security Package"
+    category: "Lenders"
+    folder: "11. Lender Documents/11.2 Security"
+    priority: critical
+    description: "Project security documents"
+    classification_patterns:
+      - "security.*package"
+      - "pledge"
+      - "cession"
+      - "bond"
+    request_template: "All security documents including share pledges and cessions"
+
+  - name: "Direct Agreements"
+    category: "Lenders"
+    folder: "11. Lender Documents/11.3 Direct Agreements"
+    priority: critical
+    description: "Lender direct agreements"
+    classification_patterns:
+      - "direct.*agreement"
+      - "tripartite"
+      - "step.*in"
+    request_template: "Direct agreements between lenders and contracting authority/key counterparties"
+
+  - name: "Lender Technical Advisor Reports"
+    category: "Lenders"
+    folder: "11. Lender Documents/11.1 Facility Agreement"
+    priority: required
+    description: "LTA reports"
+    classification_patterns:
+      - "lta.*report"
+      - "technical.*advisor"
+      - "lender.*engineer"
+    request_template: "Recent lender technical advisor reports"
+
+  # BEE
+  - name: "BEE Ownership Structure"
+    category: "BEE & Transformation"
+    folder: "09. BEE & Transformation"
+    priority: critical
+    description: "Concession BEE requirements"
+    classification_patterns:
+      - "bee.*ownership"
+      - "transformation"
+      - "hdsa"
+    request_template: "BEE ownership structure and compliance with concession requirements"
+
+  - name: "Local Content Compliance"
+    category: "BEE & Transformation"
+    folder: "09. BEE & Transformation"
+    priority: required
+    description: "Local procurement compliance"
+    classification_patterns:
+      - "local.*content"
+      - "local.*procurement"
+    request_template: "Local content/procurement compliance reports"

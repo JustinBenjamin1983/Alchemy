@@ -1,0 +1,353 @@
+# Document registry for Employment & Labor transactions
+
+transaction_type: "Employment & Labor"
+
+folder_structure:
+  - name: "01. Corporate"
+    subfolders:
+      - name: "1.1 Constitutional"
+      - name: "1.2 Board & Shareholders"
+
+  - name: "02. Workforce Data"
+    subfolders:
+      - name: "2.1 Employee Lists"
+      - name: "2.2 Organograms"
+      - name: "2.3 Demographics"
+
+  - name: "03. Employment Contracts"
+    subfolders:
+      - name: "3.1 Executive Contracts"
+      - name: "3.2 Standard Contracts"
+      - name: "3.3 Fixed Term"
+      - name: "3.4 Independent Contractors"
+
+  - name: "04. Union & Collective"
+    subfolders:
+      - name: "4.1 Recognition Agreements"
+      - name: "4.2 Collective Agreements"
+      - name: "4.3 Industrial Action"
+      - name: "4.4 CCMA/Labour Court"
+
+  - name: "05. Benefits"
+    subfolders:
+      - name: "5.1 Pension & Provident"
+      - name: "5.2 Medical Aid"
+      - name: "5.3 Other Benefits"
+      - name: "5.4 Share Schemes"
+
+  - name: "06. Policies & Procedures"
+
+  - name: "07. Statutory Compliance"
+    subfolders:
+      - name: "7.1 Employment Equity"
+      - name: "7.2 Skills Development"
+      - name: "7.3 UIF & COIDA"
+
+  - name: "08. Restructuring"
+    subfolders:
+      - name: "8.1 Section 189"
+      - name: "8.2 Section 197"
+
+  - name: "09. Disputes & Claims"
+
+  - name: "99. Other Documents"
+
+categories:
+  - name: "Workforce"
+    description: "Employee data and structure"
+    folder: "02. Workforce Data"
+
+  - name: "Contracts"
+    description: "Employment contracts"
+    folder: "03. Employment Contracts"
+
+  - name: "Union"
+    description: "Union and collective agreements"
+    folder: "04. Union & Collective"
+
+  - name: "Benefits"
+    description: "Employee benefit schemes"
+    folder: "05. Benefits"
+
+  - name: "Compliance"
+    description: "Statutory employment compliance"
+    folder: "07. Statutory Compliance"
+
+  - name: "Restructuring"
+    description: "Section 189/197 matters"
+    folder: "08. Restructuring"
+
+documents:
+  # Workforce
+  - name: "Employee List"
+    category: "Workforce"
+    folder: "02. Workforce Data/2.1 Employee Lists"
+    priority: critical
+    description: "Complete employee listing"
+    classification_patterns:
+      - "employee.*list"
+      - "staff.*list"
+      - "headcount"
+      - "personnel"
+    request_template: "Complete employee list with name, ID, position, start date, salary, benefits"
+
+  - name: "Organogram"
+    category: "Workforce"
+    folder: "02. Workforce Data/2.2 Organograms"
+    priority: required
+    description: "Organizational structure"
+    classification_patterns:
+      - "organogram"
+      - "organization.*chart"
+      - "reporting.*structure"
+    request_template: "Current organizational structure/organogram"
+
+  - name: "Payroll Summary"
+    category: "Workforce"
+    folder: "02. Workforce Data/2.1 Employee Lists"
+    priority: critical
+    description: "Monthly payroll costs"
+    classification_patterns:
+      - "payroll"
+      - "salary.*cost"
+      - "wage.*bill"
+    request_template: "Monthly payroll summary for last 12 months"
+
+  # Contracts
+  - name: "Executive Employment Contracts"
+    category: "Contracts"
+    folder: "03. Employment Contracts/3.1 Executive Contracts"
+    priority: critical
+    description: "C-suite and executive contracts"
+    classification_patterns:
+      - "executive.*contract"
+      - "ceo.*contract"
+      - "cfo.*contract"
+      - "director.*employment"
+    content_keywords:
+      - "change of control"
+      - "golden parachute"
+      - "severance"
+      - "restraint"
+    request_template: "Employment contracts for all executives with change of control provisions"
+
+  - name: "Standard Employment Contract Template"
+    category: "Contracts"
+    folder: "03. Employment Contracts/3.2 Standard Contracts"
+    priority: required
+    description: "Standard employee contract"
+    classification_patterns:
+      - "standard.*contract"
+      - "template.*contract"
+      - "employment.*template"
+    request_template: "Standard employment contract template"
+
+  - name: "Independent Contractor Agreements"
+    category: "Contracts"
+    folder: "03. Employment Contracts/3.4 Independent Contractors"
+    priority: required
+    description: "Contractor/consultant agreements"
+    classification_patterns:
+      - "contractor.*agreement"
+      - "consultant.*agreement"
+      - "service.*provider"
+    request_template: "All independent contractor/consultant agreements"
+
+  # Union
+  - name: "Recognition Agreements"
+    category: "Union"
+    folder: "04. Union & Collective/4.1 Recognition Agreements"
+    priority: critical
+    description: "Union recognition agreements"
+    classification_patterns:
+      - "recognition.*agreement"
+      - "union.*recognition"
+      - "organisational.*right"
+    request_template: "All union recognition agreements"
+
+  - name: "Collective Agreements"
+    category: "Union"
+    folder: "04. Union & Collective/4.2 Collective Agreements"
+    priority: critical
+    description: "Wage and conditions agreements"
+    classification_patterns:
+      - "collective.*agreement"
+      - "wage.*agreement"
+      - "substantive.*agreement"
+    content_keywords:
+      - "wage"
+      - "conditions of employment"
+      - "annual increase"
+    request_template: "All collective/wage agreements currently in force"
+
+  - name: "Industrial Action History"
+    category: "Union"
+    folder: "04. Union & Collective/4.3 Industrial Action"
+    priority: required
+    description: "Strike and work stoppage history"
+    classification_patterns:
+      - "strike"
+      - "work.*stoppage"
+      - "industrial.*action"
+    request_template: "Record of industrial action in last 5 years"
+
+  - name: "CCMA/Labour Court Cases"
+    category: "Union"
+    folder: "04. Union & Collective/4.4 CCMA/Labour Court"
+    priority: critical
+    description: "Pending and historical cases"
+    classification_patterns:
+      - "ccma"
+      - "labour.*court"
+      - "unfair.*dismissal"
+      - "unfair.*labour"
+    request_template: "Schedule of all CCMA referrals and Labour Court cases in last 5 years"
+
+  # Benefits
+  - name: "Pension/Provident Fund Rules"
+    category: "Benefits"
+    folder: "05. Benefits/5.1 Pension & Provident"
+    priority: critical
+    description: "Retirement fund documentation"
+    classification_patterns:
+      - "pension.*fund"
+      - "provident.*fund"
+      - "retirement.*fund"
+      - "fund.*rule"
+    request_template: "Pension/provident fund rules and participation agreement"
+
+  - name: "Actuarial Valuation"
+    category: "Benefits"
+    folder: "05. Benefits/5.1 Pension & Provident"
+    priority: critical
+    description: "Latest fund valuation"
+    classification_patterns:
+      - "actuarial.*valuation"
+      - "fund.*valuation"
+    request_template: "Latest actuarial valuation (for defined benefit funds)"
+
+  - name: "Medical Aid Arrangements"
+    category: "Benefits"
+    folder: "05. Benefits/5.2 Medical Aid"
+    priority: required
+    description: "Medical aid scheme details"
+    classification_patterns:
+      - "medical.*aid"
+      - "medical.*scheme"
+      - "health.*cover"
+    request_template: "Medical aid participation details and employer contribution"
+
+  - name: "Post-Retirement Medical Liability"
+    category: "Benefits"
+    folder: "05. Benefits/5.2 Medical Aid"
+    priority: critical
+    description: "PRMA obligations"
+    classification_patterns:
+      - "post.*retirement.*medical"
+      - "prma"
+      - "retiree.*medical"
+    request_template: "Details of any post-retirement medical aid obligations and actuarial valuation"
+
+  - name: "Share Option/Incentive Schemes"
+    category: "Benefits"
+    folder: "05. Benefits/5.4 Share Schemes"
+    priority: required
+    description: "Equity incentive schemes"
+    classification_patterns:
+      - "share.*option"
+      - "share.*scheme"
+      - "equity.*incentive"
+      - "ltip"
+    request_template: "Share option/incentive scheme rules and participant schedules"
+
+  # Compliance
+  - name: "Employment Equity Plan"
+    category: "Compliance"
+    folder: "07. Statutory Compliance/7.1 Employment Equity"
+    priority: critical
+    description: "Current EE plan"
+    classification_patterns:
+      - "employment.*equity.*plan"
+      - "ee.*plan"
+      - "eea.*plan"
+    request_template: "Current Employment Equity Plan and latest EEA2/EEA4 reports"
+
+  - name: "Employment Equity Report"
+    category: "Compliance"
+    folder: "07. Statutory Compliance/7.1 Employment Equity"
+    priority: required
+    description: "EE compliance status"
+    classification_patterns:
+      - "ee.*report"
+      - "eea2"
+      - "eea4"
+    request_template: "Latest submitted EE reports"
+
+  - name: "Skills Development"
+    category: "Compliance"
+    folder: "07. Statutory Compliance/7.2 Skills Development"
+    priority: required
+    description: "SDL and WSP submissions"
+    classification_patterns:
+      - "skills.*development"
+      - "wsp"
+      - "atr"
+      - "sdl"
+    request_template: "WSP and ATR submissions for last 3 years"
+
+  - name: "UIF Compliance"
+    category: "Compliance"
+    folder: "07. Statutory Compliance/7.3 UIF & COIDA"
+    priority: required
+    description: "UIF registration and compliance"
+    classification_patterns:
+      - "uif"
+      - "unemployment.*insurance"
+    request_template: "UIF registration certificate and proof of payments"
+
+  - name: "COIDA Compliance"
+    category: "Compliance"
+    folder: "07. Statutory Compliance/7.3 UIF & COIDA"
+    priority: required
+    description: "Compensation fund registration"
+    classification_patterns:
+      - "coida"
+      - "compensation.*fund"
+      - "letter.*good.*standing"
+    request_template: "COIDA letter of good standing"
+
+  # Restructuring
+  - name: "Section 189 Documentation"
+    category: "Restructuring"
+    folder: "08. Restructuring/8.1 Section 189"
+    priority: critical
+    description: "Retrenchment consultation records"
+    classification_patterns:
+      - "section.*189"
+      - "retrenchment"
+      - "redundancy"
+      - "operational.*requirement"
+    request_template: "All Section 189 notices and consultation records for last 3 years"
+
+  - name: "Section 197 Analysis"
+    category: "Restructuring"
+    folder: "08. Restructuring/8.2 Section 197"
+    priority: critical
+    description: "Transfer of undertaking analysis"
+    classification_patterns:
+      - "section.*197"
+      - "transfer.*undertaking"
+      - "going.*concern"
+    request_template: "Analysis of Section 197 application to the transaction"
+
+  # Disputes
+  - name: "Pending Claims Register"
+    category: "Disputes"
+    folder: "09. Disputes & Claims"
+    priority: critical
+    description: "Register of employee claims"
+    classification_patterns:
+      - "claim.*register"
+      - "pending.*claim"
+      - "employee.*claim"
+    request_template: "Register of all pending employee claims and disputes"

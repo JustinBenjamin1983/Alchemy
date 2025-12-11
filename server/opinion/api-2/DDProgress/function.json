@@ -1,0 +1,12 @@
+{
+  "bindings": [
+    {
+      "type": "httpTrigger",
+      "authLevel": "function",
+      "methods": ["get"],
+      "route": "progress/{dd_id}",
+      "name": "req"
+    },
+    { "type": "http", "direction": "out", "name": "$return" }
+  ]
+}

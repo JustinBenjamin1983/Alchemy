@@ -1,0 +1,191 @@
+# DD Blueprint: Mining/Resources Acquisition
+# ============================================
+# This blueprint defines the due diligence framework for acquiring
+# mining operations, specifically tailored for South African mining sector.
+
+transaction_type: "Mining/Resources Acquisition"
+description: "Due diligence blueprint for acquisition of mining operations"
+jurisdiction: "South Africa"
+
+# Reference documents that should always be included in analysis context
+reference_documents:
+  always_include:
+    - pattern: "MOI"
+      reason: "Constitutional document - defines approval requirements for change of control"
+    - pattern: "Shareholder"
+      reason: "Constitutional document - defines shareholder rights, pre-emption, tag/drag"
+    - pattern: "Board Resolution"
+      reason: "Governance - verifies transaction has been properly authorized"
+
+# Risk categories with specific focus areas
+risk_categories:
+  - name: "Change of Control"
+    weight: critical
+    description: "Provisions triggered by the acquisition"
+    standard_questions:
+      - "Which material contracts contain change of control provisions?"
+      - "What consents are required to complete the transaction?"
+      - "What are the financial consequences of triggering CoC clauses?"
+      - "Are there any termination rights upon change of control?"
+      - "What notice periods apply?"
+    cross_doc_validations:
+      - check: "MOI approval requirements vs Board Resolution authorizations"
+        description: "Verify board has authority for what it approved"
+      - check: "CoC thresholds across all contracts"
+        description: "Ensure transaction structure triggers (or avoids) CoC"
+      - check: "Definition consistency"
+        description: "Compare CoC definitions across documents"
+    calculations:
+      - "Aggregate all liquidated damages exposure"
+      - "Sum all potential termination costs"
+      - "Calculate acceleration amounts for loan facilities"
+
+  - name: "Mining Rights & Regulatory"
+    weight: critical
+    description: "Mining right validity and regulatory compliance"
+    standard_questions:
+      - "Is the mining right valid and in good standing?"
+      - "When does it expire and what renewal steps are required?"
+      - "What DMRE consents are required for transfer of control?"
+      - "Are there any Section 102 (MPRDA) compliance issues?"
+      - "Is the mining work programme being followed?"
+      - "What are the Social and Labour Plan obligations?"
+    cross_doc_validations:
+      - check: "Mining right area vs lease agreement property description"
+        description: "Verify mining right covers leased land"
+      - check: "Mining right holder vs company name"
+        description: "Verify consistency of holder identity"
+    regulatory_approvals:
+      - "DMRE Section 11 consent (if share transfer)"
+      - "Competition Commission (if thresholds met)"
+      - "Ministerial consent (if required by Mining Charter)"
+
+  - name: "Financial & Banking"
+    weight: critical
+    description: "Loan facilities, covenants, and financial position"
+    standard_questions:
+      - "What loan facilities exist and what are the outstanding amounts?"
+      - "Are there any covenant breaches or existing waivers?"
+      - "Do loan agreements contain CoC triggers or acceleration rights?"
+      - "What security has been provided over company assets?"
+      - "Are there any cross-default provisions?"
+    cross_doc_validations:
+      - check: "Loan security vs asset register"
+        description: "Verify all secured assets are identified"
+      - check: "Covenant calculations vs financial statements"
+        description: "Verify current covenant compliance"
+    calculations:
+      - "Total debt outstanding"
+      - "Covenant compliance ratios (DSCR, Interest Cover, etc.)"
+      - "Acceleration exposure if CoC triggered"
+      - "Early repayment penalties"
+
+  - name: "Environmental"
+    weight: high
+    description: "Environmental compliance and rehabilitation liabilities"
+    standard_questions:
+      - "What is the total rehabilitation liability provision?"
+      - "Is there a valid Environmental Management Programme?"
+      - "Is the water use license current and compliant?"
+      - "Are there any pending environmental actions or notices?"
+      - "What financial provision/guarantee is in place for rehabilitation?"
+    key_documents:
+      - "Environmental Compliance Certificate"
+      - "Water Use License"
+      - "Environmental Management Programme"
+      - "Financial Provision Certificate"
+
+  - name: "Material Contracts"
+    weight: high
+    description: "Key commercial contracts and their terms"
+    standard_questions:
+      - "What are the key revenue contracts (offtake/supply agreements)?"
+      - "Do they contain assignment restrictions or CoC triggers?"
+      - "What is the revenue concentration risk?"
+      - "Are there minimum volume/take-or-pay obligations?"
+      - "What are the pricing mechanisms and escalation provisions?"
+    cross_doc_validations:
+      - check: "Supply agreement volumes vs production capacity"
+        description: "Verify company can meet contractual commitments"
+    calculations:
+      - "Revenue at risk if contracts terminate on CoC"
+      - "Liquidated damages for supply shortfall"
+      - "Take-or-pay exposure"
+
+  - name: "Property & Leases"
+    weight: medium
+    description: "Real property and lease arrangements"
+    standard_questions:
+      - "What properties are owned vs leased?"
+      - "Do leases contain assignment/CoC restrictions?"
+      - "When do key leases expire?"
+      - "What renewal rights exist?"
+    cross_doc_validations:
+      - check: "Leased property vs mining right area"
+        description: "Verify mining rights cover necessary land"
+
+  - name: "Employment & Key Persons"
+    weight: medium
+    description: "Employment matters and key person dependencies"
+    standard_questions:
+      - "Are there key person dependencies?"
+      - "What are the CoC provisions in executive contracts?"
+      - "What is the severance exposure on CoC?"
+      - "Are there any retention arrangements?"
+      - "What are the union/collective agreement obligations?"
+    calculations:
+      - "Total severance exposure on CoC"
+      - "Retention bonus costs"
+
+# Deal blocker definitions
+deal_blockers:
+  - description: "Mining right suspended, cancelled, or under forfeiture proceedings"
+    severity: "absolute"
+    remediation: "Cannot proceed - fundamental to transaction"
+
+  - description: "Required shareholder approval not obtained per MOI"
+    severity: "absolute"
+    remediation: "Must obtain shareholder approval before signing"
+
+  - description: "Material third-party consent cannot reasonably be obtained"
+    severity: "conditional"
+    remediation: "Condition precedent - evaluate likelihood and alternatives"
+
+  - description: "Unwaivable covenant breach with acceleration risk"
+    severity: "conditional"
+    remediation: "Negotiate waiver or refinancing as condition"
+
+  - description: "Competition approval unlikely to be obtained"
+    severity: "conditional"
+    remediation: "Consider deal structuring to avoid thresholds"
+
+# Conditions precedent patterns to identify
+conditions_precedent_patterns:
+  - pattern: "consent required"
+    cp_type: "Third Party Consent"
+  - pattern: "approval required"
+    cp_type: "Approval"
+  - pattern: "must notify"
+    cp_type: "Notification"
+  - pattern: "subject to"
+    cp_type: "Condition"
+  - pattern: "prior written consent"
+    cp_type: "Third Party Consent"
+  - pattern: "ministerial approval"
+    cp_type: "Regulatory Approval"
+
+# Output requirements
+output_requirements:
+  must_include:
+    - "Deal blocker identification"
+    - "Financial exposure quantification"
+    - "Conditions precedent register"
+    - "Consent matrix"
+    - "Key risk summary"
+    - "Recommendations"
+
+  format:
+    - "Executive summary (1-2 pages)"
+    - "Detailed findings by category"
+    - "Financial exposure schedule"
+    - "CP checklist"

@@ -1,0 +1,11 @@
+PyJWT
+PyMuPDF
+azure-functions
+azure-data-tables
+azure-storage-blob
+requests
+tiktoken
+python-docx
+langchain
+requests-toolbelt
+azure-ai-formrecognizer

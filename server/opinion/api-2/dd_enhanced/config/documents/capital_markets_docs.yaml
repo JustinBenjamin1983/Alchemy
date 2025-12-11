@@ -1,0 +1,511 @@
+# Document registry for Capital Markets transactions
+# Covers: IPOs, rights issues, bond issuances, secondary offerings, delistings
+
+transaction_type: "Capital Markets"
+
+folder_structure:
+  - name: "01. Prospectus & Listing"
+    subfolders:
+      - name: "1.1 Prospectus Drafts"
+      - name: "1.2 JSE Correspondence"
+      - name: "1.3 FSCA Applications"
+  - name: "02. Corporate & Constitutional"
+    subfolders:
+      - name: "2.1 Constitutional Documents"
+      - name: "2.2 Corporate Records"
+      - name: "2.3 Share Capital"
+  - name: "03. Financial Information"
+    subfolders:
+      - name: "3.1 Audited Financials"
+      - name: "3.2 Pro Forma Financials"
+      - name: "3.3 Working Capital"
+  - name: "04. Directors & Management"
+    subfolders:
+      - name: "4.1 Director Declarations"
+      - name: "4.2 Management CVs"
+      - name: "4.3 Service Agreements"
+  - name: "05. Material Contracts"
+    subfolders:
+      - name: "5.1 Commercial Agreements"
+      - name: "5.2 Finance Agreements"
+  - name: "06. Underwriting & Distribution"
+    subfolders:
+      - name: "6.1 Underwriting Documents"
+      - name: "6.2 Selling Documents"
+  - name: "07. Legal & Litigation"
+    subfolders:
+      - name: "7.1 Legal Opinions"
+      - name: "7.2 Litigation"
+  - name: "08. Tax"
+  - name: "09. Verification & Due Diligence"
+  - name: "99. Other Documents"
+
+categories:
+  - name: "Prospectus"
+    description: "Prospectus and listing documentation"
+    folder: "01. Prospectus & Listing"
+
+  - name: "JSE/Regulatory"
+    description: "JSE and regulatory correspondence"
+    folder: "01. Prospectus & Listing/1.2 JSE Correspondence"
+
+  - name: "Corporate"
+    description: "Corporate and constitutional documents"
+    folder: "02. Corporate & Constitutional"
+
+  - name: "Financial"
+    description: "Financial statements and reports"
+    folder: "03. Financial Information"
+
+  - name: "Directors"
+    description: "Director and management information"
+    folder: "04. Directors & Management"
+
+  - name: "Underwriting"
+    description: "Underwriting and distribution"
+    folder: "06. Underwriting & Distribution"
+
+  - name: "Verification"
+    description: "Verification and due diligence"
+    folder: "09. Verification & Due Diligence"
+
+documents:
+  # Prospectus & Listing Documents
+  - name: "Draft Prospectus (latest)"
+    category: "Prospectus"
+    folder: "01. Prospectus & Listing/1.1 Prospectus Drafts"
+    priority: critical
+    description: "Current version of prospectus for review"
+    classification_patterns:
+      - "prospectus"
+      - "pre-listing"
+      - "offering.*circular"
+      - "listing.*particular"
+    content_keywords:
+      - "prospectus"
+      - "listing particulars"
+      - "offer to subscribe"
+    request_template: "Please provide the latest draft prospectus including all annexures and schedules."
+
+  - name: "Prospectus Completeness Checklist"
+    category: "Prospectus"
+    folder: "01. Prospectus & Listing/1.1 Prospectus Drafts"
+    priority: critical
+    description: "JSE/Companies Act completeness checklist"
+    classification_patterns:
+      - "checklist"
+      - "completeness"
+      - "schedule.*3"
+    content_keywords:
+      - "disclosure requirements"
+      - "completeness"
+    request_template: "JSE/Companies Act completeness checklist for prospectus"
+
+  - name: "JSE Listing Application"
+    category: "JSE/Regulatory"
+    folder: "01. Prospectus & Listing/1.2 JSE Correspondence"
+    priority: critical
+    description: "Formal application to JSE for listing"
+    classification_patterns:
+      - "jse.*application"
+      - "listing.*application"
+    content_keywords:
+      - "listing application"
+      - "JSE Limited"
+    request_template: "Formal listing application submitted to JSE"
+
+  - name: "JSE Documentation Schedule"
+    category: "JSE/Regulatory"
+    folder: "01. Prospectus & Listing/1.2 JSE Correspondence"
+    priority: required
+    description: "Schedule of documents submitted to JSE"
+    classification_patterns:
+      - "doc.*schedule"
+      - "jse.*schedule"
+      - "documentation.*list"
+    request_template: "Schedule of all documents submitted to JSE"
+
+  - name: "Sponsor's Due Diligence Report"
+    category: "JSE/Regulatory"
+    folder: "01. Prospectus & Listing/1.2 JSE Correspondence"
+    priority: critical
+    description: "Sponsor's independent due diligence report"
+    classification_patterns:
+      - "sponsor.*report"
+      - "sponsor.*dd"
+      - "sponsor.*due.*diligence"
+    content_keywords:
+      - "sponsor"
+      - "due diligence"
+      - "JSE Listings Requirements"
+    request_template: "Sponsor's due diligence report and sign-off"
+
+  - name: "FSCA Application"
+    category: "JSE/Regulatory"
+    folder: "01. Prospectus & Listing/1.3 FSCA Applications"
+    priority: required
+    description: "Application to FSCA for approval (if required)"
+    classification_patterns:
+      - "fsca"
+      - "registrar"
+      - "financial.*sector"
+    content_keywords:
+      - "FSCA"
+      - "Financial Sector Conduct Authority"
+    request_template: "FSCA application and any related correspondence"
+
+  # Corporate Documents
+  - name: "JSE Schedule 10 Compliance Certificate"
+    category: "Corporate"
+    folder: "02. Corporate & Constitutional/2.1 Constitutional Documents"
+    priority: critical
+    description: "Confirmation MOI complies with JSE Schedule 10"
+    classification_patterns:
+      - "schedule.*10"
+      - "moi.*compliance"
+      - "jse.*compliance"
+    content_keywords:
+      - "Schedule 10"
+      - "JSE Listings Requirements"
+    request_template: "Confirmation that MOI complies with JSE Schedule 10 requirements"
+
+  - name: "Board Resolutions - Listing"
+    category: "Corporate"
+    folder: "02. Corporate & Constitutional/2.2 Corporate Records"
+    priority: critical
+    description: "Board approval for listing and prospectus"
+    classification_patterns:
+      - "board.*resolution"
+      - "listing.*resolution"
+      - "directors.*resolution"
+    content_keywords:
+      - "resolved"
+      - "listing"
+      - "prospectus"
+    request_template: "Board resolution authorizing listing and prospectus publication"
+
+  - name: "Shareholder Resolutions - Listing"
+    category: "Corporate"
+    folder: "02. Corporate & Constitutional/2.2 Corporate Records"
+    priority: required
+    description: "Shareholder approvals for listing"
+    classification_patterns:
+      - "shareholder.*resolution"
+      - "agm.*resolution"
+      - "egm.*resolution"
+    content_keywords:
+      - "shareholders"
+      - "resolved"
+      - "listing"
+    request_template: "Shareholder resolutions authorizing listing"
+
+  - name: "Pre-Listing Share Capital Analysis"
+    category: "Corporate"
+    folder: "02. Corporate & Constitutional/2.3 Share Capital"
+    priority: required
+    description: "Share capital position for prospectus"
+    classification_patterns:
+      - "share.*capital"
+      - "capital.*structure"
+      - "equity.*structure"
+    request_template: "Analysis of share capital structure pre and post listing"
+
+  # Financial Information
+  - name: "Reporting Accountant's Report"
+    category: "Financial"
+    folder: "03. Financial Information/3.1 Audited Financials"
+    priority: critical
+    description: "Reporting accountant's report on historical financials"
+    classification_patterns:
+      - "reporting.*accountant"
+      - "historical.*report"
+      - "accountant.*report"
+    content_keywords:
+      - "reporting accountant"
+      - "historical financial information"
+    request_template: "Reporting accountant's report on historical financial information"
+
+  - name: "Pro Forma Financial Information"
+    category: "Financial"
+    folder: "03. Financial Information/3.2 Pro Forma Financials"
+    priority: critical
+    description: "Pro forma financial effects of transaction"
+    classification_patterns:
+      - "pro.*forma"
+      - "proforma"
+    content_keywords:
+      - "pro forma"
+      - "adjustments"
+    request_template: "Pro forma financial information showing effects of transaction"
+
+  - name: "Report on Pro Forma Financial Information"
+    category: "Financial"
+    folder: "03. Financial Information/3.2 Pro Forma Financials"
+    priority: critical
+    description: "Accountant's report on pro forma financials"
+    classification_patterns:
+      - "proforma.*report"
+      - "pro.*forma.*report"
+    request_template: "Independent report on pro forma financial information"
+
+  - name: "Profit Forecast"
+    category: "Financial"
+    folder: "03. Financial Information/3.2 Pro Forma Financials"
+    priority: recommended
+    description: "Profit forecast with assumptions (if included)"
+    classification_patterns:
+      - "forecast"
+      - "profit.*forecast"
+      - "projection"
+    content_keywords:
+      - "forecast"
+      - "projection"
+      - "assumptions"
+    request_template: "Profit forecast with underlying assumptions (if applicable)"
+
+  - name: "Working Capital Statement"
+    category: "Financial"
+    folder: "03. Financial Information/3.3 Working Capital"
+    priority: critical
+    description: "Directors' statement on working capital sufficiency"
+    classification_patterns:
+      - "working.*capital.*statement"
+      - "wc.*statement"
+    content_keywords:
+      - "working capital"
+      - "sufficiency"
+    request_template: "Directors' working capital statement"
+
+  - name: "Working Capital Report"
+    category: "Financial"
+    folder: "03. Financial Information/3.3 Working Capital"
+    priority: critical
+    description: "Supporting report on working capital"
+    classification_patterns:
+      - "wc.*report"
+      - "working.*capital.*report"
+    request_template: "Working capital report supporting directors' statement"
+
+  - name: "Cash Flow Projections"
+    category: "Financial"
+    folder: "03. Financial Information/3.3 Working Capital"
+    priority: required
+    description: "Cash flow projections supporting working capital"
+    classification_patterns:
+      - "cash.*flow"
+      - "cashflow.*projection"
+    request_template: "Cash flow projections supporting working capital analysis"
+
+  # Directors & Management
+  - name: "Director Declarations"
+    category: "Directors"
+    folder: "04. Directors & Management/4.1 Director Declarations"
+    priority: critical
+    description: "Directors' declarations for prospectus"
+    classification_patterns:
+      - "director.*declaration"
+      - "d&o.*declaration"
+      - "schedule.*21"
+    content_keywords:
+      - "declare"
+      - "director"
+      - "schedule 21"
+    request_template: "Directors' declarations as required by prospectus regulations"
+
+  - name: "Director Consent Letters"
+    category: "Directors"
+    folder: "04. Directors & Management/4.1 Director Declarations"
+    priority: critical
+    description: "Directors' consents to act and prospectus publication"
+    classification_patterns:
+      - "consent.*letter"
+      - "director.*consent"
+    content_keywords:
+      - "consent"
+      - "prospectus"
+    request_template: "Directors' consent letters for prospectus publication"
+
+  - name: "Background Verification Reports"
+    category: "Directors"
+    folder: "04. Directors & Management/4.1 Director Declarations"
+    priority: required
+    description: "Background checks on directors"
+    classification_patterns:
+      - "background"
+      - "verification"
+      - "screening"
+    request_template: "Background verification reports on all directors"
+
+  - name: "Remuneration Policy"
+    category: "Directors"
+    folder: "04. Directors & Management/4.3 Service Agreements"
+    priority: required
+    description: "Director and executive remuneration policy"
+    classification_patterns:
+      - "remuneration.*policy"
+      - "compensation"
+      - "incentive.*policy"
+    content_keywords:
+      - "remuneration"
+      - "compensation"
+      - "incentive"
+    request_template: "Remuneration policy for directors and executives"
+
+  # Material Contracts
+  - name: "Material Contracts Schedule"
+    category: "Material Contracts"
+    folder: "05. Material Contracts/5.1 Commercial Agreements"
+    priority: critical
+    description: "Schedule of all material contracts"
+    classification_patterns:
+      - "material.*contract"
+      - "contract.*schedule"
+    request_template: "Schedule of all material contracts for prospectus disclosure"
+
+  - name: "Lender Consents to Listing"
+    category: "Material Contracts"
+    folder: "05. Material Contracts/5.2 Finance Agreements"
+    priority: required
+    description: "Lender consents to listing"
+    classification_patterns:
+      - "lender.*consent"
+      - "bank.*consent"
+      - "facility.*consent"
+    content_keywords:
+      - "consent"
+      - "lender"
+      - "listing"
+    request_template: "Consents from lenders for the listing transaction"
+
+  # Underwriting & Distribution
+  - name: "Underwriting Agreement"
+    category: "Underwriting"
+    folder: "06. Underwriting & Distribution/6.1 Underwriting Documents"
+    priority: critical
+    description: "Primary underwriting agreement"
+    classification_patterns:
+      - "underwriting"
+      - "placement.*agreement"
+    content_keywords:
+      - "underwriting"
+      - "underwriter"
+      - "commitment"
+    request_template: "Underwriting agreement with lead managers"
+
+  - name: "Underwriter Due Diligence Package"
+    category: "Underwriting"
+    folder: "06. Underwriting & Distribution/6.1 Underwriting Documents"
+    priority: required
+    description: "Underwriter's due diligence package"
+    classification_patterns:
+      - "underwriter.*dd"
+      - "ibd.*dd"
+      - "investment.*bank.*dd"
+    request_template: "Due diligence package prepared for underwriters"
+
+  - name: "Selling Restrictions"
+    category: "Underwriting"
+    folder: "06. Underwriting & Distribution/6.2 Selling Documents"
+    priority: required
+    description: "Jurisdictional selling restrictions"
+    classification_patterns:
+      - "selling.*restriction"
+      - "jurisdiction"
+      - "offering.*restriction"
+    content_keywords:
+      - "selling restrictions"
+      - "offering jurisdiction"
+    request_template: "Selling restrictions for relevant jurisdictions"
+
+  - name: "Allocation Policy"
+    category: "Underwriting"
+    folder: "06. Underwriting & Distribution/6.2 Selling Documents"
+    priority: recommended
+    description: "Share allocation policy"
+    classification_patterns:
+      - "allocation"
+      - "distribution.*policy"
+    request_template: "Policy for allocation of shares in the offering"
+
+  # Legal & Litigation
+  - name: "Legal Opinion - SA Law"
+    category: "Litigation"
+    folder: "07. Legal & Litigation/7.1 Legal Opinions"
+    priority: critical
+    description: "South African legal opinion"
+    classification_patterns:
+      - "legal.*opinion"
+      - "sa.*opinion"
+      - "counsel.*opinion"
+    content_keywords:
+      - "legal opinion"
+      - "counsel"
+      - "South African law"
+    request_template: "South African legal opinion for prospectus"
+
+  - name: "Insurance Schedule (D&O)"
+    category: "Insurance"
+    folder: "07. Legal & Litigation/7.2 Litigation"
+    priority: required
+    description: "D&O and other relevant insurance"
+    classification_patterns:
+      - "insurance"
+      - "d&o"
+      - "liability.*insurance"
+    request_template: "Directors & Officers insurance and other relevant policies"
+
+  # Tax
+  - name: "Tax Opinion"
+    category: "Tax"
+    folder: "08. Tax"
+    priority: required
+    description: "Tax opinion on listing structure"
+    classification_patterns:
+      - "tax.*opinion"
+      - "tax.*advice"
+      - "tax.*memo"
+    content_keywords:
+      - "tax"
+      - "opinion"
+      - "consequences"
+    request_template: "Tax opinion on the listing transaction structure"
+
+  # Verification & Due Diligence
+  - name: "Verification Notes"
+    category: "Verification"
+    folder: "09. Verification & Due Diligence"
+    priority: critical
+    description: "Verification of prospectus statements"
+    classification_patterns:
+      - "verification"
+      - "back.*up"
+      - "verification.*note"
+    content_keywords:
+      - "verification"
+      - "verified"
+    request_template: "Verification notes with supporting documentation"
+
+  - name: "Due Diligence Session Notes"
+    category: "Verification"
+    folder: "09. Verification & Due Diligence"
+    priority: required
+    description: "Notes from DD sessions"
+    classification_patterns:
+      - "dd.*note"
+      - "session.*note"
+      - "meeting.*note"
+    request_template: "Notes from due diligence sessions with management"
+
+  - name: "Expert Consents"
+    category: "Verification"
+    folder: "09. Verification & Due Diligence"
+    priority: critical
+    description: "Consents from experts named in prospectus"
+    classification_patterns:
+      - "expert.*consent"
+      - "professional.*consent"
+    content_keywords:
+      - "consent"
+      - "expert"
+      - "prospectus"
+    request_template: "Consent letters from all experts named in prospectus"

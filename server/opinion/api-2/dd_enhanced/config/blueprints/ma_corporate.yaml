@@ -1,0 +1,219 @@
+transaction_type: "M&A Corporate"
+code: "ma_corporate"
+description: |
+  General due diligence blueprint for mergers and acquisitions of corporate entities.
+  Applicable to share purchases, asset deals, mergers, and scheme of arrangements.
+
+jurisdiction: "South Africa"
+primary_legislation:
+  - "Companies Act 71 of 2008"
+  - "Competition Act 89 of 1998"
+  - "Income Tax Act 58 of 1962"
+
+reference_documents:
+  always_include:
+    - pattern: "MOI|Memorandum of Incorporation"
+      reason: "Constitutional document"
+    - pattern: "Shareholder|SHA"
+      reason: "Shareholder rights and restrictions"
+    - pattern: "Board Resolution"
+      reason: "Transaction authorization"
+
+risk_categories:
+  - name: "Corporate Structure & Governance"
+    weight: critical
+    standard_questions:
+      - question: "Is the company validly incorporated and in good standing?"
+        priority: critical
+      - question: "What is the complete group structure including all subsidiaries?"
+        priority: critical
+      - question: "Are all shares validly issued and fully paid?"
+        priority: critical
+      - question: "Are there any options, warrants, or rights to acquire shares?"
+        priority: critical
+      - question: "What are the classes of shares and their respective rights?"
+        priority: high
+      - question: "Have all statutory filings (annual returns, etc.) been made?"
+        priority: high
+      - question: "Are there any restrictions on share transfers in the MOI?"
+        priority: critical
+      - question: "Are there any shareholders' agreements affecting the shares?"
+        priority: critical
+      - question: "Are there any disputes between shareholders?"
+        priority: high
+      - question: "What is the quorum and approval thresholds for shareholder meetings?"
+        priority: high
+      - question: "Are board compositions and appointments compliant with MOI?"
+        priority: medium
+      - question: "Have all related party transactions been properly approved?"
+        priority: high
+
+  - name: "Change of Control & Consents"
+    weight: critical
+    standard_questions:
+      - question: "Which contracts contain change of control provisions?"
+        priority: critical
+      - question: "What third-party consents are required for the transaction?"
+        priority: critical
+      - question: "Are there any anti-assignment provisions in key contracts?"
+        priority: critical
+      - question: "What government or regulatory approvals are required?"
+        priority: critical
+      - question: "Does the transaction require Competition Commission approval?"
+        priority: critical
+      - question: "What are the consequences of not obtaining required consents?"
+        priority: high
+      - question: "What is the process and timeline for obtaining each consent?"
+        priority: high
+      - question: "Are there any consents that are likely to be refused?"
+        priority: high
+
+  - name: "Material Contracts"
+    weight: critical
+    standard_questions:
+      - question: "What are the company's most material contracts by value?"
+        priority: critical
+      - question: "What is the termination notice period for key contracts?"
+        priority: high
+      - question: "Are there any contracts with related parties?"
+        priority: high
+      - question: "What exclusivity or non-compete provisions exist?"
+        priority: high
+      - question: "Are there any onerous or unusual contract terms?"
+        priority: high
+      - question: "What is the status of any contracts under dispute?"
+        priority: high
+      - question: "Are there any contracts about to expire that need renewal?"
+        priority: medium
+      - question: "What warranties or guarantees has the company given?"
+        priority: medium
+
+  - name: "Financial Position"
+    weight: critical
+    standard_questions:
+      - question: "Are the financial statements fairly stated without qualification?"
+        priority: critical
+      - question: "What are the working capital trends and requirements?"
+        priority: high
+      - question: "Are there any off-balance sheet liabilities or arrangements?"
+        priority: critical
+      - question: "What is the aged analysis of receivables and payables?"
+        priority: high
+      - question: "Are there any contingent liabilities?"
+        priority: high
+      - question: "What inter-company balances exist and how will they be settled?"
+        priority: high
+      - question: "What is the normalized EBITDA and profit?"
+        priority: high
+      - question: "Are there any material post-balance sheet events?"
+        priority: critical
+      - question: "What provisions and accruals may be understated?"
+        priority: medium
+
+  - name: "Debt & Security"
+    weight: high
+    standard_questions:
+      - question: "What is the total debt and who are the lenders?"
+        priority: critical
+      - question: "What security has been granted to lenders?"
+        priority: critical
+      - question: "Are there any financial covenant breaches?"
+        priority: critical
+      - question: "Do debt facilities have change of control provisions?"
+        priority: critical
+      - question: "What are the terms for early repayment?"
+        priority: high
+      - question: "Are there any guarantees given to or by the company?"
+        priority: high
+      - question: "What hedging arrangements are in place?"
+        priority: medium
+
+  - name: "Intellectual Property"
+    weight: high
+    standard_questions:
+      - question: "What registered IP rights does the company own?"
+        priority: high
+      - question: "Are all IP registrations current and maintained?"
+        priority: high
+      - question: "Are there any IP infringement claims or disputes?"
+        priority: high
+      - question: "What IP licenses does the company rely on?"
+        priority: high
+      - question: "Do employment contracts assign IP to the company?"
+        priority: medium
+      - question: "Is source code and trade secrets adequately protected?"
+        priority: medium
+
+  - name: "Employment"
+    weight: high
+    standard_questions:
+      - question: "What is the total headcount and payroll cost?"
+        priority: high
+      - question: "Are there any pending retrenchments or restructuring?"
+        priority: critical
+      - question: "What are the key executive terms and notice periods?"
+        priority: high
+      - question: "Are there any retention arrangements for key staff?"
+        priority: high
+      - question: "What is the status of any union relationships?"
+        priority: high
+      - question: "Are there any pending employment disputes or claims?"
+        priority: high
+      - question: "Are all employment equity and skills development obligations met?"
+        priority: medium
+      - question: "What employee benefit schemes exist?"
+        priority: medium
+
+  - name: "Property & Assets"
+    weight: medium
+    standard_questions:
+      - question: "What properties does the company own or lease?"
+        priority: high
+      - question: "Are there any zoning or land use restrictions?"
+        priority: medium
+      - question: "What is the condition of plant and equipment?"
+        priority: medium
+      - question: "Are there any disputes regarding property or assets?"
+        priority: medium
+      - question: "What environmental liabilities attach to properties?"
+        priority: high
+
+  - name: "Regulatory & Compliance"
+    weight: high
+    standard_questions:
+      - question: "What regulatory licenses are required for the business?"
+        priority: critical
+      - question: "Are all regulatory licenses current and compliant?"
+        priority: critical
+      - question: "Are there any pending regulatory investigations?"
+        priority: critical
+      - question: "Is the company compliant with anti-corruption laws?"
+        priority: high
+      - question: "Are there any sanctions or export control concerns?"
+        priority: high
+      - question: "Is the company compliant with industry-specific regulations?"
+        priority: high
+
+deal_blockers:
+  - description: "Fundamental defect in corporate existence or share issuance"
+    severity: absolute
+  - description: "Required shareholder approval cannot be obtained"
+    severity: absolute
+  - description: "Competition Commission prohibition or unacceptable conditions"
+    severity: absolute
+  - description: "Material undisclosed liabilities exceeding materiality threshold"
+    severity: conditional
+  - description: "Key regulatory license suspended or at risk"
+    severity: conditional
+
+conditions_precedent_patterns:
+  - pattern: "Competition Commission|merger control"
+    cp_type: "Competition Approval"
+  - pattern: "shareholder approval|special resolution"
+    cp_type: "Shareholder Approval"
+  - pattern: "regulatory approval|license transfer"
+    cp_type: "Regulatory Approval"
+  - pattern: "landlord consent|lessor consent"
+    cp_type: "Third Party Consent"
+  - pattern: "lender consent|bank consent"
+    cp_type: "Lender Consent"

@@ -1,0 +1,253 @@
+# Common documents applicable to ALL transaction types
+# These are merged into every transaction-specific registry
+
+categories:
+  - name: "Constitutional Documents"
+    description: "Founding and governance documents of the company"
+    folder: "01. Corporate/1.1 Constitutional"
+
+  - name: "Board & Shareholders"
+    description: "Board and shareholder meeting records"
+    folder: "01. Corporate/1.2 Board & Shareholders"
+
+  - name: "Financial Statements"
+    description: "Audited and management financial statements"
+    folder: "02. Financial/2.1 Annual Financial Statements"
+
+  - name: "Tax"
+    description: "Tax returns, assessments, and correspondence"
+    folder: "02. Financial/2.2 Tax"
+
+  - name: "Litigation"
+    description: "Pending and historical litigation matters"
+    folder: "08. Litigation & Disputes"
+
+  - name: "Insurance"
+    description: "Insurance policies and claims"
+    folder: "09. Insurance"
+
+documents:
+  # Constitutional Documents
+  - name: "Memorandum of Incorporation (MOI)"
+    category: "Constitutional Documents"
+    folder: "01. Corporate/1.1 Constitutional"
+    priority: critical
+    description: "Current MOI as registered with CIPC"
+    classification_patterns:
+      - "moi"
+      - "memorandum.*incorporation"
+      - "mem.*inc"
+      - "articles.*association"
+    common_filenames:
+      - "MOI"
+      - "Memorandum of Incorporation"
+    content_keywords:
+      - "memorandum of incorporation"
+      - "companies act"
+      - "alterable provisions"
+      - "unalterable provisions"
+    request_template: "Current Memorandum of Incorporation as registered with CIPC, including all amendments"
+
+  - name: "Shareholders Agreement"
+    category: "Constitutional Documents"
+    folder: "01. Corporate/1.1 Constitutional"
+    priority: critical
+    description: "Agreement between shareholders regulating their relationship"
+    classification_patterns:
+      - "shareholders?.*agreement"
+      - "sha\\b"
+      - "investor.*agreement"
+    common_filenames:
+      - "Shareholders Agreement"
+      - "SHA"
+      - "Investor Agreement"
+    content_keywords:
+      - "shareholders agreement"
+      - "drag along"
+      - "tag along"
+      - "pre-emptive"
+    request_template: "All shareholders agreements, side letters, and amendments"
+
+  - name: "CIPC Registration Documents"
+    category: "Constitutional Documents"
+    folder: "01. Corporate/1.1 Constitutional"
+    priority: required
+    description: "Company registration certificate and related CIPC documents"
+    classification_patterns:
+      - "cipc"
+      - "registration.*cert"
+      - "cor.*14"
+      - "cm29"
+    common_filenames:
+      - "CIPC"
+      - "Registration Certificate"
+      - "CoR 14.3"
+    request_template: "CIPC registration certificate, CoR 14.3, and any name change certificates"
+
+  - name: "Share Register / Securities Register"
+    category: "Constitutional Documents"
+    folder: "01. Corporate/1.1 Constitutional"
+    priority: critical
+    description: "Register of all issued shares and shareholders"
+    classification_patterns:
+      - "share.*register"
+      - "securities.*register"
+      - "shareholder.*list"
+      - "member.*register"
+    common_filenames:
+      - "Share Register"
+      - "Securities Register"
+    request_template: "Current share/securities register showing all issued shares and beneficial owners"
+
+  # Board & Shareholders
+  - name: "Board Resolutions - Transaction"
+    category: "Board & Shareholders"
+    folder: "01. Corporate/1.2 Board & Shareholders"
+    priority: critical
+    description: "Board resolution authorizing the transaction"
+    classification_patterns:
+      - "board.*resolution"
+      - "directors.*resolution"
+      - "resolution.*board"
+    common_filenames:
+      - "Board Resolution"
+      - "Directors Resolution"
+    content_keywords:
+      - "it is resolved"
+      - "board of directors"
+      - "hereby authorized"
+    request_template: "Board resolution authorizing the proposed transaction and appointing signatories"
+
+  - name: "Board Minutes (Last 3 Years)"
+    category: "Board & Shareholders"
+    folder: "01. Corporate/1.2 Board & Shareholders"
+    priority: required
+    description: "Minutes of board meetings"
+    classification_patterns:
+      - "board.*minutes"
+      - "minutes.*board"
+      - "directors.*meeting"
+    request_template: "Board minutes for the last 3 years"
+
+  - name: "Shareholder Meeting Minutes (Last 3 Years)"
+    category: "Board & Shareholders"
+    folder: "01. Corporate/1.2 Board & Shareholders"
+    priority: required
+    description: "Minutes of AGMs and EGMs"
+    classification_patterns:
+      - "agm"
+      - "egm"
+      - "shareholder.*meeting"
+      - "general.*meeting"
+    request_template: "Minutes of all AGMs and EGMs for the last 3 years"
+
+  # Financial Statements
+  - name: "Annual Financial Statements (Last 3 Years)"
+    category: "Financial Statements"
+    folder: "02. Financial/2.1 Annual Financial Statements"
+    priority: critical
+    description: "Audited annual financial statements"
+    classification_patterns:
+      - "annual.*financial"
+      - "afs"
+      - "audited.*statement"
+      - "financial.*statement"
+    common_filenames:
+      - "AFS"
+      - "Annual Financial Statements"
+      - "Audited Financials"
+    content_keywords:
+      - "independent auditor"
+      - "statement of financial position"
+      - "statement of comprehensive income"
+    request_template: "Audited annual financial statements for the last 3 financial years"
+
+  - name: "Management Accounts (Latest)"
+    category: "Financial Statements"
+    folder: "02. Financial/2.1 Annual Financial Statements"
+    priority: required
+    description: "Latest unaudited management accounts"
+    classification_patterns:
+      - "management.*account"
+      - "monthly.*account"
+      - "interim.*financial"
+    request_template: "Latest management accounts (monthly or quarterly)"
+
+  # Tax
+  - name: "Income Tax Returns (Last 3 Years)"
+    category: "Tax"
+    folder: "02. Financial/2.2 Tax"
+    priority: required
+    description: "Corporate income tax returns"
+    classification_patterns:
+      - "itr14"
+      - "income.*tax.*return"
+      - "tax.*return"
+    request_template: "Income tax returns (ITR14) for the last 3 years with SARS acknowledgments"
+
+  - name: "Tax Clearance Certificate"
+    category: "Tax"
+    folder: "02. Financial/2.2 Tax"
+    priority: required
+    description: "Current SARS tax compliance status"
+    classification_patterns:
+      - "tax.*clearance"
+      - "tcc"
+      - "compliance.*status"
+    request_template: "Current SARS tax clearance certificate or compliance status PIN"
+
+  - name: "VAT Returns (Last 12 Months)"
+    category: "Tax"
+    folder: "02. Financial/2.2 Tax"
+    priority: recommended
+    description: "VAT201 returns"
+    classification_patterns:
+      - "vat.*return"
+      - "vat201"
+    request_template: "VAT returns for the last 12 months"
+
+  # Litigation
+  - name: "Litigation Register / Summary"
+    category: "Litigation"
+    folder: "08. Litigation & Disputes"
+    priority: required
+    description: "Summary of all pending and threatened litigation"
+    classification_patterns:
+      - "litigation.*register"
+      - "litigation.*summary"
+      - "legal.*dispute"
+      - "pending.*claim"
+    request_template: "Schedule of all pending, threatened, or concluded litigation in last 5 years"
+
+  - name: "Regulatory Investigations"
+    category: "Litigation"
+    folder: "08. Litigation & Disputes"
+    priority: required
+    description: "Any regulatory investigations or inquiries"
+    classification_patterns:
+      - "regulatory.*invest"
+      - "inquiry"
+      - "investigation"
+    request_template: "Details of any regulatory investigations or inquiries in last 5 years"
+
+  # Insurance
+  - name: "Insurance Policies Schedule"
+    category: "Insurance"
+    folder: "09. Insurance"
+    priority: required
+    description: "Summary of all insurance policies in force"
+    classification_patterns:
+      - "insurance.*schedule"
+      - "insurance.*polic"
+      - "cover.*summary"
+    request_template: "Schedule of all insurance policies including coverage limits, premiums, and expiry dates"
+
+  - name: "Claims History"
+    category: "Insurance"
+    folder: "09. Insurance"
+    priority: recommended
+    description: "Insurance claims history"
+    classification_patterns:
+      - "claims.*history"
+      - "insurance.*claim"
+    request_template: "Insurance claims history for last 5 years"

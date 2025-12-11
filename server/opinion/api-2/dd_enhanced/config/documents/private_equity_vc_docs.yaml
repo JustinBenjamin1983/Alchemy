@@ -1,0 +1,752 @@
+# Document registry for Private Equity & Venture Capital transactions
+# Covers: PE buyouts, VC investments, growth equity, fund investments
+
+transaction_type: "Private Equity & VC"
+
+folder_structure:
+  - name: "01. Transaction Documents"
+    subfolders:
+      - name: "1.1 Term Sheet & Structure"
+      - name: "1.2 Investment Agreements"
+      - name: "1.3 Conditions Precedent"
+  - name: "02. Corporate & Cap Table"
+    subfolders:
+      - name: "2.1 Corporate Records"
+      - name: "2.2 Capitalisation"
+      - name: "2.3 Existing Shareholders"
+  - name: "03. Financial Information"
+    subfolders:
+      - name: "3.1 Historical Financials"
+      - name: "3.2 Projections & Model"
+      - name: "3.3 QofE"
+  - name: "04. Management & Team"
+    subfolders:
+      - name: "4.1 Team Information"
+      - name: "4.2 Incentives"
+      - name: "4.3 Employment Matters"
+  - name: "05. Business & Commercial"
+    subfolders:
+      - name: "5.1 Business Overview"
+      - name: "5.2 Customers & Revenue"
+      - name: "5.3 Technology"
+  - name: "06. Legal & Contracts"
+    subfolders:
+      - name: "6.1 Material Contracts"
+      - name: "6.2 IP"
+      - name: "6.3 Litigation"
+  - name: "07. Regulatory & Compliance"
+  - name: "08. Tax"
+  - name: "09. Exit Analysis"
+  - name: "99. Other Documents"
+
+categories:
+  - name: "Transaction"
+    description: "Transaction structure and agreements"
+    folder: "01. Transaction Documents"
+
+  - name: "Corporate"
+    description: "Corporate records and capitalisation"
+    folder: "02. Corporate & Cap Table"
+
+  - name: "Financial"
+    description: "Financial statements and analysis"
+    folder: "03. Financial Information"
+
+  - name: "Management"
+    description: "Management team and incentives"
+    folder: "04. Management & Team"
+
+  - name: "Commercial"
+    description: "Business and commercial matters"
+    folder: "05. Business & Commercial"
+
+  - name: "Legal"
+    description: "Legal and contractual matters"
+    folder: "06. Legal & Contracts"
+
+documents:
+  # Transaction Documents
+  - name: "Term Sheet (Signed)"
+    category: "Transaction"
+    folder: "01. Transaction Documents/1.1 Term Sheet & Structure"
+    priority: critical
+    description: "Signed term sheet or heads of terms"
+    classification_patterns:
+      - "term.*sheet"
+      - "heads.*of.*terms"
+      - "hot"
+    content_keywords:
+      - "term sheet"
+      - "indicative terms"
+      - "non-binding"
+    request_template: "Signed term sheet for this investment"
+
+  - name: "Structure Memorandum"
+    category: "Transaction"
+    folder: "01. Transaction Documents/1.1 Term Sheet & Structure"
+    priority: critical
+    description: "Investment structure and legal analysis"
+    classification_patterns:
+      - "structure.*memo"
+      - "structure.*paper"
+    content_keywords:
+      - "structure"
+      - "investment"
+      - "tax efficiency"
+    request_template: "Structure memorandum for the investment"
+
+  - name: "Investment Committee Memorandum"
+    category: "Transaction"
+    folder: "01. Transaction Documents/1.1 Term Sheet & Structure"
+    priority: required
+    description: "IC memo for approval"
+    classification_patterns:
+      - "ic.*memo"
+      - "investment.*committee"
+    content_keywords:
+      - "investment committee"
+      - "recommendation"
+      - "approval"
+    request_template: "Investment committee memorandum"
+
+  - name: "Subscription/Investment Agreement"
+    category: "Transaction"
+    folder: "01. Transaction Documents/1.2 Investment Agreements"
+    priority: critical
+    description: "Primary investment agreement"
+    classification_patterns:
+      - "subscription"
+      - "investment.*agreement"
+      - "spa"
+    content_keywords:
+      - "subscription"
+      - "investment"
+      - "subscriber"
+    request_template: "Subscription or investment agreement"
+
+  - name: "Shareholders Agreement"
+    category: "Transaction"
+    folder: "01. Transaction Documents/1.2 Investment Agreements"
+    priority: critical
+    description: "Shareholders/stockholders agreement"
+    classification_patterns:
+      - "shareholders.*agreement"
+      - "sha"
+      - "stockholders"
+    content_keywords:
+      - "shareholders agreement"
+      - "reserved matters"
+      - "board composition"
+    request_template: "Shareholders agreement for post-investment governance"
+
+  - name: "Side Letters"
+    category: "Transaction"
+    folder: "01. Transaction Documents/1.2 Investment Agreements"
+    priority: required
+    description: "Any side letters to main agreements"
+    classification_patterns:
+      - "side.*letter"
+      - "supplemental"
+    content_keywords:
+      - "side letter"
+      - "supplemental"
+      - "additional rights"
+    request_template: "Any side letters or supplemental agreements"
+
+  - name: "Disclosure Letter"
+    category: "Transaction"
+    folder: "01. Transaction Documents/1.2 Investment Agreements"
+    priority: critical
+    description: "Disclosure letter against warranties"
+    classification_patterns:
+      - "disclosure.*letter"
+      - "disclosure.*schedule"
+    content_keywords:
+      - "disclosure"
+      - "warranties"
+      - "exceptions"
+    request_template: "Disclosure letter against warranties"
+
+  - name: "CP Checklist"
+    category: "Transaction"
+    folder: "01. Transaction Documents/1.3 Conditions Precedent"
+    priority: required
+    description: "Conditions precedent tracking"
+    classification_patterns:
+      - "cp.*checklist"
+      - "conditions.*precedent"
+    content_keywords:
+      - "conditions precedent"
+      - "CP"
+      - "satisfaction"
+    request_template: "Conditions precedent checklist and status"
+
+  # Corporate & Cap Table
+  - name: "Cap Table (Fully Diluted)"
+    category: "Corporate"
+    folder: "02. Corporate & Cap Table/2.2 Capitalisation"
+    priority: critical
+    description: "Fully diluted capitalisation table"
+    classification_patterns:
+      - "cap.*table"
+      - "capitalization"
+      - "ownership"
+    content_keywords:
+      - "capitalisation"
+      - "ownership"
+      - "fully diluted"
+    request_template: "Fully diluted cap table including all options and convertibles"
+
+  - name: "Option Pool / ESOP Details"
+    category: "Corporate"
+    folder: "02. Corporate & Cap Table/2.2 Capitalisation"
+    priority: critical
+    description: "Employee option pool details"
+    classification_patterns:
+      - "esop"
+      - "option.*pool"
+      - "share.*scheme"
+    content_keywords:
+      - "option"
+      - "ESOP"
+      - "employee shares"
+    request_template: "Option pool details and ESOP documentation"
+
+  - name: "Convertible Instruments"
+    category: "Corporate"
+    folder: "02. Corporate & Cap Table/2.2 Capitalisation"
+    priority: required
+    description: "Convertible notes, SAFEs, etc."
+    classification_patterns:
+      - "convertible"
+      - "safe"
+      - "note"
+    content_keywords:
+      - "convertible"
+      - "SAFE"
+      - "conversion"
+    request_template: "All convertible instruments and conversion terms"
+
+  - name: "Existing Shareholders Agreement"
+    category: "Corporate"
+    folder: "02. Corporate & Cap Table/2.3 Existing Shareholders"
+    priority: critical
+    description: "Current shareholders agreement to be replaced/amended"
+    classification_patterns:
+      - "existing.*sha"
+      - "current.*shareholders"
+    content_keywords:
+      - "shareholders agreement"
+      - "existing"
+    request_template: "Current shareholders agreement"
+
+  - name: "Previous Round Documents"
+    category: "Corporate"
+    folder: "02. Corporate & Cap Table/2.3 Existing Shareholders"
+    priority: required
+    description: "Documents from previous funding rounds"
+    classification_patterns:
+      - "series.*a"
+      - "series.*b"
+      - "seed"
+      - "previous.*round"
+    content_keywords:
+      - "series"
+      - "round"
+      - "previous"
+    request_template: "Documentation from previous funding rounds"
+
+  # Financial Information
+  - name: "Revenue Breakdown / Cohort Analysis"
+    category: "Financial"
+    folder: "03. Financial Information/3.1 Historical Financials"
+    priority: required
+    description: "Detailed revenue analysis"
+    classification_patterns:
+      - "revenue"
+      - "cohort"
+      - "mrr"
+    content_keywords:
+      - "revenue"
+      - "cohort"
+      - "MRR"
+      - "ARR"
+    request_template: "Revenue breakdown and cohort analysis"
+
+  - name: "Financial Model"
+    category: "Financial"
+    folder: "03. Financial Information/3.2 Projections & Model"
+    priority: critical
+    description: "Company financial model"
+    classification_patterns:
+      - "financial.*model"
+      - "model"
+    content_keywords:
+      - "model"
+      - "projections"
+      - "forecast"
+    request_template: "Financial model with projections"
+
+  - name: "Business Plan / Investor Deck"
+    category: "Financial"
+    folder: "03. Financial Information/3.2 Projections & Model"
+    priority: required
+    description: "Business plan or investor presentation"
+    classification_patterns:
+      - "business.*plan"
+      - "investor.*deck"
+      - "pitch.*deck"
+    content_keywords:
+      - "business plan"
+      - "strategy"
+      - "market"
+    request_template: "Business plan or investor presentation"
+
+  - name: "Assumptions Book"
+    category: "Financial"
+    folder: "03. Financial Information/3.2 Projections & Model"
+    priority: required
+    description: "Key assumptions underlying projections"
+    classification_patterns:
+      - "assumptions"
+      - "model.*assumptions"
+    content_keywords:
+      - "assumptions"
+      - "drivers"
+    request_template: "Key assumptions underlying financial projections"
+
+  - name: "Quality of Earnings Report"
+    category: "Financial"
+    folder: "03. Financial Information/3.3 QofE"
+    priority: critical
+    description: "QofE or financial due diligence report"
+    classification_patterns:
+      - "qoe"
+      - "quality.*of.*earnings"
+      - "fdd"
+    content_keywords:
+      - "quality of earnings"
+      - "normalised"
+      - "EBITDA"
+    request_template: "Quality of earnings report"
+
+  - name: "Working Capital Analysis"
+    category: "Financial"
+    folder: "03. Financial Information/3.3 QofE"
+    priority: required
+    description: "Net working capital analysis"
+    classification_patterns:
+      - "working.*capital"
+      - "nwc"
+    content_keywords:
+      - "working capital"
+      - "NWC"
+      - "normalised"
+    request_template: "Net working capital analysis"
+
+  - name: "Net Debt Analysis"
+    category: "Financial"
+    folder: "03. Financial Information/3.3 QofE"
+    priority: required
+    description: "Net debt and debt-like items analysis"
+    classification_patterns:
+      - "net.*debt"
+      - "debt.*analysis"
+    content_keywords:
+      - "net debt"
+      - "debt-like"
+      - "cash-like"
+    request_template: "Net debt and debt-like items analysis"
+
+  # Management & Team
+  - name: "Management CVs"
+    category: "Management"
+    folder: "04. Management & Team/4.1 Team Information"
+    priority: critical
+    description: "CVs of founders and key management"
+    classification_patterns:
+      - "cv"
+      - "resume"
+      - "biography"
+    content_keywords:
+      - "curriculum vitae"
+      - "experience"
+    request_template: "CVs of founders and key management"
+
+  - name: "Reference Check Notes"
+    category: "Management"
+    folder: "04. Management & Team/4.1 Team Information"
+    priority: required
+    description: "Management reference checks"
+    classification_patterns:
+      - "reference"
+      - "background"
+    content_keywords:
+      - "reference"
+      - "background check"
+    request_template: "Management reference check notes"
+
+  - name: "Org Chart"
+    category: "Management"
+    folder: "04. Management & Team/4.1 Team Information"
+    priority: required
+    description: "Organisation structure"
+    classification_patterns:
+      - "org.*chart"
+      - "organisation"
+    content_keywords:
+      - "organisation"
+      - "structure"
+      - "reporting"
+    request_template: "Current organisation chart"
+
+  - name: "Management Incentive Plan"
+    category: "Management"
+    folder: "04. Management & Team/4.2 Incentives"
+    priority: critical
+    description: "Proposed management incentive structure"
+    classification_patterns:
+      - "incentive"
+      - "mip"
+      - "management.*equity"
+    content_keywords:
+      - "incentive"
+      - "management"
+      - "equity"
+    request_template: "Proposed management incentive plan"
+
+  - name: "Share Option Scheme Rules"
+    category: "Management"
+    folder: "04. Management & Team/4.2 Incentives"
+    priority: required
+    description: "Rules of existing share option scheme"
+    classification_patterns:
+      - "scheme.*rules"
+      - "option.*plan"
+    content_keywords:
+      - "scheme"
+      - "rules"
+      - "options"
+    request_template: "Share option scheme rules"
+
+  - name: "Vesting Schedules"
+    category: "Management"
+    folder: "04. Management & Team/4.2 Incentives"
+    priority: required
+    description: "Vesting schedules for management equity"
+    classification_patterns:
+      - "vesting"
+      - "schedule"
+    content_keywords:
+      - "vesting"
+      - "cliff"
+      - "acceleration"
+    request_template: "Vesting schedules for all management equity"
+
+  - name: "Employment Agreements - Key Employees"
+    category: "Management"
+    folder: "04. Management & Team/4.3 Employment Matters"
+    priority: critical
+    description: "Contracts for key employees/founders"
+    classification_patterns:
+      - "employment"
+      - "service.*agreement"
+    content_keywords:
+      - "employment"
+      - "service"
+      - "employee"
+    request_template: "Employment agreements for key employees"
+
+  - name: "IP Assignment Agreements"
+    category: "Management"
+    folder: "04. Management & Team/4.3 Employment Matters"
+    priority: critical
+    description: "IP assignments from employees/founders"
+    classification_patterns:
+      - "ip.*assignment"
+      - "invention.*assignment"
+    content_keywords:
+      - "intellectual property"
+      - "assignment"
+      - "invention"
+    request_template: "IP assignment agreements from all employees"
+
+  - name: "Non-Compete/Non-Solicit Agreements"
+    category: "Management"
+    folder: "04. Management & Team/4.3 Employment Matters"
+    priority: required
+    description: "Restraint of trade provisions"
+    classification_patterns:
+      - "non.*compete"
+      - "restraint"
+      - "non.*solicit"
+    content_keywords:
+      - "non-compete"
+      - "restraint"
+      - "non-solicitation"
+    request_template: "Non-compete and non-solicitation agreements"
+
+  # Business & Commercial
+  - name: "Business Overview / Information Memorandum"
+    category: "Commercial"
+    folder: "05. Business & Commercial/5.1 Business Overview"
+    priority: critical
+    description: "Company information memorandum"
+    classification_patterns:
+      - "info.*memo"
+      - "im"
+      - "business.*overview"
+    content_keywords:
+      - "information memorandum"
+      - "overview"
+      - "business"
+    request_template: "Company information memorandum"
+
+  - name: "Market Analysis"
+    category: "Commercial"
+    folder: "05. Business & Commercial/5.1 Business Overview"
+    priority: required
+    description: "Market size and competitive analysis"
+    classification_patterns:
+      - "market"
+      - "tam"
+      - "competitive"
+    content_keywords:
+      - "market"
+      - "TAM"
+      - "SAM"
+      - "competitive"
+    request_template: "Market analysis and competitive landscape"
+
+  - name: "Customer List / Analysis"
+    category: "Commercial"
+    folder: "05. Business & Commercial/5.2 Customers & Revenue"
+    priority: critical
+    description: "Key customer list and analysis"
+    classification_patterns:
+      - "customer.*list"
+      - "customer.*analysis"
+    content_keywords:
+      - "customer"
+      - "client"
+      - "revenue"
+    request_template: "Customer list with revenue breakdown"
+
+  - name: "Key Customer Contracts"
+    category: "Commercial"
+    folder: "05. Business & Commercial/5.2 Customers & Revenue"
+    priority: critical
+    description: "Agreements with key customers"
+    classification_patterns:
+      - "customer.*contract"
+      - "msa"
+    content_keywords:
+      - "customer"
+      - "agreement"
+      - "services"
+    request_template: "Contracts with top customers"
+
+  - name: "Churn Analysis"
+    category: "Commercial"
+    folder: "05. Business & Commercial/5.2 Customers & Revenue"
+    priority: required
+    description: "Customer churn and retention metrics"
+    classification_patterns:
+      - "churn"
+      - "retention"
+    content_keywords:
+      - "churn"
+      - "retention"
+      - "NRR"
+    request_template: "Customer churn and retention analysis"
+
+  - name: "Technology Architecture Overview"
+    category: "Commercial"
+    folder: "05. Business & Commercial/5.3 Technology"
+    priority: required
+    description: "Technology stack and architecture"
+    classification_patterns:
+      - "architecture"
+      - "tech.*stack"
+    content_keywords:
+      - "architecture"
+      - "technology"
+      - "stack"
+    request_template: "Technology architecture overview"
+
+  - name: "Technical Due Diligence Report"
+    category: "Commercial"
+    folder: "05. Business & Commercial/5.3 Technology"
+    priority: required
+    description: "Independent tech DD report"
+    classification_patterns:
+      - "tech.*dd"
+      - "technical.*dd"
+    content_keywords:
+      - "technical"
+      - "due diligence"
+      - "technology"
+    request_template: "Technical due diligence report"
+
+  - name: "Security Assessment / Pen Test"
+    category: "Commercial"
+    folder: "05. Business & Commercial/5.3 Technology"
+    priority: required
+    description: "Security audit or penetration test results"
+    classification_patterns:
+      - "security"
+      - "pentest"
+      - "vulnerability"
+    content_keywords:
+      - "security"
+      - "penetration"
+      - "vulnerability"
+    request_template: "Security assessment or penetration test results"
+
+  # Legal & Contracts
+  - name: "Material Contracts Schedule"
+    category: "Legal"
+    folder: "06. Legal & Contracts/6.1 Material Contracts"
+    priority: critical
+    description: "Schedule of all material contracts"
+    classification_patterns:
+      - "contract.*schedule"
+      - "material.*contracts"
+    content_keywords:
+      - "contracts"
+      - "schedule"
+      - "material"
+    request_template: "Schedule of all material contracts"
+
+  - name: "IP Register"
+    category: "Legal"
+    folder: "06. Legal & Contracts/6.2 IP"
+    priority: critical
+    description: "Register of intellectual property"
+    classification_patterns:
+      - "ip.*register"
+      - "ip.*schedule"
+    content_keywords:
+      - "intellectual property"
+      - "patents"
+      - "trademarks"
+    request_template: "Register of all intellectual property"
+
+  - name: "Patent/Trademark Certificates"
+    category: "Legal"
+    folder: "06. Legal & Contracts/6.2 IP"
+    priority: required
+    description: "IP registration certificates"
+    classification_patterns:
+      - "patent"
+      - "trademark"
+      - "registration"
+    content_keywords:
+      - "patent"
+      - "trademark"
+      - "registered"
+    request_template: "Patent and trademark certificates"
+
+  - name: "Software Licences"
+    category: "Legal"
+    folder: "06. Legal & Contracts/6.2 IP"
+    priority: required
+    description: "Key software licences"
+    classification_patterns:
+      - "licence"
+      - "license"
+      - "software"
+    content_keywords:
+      - "licence"
+      - "software"
+      - "subscription"
+    request_template: "Key software licences"
+
+  # Regulatory & Compliance
+  - name: "POPIA Compliance Assessment"
+    category: "Regulatory"
+    folder: "07. Regulatory & Compliance"
+    priority: required
+    description: "Data protection compliance"
+    classification_patterns:
+      - "popia"
+      - "privacy"
+      - "data.*protection"
+    content_keywords:
+      - "POPIA"
+      - "privacy"
+      - "data protection"
+    request_template: "POPIA compliance assessment"
+
+  - name: "BEE Certificate"
+    category: "Regulatory"
+    folder: "07. Regulatory & Compliance"
+    priority: recommended
+    description: "B-BBEE verification certificate"
+    classification_patterns:
+      - "bee"
+      - "bbbee"
+    content_keywords:
+      - "B-BBEE"
+      - "BEE"
+      - "verification"
+    request_template: "Current BEE certificate"
+
+  # Tax
+  - name: "Tax Structure Opinion"
+    category: "Tax"
+    folder: "08. Tax"
+    priority: required
+    description: "Tax opinion on investment structure"
+    classification_patterns:
+      - "tax.*opinion"
+      - "tax.*memo"
+    content_keywords:
+      - "tax"
+      - "opinion"
+      - "structure"
+    request_template: "Tax opinion on investment structure"
+
+  - name: "Section 8C Analysis (Incentives)"
+    category: "Tax"
+    folder: "08. Tax"
+    priority: required
+    description: "Tax analysis of management incentives"
+    classification_patterns:
+      - "s8c"
+      - "section.*8c"
+    content_keywords:
+      - "Section 8C"
+      - "equity"
+      - "tax"
+    request_template: "Section 8C analysis for management incentives"
+
+  # Exit Analysis
+  - name: "Exit Analysis"
+    category: "Exit"
+    folder: "09. Exit Analysis"
+    priority: required
+    description: "Analysis of exit routes and timing"
+    classification_patterns:
+      - "exit"
+      - "liquidity"
+    content_keywords:
+      - "exit"
+      - "liquidity"
+      - "IPO"
+      - "trade sale"
+    request_template: "Exit analysis and route assessment"
+
+  - name: "Comparable Transactions"
+    category: "Exit"
+    folder: "09. Exit Analysis"
+    priority: required
+    description: "Analysis of comparable exits"
+    classification_patterns:
+      - "comparable"
+      - "comps"
+    content_keywords:
+      - "comparable"
+      - "transactions"
+      - "multiples"
+    request_template: "Comparable transaction analysis"

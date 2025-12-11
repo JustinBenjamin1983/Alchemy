@@ -1,0 +1,205 @@
+# Document registry for Competition & Regulatory transactions
+
+transaction_type: "Competition & Regulatory"
+
+folder_structure:
+  - name: "01. Corporate"
+    subfolders:
+      - name: "1.1 Constitutional"
+      - name: "1.2 Group Structure"
+
+  - name: "02. Financial"
+    subfolders:
+      - name: "2.1 Financial Statements"
+      - name: "2.2 Revenue Analysis"
+
+  - name: "03. Market Information"
+    subfolders:
+      - name: "3.1 Market Studies"
+      - name: "3.2 Competitor Analysis"
+      - name: "3.3 Customer Analysis"
+
+  - name: "04. Competition History"
+    subfolders:
+      - name: "4.1 Prior Mergers"
+      - name: "4.2 Investigations"
+      - name: "4.3 Complaints"
+
+  - name: "05. Public Interest"
+    subfolders:
+      - name: "5.1 Employment"
+      - name: "5.2 BEE"
+      - name: "5.3 Industrial Policy"
+
+  - name: "06. Foreign Filings"
+
+  - name: "99. Other Documents"
+
+categories:
+  - name: "Market Information"
+    description: "Market and competitor data"
+    folder: "03. Market Information"
+
+  - name: "Competition History"
+    description: "Prior competition matters"
+    folder: "04. Competition History"
+
+  - name: "Public Interest"
+    description: "Employment and public interest factors"
+    folder: "05. Public Interest"
+
+documents:
+  # Market Information
+  - name: "Market Share Analysis"
+    category: "Market Information"
+    folder: "03. Market Information/3.1 Market Studies"
+    priority: critical
+    description: "Analysis of market shares by product/geography"
+    classification_patterns:
+      - "market.*share"
+      - "market.*analysis"
+      - "competitive.*position"
+    request_template: "Market share analysis by product line and geography"
+
+  - name: "Industry Reports"
+    category: "Market Information"
+    folder: "03. Market Information/3.1 Market Studies"
+    priority: required
+    description: "Third-party industry reports"
+    classification_patterns:
+      - "industry.*report"
+      - "market.*report"
+      - "sector.*analysis"
+    request_template: "Recent industry/market reports relied upon"
+
+  - name: "Competitor List"
+    category: "Market Information"
+    folder: "03. Market Information/3.2 Competitor Analysis"
+    priority: critical
+    description: "List of competitors by product"
+    classification_patterns:
+      - "competitor"
+      - "competitive.*landscape"
+    request_template: "List of competitors by product/service with estimated market shares"
+
+  - name: "Customer Concentration"
+    category: "Market Information"
+    folder: "03. Market Information/3.3 Customer Analysis"
+    priority: critical
+    description: "Revenue by top customers"
+    classification_patterns:
+      - "customer.*concentration"
+      - "top.*customer"
+      - "revenue.*concentration"
+    request_template: "Revenue breakdown by top 20 customers"
+
+  # Competition History
+  - name: "Prior Merger Filings"
+    category: "Competition History"
+    folder: "04. Competition History/4.1 Prior Mergers"
+    priority: critical
+    description: "Previous merger notifications"
+    classification_patterns:
+      - "merger.*filing"
+      - "merger.*notification"
+      - "cc.*filing"
+    request_template: "All merger filings in last 5 years with decisions"
+
+  - name: "Competition Investigations"
+    category: "Competition History"
+    folder: "04. Competition History/4.2 Investigations"
+    priority: critical
+    description: "Prior/ongoing investigations"
+    classification_patterns:
+      - "investigation"
+      - "cartel"
+      - "abuse.*dominance"
+      - "collusion"
+    request_template: "Details of any competition investigations in last 10 years"
+
+  - name: "Leniency Applications"
+    category: "Competition History"
+    folder: "04. Competition History/4.2 Investigations"
+    priority: critical
+    description: "Any leniency applications"
+    classification_patterns:
+      - "leniency"
+      - "immunity"
+    request_template: "Details of any leniency applications (without waiving privilege)"
+
+  - name: "Competition Complaints"
+    category: "Competition History"
+    folder: "04. Competition History/4.3 Complaints"
+    priority: required
+    description: "Complaints received or lodged"
+    classification_patterns:
+      - "complaint.*competition"
+      - "cc.*complaint"
+    request_template: "Schedule of complaints lodged or received in last 5 years"
+
+  # Public Interest
+  - name: "Employment Data"
+    category: "Public Interest"
+    folder: "05. Public Interest/5.1 Employment"
+    priority: critical
+    description: "Employee numbers and locations"
+    classification_patterns:
+      - "employment.*data"
+      - "headcount"
+      - "employee.*number"
+    request_template: "Employee numbers by location, category, and race/gender"
+
+  - name: "Retrenchment Plans"
+    category: "Public Interest"
+    folder: "05. Public Interest/5.1 Employment"
+    priority: critical
+    description: "Post-merger employment plans"
+    classification_patterns:
+      - "retrenchment"
+      - "redundancy"
+      - "job.*loss"
+    request_template: "Details of any planned retrenchments post-merger"
+
+  - name: "BEE Status"
+    category: "Public Interest"
+    folder: "05. Public Interest/5.2 BEE"
+    priority: critical
+    description: "Current BEE ownership/status"
+    classification_patterns:
+      - "bee.*status"
+      - "hdsa.*ownership"
+      - "black.*ownership"
+    request_template: "BEE ownership structure pre and post transaction"
+
+  - name: "South African Control"
+    category: "Public Interest"
+    folder: "05. Public Interest/5.3 Industrial Policy"
+    priority: required
+    description: "SA ownership and control"
+    classification_patterns:
+      - "south.*african.*control"
+      - "foreign.*ownership"
+      - "national.*champion"
+    request_template: "Analysis of SA vs foreign ownership and control"
+
+  # Revenue Analysis
+  - name: "Revenue by Product/Geography"
+    category: "Financial Statements"
+    folder: "02. Financial/2.2 Revenue Analysis"
+    priority: critical
+    description: "Revenue segmentation"
+    classification_patterns:
+      - "revenue.*breakdown"
+      - "revenue.*segment"
+      - "sales.*analysis"
+    request_template: "Revenue breakdown by product line and geography for last 3 years"
+
+  - name: "South African Turnover"
+    category: "Financial Statements"
+    folder: "02. Financial/2.2 Revenue Analysis"
+    priority: critical
+    description: "SA-specific revenue for thresholds"
+    classification_patterns:
+      - "sa.*turnover"
+      - "south.*african.*revenue"
+    request_template: "South African turnover and asset values for merger threshold calculation"

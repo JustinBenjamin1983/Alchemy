@@ -1,0 +1,124 @@
+# Base questions applicable to ALL transaction types
+# These are merged into every blueprint
+
+common_questions:
+  corporate_governance:
+    - question: "Is the target company validly incorporated and in good standing?"
+      category: "Corporate"
+      priority: critical
+    - question: "Are all statutory registers and records up to date?"
+      category: "Corporate"
+      priority: high
+    - question: "Are there any pending or threatened shareholder disputes?"
+      category: "Corporate"
+      priority: high
+    - question: "Have all annual returns been filed with CIPC?"
+      category: "Corporate"
+      priority: medium
+
+  constitutional_documents:
+    - question: "What approval thresholds does the MOI require for the transaction?"
+      category: "Governance"
+      priority: critical
+    - question: "Are there any restrictive provisions in the MOI that affect the transaction?"
+      category: "Governance"
+      priority: critical
+    - question: "Does the Shareholders Agreement impose additional requirements?"
+      category: "Governance"
+      priority: critical
+    - question: "Are there any tag-along or drag-along rights?"
+      category: "Governance"
+      priority: high
+    - question: "Are there any pre-emptive rights on share transfers?"
+      category: "Governance"
+      priority: high
+
+  board_and_shareholders:
+    - question: "Has the board properly authorized the transaction?"
+      category: "Governance"
+      priority: critical
+    - question: "Have all required shareholder approvals been obtained?"
+      category: "Governance"
+      priority: critical
+    - question: "Are there any director conflicts of interest?"
+      category: "Governance"
+      priority: high
+    - question: "Have all directors disclosed their interests?"
+      category: "Governance"
+      priority: medium
+
+  litigation:
+    - question: "Is there any pending or threatened litigation?"
+      category: "Litigation"
+      priority: high
+    - question: "Are there any regulatory investigations or inquiries?"
+      category: "Litigation"
+      priority: high
+    - question: "Are there any material disputes with customers or suppliers?"
+      category: "Litigation"
+      priority: medium
+    - question: "What is the company's litigation history over the past 5 years?"
+      category: "Litigation"
+      priority: medium
+
+  tax:
+    - question: "Are all tax returns filed and taxes paid?"
+      category: "Tax"
+      priority: high
+    - question: "Are there any pending tax audits or assessments?"
+      category: "Tax"
+      priority: high
+    - question: "Are there any tax disputes with SARS?"
+      category: "Tax"
+      priority: high
+    - question: "Is there any exposure to secondary tax on companies (STC) or dividends tax?"
+      category: "Tax"
+      priority: medium
+    - question: "Are transfer pricing arrangements compliant?"
+      category: "Tax"
+      priority: medium
+
+  insurance:
+    - question: "What insurance policies are in place?"
+      category: "Insurance"
+      priority: medium
+    - question: "Are coverage levels adequate for the business?"
+      category: "Insurance"
+      priority: medium
+    - question: "Are there any pending or unresolved claims?"
+      category: "Insurance"
+      priority: medium
+    - question: "Will policies remain in force post-transaction?"
+      category: "Insurance"
+      priority: medium
+
+  data_protection:
+    - question: "Is the company POPIA compliant?"
+      category: "Regulatory"
+      priority: high
+    - question: "Has an Information Officer been registered?"
+      category: "Regulatory"
+      priority: medium
+    - question: "Are there adequate data processing agreements with third parties?"
+      category: "Regulatory"
+      priority: medium
+    - question: "Have there been any data breaches?"
+      category: "Regulatory"
+      priority: high
+
+cross_document_validations:
+  - check: "MOI approval thresholds vs transaction structure"
+    applies_to: all
+    description: "Verify that the transaction structure complies with MOI approval requirements"
+  - check: "Board Resolution scope vs MOI requirements"
+    applies_to: all
+    description: "Confirm board has authority for the specific transaction being authorized"
+  - check: "Shareholders Agreement restrictions vs proposed transaction"
+    applies_to: all
+    description: "Check for any SHA provisions that could block or restrict the transaction"
+  - check: "Financial statements vs representations made"
+    applies_to: all
+    description: "Verify financial representations are consistent with audited statements"
+  - check: "Security register vs loan agreement requirements"
+    applies_to: all
+    description: "Confirm all required security is properly registered"

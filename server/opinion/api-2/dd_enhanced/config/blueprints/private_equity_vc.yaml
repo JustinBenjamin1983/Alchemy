@@ -1,0 +1,397 @@
+# Private Equity & Venture Capital Due Diligence Blueprint
+# Covers: PE buyouts, VC investments, growth equity, fund investments
+# Jurisdiction: South Africa
+
+transaction_type: "Private Equity & Venture Capital"
+code: "private_equity_vc"
+description: |
+  Due diligence blueprint for private equity and venture capital transactions
+  including buyouts, growth equity investments, venture investments, and fund
+  investments. Covers investment structures, management incentives, and exit planning.
+
+risk_categories:
+  - name: "Investment Structure & Terms"
+    description: "Deal structure, investment instruments, and key commercial terms"
+    questions:
+      - id: "PE-STR-001"
+        question: "Is the proposed investment structure appropriate for the transaction type and objectives?"
+        priority: "critical"
+        document_types: ["Term sheet", "Structure memorandum", "Tax opinion", "Legal structure diagram"]
+        risk_indicators: ["Tax inefficiency", "Structural complexity", "Regulatory issues"]
+
+      - id: "PE-STR-002"
+        question: "Are the investment instruments (ordinary shares, preference shares, convertibles) appropriate?"
+        priority: "critical"
+        document_types: ["Investment agreement", "Shareholders agreement", "Instrument terms", "Rights analysis"]
+        risk_indicators: ["Inappropriate instruments", "Misaligned economics", "Conversion issues"]
+
+      - id: "PE-STR-003"
+        question: "What are the valuation methodology and key assumptions, and are they supportable?"
+        priority: "critical"
+        document_types: ["Valuation report", "Model assumptions", "Comparable analysis", "Management projections"]
+        risk_indicators: ["Aggressive valuation", "Unsupported assumptions", "Market disconnect"]
+
+      - id: "PE-STR-004"
+        question: "Are there anti-dilution, pre-emption, and other protective provisions in place?"
+        priority: "high"
+        document_types: ["Shareholders agreement", "Subscription agreement", "Anti-dilution analysis", "Rights summary"]
+        risk_indicators: ["Inadequate protection", "Full ratchet exposure", "Watered rights"]
+
+      - id: "PE-STR-005"
+        question: "What are the governance rights and are they appropriate for the investment size?"
+        priority: "high"
+        document_types: ["Shareholders agreement", "Board representation", "Reserved matters", "Voting rights"]
+        risk_indicators: ["Insufficient governance rights", "Minority position issues", "Blocked decisions"]
+
+      - id: "PE-STR-006"
+        question: "Are there co-investment rights, follow-on provisions, or pay-to-play requirements?"
+        priority: "medium"
+        document_types: ["Co-investment terms", "Follow-on rights", "Pay-to-play provisions", "Syndicate arrangements"]
+        risk_indicators: ["Forced participation", "Dilution risk", "Capital calls"]
+
+      - id: "PE-STR-007"
+        question: "How does this investment fit within the fund's mandate and portfolio construction?"
+        priority: "medium"
+        document_types: ["Fund LPA", "Investment mandate", "Portfolio analysis", "Concentration limits"]
+        risk_indicators: ["Mandate breach", "Concentration issues", "Sector exposure"]
+
+  - name: "Founder & Management Assessment"
+    description: "Management team evaluation, incentives, and key person considerations"
+    questions:
+      - id: "PE-MGT-001"
+        question: "What is the quality and track record of the founding team and key management?"
+        priority: "critical"
+        document_types: ["Management CVs", "Reference checks", "Track record analysis", "Background checks"]
+        risk_indicators: ["Weak track record", "Key gaps", "Integrity concerns"]
+
+      - id: "PE-MGT-002"
+        question: "Are management incentive arrangements appropriately structured and aligned?"
+        priority: "critical"
+        document_types: ["Management incentive plan", "Share option scheme", "Vesting schedules", "Performance metrics"]
+        risk_indicators: ["Misaligned incentives", "Inadequate retention", "Excessive dilution"]
+
+      - id: "PE-MGT-003"
+        question: "Are there appropriate service agreements and restraint of trade provisions?"
+        priority: "high"
+        document_types: ["Employment agreements", "Service contracts", "Restraint provisions", "IP assignments"]
+        risk_indicators: ["Weak restraints", "Missing agreements", "IP ownership gaps"]
+
+      - id: "PE-MGT-004"
+        question: "What is the key person dependency and are there succession arrangements?"
+        priority: "high"
+        document_types: ["Key person analysis", "Succession plans", "Organisational structure", "Depth assessment"]
+        risk_indicators: ["Single point of failure", "No succession", "Skills concentration"]
+
+      - id: "PE-MGT-005"
+        question: "Are there any existing shareholder or management disputes to consider?"
+        priority: "high"
+        document_types: ["Shareholder correspondence", "Dispute history", "Legal proceedings", "Settlement agreements"]
+        risk_indicators: ["Active disputes", "Founder conflict", "Governance breakdown"]
+
+      - id: "PE-MGT-006"
+        question: "What are management's intentions regarding continued involvement post-investment?"
+        priority: "medium"
+        document_types: ["Management letters", "Commitment statements", "Lock-in arrangements", "Exit intentions"]
+        risk_indicators: ["Exit intentions", "Reduced commitment", "Competing interests"]
+
+      - id: "PE-MGT-007"
+        question: "Are there appropriate good/bad leaver provisions in the incentive structures?"
+        priority: "medium"
+        document_types: ["Leaver provisions", "Share scheme rules", "Acceleration terms", "Clawback provisions"]
+        risk_indicators: ["Weak leaver provisions", "Accelerated vesting risks", "No clawback"]
+
+  - name: "Business & Commercial Due Diligence"
+    description: "Business model, market position, and commercial viability"
+    questions:
+      - id: "PE-BUS-001"
+        question: "Is the business model proven and sustainable?"
+        priority: "critical"
+        document_types: ["Business plan", "Revenue model analysis", "Unit economics", "Cohort analysis"]
+        risk_indicators: ["Unproven model", "Negative unit economics", "Unsustainable growth"]
+
+      - id: "PE-BUS-002"
+        question: "What is the market size, growth potential, and competitive dynamics?"
+        priority: "critical"
+        document_types: ["Market analysis", "TAM/SAM/SOM analysis", "Competitive landscape", "Industry reports"]
+        risk_indicators: ["Limited market", "Intense competition", "Market decline"]
+
+      - id: "PE-BUS-003"
+        question: "What are the key competitive advantages and barriers to entry?"
+        priority: "critical"
+        document_types: ["Competitive analysis", "Moat assessment", "IP/technology review", "Customer lock-in analysis"]
+        risk_indicators: ["Weak moat", "Low barriers", "Commoditised offering"]
+
+      - id: "PE-BUS-004"
+        question: "Is there customer concentration risk and what is customer quality?"
+        priority: "high"
+        document_types: ["Customer analysis", "Revenue concentration", "Customer contracts", "Churn analysis"]
+        risk_indicators: ["High concentration", "Customer churn", "Weak contracts"]
+
+      - id: "PE-BUS-005"
+        question: "What is the technology stack and are there any technology risks?"
+        priority: "high"
+        document_types: ["Technology assessment", "Architecture review", "Technical debt analysis", "Security audit"]
+        risk_indicators: ["Technical debt", "Scalability issues", "Security vulnerabilities"]
+
+      - id: "PE-BUS-006"
+        question: "Are there any key supplier dependencies or supply chain risks?"
+        priority: "medium"
+        document_types: ["Supplier analysis", "Supplier contracts", "Alternative supplier assessment", "Supply chain mapping"]
+        risk_indicators: ["Single suppliers", "Contract risks", "Supply disruption"]
+
+      - id: "PE-BUS-007"
+        question: "What are the key operational metrics and how do they trend?"
+        priority: "medium"
+        document_types: ["KPI dashboard", "Operational metrics", "Trend analysis", "Benchmark comparison"]
+        risk_indicators: ["Declining metrics", "Below benchmarks", "Inconsistent data"]
+
+  - name: "Financial Due Diligence"
+    description: "Financial performance, quality of earnings, and projections"
+    questions:
+      - id: "PE-FIN-001"
+        question: "What is the quality of historical earnings and are there normalisation adjustments?"
+        priority: "critical"
+        document_types: ["QofE report", "Audited financials", "Normalisation schedule", "Adjustment analysis"]
+        risk_indicators: ["Poor earnings quality", "Material adjustments", "Inconsistent recognition"]
+
+      - id: "PE-FIN-002"
+        question: "Are the financial projections achievable and assumptions reasonable?"
+        priority: "critical"
+        document_types: ["Financial model", "Management projections", "Assumption book", "Sensitivity analysis"]
+        risk_indicators: ["Aggressive projections", "Unrealistic assumptions", "Hockey stick growth"]
+
+      - id: "PE-FIN-003"
+        question: "What is the working capital position and normalised working capital requirement?"
+        priority: "high"
+        document_types: ["Working capital analysis", "Cash conversion", "Seasonality analysis", "Completion mechanism"]
+        risk_indicators: ["Working capital volatility", "Cash conversion issues", "Funding requirements"]
+
+      - id: "PE-FIN-004"
+        question: "Are there any net debt items, debt-like items, or cash-like items to consider?"
+        priority: "high"
+        document_types: ["Net debt analysis", "Debt schedule", "Off-balance sheet items", "Cash analysis"]
+        risk_indicators: ["Hidden debt", "Off-balance sheet", "Trapped cash"]
+
+      - id: "PE-FIN-005"
+        question: "What is the cash burn rate and runway at current and projected performance?"
+        priority: "high"
+        document_types: ["Cash flow analysis", "Runway calculation", "Funding requirements", "Bridge scenarios"]
+        risk_indicators: ["High burn rate", "Short runway", "Funding gap"]
+
+      - id: "PE-FIN-006"
+        question: "Are there any related party transactions requiring adjustment or disclosure?"
+        priority: "medium"
+        document_types: ["Related party schedule", "Transfer pricing", "Arm's length analysis", "Ongoing arrangements"]
+        risk_indicators: ["Non-arm's length", "Undisclosed transactions", "Leakage risk"]
+
+      - id: "PE-FIN-007"
+        question: "What is the historical and projected capex requirement?"
+        priority: "medium"
+        document_types: ["Capex analysis", "Asset register", "Maintenance vs growth capex", "Investment plans"]
+        risk_indicators: ["Deferred capex", "Large investment needs", "Asset condition"]
+
+  - name: "Legal Structure & Corporate"
+    description: "Corporate structure, governance, and legal matters"
+    questions:
+      - id: "PE-LEG-001"
+        question: "Is the corporate structure clean and appropriate for the investment?"
+        priority: "critical"
+        document_types: ["Group structure", "Corporate records", "Share registers", "Restructuring requirements"]
+        risk_indicators: ["Complex structure", "Legacy issues", "Restructuring needed"]
+
+      - id: "PE-LEG-002"
+        question: "Are all shares validly issued and is the cap table accurate and complete?"
+        priority: "critical"
+        document_types: ["Cap table", "Share certificates", "Share issue resolutions", "Option register"]
+        risk_indicators: ["Cap table errors", "Invalid issuances", "Missing options"]
+
+      - id: "PE-LEG-003"
+        question: "Are there any existing shareholder arrangements that affect the investment?"
+        priority: "critical"
+        document_types: ["Existing shareholders agreement", "Side letters", "Consent requirements", "Tag/drag analysis"]
+        risk_indicators: ["Blocking rights", "Consent requirements", "Conflicting rights"]
+
+      - id: "PE-LEG-004"
+        question: "Are all material contracts in place and in good standing?"
+        priority: "high"
+        document_types: ["Material contracts schedule", "Contract summaries", "Standing confirmations", "Renewal schedule"]
+        risk_indicators: ["Missing contracts", "Expiring contracts", "Breach issues"]
+
+      - id: "PE-LEG-005"
+        question: "Is the intellectual property properly owned, registered, and protected?"
+        priority: "high"
+        document_types: ["IP register", "IP assignments", "Patent/trademark certificates", "Licence agreements"]
+        risk_indicators: ["Unassigned IP", "Lapsed registrations", "Licence dependencies"]
+
+      - id: "PE-LEG-006"
+        question: "Are there any pending or threatened litigation matters?"
+        priority: "high"
+        document_types: ["Litigation schedule", "Legal opinions", "Insurance coverage", "Dispute history"]
+        risk_indicators: ["Material litigation", "Uninsured exposure", "Pattern of disputes"]
+
+      - id: "PE-LEG-007"
+        question: "Is the company compliant with data protection and privacy requirements?"
+        priority: "medium"
+        document_types: ["POPIA assessment", "Privacy policies", "Consent mechanisms", "Data processing agreements"]
+        risk_indicators: ["Non-compliance", "Data breaches", "Missing consents"]
+
+  - name: "Exit & Liquidity"
+    description: "Exit routes, timeline, and liquidity considerations"
+    questions:
+      - id: "PE-EXIT-001"
+        question: "What are the realistic exit routes and potential acquirers/IPO prospects?"
+        priority: "critical"
+        document_types: ["Exit analysis", "Potential acquirer list", "IPO readiness", "Comparable exits"]
+        risk_indicators: ["Limited exit routes", "No natural buyers", "IPO unviable"]
+
+      - id: "PE-EXIT-002"
+        question: "What is the expected investment horizon and target returns?"
+        priority: "critical"
+        document_types: ["Investment memo", "Return analysis", "Hold period assessment", "Fund timeline"]
+        risk_indicators: ["Extended hold", "Below target returns", "Fund life constraints"]
+
+      - id: "PE-EXIT-003"
+        question: "Are the drag-along, tag-along, and other exit provisions appropriate?"
+        priority: "high"
+        document_types: ["Shareholders agreement", "Exit provisions", "Threshold analysis", "Mechanic review"]
+        risk_indicators: ["Inadequate drag", "Missing tag", "Threshold issues"]
+
+      - id: "PE-EXIT-004"
+        question: "Are there any contractual or regulatory restrictions on exit?"
+        priority: "high"
+        document_types: ["Lock-up agreements", "Regulatory requirements", "Transfer restrictions", "Consent requirements"]
+        risk_indicators: ["Extended lock-ups", "Regulatory approval", "Transfer blocks"]
+
+      - id: "PE-EXIT-005"
+        question: "What are the liquidation preference and waterfall mechanics?"
+        priority: "high"
+        document_types: ["Waterfall analysis", "Liquidation preferences", "Participation rights", "Model scenarios"]
+        risk_indicators: ["Excessive preferences", "Participation concerns", "Waterfall complexity"]
+
+      - id: "PE-EXIT-006"
+        question: "Are there appropriate information rights for exit preparation?"
+        priority: "medium"
+        document_types: ["Information rights", "Reporting requirements", "Audit rights", "Data room provisions"]
+        risk_indicators: ["Limited information", "No audit rights", "Disclosure restrictions"]
+
+  - name: "Tax Structuring"
+    description: "Tax efficiency, compliance, and structuring considerations"
+    questions:
+      - id: "PE-TAX-001"
+        question: "Is the investment structure tax efficient from both investor and company perspective?"
+        priority: "critical"
+        document_types: ["Tax structure memo", "Tax opinion", "Withholding analysis", "Repatriation planning"]
+        risk_indicators: ["Tax leakage", "Withholding issues", "Repatriation blocks"]
+
+      - id: "PE-TAX-002"
+        question: "Are there any historical tax issues or exposures to consider?"
+        priority: "high"
+        document_types: ["Tax compliance review", "SARS correspondence", "Assessment status", "Tax warranties"]
+        risk_indicators: ["Tax disputes", "Compliance gaps", "Assessment risk"]
+
+      - id: "PE-TAX-003"
+        question: "Are management incentives structured in a tax-efficient manner?"
+        priority: "high"
+        document_types: ["Incentive tax analysis", "Section 8C analysis", "Valuation for tax", "Timing considerations"]
+        risk_indicators: ["Inefficient structure", "Section 8C exposure", "Valuation disputes"]
+
+      - id: "PE-TAX-004"
+        question: "Are there transfer pricing considerations for group transactions?"
+        priority: "medium"
+        document_types: ["Transfer pricing policy", "Intercompany agreements", "Benchmarking studies", "Country files"]
+        risk_indicators: ["No TP documentation", "Arm's length issues", "BEPS exposure"]
+
+      - id: "PE-TAX-005"
+        question: "Have exit tax implications been modelled and planned for?"
+        priority: "medium"
+        document_types: ["Exit tax analysis", "CGT calculations", "Participation exemption", "Treaty benefits"]
+        risk_indicators: ["High exit tax", "No planning", "Treaty limitations"]
+
+  - name: "Regulatory & Compliance"
+    description: "Sector regulation, compliance requirements, and approvals"
+    questions:
+      - id: "PE-REG-001"
+        question: "Are there any sector-specific regulatory approvals required for the investment?"
+        priority: "critical"
+        document_types: ["Regulatory analysis", "Licence requirements", "Change of control provisions", "Approval timeline"]
+        risk_indicators: ["Approval required", "Licence conditions", "Regulatory objection risk"]
+
+      - id: "PE-REG-002"
+        question: "Is Competition Commission approval required and what is the likely outcome?"
+        priority: "critical"
+        document_types: ["Competition analysis", "Market definition", "Notification requirements", "Timing assessment"]
+        risk_indicators: ["Merger control required", "Concentration issues", "Conditions likely"]
+
+      - id: "PE-REG-003"
+        question: "Are there any exchange control or Reserve Bank considerations?"
+        priority: "high"
+        document_types: ["Exchange control analysis", "Loop structure review", "SARB applications", "Approval requirements"]
+        risk_indicators: ["Loop structure issues", "SARB approval required", "Repatriation restrictions"]
+
+      - id: "PE-REG-004"
+        question: "Is the company compliant with all applicable regulatory requirements?"
+        priority: "high"
+        document_types: ["Compliance register", "Licence register", "Regulatory correspondence", "Compliance certificates"]
+        risk_indicators: ["Compliance gaps", "Licence issues", "Regulatory scrutiny"]
+
+      - id: "PE-REG-005"
+        question: "Are there any B-BBEE considerations affecting the investment?"
+        priority: "medium"
+        document_types: ["BEE certificate", "BEE structure", "Ownership analysis", "Sector codes"]
+        risk_indicators: ["BEE level impact", "Ownership dilution", "Fronting risks"]
+
+cross_document_validations:
+  - validation_id: "PE-CROSS-001"
+    description: "Cap table reconciles to share register and option pool"
+    primary_docs: ["Cap table"]
+    secondary_docs: ["Share register", "Option register", "Shareholders agreement"]
+    check_type: "accuracy"
+
+  - validation_id: "PE-CROSS-002"
+    description: "Financial model assumptions consistent with QofE findings"
+    primary_docs: ["Financial model"]
+    secondary_docs: ["QofE report", "Audited financials", "Management accounts"]
+    check_type: "financial_consistency"
+
+  - validation_id: "PE-CROSS-003"
+    description: "Investment agreement terms match negotiated term sheet"
+    primary_docs: ["Investment agreement"]
+    secondary_docs: ["Term sheet", "Shareholders agreement", "Side letters"]
+    check_type: "completeness"
+
+  - validation_id: "PE-CROSS-004"
+    description: "IP ownership confirmed by assignments and employment agreements"
+    primary_docs: ["IP register"]
+    secondary_docs: ["IP assignments", "Employment agreements", "Contractor agreements"]
+    check_type: "verification"
+
+deal_blockers:
+  - blocker_id: "PE-BLOCK-001"
+    condition: "Founder or key management unwilling to continue post-investment"
+    severity: "critical"
+    mitigation: "Negotiate retention arrangements, adjust valuation, seek replacements"
+
+  - blocker_id: "PE-BLOCK-002"
+    condition: "Material misrepresentation in due diligence"
+    severity: "critical"
+    mitigation: "Terminate discussions, consider legal recourse, reputational protection"
+
+  - blocker_id: "PE-BLOCK-003"
+    condition: "Valuation expectations materially misaligned"
+    severity: "high"
+    mitigation: "Bridge with structure (earnouts, ratchets), staged investment, walk away"
+
+  - blocker_id: "PE-BLOCK-004"
+    condition: "Regulatory approval unlikely or significantly delayed"
+    severity: "high"
+    mitigation: "Early regulatory engagement, structure to avoid triggers, walk away"
+
+  - blocker_id: "PE-BLOCK-005"
+    condition: "Existing shareholders blocking investment"
+    severity: "high"
+    mitigation: "Negotiate consent, buy out objectors, adjust terms, alternative structure"
+
+  - blocker_id: "PE-BLOCK-006"
+    condition: "Unresolvable IP ownership issues"
+    severity: "high"
+    mitigation: "Secure assignments, indemnities, carve-out affected IP, reduce valuation"

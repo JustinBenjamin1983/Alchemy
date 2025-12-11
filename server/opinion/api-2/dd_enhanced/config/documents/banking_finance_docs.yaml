@@ -1,0 +1,270 @@
+# Document registry for Banking & Finance transactions
+
+transaction_type: "Banking & Finance"
+
+folder_structure:
+  - name: "01. Corporate"
+    subfolders:
+      - name: "1.1 Constitutional"
+      - name: "1.2 Board & Shareholders"
+      - name: "1.3 Group Structure"
+
+  - name: "02. Financial"
+    subfolders:
+      - name: "2.1 Annual Financial Statements"
+      - name: "2.2 Tax"
+      - name: "2.3 Management Accounts"
+      - name: "2.4 Projections"
+
+  - name: "03. Existing Debt"
+    subfolders:
+      - name: "3.1 Facility Agreements"
+      - name: "3.2 Amendments & Waivers"
+      - name: "3.3 Covenant Compliance"
+      - name: "3.4 Inter-creditor"
+
+  - name: "04. Security"
+    subfolders:
+      - name: "4.1 Bonds & Mortgages"
+      - name: "4.2 Cessions & Pledges"
+      - name: "4.3 Guarantees"
+      - name: "4.4 Security Register"
+
+  - name: "05. Assets (Security)"
+    subfolders:
+      - name: "5.1 Property"
+      - name: "5.2 Movables"
+      - name: "5.3 Receivables"
+      - name: "5.4 Shares"
+
+  - name: "06. Material Contracts"
+
+  - name: "07. Regulatory"
+
+  - name: "08. Litigation & Disputes"
+
+  - name: "09. Insurance"
+
+  - name: "99. Other Documents"
+
+categories:
+  - name: "Existing Debt"
+    description: "Current debt facilities and obligations"
+    folder: "03. Existing Debt"
+
+  - name: "Security"
+    description: "Security documents and assets"
+    folder: "04. Security"
+
+  - name: "Assets"
+    description: "Assets available as security"
+    folder: "05. Assets (Security)"
+
+documents:
+  # Existing Debt
+  - name: "Existing Facility Agreements"
+    category: "Existing Debt"
+    folder: "03. Existing Debt/3.1 Facility Agreements"
+    priority: critical
+    description: "All existing loan and facility agreements"
+    classification_patterns:
+      - "facility.*agreement"
+      - "loan.*agreement"
+      - "credit.*agreement"
+      - "term.*loan"
+    content_keywords:
+      - "borrower"
+      - "lender"
+      - "commitment"
+      - "margin"
+    request_template: "All existing facility/loan agreements with all schedules"
+
+  - name: "Facility Amendments"
+    category: "Existing Debt"
+    folder: "03. Existing Debt/3.2 Amendments & Waivers"
+    priority: critical
+    description: "Amendments to existing facilities"
+    classification_patterns:
+      - "amendment"
+      - "variation"
+      - "supplemental"
+    request_template: "All amendments, variations, and supplemental agreements"
+
+  - name: "Waiver Letters"
+    category: "Existing Debt"
+    folder: "03. Existing Debt/3.2 Amendments & Waivers"
+    priority: critical
+    description: "Covenant waivers granted"
+    classification_patterns:
+      - "waiver"
+      - "consent.*letter"
+      - "standstill"
+    request_template: "All waiver letters and standstill agreements"
+
+  - name: "Covenant Compliance Certificates"
+    category: "Existing Debt"
+    folder: "03. Existing Debt/3.3 Covenant Compliance"
+    priority: critical
+    description: "Historical covenant compliance"
+    classification_patterns:
+      - "covenant.*compliance"
+      - "compliance.*cert"
+      - "financial.*covenant"
+    request_template: "Covenant compliance certificates for last 12 quarters"
+
+  - name: "Inter-creditor Agreement"
+    category: "Existing Debt"
+    folder: "03. Existing Debt/3.4 Inter-creditor"
+    priority: critical
+    description: "Arrangements between lenders"
+    classification_patterns:
+      - "inter.*creditor"
+      - "intercreditor"
+      - "subordination"
+      - "priority.*deed"
+    request_template: "All inter-creditor, subordination, and priority agreements"
+
+  # Security
+  - name: "Mortgage Bonds"
+    category: "Security"
+    folder: "04. Security/4.1 Bonds & Mortgages"
+    priority: critical
+    description: "Mortgage bonds over immovable property"
+    classification_patterns:
+      - "mortgage.*bond"
+      - "covering.*bond"
+      - "special.*bond"
+    request_template: "All mortgage bonds with proof of registration"
+
+  - name: "Notarial Bonds"
+    category: "Security"
+    folder: "04. Security/4.1 Bonds & Mortgages"
+    priority: critical
+    description: "Notarial bonds over movables"
+    classification_patterns:
+      - "notarial.*bond"
+      - "general.*notarial"
+      - "special.*notarial"
+    request_template: "All notarial bonds with proof of registration"
+
+  - name: "Cession Agreements"
+    category: "Security"
+    folder: "04. Security/4.2 Cessions & Pledges"
+    priority: critical
+    description: "Cessions of rights/receivables"
+    classification_patterns:
+      - "cession"
+      - "assignment"
+      - "cession.*security"
+    request_template: "All cession in security agreements"
+
+  - name: "Pledge Agreements"
+    category: "Security"
+    folder: "04. Security/4.2 Cessions & Pledges"
+    priority: critical
+    description: "Share pledges and other pledges"
+    classification_patterns:
+      - "pledge"
+      - "share.*pledge"
+    request_template: "All pledge agreements"
+
+  - name: "Guarantee Documents"
+    category: "Security"
+    folder: "04. Security/4.3 Guarantees"
+    priority: critical
+    description: "Corporate and personal guarantees"
+    classification_patterns:
+      - "guarantee"
+      - "suretyship"
+      - "surety"
+    content_keywords:
+      - "guarantor"
+      - "guarantee"
+      - "jointly and severally"
+    request_template: "All guarantee and suretyship agreements"
+
+  - name: "Security Register"
+    category: "Security"
+    folder: "04. Security/4.4 Security Register"
+    priority: critical
+    description: "Register of all security"
+    classification_patterns:
+      - "security.*register"
+      - "security.*schedule"
+    request_template: "Complete security register showing all security held"
+
+  # Assets
+  - name: "Property Title Deeds"
+    category: "Assets"
+    folder: "05. Assets (Security)/5.1 Property"
+    priority: critical
+    description: "Title deeds for security properties"
+    classification_patterns:
+      - "title.*deed"
+      - "property.*deed"
+    request_template: "Title deeds for all properties offered as security"
+
+  - name: "Property Valuations"
+    category: "Assets"
+    folder: "05. Assets (Security)/5.1 Property"
+    priority: critical
+    description: "Recent property valuations"
+    classification_patterns:
+      - "valuation"
+      - "property.*value"
+    request_template: "Recent property valuations (within 12 months)"
+
+  - name: "Asset Register"
+    category: "Assets"
+    folder: "05. Assets (Security)/5.2 Movables"
+    priority: required
+    description: "Fixed asset register"
+    classification_patterns:
+      - "asset.*register"
+      - "fixed.*asset"
+      - "ppe.*register"
+    request_template: "Fixed asset register showing all movable assets"
+
+  - name: "Debtors Book"
+    category: "Assets"
+    folder: "05. Assets (Security)/5.3 Receivables"
+    priority: required
+    description: "Trade receivables for cession"
+    classification_patterns:
+      - "debtor.*book"
+      - "receivable"
+      - "debtor.*list"
+    request_template: "Aged debtors book with top 20 debtor details"
+
+  - name: "Share Certificates"
+    category: "Assets"
+    folder: "05. Assets (Security)/5.4 Shares"
+    priority: critical
+    description: "Share certificates for pledge"
+    classification_patterns:
+      - "share.*cert"
+      - "stock.*cert"
+    request_template: "Original share certificates for pledged shares"
+
+  # Additional Financial
+  - name: "Financial Model/Projections"
+    category: "Financial Statements"
+    folder: "02. Financial/2.4 Projections"
+    priority: critical
+    description: "Financial model for debt service"
+    classification_patterns:
+      - "financial.*model"
+      - "projection"
+      - "forecast"
+      - "base.*case"
+    request_template: "Financial model with base case and downside scenarios"
+
+  - name: "Cashflow Forecast"
+    category: "Financial Statements"
+    folder: "02. Financial/2.4 Projections"
+    priority: critical
+    description: "Cash flow projections"
+    classification_patterns:
+      - "cash.*flow"
+      - "liquidity"
+    request_template: "Monthly cashflow forecast for debt service period"

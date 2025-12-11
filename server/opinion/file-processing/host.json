@@ -1,0 +1,15 @@
+{
+  "version": "2.0",
+  "logging": {
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true
+      }
+    },
+    "logLevel": {
+      "Function.FileUploadAndIndex": "Information",
+      "default": "Debug"
+    }
+  },
+  "functionTimeout": "00:10:00"
+}

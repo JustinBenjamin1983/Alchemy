@@ -1,0 +1,4 @@
+PyJWT
+azure-functions
+azure-data-tables
+requests

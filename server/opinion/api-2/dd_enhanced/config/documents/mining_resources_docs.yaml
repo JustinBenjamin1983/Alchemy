@@ -1,0 +1,586 @@
+# Document registry for Mining & Resources transactions
+# Supplements _common_documents.yaml
+
+transaction_type: "Mining & Resources"
+
+folder_structure:
+  - name: "01. Corporate"
+    subfolders:
+      - name: "1.1 Constitutional"
+        description: "MOI, SHA, CIPC documents"
+      - name: "1.2 Board & Shareholders"
+        description: "Resolutions, minutes, registers"
+      - name: "1.3 Group Structure"
+        description: "Organograms, subsidiary documents"
+
+  - name: "02. Financial"
+    subfolders:
+      - name: "2.1 Annual Financial Statements"
+      - name: "2.2 Tax"
+      - name: "2.3 Management Accounts"
+      - name: "2.4 Budgets & Forecasts"
+      - name: "2.5 Debt & Banking"
+
+  - name: "03. Mining Rights & Regulatory"
+    subfolders:
+      - name: "3.1 Mining Rights"
+        description: "Mining rights, prospecting rights"
+      - name: "3.2 DMRE Correspondence"
+        description: "Compliance, renewals, Section 11"
+      - name: "3.3 Social & Labour Plan"
+      - name: "3.4 Mine Work Programme"
+
+  - name: "04. Environmental"
+    subfolders:
+      - name: "4.1 Environmental Authorizations"
+        description: "EMPr, EA, amendments"
+      - name: "4.2 Water Use License"
+      - name: "4.3 Waste & Emissions"
+      - name: "4.4 Rehabilitation"
+        description: "Closure plans, financial provision"
+      - name: "4.5 Environmental Audits"
+
+  - name: "05. Property & Surface Rights"
+    subfolders:
+      - name: "5.1 Title Deeds"
+      - name: "5.2 Lease Agreements"
+      - name: "5.3 Servitudes & Rights"
+
+  - name: "06. Commercial Contracts"
+    subfolders:
+      - name: "6.1 Offtake & Sales"
+        description: "Coal supply, offtake agreements"
+      - name: "6.2 Supply & Procurement"
+      - name: "6.3 Services & Contractors"
+      - name: "6.4 Joint Ventures"
+
+  - name: "07. Employment"
+    subfolders:
+      - name: "7.1 Executive Contracts"
+      - name: "7.2 Union & Collective Agreements"
+      - name: "7.3 Benefit Schemes"
+      - name: "7.4 Health & Safety"
+
+  - name: "08. Litigation & Disputes"
+
+  - name: "09. Insurance"
+
+  - name: "10. BEE & Transformation"
+    subfolders:
+      - name: "10.1 BEE Certificates"
+      - name: "10.2 Ownership Structure"
+      - name: "10.3 Mining Charter Compliance"
+
+  - name: "11. Technical"
+    subfolders:
+      - name: "11.1 Competent Persons Report"
+      - name: "11.2 Mine Plans"
+      - name: "11.3 Resource & Reserve Statements"
+
+  - name: "99. Other Documents"
+
+categories:
+  - name: "Mining Rights"
+    description: "Mining and prospecting rights documentation"
+    folder: "03. Mining Rights & Regulatory/3.1 Mining Rights"
+
+  - name: "Environmental"
+    description: "Environmental authorizations and compliance"
+    folder: "04. Environmental"
+
+  - name: "Water"
+    description: "Water use licenses and compliance"
+    folder: "04. Environmental/4.2 Water Use License"
+
+  - name: "Offtake Agreements"
+    description: "Coal supply and sales agreements"
+    folder: "06. Commercial Contracts/6.1 Offtake & Sales"
+
+  - name: "Surface Rights"
+    description: "Land ownership and leases"
+    folder: "05. Property & Surface Rights"
+
+  - name: "Technical"
+    description: "Technical and geological reports"
+    folder: "11. Technical"
+
+  - name: "BEE & Transformation"
+    description: "BEE ownership and Mining Charter compliance"
+    folder: "10. BEE & Transformation"
+
+  - name: "Employment"
+    description: "Employment contracts and labor relations"
+    folder: "07. Employment"
+
+  - name: "Debt & Banking"
+    description: "Loan facilities and security"
+    folder: "02. Financial/2.5 Debt & Banking"
+
+documents:
+  # Mining Rights
+  - name: "Mining Right Certificate"
+    category: "Mining Rights"
+    folder: "03. Mining Rights & Regulatory/3.1 Mining Rights"
+    priority: critical
+    description: "New Order Mining Right issued under MPRDA"
+    classification_patterns:
+      - "mining.*right"
+      - "\\bmr\\b"
+      - "mprda"
+      - "mineral.*right"
+    common_filenames:
+      - "Mining Right"
+      - "MR"
+      - "10158MR"
+    content_keywords:
+      - "mining right"
+      - "department of mineral resources"
+      - "mprda"
+      - "section 23"
+    request_template: "Mining Right certificate with all annexures, conditions, and amendments"
+
+  - name: "Mining Right Conditions"
+    category: "Mining Rights"
+    folder: "03. Mining Rights & Regulatory/3.1 Mining Rights"
+    priority: critical
+    description: "Conditions attached to mining right"
+    classification_patterns:
+      - "mining.*condition"
+      - "right.*condition"
+      - "mr.*condition"
+    request_template: "Full conditions document attached to Mining Right"
+
+  - name: "Prospecting Right (if applicable)"
+    category: "Mining Rights"
+    folder: "03. Mining Rights & Regulatory/3.1 Mining Rights"
+    priority: recommended
+    description: "Any related prospecting rights"
+    classification_patterns:
+      - "prospecting.*right"
+      - "\\bpr\\b"
+      - "exploration"
+    request_template: "Any related prospecting rights in force or recently converted"
+
+  - name: "Section 102 Compliance Certificates"
+    category: "Mining Rights"
+    folder: "03. Mining Rights & Regulatory/3.2 DMRE Correspondence"
+    priority: critical
+    description: "Annual compliance certificates from DMRE"
+    classification_patterns:
+      - "section.*102"
+      - "s102"
+      - "compliance.*cert"
+      - "annual.*compliance"
+    request_template: "Section 102 compliance certificates for past 5 years"
+
+  - name: "DMRE Correspondence (Last 3 Years)"
+    category: "Mining Rights"
+    folder: "03. Mining Rights & Regulatory/3.2 DMRE Correspondence"
+    priority: required
+    description: "All correspondence with DMRE"
+    classification_patterns:
+      - "dmre"
+      - "dmr\\b"
+      - "department.*mineral"
+      - "regional.*manager"
+    request_template: "All correspondence with DMRE for last 3 years including directives, queries, and submissions"
+
+  - name: "Social and Labour Plan (SLP)"
+    category: "Mining Rights"
+    folder: "03. Mining Rights & Regulatory/3.3 Social & Labour Plan"
+    priority: critical
+    description: "Approved SLP and amendments"
+    classification_patterns:
+      - "social.*labour.*plan"
+      - "\\bslp\\b"
+      - "led\\b"
+      - "local.*economic"
+    content_keywords:
+      - "social and labour plan"
+      - "local economic development"
+      - "human resources development"
+    request_template: "Current approved SLP with all amendments and progress reports"
+
+  - name: "SLP Annual Reports"
+    category: "Mining Rights"
+    folder: "03. Mining Rights & Regulatory/3.3 Social & Labour Plan"
+    priority: required
+    description: "Annual SLP compliance reports"
+    classification_patterns:
+      - "slp.*report"
+      - "slp.*annual"
+      - "slp.*progress"
+    request_template: "SLP annual progress reports for last 3 years"
+
+  - name: "Mine Works Programme"
+    category: "Mining Rights"
+    folder: "03. Mining Rights & Regulatory/3.4 Mine Work Programme"
+    priority: required
+    description: "Approved mining work programme"
+    classification_patterns:
+      - "mine.*work.*programme"
+      - "mwp"
+      - "mining.*programme"
+    request_template: "Current approved mine works programme with amendments"
+
+  # Environmental
+  - name: "Environmental Management Programme (EMPr)"
+    category: "Environmental"
+    folder: "04. Environmental/4.1 Environmental Authorizations"
+    priority: critical
+    description: "Approved EMPr under NEMA"
+    classification_patterns:
+      - "empr"
+      - "emp\\b"
+      - "environmental.*management.*prog"
+      - "environmental.*authoriz"
+    content_keywords:
+      - "environmental management programme"
+      - "environmental impact"
+      - "nema"
+    request_template: "Approved EMPr with all amendments and annual performance assessments"
+
+  - name: "Environmental Authorization"
+    category: "Environmental"
+    folder: "04. Environmental/4.1 Environmental Authorizations"
+    priority: critical
+    description: "EA issued under NEMA"
+    classification_patterns:
+      - "environmental.*author"
+      - "\\bea\\b"
+      - "record.*decision"
+      - "nema.*author"
+    request_template: "Environmental Authorization with conditions and any amendments"
+
+  - name: "Water Use License (WUL)"
+    category: "Water"
+    folder: "04. Environmental/4.2 Water Use License"
+    priority: critical
+    description: "WUL issued under National Water Act"
+    classification_patterns:
+      - "water.*use.*licen"
+      - "\\bwul\\b"
+      - "water.*auth"
+      - "nwa\\b"
+    content_keywords:
+      - "water use license"
+      - "national water act"
+      - "department of water"
+    request_template: "Current Water Use License with all conditions and amendments"
+
+  - name: "Atmospheric Emission License"
+    category: "Environmental"
+    folder: "04. Environmental/4.3 Waste & Emissions"
+    priority: required
+    description: "AEL for air emissions"
+    classification_patterns:
+      - "atmospheric.*emission"
+      - "\\bael\\b"
+      - "air.*emission"
+      - "air.*quality"
+    request_template: "Atmospheric Emission License with monitoring reports"
+
+  - name: "Waste Management License"
+    category: "Environmental"
+    folder: "04. Environmental/4.3 Waste & Emissions"
+    priority: recommended
+    description: "WML if applicable"
+    classification_patterns:
+      - "waste.*management.*lic"
+      - "\\bwml\\b"
+      - "waste.*disposal"
+    request_template: "Waste Management License if applicable"
+
+  - name: "Rehabilitation/Closure Plan"
+    category: "Environmental"
+    folder: "04. Environmental/4.4 Rehabilitation"
+    priority: critical
+    description: "Mine closure and rehabilitation plan"
+    classification_patterns:
+      - "rehabilitation.*plan"
+      - "closure.*plan"
+      - "mine.*closure"
+      - "decommission"
+    request_template: "Approved rehabilitation/closure plan with latest updates"
+
+  - name: "Financial Provision Assessment"
+    category: "Environmental"
+    folder: "04. Environmental/4.4 Rehabilitation"
+    priority: critical
+    description: "Latest financial provision calculation"
+    classification_patterns:
+      - "financial.*provision"
+      - "rehab.*provision"
+      - "closure.*cost"
+      - "quantum"
+    content_keywords:
+      - "financial provision"
+      - "rehabilitation liability"
+      - "closure cost"
+    request_template: "Latest financial provision assessment and proof of provision (guarantee/trust)"
+
+  - name: "Environmental Audit Reports"
+    category: "Environmental"
+    folder: "04. Environmental/4.5 Environmental Audits"
+    priority: required
+    description: "External environmental audit reports"
+    classification_patterns:
+      - "environmental.*audit"
+      - "compliance.*audit"
+      - "empr.*audit"
+    request_template: "Environmental audit reports for last 3 years"
+
+  - name: "Environmental Compliance Certificate"
+    category: "Environmental"
+    folder: "04. Environmental/4.5 Environmental Audits"
+    priority: required
+    description: "Annual compliance certificate from DFFE"
+    classification_patterns:
+      - "environmental.*compliance"
+      - "compliance.*certificate"
+      - "dffe"
+    request_template: "Latest environmental compliance certificate"
+
+  # Surface Rights
+  - name: "Title Deeds"
+    category: "Surface Rights"
+    folder: "05. Property & Surface Rights/5.1 Title Deeds"
+    priority: critical
+    description: "Title deeds for owned properties"
+    classification_patterns:
+      - "title.*deed"
+      - "deed.*transfer"
+      - "property.*deed"
+    request_template: "Title deeds for all owned properties with endorsements"
+
+  - name: "Surface Lease Agreement"
+    category: "Surface Rights"
+    folder: "05. Property & Surface Rights/5.2 Lease Agreements"
+    priority: critical
+    description: "Lease agreements for mining surfaces"
+    classification_patterns:
+      - "surface.*lease"
+      - "land.*lease"
+      - "mining.*lease"
+      - "lease.*agreement"
+    content_keywords:
+      - "lease agreement"
+      - "lessor"
+      - "lessee"
+      - "rental"
+    request_template: "All surface/land lease agreements with amendments and correspondence"
+
+  - name: "Servitude Agreements"
+    category: "Surface Rights"
+    folder: "05. Property & Surface Rights/5.3 Servitudes & Rights"
+    priority: recommended
+    description: "Pipeline, power line, and access servitudes"
+    classification_patterns:
+      - "servitude"
+      - "right.*way"
+      - "wayleave"
+      - "access.*agreement"
+    request_template: "All servitude agreements and rights of way"
+
+  # Commercial Contracts
+  - name: "Coal Supply/Offtake Agreement"
+    category: "Offtake Agreements"
+    folder: "06. Commercial Contracts/6.1 Offtake & Sales"
+    priority: critical
+    description: "Primary sales/offtake agreements"
+    classification_patterns:
+      - "coal.*supply"
+      - "offtake"
+      - "supply.*agreement"
+      - "eskom"
+      - "sales.*agreement"
+    content_keywords:
+      - "coal supply"
+      - "offtake"
+      - "tonnes"
+      - "calorific value"
+    request_template: "All coal supply/offtake agreements with pricing schedules and amendments"
+
+  - name: "Contractor Mining Agreement"
+    category: "Offtake Agreements"
+    folder: "06. Commercial Contracts/6.3 Services & Contractors"
+    priority: required
+    description: "Contract mining arrangements"
+    classification_patterns:
+      - "contract.*mining"
+      - "mining.*contractor"
+      - "load.*haul"
+    request_template: "Contract mining agreements if applicable"
+
+  # Banking & Finance
+  - name: "Loan Facility Agreement"
+    category: "Debt & Banking"
+    folder: "02. Financial/2.5 Debt & Banking"
+    priority: critical
+    description: "Term loan and facility agreements"
+    classification_patterns:
+      - "loan.*agreement"
+      - "facility.*agreement"
+      - "term.*loan"
+      - "credit.*agreement"
+    content_keywords:
+      - "facility agreement"
+      - "borrower"
+      - "lender"
+      - "financial covenant"
+    request_template: "All loan/facility agreements with amendments, waivers, and security documents"
+
+  - name: "Security Documents"
+    category: "Debt & Banking"
+    folder: "02. Financial/2.5 Debt & Banking"
+    priority: critical
+    description: "Mortgage bonds, cessions, pledges"
+    classification_patterns:
+      - "security"
+      - "mortgage.*bond"
+      - "cession"
+      - "pledge"
+      - "notarial.*bond"
+    request_template: "All security documents including bonds, cessions, and pledges"
+
+  - name: "Covenant Compliance Certificates"
+    category: "Debt & Banking"
+    folder: "02. Financial/2.5 Debt & Banking"
+    priority: required
+    description: "Financial covenant compliance certificates"
+    classification_patterns:
+      - "covenant.*compliance"
+      - "compliance.*certificate"
+      - "dscr"
+    request_template: "Covenant compliance certificates for last 8 quarters"
+
+  # BEE
+  - name: "B-BBEE Certificate"
+    category: "BEE & Transformation"
+    folder: "10. BEE & Transformation/10.1 BEE Certificates"
+    priority: critical
+    description: "Current verified B-BBEE certificate"
+    classification_patterns:
+      - "b-?bbee.*cert"
+      - "bee.*cert"
+      - "empowerment.*cert"
+    request_template: "Current B-BBEE certificate from SANAS accredited agency"
+
+  - name: "BEE Ownership Analysis"
+    category: "BEE & Transformation"
+    folder: "10. BEE & Transformation/10.2 Ownership Structure"
+    priority: critical
+    description: "Analysis of HDSA ownership"
+    classification_patterns:
+      - "bee.*ownership"
+      - "hdsa"
+      - "ownership.*analysis"
+      - "flow.*through"
+    request_template: "BEE ownership flow-through analysis and supporting documents"
+
+  - name: "Mining Charter Compliance Report"
+    category: "BEE & Transformation"
+    folder: "10. BEE & Transformation/10.3 Mining Charter Compliance"
+    priority: critical
+    description: "Mining Charter compliance status"
+    classification_patterns:
+      - "mining.*charter"
+      - "charter.*compliance"
+      - "mc.*compliance"
+    request_template: "Latest Mining Charter compliance report and scorecard"
+
+  # Technical
+  - name: "Competent Persons Report"
+    category: "Technical"
+    folder: "11. Technical/11.1 Competent Persons Report"
+    priority: critical
+    description: "CPR prepared under SAMREC"
+    classification_patterns:
+      - "competent.*person"
+      - "\\bcpr\\b"
+      - "samrec"
+      - "technical.*report"
+    content_keywords:
+      - "competent person"
+      - "samrec"
+      - "mineral resource"
+      - "mineral reserve"
+    request_template: "Latest Competent Persons Report (CPR) prepared under SAMREC Code"
+
+  - name: "Resource & Reserve Statement"
+    category: "Technical"
+    folder: "11. Technical/11.3 Resource & Reserve Statements"
+    priority: critical
+    description: "SAMREC compliant resource/reserve statement"
+    classification_patterns:
+      - "resource.*statement"
+      - "reserve.*statement"
+      - "mineral.*resource"
+      - "ore.*reserve"
+    request_template: "Latest SAMREC-compliant resource and reserve statement"
+
+  - name: "Life of Mine Plan"
+    category: "Technical"
+    folder: "11. Technical/11.2 Mine Plans"
+    priority: required
+    description: "Current life of mine plan"
+    classification_patterns:
+      - "life.*mine"
+      - "lom"
+      - "mine.*plan"
+      - "mining.*schedule"
+    request_template: "Current Life of Mine plan with production schedule"
+
+  # Employment
+  - name: "Managing Director/CEO Contract"
+    category: "Employment"
+    folder: "07. Employment/7.1 Executive Contracts"
+    priority: critical
+    description: "MD/CEO employment contract"
+    classification_patterns:
+      - "managing.*director"
+      - "\\bmd\\b.*contract"
+      - "ceo.*contract"
+      - "executive.*contract"
+    content_keywords:
+      - "managing director"
+      - "employment"
+      - "remuneration"
+      - "change of control"
+    request_template: "Employment contracts for all executives including change of control provisions"
+
+  - name: "Recognition Agreements"
+    category: "Employment"
+    folder: "07. Employment/7.2 Union & Collective Agreements"
+    priority: required
+    description: "Union recognition agreements"
+    classification_patterns:
+      - "recognition.*agreement"
+      - "union.*agreement"
+      - "num\\b"
+      - "amcu"
+    request_template: "All union recognition agreements"
+
+  - name: "Collective Bargaining Agreements"
+    category: "Employment"
+    folder: "07. Employment/7.2 Union & Collective Agreements"
+    priority: required
+    description: "Wage and conditions agreements"
+    classification_patterns:
+      - "collective.*agreement"
+      - "wage.*agreement"
+      - "bargaining"
+    request_template: "All collective/wage agreements in force"
+
+  - name: "Mine Health & Safety Records"
+    category: "Employment"
+    folder: "07. Employment/7.4 Health & Safety"
+    priority: critical
+    description: "Safety statistics and incident reports"
+    classification_patterns:
+      - "health.*safety"
+      - "mhsa"
+      - "safety.*report"
+      - "incident.*report"
+      - "section.*54"
+    request_template: "Safety statistics, fatality reports, and Section 54/55 notices for last 3 years"

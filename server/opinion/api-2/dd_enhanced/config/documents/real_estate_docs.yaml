@@ -1,0 +1,370 @@
+# Document registry for Real Estate transactions
+
+transaction_type: "Real Estate"
+
+folder_structure:
+  - name: "01. Corporate"
+    subfolders:
+      - name: "1.1 Constitutional"
+      - name: "1.2 Board & Shareholders"
+
+  - name: "02. Title"
+    subfolders:
+      - name: "2.1 Title Deeds"
+      - name: "2.2 Diagrams & Plans"
+      - name: "2.3 Deeds Search"
+      - name: "2.4 Endorsements"
+
+  - name: "03. Zoning & Planning"
+    subfolders:
+      - name: "3.1 Zoning Certificates"
+      - name: "3.2 Building Plans"
+      - name: "3.3 Occupation Certificates"
+      - name: "3.4 Development Applications"
+
+  - name: "04. Leases"
+    subfolders:
+      - name: "4.1 Lease Agreements"
+      - name: "4.2 Tenant Schedule"
+      - name: "4.3 Lease Correspondence"
+
+  - name: "05. Municipal"
+    subfolders:
+      - name: "5.1 Rates & Taxes"
+      - name: "5.2 Services"
+      - name: "5.3 Valuations"
+
+  - name: "06. Body Corporate"
+    subfolders:
+      - name: "6.1 Sectional Title"
+      - name: "6.2 HOA"
+      - name: "6.3 Levies"
+
+  - name: "07. Physical Condition"
+    subfolders:
+      - name: "7.1 Building Reports"
+      - name: "7.2 Environmental"
+      - name: "7.3 Compliance Certificates"
+
+  - name: "08. Financial"
+    subfolders:
+      - name: "8.1 Income & Expenses"
+      - name: "8.2 Valuations"
+
+  - name: "09. Insurance"
+
+  - name: "99. Other Documents"
+
+categories:
+  - name: "Title"
+    description: "Ownership and title documents"
+    folder: "02. Title"
+
+  - name: "Zoning"
+    description: "Zoning and planning compliance"
+    folder: "03. Zoning & Planning"
+
+  - name: "Leases"
+    description: "Tenant leases and schedules"
+    folder: "04. Leases"
+
+  - name: "Municipal"
+    description: "Municipal rates and services"
+    folder: "05. Municipal"
+
+  - name: "Body Corporate"
+    description: "Sectional title and HOA matters"
+    folder: "06. Body Corporate"
+
+  - name: "Physical"
+    description: "Building condition and compliance"
+    folder: "07. Physical Condition"
+
+documents:
+  # Title
+  - name: "Title Deed"
+    category: "Title"
+    folder: "02. Title/2.1 Title Deeds"
+    priority: critical
+    description: "Current registered title deed"
+    classification_patterns:
+      - "title.*deed"
+      - "deed.*transfer"
+      - "t[0-9]+"
+    content_keywords:
+      - "registrar of deeds"
+      - "hereby transferred"
+      - "erf"
+      - "portion"
+    request_template: "Certified copy of title deed with all endorsements"
+
+  - name: "Survey Diagram"
+    category: "Title"
+    folder: "02. Title/2.2 Diagrams & Plans"
+    priority: critical
+    description: "Registered survey diagram"
+    classification_patterns:
+      - "survey.*diagram"
+      - "sg.*diagram"
+      - "surveyor.*general"
+    request_template: "Copy of approved SG diagram"
+
+  - name: "Deeds Office Search"
+    category: "Title"
+    folder: "02. Title/2.3 Deeds Search"
+    priority: critical
+    description: "Recent deeds office search"
+    classification_patterns:
+      - "deeds.*search"
+      - "title.*search"
+      - "property.*search"
+    request_template: "Deeds office search dated within last 30 days"
+
+  - name: "Endorsements Schedule"
+    category: "Title"
+    folder: "02. Title/2.4 Endorsements"
+    priority: critical
+    description: "All endorsements on title"
+    classification_patterns:
+      - "endorsement"
+      - "condition.*title"
+      - "restrictive.*condition"
+    request_template: "Schedule of all endorsements with copies of underlying documents"
+
+  # Zoning
+  - name: "Zoning Certificate"
+    category: "Zoning"
+    folder: "03. Zoning & Planning/3.1 Zoning Certificates"
+    priority: critical
+    description: "Municipal zoning certificate"
+    classification_patterns:
+      - "zoning.*cert"
+      - "land.*use.*cert"
+      - "town.*planning"
+    request_template: "Current zoning certificate from municipality"
+
+  - name: "Approved Building Plans"
+    category: "Zoning"
+    folder: "03. Zoning & Planning/3.2 Building Plans"
+    priority: critical
+    description: "Municipality approved plans"
+    classification_patterns:
+      - "building.*plan"
+      - "approved.*plan"
+      - "architectural.*plan"
+    request_template: "All approved building plans with municipal stamps"
+
+  - name: "Occupation Certificate"
+    category: "Zoning"
+    folder: "03. Zoning & Planning/3.3 Occupation Certificates"
+    priority: critical
+    description: "Certificate of occupancy"
+    classification_patterns:
+      - "occupation.*cert"
+      - "occupancy.*cert"
+      - "completion.*cert"
+    request_template: "Occupation certificates for all buildings"
+
+  - name: "Development Applications"
+    category: "Zoning"
+    folder: "03. Zoning & Planning/3.4 Development Applications"
+    priority: recommended
+    description: "Pending development applications"
+    classification_patterns:
+      - "development.*application"
+      - "rezoning"
+      - "subdivision"
+    request_template: "Any pending development or rezoning applications"
+
+  # Leases
+  - name: "Lease Agreements"
+    category: "Leases"
+    folder: "04. Leases/4.1 Lease Agreements"
+    priority: critical
+    description: "All tenant lease agreements"
+    classification_patterns:
+      - "lease.*agreement"
+      - "rental.*agreement"
+      - "tenancy"
+    content_keywords:
+      - "landlord"
+      - "tenant"
+      - "rental"
+      - "lease period"
+    request_template: "All lease agreements with amendments and renewals"
+
+  - name: "Tenant Schedule"
+    category: "Leases"
+    folder: "04. Leases/4.2 Tenant Schedule"
+    priority: critical
+    description: "Summary of all tenancies"
+    classification_patterns:
+      - "tenant.*schedule"
+      - "rental.*roll"
+      - "lease.*schedule"
+    request_template: "Tenant schedule showing all tenants, GLA, rental, escalation, and expiry"
+
+  - name: "Arrears Report"
+    category: "Leases"
+    folder: "04. Leases/4.3 Lease Correspondence"
+    priority: required
+    description: "Tenant arrears status"
+    classification_patterns:
+      - "arrear"
+      - "outstanding.*rental"
+      - "tenant.*debt"
+    request_template: "Aged tenant arrears report"
+
+  # Municipal
+  - name: "Rates Clearance Certificate"
+    category: "Municipal"
+    folder: "05. Municipal/5.1 Rates & Taxes"
+    priority: critical
+    description: "Municipal rates clearance"
+    classification_patterns:
+      - "rates.*clearance"
+      - "clearance.*cert"
+      - "municipal.*clearance"
+    request_template: "Rates clearance certificate (for transfer)"
+
+  - name: "Rates Account Statements"
+    category: "Municipal"
+    folder: "05. Municipal/5.1 Rates & Taxes"
+    priority: required
+    description: "Municipal account history"
+    classification_patterns:
+      - "rates.*account"
+      - "municipal.*account"
+      - "rates.*statement"
+    request_template: "Municipal rates statements for last 12 months"
+
+  - name: "Municipal Valuation"
+    category: "Municipal"
+    folder: "05. Municipal/5.3 Valuations"
+    priority: required
+    description: "Latest municipal valuation"
+    classification_patterns:
+      - "municipal.*valuation"
+      - "valuation.*roll"
+    request_template: "Current municipal valuation roll extract"
+
+  # Body Corporate
+  - name: "Sectional Title Register"
+    category: "Body Corporate"
+    folder: "06. Body Corporate/6.1 Sectional Title"
+    priority: critical
+    description: "Sectional plan and schedule"
+    classification_patterns:
+      - "sectional.*title"
+      - "sectional.*plan"
+      - "ss[0-9]+"
+    request_template: "Registered sectional plan and schedule of participation quotas"
+
+  - name: "Body Corporate Rules"
+    category: "Body Corporate"
+    folder: "06. Body Corporate/6.1 Sectional Title"
+    priority: critical
+    description: "Management and conduct rules"
+    classification_patterns:
+      - "body.*corporate.*rule"
+      - "management.*rule"
+      - "conduct.*rule"
+    request_template: "Body corporate management and conduct rules"
+
+  - name: "Levy Clearance"
+    category: "Body Corporate"
+    folder: "06. Body Corporate/6.3 Levies"
+    priority: critical
+    description: "Levy clearance certificate"
+    classification_patterns:
+      - "levy.*clearance"
+      - "levy.*paid"
+    request_template: "Levy clearance certificate from body corporate"
+
+  - name: "BC Financial Statements"
+    category: "Body Corporate"
+    folder: "06. Body Corporate/6.3 Levies"
+    priority: required
+    description: "Body corporate financials"
+    classification_patterns:
+      - "body.*corporate.*financial"
+      - "reserve.*fund"
+    request_template: "Body corporate financial statements and reserve fund status"
+
+  # Physical
+  - name: "Building Condition Report"
+    category: "Physical"
+    folder: "07. Physical Condition/7.1 Building Reports"
+    priority: required
+    description: "Structural inspection report"
+    classification_patterns:
+      - "building.*report"
+      - "structural.*report"
+      - "condition.*report"
+    request_template: "Recent building condition/structural report"
+
+  - name: "Environmental Assessment"
+    category: "Physical"
+    folder: "07. Physical Condition/7.2 Environmental"
+    priority: required
+    description: "Phase 1 environmental assessment"
+    classification_patterns:
+      - "environmental.*assessment"
+      - "phase.*1"
+      - "contamination"
+    request_template: "Phase 1 environmental site assessment"
+
+  - name: "Electrical Compliance Certificate"
+    category: "Physical"
+    folder: "07. Physical Condition/7.3 Compliance Certificates"
+    priority: critical
+    description: "Electrical COC"
+    classification_patterns:
+      - "electrical.*compliance"
+      - "coc.*electrical"
+      - "ecocc"
+    request_template: "Valid electrical compliance certificate"
+
+  - name: "Gas Compliance Certificate"
+    category: "Physical"
+    folder: "07. Physical Condition/7.3 Compliance Certificates"
+    priority: required
+    description: "Gas installation COC"
+    classification_patterns:
+      - "gas.*compliance"
+      - "coc.*gas"
+    request_template: "Gas compliance certificate if applicable"
+
+  - name: "Fire Compliance Certificate"
+    category: "Physical"
+    folder: "07. Physical Condition/7.3 Compliance Certificates"
+    priority: critical
+    description: "Fire safety compliance"
+    classification_patterns:
+      - "fire.*compliance"
+      - "fire.*cert"
+      - "fire.*safety"
+    request_template: "Fire compliance certificate from municipality"
+
+  # Financial
+  - name: "Income & Expense Statement"
+    category: "Financial Statements"
+    folder: "08. Financial/8.1 Income & Expenses"
+    priority: critical
+    description: "Property income statement"
+    classification_patterns:
+      - "income.*statement"
+      - "operating.*statement"
+      - "noi"
+    request_template: "Income and expense statement for last 3 years"
+
+  - name: "Property Valuation"
+    category: "Financial Statements"
+    folder: "08. Financial/8.2 Valuations"
+    priority: critical
+    description: "Independent property valuation"
+    classification_patterns:
+      - "valuation"
+      - "appraisal"
+      - "market.*value"
+    request_template: "Recent independent property valuation (within 12 months)"

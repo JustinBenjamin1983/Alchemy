@@ -1,0 +1,164 @@
+transaction_type: "Real Estate"
+code: "real_estate"
+description: |
+  Due diligence blueprint for property transactions including acquisitions,
+  disposals, developments, and commercial leases.
+
+jurisdiction: "South Africa"
+primary_legislation:
+  - "Deeds Registries Act 47 of 1937"
+  - "Alienation of Land Act 68 of 1981"
+  - "Sectional Titles Act 95 of 1986"
+  - "Property Practitioners Act 22 of 2019"
+  - "Spatial Planning and Land Use Management Act 16 of 2013 (SPLUMA)"
+
+risk_categories:
+  - name: "Title & Ownership"
+    weight: critical
+    standard_questions:
+      - question: "Is the seller the registered owner of the property?"
+        priority: critical
+      - question: "What is the extent and description of the property?"
+        priority: critical
+      - question: "Are there any title deed conditions or restrictions?"
+        priority: critical
+      - question: "Are there any servitudes registered against the property?"
+        priority: critical
+      - question: "Are there any mortgage bonds registered?"
+        priority: critical
+      - question: "Are there any caveats or interdict noted on the title?"
+        priority: critical
+      - question: "Is the property subject to any expropriation notice?"
+        priority: critical
+      - question: "Are there any boundary disputes?"
+        priority: high
+      - question: "What mineral rights apply to the property?"
+        priority: high
+      - question: "Is there a valid survey diagram?"
+        priority: medium
+
+  - name: "Zoning & Land Use"
+    weight: critical
+    standard_questions:
+      - question: "What is the current zoning of the property?"
+        priority: critical
+      - question: "Is the current use compliant with zoning?"
+        priority: critical
+      - question: "Are there any pending rezoning applications?"
+        priority: high
+      - question: "What building plan approvals have been obtained?"
+        priority: critical
+      - question: "Is there an occupation certificate for all buildings?"
+        priority: critical
+      - question: "Are there any building contraventions?"
+        priority: high
+      - question: "What development rights attach to the property?"
+        priority: high
+      - question: "Are there any heritage or environmental restrictions?"
+        priority: high
+      - question: "What bulk and coverage allowances apply?"
+        priority: medium
+      - question: "Are there any spatial development framework implications?"
+        priority: medium
+
+  - name: "Rates, Taxes & Levies"
+    weight: high
+    standard_questions:
+      - question: "Are all municipal rates and taxes paid up to date?"
+        priority: critical
+      - question: "What is the current municipal valuation?"
+        priority: high
+      - question: "Are there any objections to municipal valuation pending?"
+        priority: medium
+      - question: "Is the property located in a special rating area?"
+        priority: medium
+      - question: "What body corporate or homeowners levies apply?"
+        priority: high
+      - question: "Are all levies paid up to date?"
+        priority: high
+      - question: "Are there any special levies pending?"
+        priority: medium
+
+  - name: "Leases & Tenancies"
+    weight: high
+    standard_questions:
+      - question: "What leases are in place and to whom?"
+        priority: critical
+      - question: "What is the total monthly rental and escalation terms?"
+        priority: high
+      - question: "What is the lease expiry profile?"
+        priority: high
+      - question: "Are there any tenant disputes or arrears?"
+        priority: high
+      - question: "Do leases contain change of control or assignment provisions?"
+        priority: critical
+      - question: "What tenant deposits are held?"
+        priority: medium
+      - question: "Are there any unusual lease provisions?"
+        priority: medium
+      - question: "What are the vacancy rates and marketing status?"
+        priority: high
+      - question: "Are there any options to renew or purchase?"
+        priority: high
+      - question: "What tenant improvements have been made?"
+        priority: low
+
+  - name: "Physical Condition"
+    weight: medium
+    standard_questions:
+      - question: "What is the age and condition of buildings?"
+        priority: high
+      - question: "Are there any latent or patent defects?"
+        priority: high
+      - question: "What capital expenditure is required?"
+        priority: high
+      - question: "Are all services (water, electricity, sewer) connected and compliant?"
+        priority: high
+      - question: "Are there any asbestos or hazardous materials present?"
+        priority: high
+      - question: "What is the status of fire and safety compliance?"
+        priority: high
+      - question: "Are lifts and escalators certified?"
+        priority: medium
+      - question: "What is the energy efficiency rating?"
+        priority: low
+
+  - name: "Environmental"
+    weight: high
+    standard_questions:
+      - question: "Has environmental due diligence been conducted?"
+        priority: high
+      - question: "Is there any soil or groundwater contamination?"
+        priority: critical
+      - question: "Are there any environmental authorizations required?"
+        priority: high
+      - question: "What is the flood risk for the property?"
+        priority: medium
+      - question: "Are there any protected species or ecosystems?"
+        priority: medium
+      - question: "What waste management systems are in place?"
+        priority: medium
+
+deal_blockers:
+  - description: "Defect in title that cannot be cured"
+    severity: absolute
+  - description: "Property subject to expropriation"
+    severity: absolute
+  - description: "Unlawful use that cannot be regularized"
+    severity: conditional
+  - description: "Significant undisclosed environmental contamination"
+    severity: conditional
+  - description: "Failure to obtain rates clearance"
+    severity: absolute
+
+conditions_precedent_patterns:
+  - pattern: "rates clearance|municipal clearance"
+    cp_type: "Rates Clearance"
+  - pattern: "transfer duty|SARS"
+    cp_type: "Transfer Duty"
+  - pattern: "bondholder consent|bond cancellation"
+    cp_type: "Bond Cancellation"
+  - pattern: "body corporate|HOA|trustees"
+    cp_type: "Body Corporate Consent"
+  - pattern: "rezoning|land use"
+    cp_type: "Zoning Approval"

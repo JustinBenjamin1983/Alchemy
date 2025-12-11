@@ -1,0 +1,185 @@
+transaction_type: "Banking & Finance"
+code: "banking_finance"
+description: |
+  Due diligence blueprint for banking and finance transactions including
+  term loans, revolving facilities, project finance, acquisition finance,
+  and debt restructuring.
+
+jurisdiction: "South Africa"
+primary_legislation:
+  - "National Credit Act 34 of 2005"
+  - "Banks Act 94 of 1990"
+  - "Financial Intelligence Centre Act 38 of 2001 (FICA)"
+  - "Financial Sector Regulation Act 9 of 2017"
+
+reference_documents:
+  always_include:
+    - pattern: "MOI|Memorandum of Incorporation"
+      reason: "Corporate authority to borrow"
+    - pattern: "Board Resolution|Borrowing Resolution"
+      reason: "Authority to enter into facility"
+    - pattern: "Existing Facility|Current Loan"
+      reason: "Existing debt to be refinanced or subordinated"
+
+risk_categories:
+  - name: "Borrower Capacity & Authority"
+    weight: critical
+    standard_questions:
+      - question: "Does the borrower have corporate capacity to borrow?"
+        priority: critical
+      - question: "What is the borrowing limit in the MOI if any?"
+        priority: critical
+      - question: "Has the board properly authorized the borrowing?"
+        priority: critical
+      - question: "Are any shareholder approvals required for the borrowing?"
+        priority: critical
+      - question: "Who are the authorized signatories for the borrower?"
+        priority: high
+      - question: "Are there any restrictions on granting security?"
+        priority: critical
+      - question: "Does existing debt contain negative pledge provisions?"
+        priority: critical
+      - question: "Are there any financial assistance concerns under Section 44/45?"
+        priority: critical
+
+  - name: "Existing Indebtedness"
+    weight: critical
+    standard_questions:
+      - question: "What existing debt facilities are in place?"
+        priority: critical
+      - question: "What is the outstanding balance on each facility?"
+        priority: critical
+      - question: "Are there any covenant breaches or events of default?"
+        priority: critical
+      - question: "What security has been granted to existing lenders?"
+        priority: critical
+      - question: "Do existing facilities permit additional indebtedness?"
+        priority: critical
+      - question: "Are there any cross-default provisions?"
+        priority: critical
+      - question: "What inter-creditor arrangements exist?"
+        priority: high
+      - question: "Are there any subordination agreements?"
+        priority: high
+      - question: "What are the mandatory prepayment triggers?"
+        priority: high
+      - question: "Are existing facilities being refinanced or remaining in place?"
+        priority: critical
+
+  - name: "Security Package"
+    weight: critical
+    standard_questions:
+      - question: "What assets are available as security?"
+        priority: critical
+      - question: "Are there any existing encumbrances over the assets?"
+        priority: critical
+      - question: "Are there any restrictions on creating security?"
+        priority: critical
+      - question: "Is landlord or other third-party consent required?"
+        priority: high
+      - question: "Are there any cession or pledge restrictions in contracts?"
+        priority: high
+      - question: "What is the value of the security assets?"
+        priority: high
+      - question: "Are there any environmental issues affecting security assets?"
+        priority: high
+      - question: "What is the priority of the proposed security?"
+        priority: critical
+      - question: "Are security assets adequately insured?"
+        priority: medium
+
+  - name: "Financial Covenants"
+    weight: critical
+    standard_questions:
+      - question: "What financial covenants will apply?"
+        priority: critical
+      - question: "What is the current covenant compliance position?"
+        priority: critical
+      - question: "What is the projected covenant headroom?"
+        priority: high
+      - question: "What cure rights exist for covenant breaches?"
+        priority: high
+      - question: "Are there any equity cure mechanics?"
+        priority: medium
+      - question: "What testing frequency applies?"
+        priority: medium
+
+  - name: "Guarantees & Credit Support"
+    weight: high
+    standard_questions:
+      - question: "What guarantees are being provided?"
+        priority: critical
+      - question: "Do guarantors have authority to provide guarantees?"
+        priority: critical
+      - question: "Are there any limitation language or carve-outs?"
+        priority: high
+      - question: "Are there any upstream or cross-stream guarantee concerns?"
+        priority: high
+      - question: "What is the financial position of each guarantor?"
+        priority: high
+      - question: "Are there any guarantee fees or related party issues?"
+        priority: medium
+
+  - name: "Conditions Precedent"
+    weight: high
+    standard_questions:
+      - question: "What conditions precedent must be satisfied before drawdown?"
+        priority: critical
+      - question: "Are all CP documents available or in agreed form?"
+        priority: critical
+      - question: "What third-party consents are required?"
+        priority: high
+      - question: "What regulatory approvals are needed?"
+        priority: high
+      - question: "What is the realistic timeline to satisfy all CPs?"
+        priority: high
+      - question: "Are there any CPs that may be waived?"
+        priority: medium
+
+  - name: "Representations & Warranties"
+    weight: medium
+    standard_questions:
+      - question: "Can all representations be made truthfully?"
+        priority: high
+      - question: "Are there any matters requiring disclosure against representations?"
+        priority: high
+      - question: "What is the repetition mechanism for representations?"
+        priority: medium
+      - question: "Are any representations particularly onerous?"
+        priority: medium
+
+  - name: "Events of Default"
+    weight: high
+    standard_questions:
+      - question: "What events of default apply?"
+        priority: high
+      - question: "Are there appropriate grace periods and thresholds?"
+        priority: high
+      - question: "What cross-default provisions apply?"
+        priority: high
+      - question: "What change of control provisions apply?"
+        priority: critical
+      - question: "Are there any material adverse change provisions?"
+        priority: high
+
+deal_blockers:
+  - description: "Borrower lacks corporate capacity or authority to borrow"
+    severity: absolute
+  - description: "Existing negative pledge prevents new security"
+    severity: absolute
+  - description: "Existing lender consent cannot be obtained"
+    severity: absolute
+  - description: "Security cannot be perfected over key assets"
+    severity: conditional
+  - description: "Financial assistance concerns cannot be resolved"
+    severity: conditional
+
+conditions_precedent_patterns:
+  - pattern: "lender consent|existing facility|waiver"
+    cp_type: "Existing Lender Consent"
+  - pattern: "security|pledge|cession|bond"
+    cp_type: "Security Perfection"
+  - pattern: "legal opinion|capacity opinion"
+    cp_type: "Legal Opinion"
+  - pattern: "solvency|liquidity"
+    cp_type: "Solvency Confirmation"

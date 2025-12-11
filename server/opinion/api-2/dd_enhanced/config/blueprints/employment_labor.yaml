@@ -1,0 +1,165 @@
+transaction_type: "Employment & Labor"
+code: "employment_labor"
+description: |
+  Due diligence blueprint for employment and labor matters in transactions,
+  including workforce transfers, restructuring, and union relations.
+
+jurisdiction: "South Africa"
+primary_legislation:
+  - "Labour Relations Act 66 of 1995"
+  - "Basic Conditions of Employment Act 75 of 1997"
+  - "Employment Equity Act 55 of 1998"
+  - "Skills Development Act 97 of 1998"
+
+risk_categories:
+  - name: "Workforce Composition"
+    weight: high
+    standard_questions:
+      - question: "What is the total headcount by category?"
+        priority: critical
+      - question: "What is the breakdown of permanent vs fixed-term vs temporary?"
+        priority: high
+      - question: "What is the total monthly payroll cost?"
+        priority: critical
+      - question: "What is the age and tenure profile of the workforce?"
+        priority: medium
+      - question: "Are there any employees on suspension or final warning?"
+        priority: medium
+      - question: "What is the staff turnover rate?"
+        priority: medium
+      - question: "Are there any labor brokers or outsourced services?"
+        priority: high
+      - question: "What is the geographic distribution of employees?"
+        priority: medium
+
+  - name: "Section 197 Transfer"
+    weight: critical
+    standard_questions:
+      - question: "Does Section 197 of the LRA apply to the transaction?"
+        priority: critical
+      - question: "Will there be a transfer of business as a going concern?"
+        priority: critical
+      - question: "What employees will transfer automatically?"
+        priority: critical
+      - question: "What are the terms and conditions that transfer?"
+        priority: critical
+      - question: "Are there any pension/provident fund transfer issues?"
+        priority: high
+      - question: "Will leave balances and accruals transfer?"
+        priority: high
+      - question: "How will years of service be treated?"
+        priority: high
+      - question: "Are there any employee objections to transfer?"
+        priority: high
+
+  - name: "Union Relations"
+    weight: high
+    standard_questions:
+      - question: "What trade unions are recognized?"
+        priority: critical
+      - question: "What is the union membership percentage?"
+        priority: high
+      - question: "What collective agreements are in place?"
+        priority: critical
+      - question: "When do current wage agreements expire?"
+        priority: high
+      - question: "Has there been any recent industrial action?"
+        priority: high
+      - question: "What is the history of labor relations?"
+        priority: medium
+      - question: "Are there any pending disputes at CCMA or Labour Court?"
+        priority: critical
+      - question: "What consultation obligations apply to the transaction?"
+        priority: critical
+
+  - name: "Employment Contracts"
+    weight: high
+    standard_questions:
+      - question: "Are there written contracts for all employees?"
+        priority: high
+      - question: "What are the key executive terms and notice periods?"
+        priority: critical
+      - question: "Are there any change of control provisions in contracts?"
+        priority: critical
+      - question: "What restraint of trade provisions exist?"
+        priority: high
+      - question: "Are there any retention or incentive schemes?"
+        priority: high
+      - question: "What leave entitlements exceed statutory minimums?"
+        priority: medium
+      - question: "Are there any unusual benefits or allowances?"
+        priority: medium
+      - question: "Do contracts properly assign IP to the employer?"
+        priority: high
+
+  - name: "Restructuring & Retrenchments"
+    weight: critical
+    standard_questions:
+      - question: "Are any retrenchments planned post-transaction?"
+        priority: critical
+      - question: "Have Section 189/189A consultations commenced?"
+        priority: critical
+      - question: "What is the estimated retrenchment cost?"
+        priority: critical
+      - question: "What severance terms apply?"
+        priority: high
+      - question: "Are there any pending retrenchment disputes?"
+        priority: critical
+      - question: "What selection criteria will be applied?"
+        priority: high
+      - question: "What alternatives to retrenchment have been considered?"
+        priority: medium
+
+  - name: "Employee Benefits"
+    weight: high
+    standard_questions:
+      - question: "What pension/provident fund arrangements exist?"
+        priority: critical
+      - question: "Are there any defined benefit pension obligations?"
+        priority: critical
+      - question: "What is the status of fund valuations?"
+        priority: high
+      - question: "What medical aid arrangements are in place?"
+        priority: high
+      - question: "Are there any post-retirement medical obligations?"
+        priority: critical
+      - question: "What group life and disability cover exists?"
+        priority: medium
+      - question: "Are there any share or option schemes?"
+        priority: high
+      - question: "What will happen to benefits on transaction?"
+        priority: critical
+
+  - name: "Statutory Compliance"
+    weight: high
+    standard_questions:
+      - question: "Is the company Employment Equity compliant?"
+        priority: high
+      - question: "Has the EE Plan been submitted?"
+        priority: high
+      - question: "Is Skills Development levy compliance up to date?"
+        priority: medium
+      - question: "Is UIF registration and payment compliant?"
+        priority: high
+      - question: "Is COIDA registration compliant?"
+        priority: high
+      - question: "Are payroll deductions handled correctly?"
+        priority: medium
+
+deal_blockers:
+  - description: "Pending mass retrenchment with union opposition"
+    severity: conditional
+  - description: "Unresolved strike action"
+    severity: conditional
+  - description: "Significant unfunded pension liability"
+    severity: conditional
+  - description: "Protected strike threatened over transaction"
+    severity: conditional
+
+conditions_precedent_patterns:
+  - pattern: "Section 189|consultation|retrenchment"
+    cp_type: "Labor Consultation"
+  - pattern: "union|collective agreement"
+    cp_type: "Union Notification"
+  - pattern: "Section 197|transfer"
+    cp_type: "Transfer Compliance"

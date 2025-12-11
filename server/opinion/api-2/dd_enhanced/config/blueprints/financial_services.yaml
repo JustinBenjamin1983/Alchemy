@@ -1,0 +1,399 @@
+# Financial Services Due Diligence Blueprint
+# Covers: Bank acquisitions, insurance M&A, asset management transactions, fintech
+# Jurisdiction: South Africa (FSCA, SARB, PA regulated)
+
+transaction_type: "Financial Services"
+code: "financial_services"
+description: |
+  Due diligence blueprint for financial services sector transactions including
+  banking, insurance, asset management, and fintech acquisitions. Covers
+  FSCA licensing, Prudential Authority requirements, and sector-specific regulations.
+
+risk_categories:
+  - name: "Regulatory Licensing & Authorisation"
+    description: "Licences, authorisations, and regulatory status"
+    questions:
+      - id: "FS-LIC-001"
+        question: "What licences and authorisations does the target hold and are they in good standing?"
+        priority: "critical"
+        document_types: ["Licence register", "FSCA authorisations", "PA approvals", "Licence conditions"]
+        risk_indicators: ["Lapsed licences", "Conditional licences", "Pending renewals"]
+
+      - id: "FS-LIC-002"
+        question: "Are all licence conditions being complied with?"
+        priority: "critical"
+        document_types: ["Compliance reports", "Condition register", "Regulatory correspondence", "Audit findings"]
+        risk_indicators: ["Condition breaches", "Remediation orders", "Warning letters"]
+
+      - id: "FS-LIC-003"
+        question: "What regulatory approvals are required for the transaction?"
+        priority: "critical"
+        document_types: ["Approval requirements analysis", "Change of control provisions", "Application requirements", "Timeline analysis"]
+        risk_indicators: ["Multiple approvals required", "Extended timelines", "Approval conditions"]
+
+      - id: "FS-LIC-004"
+        question: "Are there any pending regulatory applications or investigations?"
+        priority: "critical"
+        document_types: ["Application register", "Investigation correspondence", "Enforcement notices", "Regulatory meetings"]
+        risk_indicators: ["Pending enforcement", "Investigation findings", "Application delays"]
+
+      - id: "FS-LIC-005"
+        question: "Has the target been subject to any regulatory sanctions or enforcement actions?"
+        priority: "high"
+        document_types: ["Sanction history", "Enforcement orders", "Administrative penalties", "Settlement agreements"]
+        risk_indicators: ["Historical sanctions", "Pattern of non-compliance", "Ongoing remediation"]
+
+      - id: "FS-LIC-006"
+        question: "Are key individuals (directors, officers) fit and proper as required?"
+        priority: "high"
+        document_types: ["Fit and proper assessments", "Director declarations", "Background checks", "Regulatory approvals"]
+        risk_indicators: ["Fit and proper concerns", "Missing approvals", "Debarment risks"]
+
+      - id: "FS-LIC-007"
+        question: "Does the transaction require notification to or approval from foreign regulators?"
+        priority: "medium"
+        document_types: ["Foreign regulatory analysis", "Cross-border considerations", "Notification requirements", "Home regulator correspondence"]
+        risk_indicators: ["Multiple jurisdictions", "Conflicting requirements", "Extended processes"]
+
+  - name: "Prudential & Capital Requirements"
+    description: "Capital adequacy, solvency, and prudential compliance"
+    questions:
+      - id: "FS-CAP-001"
+        question: "Does the target meet all applicable capital adequacy requirements?"
+        priority: "critical"
+        document_types: ["Capital adequacy returns", "Basel III calculations", "Solvency reports", "Stress test results"]
+        risk_indicators: ["Capital shortfall", "Buffer erosion", "Trending concerns"]
+
+      - id: "FS-CAP-002"
+        question: "What is the solvency position and SAM/Solvency II compliance status?"
+        priority: "critical"
+        document_types: ["Solvency calculation", "SCR/MCR analysis", "Own funds assessment", "ORSA report"]
+        risk_indicators: ["Solvency concerns", "Below requirements", "Volatility risk"]
+
+      - id: "FS-CAP-003"
+        question: "Are liquidity ratios and liquidity management practices adequate?"
+        priority: "critical"
+        document_types: ["Liquidity coverage ratio", "NSFR calculations", "Liquidity stress tests", "Funding profile"]
+        risk_indicators: ["Liquidity concerns", "Concentration risk", "Maturity mismatch"]
+
+      - id: "FS-CAP-004"
+        question: "What are the large exposure and concentration limits compliance?"
+        priority: "high"
+        document_types: ["Large exposure reports", "Concentration analysis", "Connected party limits", "Sector exposures"]
+        risk_indicators: ["Limit breaches", "Concentration risk", "Connected party exposure"]
+
+      - id: "FS-CAP-005"
+        question: "How will the transaction impact the group's consolidated capital position?"
+        priority: "high"
+        document_types: ["Pro forma capital", "Consolidation analysis", "Goodwill impact", "Capital planning"]
+        risk_indicators: ["Capital dilution", "Goodwill concerns", "Group impact"]
+
+      - id: "FS-CAP-006"
+        question: "Are there any recovery and resolution planning requirements?"
+        priority: "medium"
+        document_types: ["Recovery plan", "Resolution strategy", "MREL/TLAC analysis", "Wind-down planning"]
+        risk_indicators: ["Missing plans", "Inadequate planning", "Resolvability concerns"]
+
+  - name: "Conduct & Market Compliance"
+    description: "Market conduct, TCF, and consumer protection compliance"
+    questions:
+      - id: "FS-CON-001"
+        question: "Is the target compliant with Treating Customers Fairly (TCF) outcomes?"
+        priority: "critical"
+        document_types: ["TCF framework", "Outcome monitoring", "Customer complaints", "Fair value assessments"]
+        risk_indicators: ["TCF failures", "Customer harm", "Outcome breaches"]
+
+      - id: "FS-CON-002"
+        question: "Are product governance and design processes compliant?"
+        priority: "critical"
+        document_types: ["Product approval process", "Target market assessments", "Product reviews", "Distribution analysis"]
+        risk_indicators: ["Product failures", "Mis-selling risk", "Target market issues"]
+
+      - id: "FS-CON-003"
+        question: "What is the customer complaints profile and resolution effectiveness?"
+        priority: "high"
+        document_types: ["Complaints register", "Root cause analysis", "Ombud complaints", "Resolution statistics"]
+        risk_indicators: ["High complaints", "Ombud findings", "Systemic issues"]
+
+      - id: "FS-CON-004"
+        question: "Are advertising and marketing practices compliant?"
+        priority: "high"
+        document_types: ["Marketing review", "Disclosure compliance", "Advertising approvals", "Social media policy"]
+        risk_indicators: ["Misleading materials", "Disclosure failures", "Regulatory findings"]
+
+      - id: "FS-CON-005"
+        question: "Are conflicts of interest appropriately identified and managed?"
+        priority: "high"
+        document_types: ["Conflicts policy", "Conflicts register", "Management procedures", "Disclosure practices"]
+        risk_indicators: ["Unmanaged conflicts", "Inadequate disclosure", "Customer prejudice"]
+
+      - id: "FS-CON-006"
+        question: "Is remuneration structure compliant with conduct standards?"
+        priority: "medium"
+        document_types: ["Remuneration policy", "Incentive structures", "Clawback provisions", "Conduct linkage"]
+        risk_indicators: ["Misaligned incentives", "Non-compliant structures", "Conduct risks"]
+
+  - name: "AML/CFT Compliance"
+    description: "Anti-money laundering and counter-terrorist financing compliance"
+    questions:
+      - id: "FS-AML-001"
+        question: "Is the RMCP (Risk Management and Compliance Programme) adequate and current?"
+        priority: "critical"
+        document_types: ["RMCP document", "Board approval", "Annual review", "FIC feedback"]
+        risk_indicators: ["Outdated RMCP", "FIC findings", "Gaps identified"]
+
+      - id: "FS-AML-002"
+        question: "Are KYC/CDD processes compliant with FIC Act requirements?"
+        priority: "critical"
+        document_types: ["KYC procedures", "CDD samples", "Enhanced due diligence", "Ongoing monitoring"]
+        risk_indicators: ["KYC deficiencies", "CDD failures", "Missing documentation"]
+
+      - id: "FS-AML-003"
+        question: "Is transaction monitoring adequate and are STRs being filed appropriately?"
+        priority: "critical"
+        document_types: ["Monitoring systems", "STR register", "Alert handling", "Filing statistics"]
+        risk_indicators: ["Monitoring gaps", "Low STR rates", "Late filings"]
+
+      - id: "FS-AML-004"
+        question: "Are sanctions screening processes effective?"
+        priority: "high"
+        document_types: ["Sanctions screening", "Alert handling", "Match resolution", "List management"]
+        risk_indicators: ["Screening failures", "Sanctions exposure", "System issues"]
+
+      - id: "FS-AML-005"
+        question: "Is there adequate training and awareness on AML/CFT?"
+        priority: "high"
+        document_types: ["Training records", "Training materials", "Completion rates", "Competency assessments"]
+        risk_indicators: ["Training gaps", "Low completion", "Outdated materials"]
+
+      - id: "FS-AML-006"
+        question: "Have there been any AML/CFT related investigations or findings?"
+        priority: "high"
+        document_types: ["FIC inspection reports", "Remediation plans", "Internal audit findings", "External reviews"]
+        risk_indicators: ["FIC findings", "Material deficiencies", "Repeat issues"]
+
+  - name: "Technology & Cyber Security"
+    description: "IT systems, cybersecurity, and operational resilience"
+    questions:
+      - id: "FS-TECH-001"
+        question: "What is the state of core technology systems and any material dependencies?"
+        priority: "critical"
+        document_types: ["Technology assessment", "Systems architecture", "Legacy analysis", "Dependency mapping"]
+        risk_indicators: ["Legacy systems", "End of life", "Critical dependencies"]
+
+      - id: "FS-TECH-002"
+        question: "Is the cybersecurity posture adequate and has penetration testing been conducted?"
+        priority: "critical"
+        document_types: ["Cybersecurity assessment", "Penetration test results", "Vulnerability scans", "Remediation status"]
+        risk_indicators: ["Security vulnerabilities", "Unpatched systems", "Inadequate controls"]
+
+      - id: "FS-TECH-003"
+        question: "Have there been any material cybersecurity incidents or data breaches?"
+        priority: "critical"
+        document_types: ["Incident register", "Breach notifications", "Root cause analysis", "Remediation evidence"]
+        risk_indicators: ["Material breaches", "Repeat incidents", "Regulatory reporting"]
+
+      - id: "FS-TECH-004"
+        question: "Are business continuity and disaster recovery arrangements adequate?"
+        priority: "high"
+        document_types: ["BCP/DRP documentation", "Testing results", "RTO/RPO analysis", "Recovery capabilities"]
+        risk_indicators: ["Untested plans", "Inadequate recovery", "Single points of failure"]
+
+      - id: "FS-TECH-005"
+        question: "Are third-party and outsourcing arrangements appropriately managed?"
+        priority: "high"
+        document_types: ["Outsourcing register", "Service level agreements", "Oversight framework", "Material outsourcing"]
+        risk_indicators: ["Concentration risk", "Oversight gaps", "SLA failures"]
+
+      - id: "FS-TECH-006"
+        question: "Is data management and data quality adequate for regulatory reporting?"
+        priority: "medium"
+        document_types: ["Data governance framework", "Data quality metrics", "Reporting accuracy", "Data lineage"]
+        risk_indicators: ["Data quality issues", "Reporting errors", "Governance gaps"]
+
+  - name: "Insurance-Specific Matters"
+    description: "Insurance-specific risks (if applicable)"
+    questions:
+      - id: "FS-INS-001"
+        question: "Are insurance reserves and technical provisions adequate?"
+        priority: "critical"
+        document_types: ["Actuarial valuation", "Reserve analysis", "Best estimate liabilities", "Risk margin"]
+        risk_indicators: ["Reserve deficiency", "Methodology concerns", "Adverse development"]
+
+      - id: "FS-INS-002"
+        question: "What is the reinsurance programme and counterparty exposure?"
+        priority: "critical"
+        document_types: ["Reinsurance contracts", "Counterparty analysis", "Coverage adequacy", "Credit quality"]
+        risk_indicators: ["Inadequate coverage", "Concentration risk", "Credit concerns"]
+
+      - id: "FS-INS-003"
+        question: "Are product-specific risks (guarantees, long-term liabilities) adequately reserved?"
+        priority: "high"
+        document_types: ["Product analysis", "Guarantee reserves", "Embedded value", "Risk exposure"]
+        risk_indicators: ["Guarantee exposure", "Mismatch risk", "Product risks"]
+
+      - id: "FS-INS-004"
+        question: "What is the claims experience and management effectiveness?"
+        priority: "high"
+        document_types: ["Claims statistics", "Loss ratios", "Claims handling", "Fraud detection"]
+        risk_indicators: ["Adverse experience", "Claims leakage", "Fraud exposure"]
+
+      - id: "FS-INS-005"
+        question: "Are policy administration systems and processes adequate?"
+        priority: "medium"
+        document_types: ["System assessment", "Process review", "Error rates", "Automation levels"]
+        risk_indicators: ["System issues", "Manual processes", "Error rates"]
+
+  - name: "Asset Management-Specific Matters"
+    description: "Asset management-specific risks (if applicable)"
+    questions:
+      - id: "FS-AM-001"
+        question: "What are the AUM trends, flows, and performance track record?"
+        priority: "critical"
+        document_types: ["AUM analysis", "Flow data", "Performance attribution", "Benchmark comparison"]
+        risk_indicators: ["AUM decline", "Negative flows", "Underperformance"]
+
+      - id: "FS-AM-002"
+        question: "Are mandate constraints and investment guidelines being complied with?"
+        priority: "critical"
+        document_types: ["Mandate compliance", "Breach register", "Investment guidelines", "Monitoring reports"]
+        risk_indicators: ["Mandate breaches", "Style drift", "Guideline violations"]
+
+      - id: "FS-AM-003"
+        question: "What is the fee structure and revenue sustainability?"
+        priority: "high"
+        document_types: ["Fee analysis", "Revenue breakdown", "Fee pressure analysis", "Client retention"]
+        risk_indicators: ["Fee compression", "Revenue concentration", "Client losses"]
+
+      - id: "FS-AM-004"
+        question: "Are there any key person dependencies in the investment team?"
+        priority: "high"
+        document_types: ["Team analysis", "Key person provisions", "Succession planning", "Track record attribution"]
+        risk_indicators: ["Key person risk", "Team instability", "Track record issues"]
+
+      - id: "FS-AM-005"
+        question: "Is the compliance monitoring programme for FAIS and CIS adequate?"
+        priority: "medium"
+        document_types: ["Compliance programme", "FAIS monitoring", "CIS compliance", "Regulatory reports"]
+        risk_indicators: ["Compliance gaps", "Regulatory issues", "Monitoring deficiencies"]
+
+  - name: "Banking-Specific Matters"
+    description: "Banking-specific risks (if applicable)"
+    questions:
+      - id: "FS-BANK-001"
+        question: "What is the loan book quality and impairment coverage?"
+        priority: "critical"
+        document_types: ["Credit portfolio analysis", "NPL analysis", "Impairment provisions", "IFRS 9 staging"]
+        risk_indicators: ["Credit deterioration", "NPL increase", "Under-provisioning"]
+
+      - id: "FS-BANK-002"
+        question: "Are credit risk management practices and underwriting standards adequate?"
+        priority: "critical"
+        document_types: ["Credit policy", "Underwriting standards", "Credit committee minutes", "Exception reports"]
+        risk_indicators: ["Policy exceptions", "Weak underwriting", "Concentration risk"]
+
+      - id: "FS-BANK-003"
+        question: "What is the funding profile and depositor concentration?"
+        priority: "high"
+        document_types: ["Funding analysis", "Depositor concentration", "Funding stability", "Cost of funds"]
+        risk_indicators: ["Funding concentration", "Run risk", "Cost pressures"]
+
+      - id: "FS-BANK-004"
+        question: "Are interest rate and market risk exposures appropriately managed?"
+        priority: "high"
+        document_types: ["ALM reports", "Interest rate sensitivity", "Market risk limits", "Hedging effectiveness"]
+        risk_indicators: ["Interest rate exposure", "Limit breaches", "Hedge ineffectiveness"]
+
+      - id: "FS-BANK-005"
+        question: "Are operational risk management and internal controls effective?"
+        priority: "medium"
+        document_types: ["Operational risk framework", "Control testing", "Loss data", "Risk assessments"]
+        risk_indicators: ["Control weaknesses", "Loss events", "Assessment gaps"]
+
+  - name: "Tax & Accounting"
+    description: "Tax compliance and accounting matters"
+    questions:
+      - id: "FS-TAX-001"
+        question: "Are there any tax risks specific to financial services activities?"
+        priority: "high"
+        document_types: ["Tax analysis", "VAT treatment", "Withholding taxes", "Tax opinions"]
+        risk_indicators: ["VAT exposure", "WHT issues", "Aggressive positions"]
+
+      - id: "FS-TAX-002"
+        question: "Are insurance accounting and reserving methodologies appropriate?"
+        priority: "high"
+        document_types: ["Accounting policies", "IFRS 17 readiness", "Auditor correspondence", "Methodology documentation"]
+        risk_indicators: ["Methodology issues", "IFRS 17 gaps", "Audit findings"]
+
+      - id: "FS-TAX-003"
+        question: "Are financial instruments appropriately classified and valued?"
+        priority: "high"
+        document_types: ["IFRS 9 classification", "Fair value hierarchy", "Valuation methodology", "Hedge accounting"]
+        risk_indicators: ["Classification issues", "Valuation concerns", "Hedge ineffectiveness"]
+
+      - id: "FS-TAX-004"
+        question: "Are there any deferred tax assets and their recoverability?"
+        priority: "medium"
+        document_types: ["Deferred tax analysis", "Recoverability assessment", "Tax losses", "Projections"]
+        risk_indicators: ["Recoverability concerns", "Tax loss limitations", "Projection risks"]
+
+cross_document_validations:
+  - validation_id: "FS-CROSS-001"
+    description: "Capital adequacy returns agree to audited financial statements"
+    primary_docs: ["Capital adequacy returns"]
+    secondary_docs: ["Audited financial statements", "Regulatory submissions"]
+    check_type: "financial_consistency"
+
+  - validation_id: "FS-CROSS-002"
+    description: "Licence conditions reflected in compliance monitoring"
+    primary_docs: ["Licence documents"]
+    secondary_docs: ["Compliance monitoring reports", "Condition register"]
+    check_type: "completeness"
+
+  - validation_id: "FS-CROSS-003"
+    description: "Actuarial reserves supported by valuation reports"
+    primary_docs: ["Financial statements - reserves"]
+    secondary_docs: ["Actuarial valuation report", "Methodology notes"]
+    check_type: "verification"
+
+  - validation_id: "FS-CROSS-004"
+    description: "AML compliance procedures match RMCP requirements"
+    primary_docs: ["RMCP document"]
+    secondary_docs: ["KYC procedures", "Transaction monitoring rules", "Training materials"]
+    check_type: "completeness"
+
+deal_blockers:
+  - blocker_id: "FS-BLOCK-001"
+    condition: "Regulatory approval for change of control denied or significantly delayed"
+    severity: "critical"
+    mitigation: "Early regulatory engagement, address concerns, alternative structuring"
+
+  - blocker_id: "FS-BLOCK-002"
+    condition: "Material capital shortfall or solvency concern"
+    severity: "critical"
+    mitigation: "Capital injection, business restructuring, portfolio disposal"
+
+  - blocker_id: "FS-BLOCK-003"
+    condition: "Active enforcement action or material regulatory investigation"
+    severity: "critical"
+    mitigation: "Understand scope and potential outcome, price adjustment, indemnities"
+
+  - blocker_id: "FS-BLOCK-004"
+    condition: "Material AML/CFT deficiencies with regulatory attention"
+    severity: "critical"
+    mitigation: "Remediation programme, enhanced due diligence, regulatory engagement"
+
+  - blocker_id: "FS-BLOCK-005"
+    condition: "Key licence at risk of withdrawal or suspension"
+    severity: "critical"
+    mitigation: "Remediation priority, regulatory engagement, alternative licensing"
+
+  - blocker_id: "FS-BLOCK-006"
+    condition: "Material reserve deficiency in insurance business"
+    severity: "high"
+    mitigation: "Price adjustment, capital support, reinsurance solutions"
+
+  - blocker_id: "FS-BLOCK-007"
+    condition: "Critical cybersecurity vulnerability or recent material breach"
+    severity: "high"
+    mitigation: "Remediation programme, cyber insurance, price adjustment"

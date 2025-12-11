@@ -1,0 +1,324 @@
+# Document registry for BEE & Transformation transactions
+
+transaction_type: "BEE & Transformation"
+
+folder_structure:
+  - name: "01. Corporate"
+    subfolders:
+      - name: "1.1 Constitutional"
+      - name: "1.2 Board & Shareholders"
+      - name: "1.3 Group Structure"
+
+  - name: "02. BEE Ownership"
+    subfolders:
+      - name: "2.1 Ownership Structure"
+      - name: "2.2 Flow-Through Analysis"
+      - name: "2.3 Trust/SPV Documents"
+      - name: "2.4 Funding Arrangements"
+
+  - name: "03. BEE Verification"
+    subfolders:
+      - name: "3.1 Certificates"
+      - name: "3.2 Scorecards"
+      - name: "3.3 Verification Reports"
+
+  - name: "04. Transaction Documents"
+    subfolders:
+      - name: "4.1 Share Subscription"
+      - name: "4.2 Shareholders Agreement"
+      - name: "4.3 Preference Shares"
+      - name: "4.4 Funding/Loan Agreements"
+
+  - name: "05. Mining Charter"
+    subfolders:
+      - name: "5.1 Compliance Reports"
+      - name: "5.2 DMRE Correspondence"
+
+  - name: "06. Employment Equity"
+
+  - name: "07. Enterprise Development"
+    subfolders:
+      - name: "7.1 ED Programs"
+      - name: "7.2 SD Programs"
+      - name: "7.3 Beneficiary Lists"
+
+  - name: "08. Procurement"
+
+  - name: "99. Other Documents"
+
+categories:
+  - name: "Ownership"
+    description: "BEE ownership structure and analysis"
+    folder: "02. BEE Ownership"
+
+  - name: "Verification"
+    description: "BEE verification and certificates"
+    folder: "03. BEE Verification"
+
+  - name: "Transaction"
+    description: "BEE transaction documents"
+    folder: "04. Transaction Documents"
+
+  - name: "Mining Charter"
+    description: "Mining Charter compliance"
+    folder: "05. Mining Charter"
+
+  - name: "ED/SD"
+    description: "Enterprise and supplier development"
+    folder: "07. Enterprise Development"
+
+documents:
+  # Ownership
+  - name: "Ownership Structure Diagram"
+    category: "Ownership"
+    folder: "02. BEE Ownership/2.1 Ownership Structure"
+    priority: critical
+    description: "Full ownership structure showing BEE"
+    classification_patterns:
+      - "ownership.*structure"
+      - "ownership.*diagram"
+      - "shareholding.*structure"
+    request_template: "Complete ownership structure diagram showing all shareholders"
+
+  - name: "Flow-Through Analysis"
+    category: "Ownership"
+    folder: "02. BEE Ownership/2.2 Flow-Through Analysis"
+    priority: critical
+    description: "BEE flow-through calculation"
+    classification_patterns:
+      - "flow.*through"
+      - "flowthrough"
+      - "bee.*ownership.*calculation"
+      - "effective.*ownership"
+    content_keywords:
+      - "flow through"
+      - "effective ownership"
+      - "black ownership"
+      - "hdsa"
+    request_template: "BEE ownership flow-through analysis with supporting calculations"
+
+  - name: "Trust Deed"
+    category: "Ownership"
+    folder: "02. BEE Ownership/2.3 Trust/SPV Documents"
+    priority: critical
+    description: "BEE trust documentation"
+    classification_patterns:
+      - "trust.*deed"
+      - "trust.*instrument"
+      - "employee.*trust"
+      - "community.*trust"
+    request_template: "Trust deed for any BEE trusts with amendments"
+
+  - name: "Trust Beneficiary List"
+    category: "Ownership"
+    folder: "02. BEE Ownership/2.3 Trust/SPV Documents"
+    priority: critical
+    description: "List of trust beneficiaries"
+    classification_patterns:
+      - "beneficiary.*list"
+      - "beneficiary.*schedule"
+      - "trust.*members"
+    request_template: "Schedule of trust beneficiaries with demographic information"
+
+  - name: "SPV Constitutional Documents"
+    category: "Ownership"
+    folder: "02. BEE Ownership/2.3 Trust/SPV Documents"
+    priority: critical
+    description: "BEE SPV MOI and SHA"
+    classification_patterns:
+      - "spv.*moi"
+      - "bee.*vehicle"
+      - "special.*purpose"
+    request_template: "MOI and SHA for any BEE SPVs"
+
+  - name: "Vendor Loan/Funding Agreement"
+    category: "Ownership"
+    folder: "02. BEE Ownership/2.4 Funding Arrangements"
+    priority: critical
+    description: "BEE funding arrangements"
+    classification_patterns:
+      - "vendor.*loan"
+      - "notional.*vendor"
+      - "bee.*funding"
+      - "preference.*share"
+    content_keywords:
+      - "notional vendor"
+      - "vendor financing"
+      - "preferential share"
+    request_template: "All BEE funding/loan agreements and preference share terms"
+
+  # Verification
+  - name: "B-BBEE Certificate"
+    category: "Verification"
+    folder: "03. BEE Verification/3.1 Certificates"
+    priority: critical
+    description: "Current B-BBEE certificate"
+    classification_patterns:
+      - "b-?bbee.*cert"
+      - "bee.*cert"
+      - "verification.*cert"
+    request_template: "Current B-BBEE certificate from SANAS accredited agency"
+
+  - name: "BEE Scorecard"
+    category: "Verification"
+    folder: "03. BEE Verification/3.2 Scorecards"
+    priority: critical
+    description: "Detailed BEE scorecard"
+    classification_patterns:
+      - "scorecard"
+      - "bee.*score"
+      - "element.*score"
+    request_template: "Detailed BEE scorecard with points per element"
+
+  - name: "Verification Report"
+    category: "Verification"
+    folder: "03. BEE Verification/3.3 Verification Reports"
+    priority: required
+    description: "Full verification agency report"
+    classification_patterns:
+      - "verification.*report"
+      - "bee.*audit"
+      - "sanas.*report"
+    request_template: "Full verification agency report (not just certificate)"
+
+  - name: "Ownership Verification Evidence"
+    category: "Verification"
+    folder: "03. BEE Verification/3.3 Verification Reports"
+    priority: critical
+    description: "Documents supporting ownership claim"
+    classification_patterns:
+      - "ownership.*evidence"
+      - "ownership.*verification"
+    request_template: "Supporting documents used to verify BEE ownership"
+
+  # Transaction
+  - name: "BEE Subscription Agreement"
+    category: "Transaction"
+    folder: "04. Transaction Documents/4.1 Share Subscription"
+    priority: critical
+    description: "Share subscription by BEE parties"
+    classification_patterns:
+      - "subscription.*agreement"
+      - "share.*subscription"
+      - "bee.*subscription"
+    request_template: "BEE share subscription agreement with all schedules"
+
+  - name: "BEE Shareholders Agreement"
+    category: "Transaction"
+    folder: "04. Transaction Documents/4.2 Shareholders Agreement"
+    priority: critical
+    description: "SHA with BEE provisions"
+    classification_patterns:
+      - "shareholders.*agreement.*bee"
+      - "sha.*bee"
+      - "investment.*agreement"
+    content_keywords:
+      - "tag along"
+      - "drag along"
+      - "anti-dilution"
+      - "lock-in"
+    request_template: "Shareholders agreement with all BEE-specific provisions"
+
+  - name: "Preference Share Terms"
+    category: "Transaction"
+    folder: "04. Transaction Documents/4.3 Preference Shares"
+    priority: critical
+    description: "Preference share arrangement"
+    classification_patterns:
+      - "preference.*share"
+      - "a.*share"
+      - "b.*share"
+      - "participating.*preference"
+    request_template: "Terms of any preference shares issued to fund BEE"
+
+  # Mining Charter
+  - name: "Mining Charter Compliance Report"
+    category: "Mining Charter"
+    folder: "05. Mining Charter/5.1 Compliance Reports"
+    priority: critical
+    description: "MC III compliance status"
+    classification_patterns:
+      - "mining.*charter"
+      - "charter.*compliance"
+      - "mc.*iii"
+      - "mc3"
+    request_template: "Latest Mining Charter compliance report and scorecard"
+
+  - name: "HDSA Ownership Calculation"
+    category: "Mining Charter"
+    folder: "05. Mining Charter/5.1 Compliance Reports"
+    priority: critical
+    description: "HDSA ownership per Charter"
+    classification_patterns:
+      - "hdsa.*ownership"
+      - "hdsa.*calculation"
+      - "meaningful.*economic"
+    request_template: "HDSA ownership calculation as per Mining Charter methodology"
+
+  - name: "DMRE Correspondence on BEE"
+    category: "Mining Charter"
+    folder: "05. Mining Charter/5.2 DMRE Correspondence"
+    priority: required
+    description: "DMRE queries on BEE/Charter"
+    classification_patterns:
+      - "dmre.*bee"
+      - "dmre.*charter"
+      - "dmre.*ownership"
+    request_template: "All DMRE correspondence regarding BEE/Mining Charter compliance"
+
+  # Employment Equity
+  - name: "EE Demographics"
+    category: "Employment Equity"
+    folder: "06. Employment Equity"
+    priority: required
+    description: "Workforce demographics"
+    classification_patterns:
+      - "employment.*equity"
+      - "ee.*report"
+      - "demographic"
+    request_template: "Employee demographics by level showing race and gender"
+
+  - name: "Management Control Analysis"
+    category: "Employment Equity"
+    folder: "06. Employment Equity"
+    priority: required
+    description: "Black representation in management"
+    classification_patterns:
+      - "management.*control"
+      - "executive.*director"
+      - "senior.*management"
+    request_template: "Analysis of black representation at board and management levels"
+
+  # ED/SD
+  - name: "Enterprise Development Program"
+    category: "ED/SD"
+    folder: "07. Enterprise Development/7.1 ED Programs"
+    priority: required
+    description: "ED initiatives and beneficiaries"
+    classification_patterns:
+      - "enterprise.*development"
+      - "ed.*program"
+      - "ed.*beneficiary"
+    request_template: "Enterprise development programs with beneficiary lists and spend"
+
+  - name: "Supplier Development Program"
+    category: "ED/SD"
+    folder: "07. Enterprise Development/7.2 SD Programs"
+    priority: required
+    description: "SD initiatives"
+    classification_patterns:
+      - "supplier.*development"
+      - "sd.*program"
+      - "preferential.*procurement"
+    request_template: "Supplier development programs with spend and outcomes"
+
+  - name: "Procurement Spend Analysis"
+    category: "Procurement"
+    folder: "08. Procurement"
+    priority: required
+    description: "BEE procurement analysis"
+    classification_patterns:
+      - "procurement.*spend"
+      - "bee.*procurement"
+      - "preferential.*procurement"
+    request_template: "Procurement spend analysis by supplier BEE level"

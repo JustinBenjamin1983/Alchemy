@@ -1,0 +1,171 @@
+transaction_type: "Energy & Power"
+code: "energy_power"
+description: |
+  Due diligence blueprint for energy sector transactions including
+  IPPs, PPAs, renewable energy projects, and power infrastructure.
+
+jurisdiction: "South Africa"
+primary_legislation:
+  - "Electricity Regulation Act 4 of 2006"
+  - "National Energy Act 34 of 2008"
+  - "National Environmental Management Act 107 of 1998"
+  - "Infrastructure Development Act 23 of 2014"
+  - "Carbon Tax Act 15 of 2019"
+
+risk_categories:
+  - name: "Generation License & Regulatory"
+    weight: critical
+    standard_questions:
+      - question: "Is there a valid generation license from NERSA?"
+        priority: critical
+      - question: "What are the conditions attached to the license?"
+        priority: critical
+      - question: "What is the licensed capacity?"
+        priority: critical
+      - question: "When does the license expire and what is renewal process?"
+        priority: high
+      - question: "Are there any pending license amendments?"
+        priority: high
+      - question: "Is registration as a schedule 2 generator required?"
+        priority: high
+      - question: "Are there any NERSA investigations or disputes?"
+        priority: high
+      - question: "What grid code compliance requirements apply?"
+        priority: high
+      - question: "Is IRP (Integrated Resource Plan) allocation secured?"
+        priority: critical
+
+  - name: "Power Purchase Agreement"
+    weight: critical
+    standard_questions:
+      - question: "Is there a PPA with Eskom or other offtaker?"
+        priority: critical
+      - question: "What is the PPA term and when does it expire?"
+        priority: critical
+      - question: "What is the tariff structure and escalation mechanism?"
+        priority: critical
+      - question: "Are there any minimum generation obligations?"
+        priority: high
+      - question: "What are the curtailment provisions and compensation?"
+        priority: high
+      - question: "Does the PPA contain change of control provisions?"
+        priority: critical
+      - question: "What termination rights exist and what are the consequences?"
+        priority: critical
+      - question: "Is the PPA bankable?"
+        priority: high
+      - question: "What are the deemed energy / availability requirements?"
+        priority: high
+      - question: "Are there any construction or COD milestones outstanding?"
+        priority: critical
+
+  - name: "REIPPPP Compliance"
+    weight: critical
+    applies_to: ["renewable"]
+    standard_questions:
+      - question: "Under which REIPPPP bid window was the project awarded?"
+        priority: critical
+      - question: "What economic development obligations apply?"
+        priority: critical
+      - question: "Is the project compliant with ED commitments?"
+        priority: critical
+      - question: "What local content requirements apply?"
+        priority: high
+      - question: "What community ownership requirements exist?"
+        priority: high
+      - question: "Are there any penalties for ED non-compliance?"
+        priority: high
+      - question: "What reporting obligations apply to DMRE/DOE?"
+        priority: medium
+
+  - name: "Project Contracts"
+    weight: critical
+    standard_questions:
+      - question: "Is there an EPC contract in place and what is its status?"
+        priority: critical
+      - question: "What warranties apply and are they still in force?"
+        priority: high
+      - question: "Is there an O&M agreement and what are its terms?"
+        priority: critical
+      - question: "What performance guarantees exist?"
+        priority: high
+      - question: "What equipment supply and warranty agreements exist?"
+        priority: high
+      - question: "Are there any disputes with contractors or suppliers?"
+        priority: high
+      - question: "What is the status of punch list / defects liability?"
+        priority: medium
+      - question: "Are there any liquidated damages outstanding?"
+        priority: high
+
+  - name: "Grid Connection"
+    weight: critical
+    standard_questions:
+      - question: "Is there a grid connection agreement?"
+        priority: critical
+      - question: "What is the contracted capacity?"
+        priority: critical
+      - question: "What grid charges and use-of-system fees apply?"
+        priority: high
+      - question: "What are the connection works and who is responsible?"
+        priority: high
+      - question: "Are there any grid constraints or curtailment risks?"
+        priority: critical
+      - question: "What reactive power requirements apply?"
+        priority: medium
+      - question: "Is there wheeling for private offtake?"
+        priority: high
+
+  - name: "Land & Surface Rights"
+    weight: high
+    standard_questions:
+      - question: "Is the land owned or leased?"
+        priority: critical
+      - question: "Do lease terms align with PPA term?"
+        priority: critical
+      - question: "What rental/royalty arrangements apply?"
+        priority: high
+      - question: "Are there any competing land uses?"
+        priority: medium
+      - question: "What land rehabilitation obligations exist?"
+        priority: high
+      - question: "Are there any community land claims?"
+        priority: high
+
+  - name: "Environmental & Permitting"
+    weight: high
+    standard_questions:
+      - question: "Is there a valid Environmental Authorization?"
+        priority: critical
+      - question: "What conditions attach to the EA?"
+        priority: high
+      - question: "Are all water use authorizations in place?"
+        priority: high
+      - question: "What bird/bat monitoring is required (for wind/solar)?"
+        priority: medium
+      - question: "Are there any heritage or biodiversity issues?"
+        priority: medium
+      - question: "What decommissioning obligations exist?"
+        priority: high
+
+deal_blockers:
+  - description: "PPA terminated or termination notice received"
+    severity: absolute
+  - description: "Generation license suspended or cancelled"
+    severity: absolute
+  - description: "Grid connection agreement not in place"
+    severity: absolute
+  - description: "REIPPPP ED non-compliance material"
+    severity: conditional
+  - description: "Project has not reached COD and is at risk of termination"
+    severity: conditional
+
+conditions_precedent_patterns:
+  - pattern: "NERSA|generation license"
+    cp_type: "Regulatory Approval"
+  - pattern: "Eskom consent|PPA consent"
+    cp_type: "Offtaker Consent"
+  - pattern: "DMRE|DOE|IPP Office"
+    cp_type: "Government Consent"
+  - pattern: "lender consent|senior lender"
+    cp_type: "Lender Consent"

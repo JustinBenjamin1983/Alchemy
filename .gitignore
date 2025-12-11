@@ -1,0 +1,36 @@
+# OS-specific
+.DS_Store
+/prototyping
+
+# Environment files (contain secrets)
+.env
+*.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+
+# DD Enhanced output
+server/opinion/api-2/dd_enhanced/output/*.json
+server/opinion/api-2/dd_enhanced/output/*.md
+
+# Local settings (contains secrets/credentials)
+server/opinion/api-2/local.settings.json
+
+# Firebase credentials (SENSITIVE)
+*firebase*.json
+alchemy-aishop-firebase-adminsdk*.json
+
+# Test documents (user data)
+test_documents/
+
+# Local storage
+.local_storage/

@@ -1,0 +1,347 @@
+# Document registry for General M&A / Corporate transactions
+
+transaction_type: "M&A Corporate"
+
+folder_structure:
+  - name: "01. Corporate"
+    subfolders:
+      - name: "1.1 Constitutional"
+      - name: "1.2 Board & Shareholders"
+      - name: "1.3 Group Structure"
+      - name: "1.4 Corporate Secretarial"
+
+  - name: "02. Financial"
+    subfolders:
+      - name: "2.1 Annual Financial Statements"
+      - name: "2.2 Tax"
+      - name: "2.3 Management Accounts"
+      - name: "2.4 Budgets & Forecasts"
+      - name: "2.5 Debt & Banking"
+      - name: "2.6 Working Capital"
+
+  - name: "03. Material Contracts"
+    subfolders:
+      - name: "3.1 Customer Contracts"
+      - name: "3.2 Supplier Contracts"
+      - name: "3.3 Joint Ventures & Partnerships"
+      - name: "3.4 Other Commercial"
+
+  - name: "04. Property"
+    subfolders:
+      - name: "4.1 Owned Property"
+      - name: "4.2 Leased Property"
+
+  - name: "05. Intellectual Property"
+    subfolders:
+      - name: "5.1 Registered IP"
+      - name: "5.2 Licenses"
+      - name: "5.3 Technology"
+
+  - name: "06. Employment"
+    subfolders:
+      - name: "6.1 Executive Contracts"
+      - name: "6.2 Employee Matters"
+      - name: "6.3 Benefit Schemes"
+
+  - name: "07. Regulatory"
+    subfolders:
+      - name: "7.1 Licenses & Permits"
+      - name: "7.2 Regulatory Correspondence"
+
+  - name: "08. Litigation & Disputes"
+
+  - name: "09. Insurance"
+
+  - name: "10. BEE & Transformation"
+
+  - name: "99. Other Documents"
+
+categories:
+  - name: "Material Contracts"
+    description: "Key commercial contracts"
+    folder: "03. Material Contracts"
+
+  - name: "Intellectual Property"
+    description: "IP rights and licenses"
+    folder: "05. Intellectual Property"
+
+  - name: "Property"
+    description: "Real property owned or leased"
+    folder: "04. Property"
+
+  - name: "Regulatory"
+    description: "Regulatory licenses and permits"
+    folder: "07. Regulatory"
+
+  - name: "Employment"
+    description: "Employment contracts and HR matters"
+    folder: "06. Employment"
+
+documents:
+  # Material Contracts
+  - name: "Top 20 Customer Contracts"
+    category: "Material Contracts"
+    folder: "03. Material Contracts/3.1 Customer Contracts"
+    priority: critical
+    description: "Contracts with largest customers by revenue"
+    classification_patterns:
+      - "customer.*contract"
+      - "sales.*agreement"
+      - "master.*agreement"
+      - "service.*agreement"
+    request_template: "Contracts with top 20 customers by revenue, including order forms and amendments"
+
+  - name: "Top 10 Supplier Contracts"
+    category: "Material Contracts"
+    folder: "03. Material Contracts/3.2 Supplier Contracts"
+    priority: required
+    description: "Key supplier agreements"
+    classification_patterns:
+      - "supplier.*contract"
+      - "supply.*agreement"
+      - "procurement"
+      - "purchase.*agreement"
+    request_template: "Contracts with top 10 suppliers by spend, including pricing schedules"
+
+  - name: "Joint Venture Agreements"
+    category: "Material Contracts"
+    folder: "03. Material Contracts/3.3 Joint Ventures & Partnerships"
+    priority: critical
+    description: "JV and partnership agreements"
+    classification_patterns:
+      - "joint.*venture"
+      - "jv\\b"
+      - "partnership.*agreement"
+      - "consortium"
+    request_template: "All joint venture and partnership agreements with financial arrangements"
+
+  - name: "Distribution Agreements"
+    category: "Material Contracts"
+    folder: "03. Material Contracts/3.4 Other Commercial"
+    priority: required
+    description: "Distribution and agency agreements"
+    classification_patterns:
+      - "distribution.*agreement"
+      - "agency.*agreement"
+      - "reseller"
+    request_template: "All distribution, agency, and reseller agreements"
+
+  - name: "Franchise Agreements"
+    category: "Material Contracts"
+    folder: "03. Material Contracts/3.4 Other Commercial"
+    priority: required
+    description: "Franchise arrangements"
+    classification_patterns:
+      - "franchise"
+    request_template: "All franchise agreements if applicable"
+
+  # Intellectual Property
+  - name: "Trademark Registrations"
+    category: "Intellectual Property"
+    folder: "05. Intellectual Property/5.1 Registered IP"
+    priority: required
+    description: "Registered trademarks"
+    classification_patterns:
+      - "trademark"
+      - "trade.*mark"
+      - "brand.*regist"
+    request_template: "Schedule of all registered trademarks with registration certificates"
+
+  - name: "Patent Portfolio"
+    category: "Intellectual Property"
+    folder: "05. Intellectual Property/5.1 Registered IP"
+    priority: required
+    description: "Patent registrations"
+    classification_patterns:
+      - "patent"
+      - "invention"
+    request_template: "Schedule of all patents and patent applications"
+
+  - name: "Domain Name Portfolio"
+    category: "Intellectual Property"
+    folder: "05. Intellectual Property/5.1 Registered IP"
+    priority: recommended
+    description: "Registered domain names"
+    classification_patterns:
+      - "domain"
+      - "\\burl\\b"
+      - "website.*address"
+    request_template: "List of all domain names with registrar details and expiry dates"
+
+  - name: "License Agreements (In-bound)"
+    category: "Intellectual Property"
+    folder: "05. Intellectual Property/5.2 Licenses"
+    priority: critical
+    description: "IP licenses the company relies on"
+    classification_patterns:
+      - "license.*agreement"
+      - "licence.*agreement"
+      - "software.*license"
+      - "technology.*license"
+    request_template: "All IP/technology licenses under which the company operates"
+
+  - name: "License Agreements (Out-bound)"
+    category: "Intellectual Property"
+    folder: "05. Intellectual Property/5.2 Licenses"
+    priority: required
+    description: "IP licenses granted to third parties"
+    classification_patterns:
+      - "license.*grant"
+      - "royalty.*agreement"
+    request_template: "All IP licenses granted to third parties"
+
+  # Property
+  - name: "Title Deeds (Owned Property)"
+    category: "Property"
+    folder: "04. Property/4.1 Owned Property"
+    priority: critical
+    description: "Title deeds for owned real property"
+    classification_patterns:
+      - "title.*deed"
+      - "property.*deed"
+      - "transfer.*deed"
+    request_template: "Title deeds for all owned properties with endorsements"
+
+  - name: "Property Leases"
+    category: "Property"
+    folder: "04. Property/4.2 Leased Property"
+    priority: critical
+    description: "Commercial property leases"
+    classification_patterns:
+      - "lease.*agreement"
+      - "rental.*agreement"
+      - "premises.*lease"
+      - "office.*lease"
+    request_template: "All property/premises lease agreements with amendments"
+
+  # Financial
+  - name: "Working Capital Analysis"
+    category: "Financial Statements"
+    folder: "02. Financial/2.6 Working Capital"
+    priority: required
+    description: "Working capital and net debt analysis"
+    classification_patterns:
+      - "working.*capital"
+      - "net.*debt"
+      - "cash.*flow"
+    request_template: "Working capital analysis by month for last 12 months"
+
+  - name: "Accounts Receivable Aging"
+    category: "Financial Statements"
+    folder: "02. Financial/2.6 Working Capital"
+    priority: required
+    description: "Debtor aging analysis"
+    classification_patterns:
+      - "debtor.*aging"
+      - "receivable.*aging"
+      - "debtor.*analysis"
+    request_template: "Accounts receivable aging at month-end for last 3 months"
+
+  - name: "Accounts Payable Aging"
+    category: "Financial Statements"
+    folder: "02. Financial/2.6 Working Capital"
+    priority: required
+    description: "Creditor aging analysis"
+    classification_patterns:
+      - "creditor.*aging"
+      - "payable.*aging"
+      - "creditor.*analysis"
+    request_template: "Accounts payable aging at month-end for last 3 months"
+
+  - name: "Bank Facility Agreements"
+    category: "Financial Statements"
+    folder: "02. Financial/2.5 Debt & Banking"
+    priority: critical
+    description: "All bank facility agreements"
+    classification_patterns:
+      - "facility.*agreement"
+      - "loan.*agreement"
+      - "overdraft"
+      - "revolving.*credit"
+    request_template: "All bank facility agreements with amendments and security documents"
+
+  # Regulatory
+  - name: "Operating Licenses"
+    category: "Regulatory"
+    folder: "07. Regulatory/7.1 Licenses & Permits"
+    priority: critical
+    description: "Operating licenses and permits"
+    classification_patterns:
+      - "operating.*licen"
+      - "business.*licen"
+      - "permit"
+    request_template: "All regulatory licenses, permits, and registrations required to operate"
+
+  - name: "Competition Authority Correspondence"
+    category: "Regulatory"
+    folder: "07. Regulatory/7.2 Regulatory Correspondence"
+    priority: required
+    description: "Correspondence with Competition Commission"
+    classification_patterns:
+      - "competition.*commission"
+      - "merger.*notif"
+      - "compcom"
+    request_template: "All correspondence with Competition Commission in last 5 years"
+
+  # Employment
+  - name: "Executive Employment Contracts"
+    category: "Employment"
+    folder: "06. Employment/6.1 Executive Contracts"
+    priority: critical
+    description: "Contracts for key executives"
+    classification_patterns:
+      - "executive.*contract"
+      - "employment.*agreement"
+      - "service.*agreement.*director"
+    content_keywords:
+      - "employment"
+      - "remuneration"
+      - "notice period"
+      - "restraint"
+    request_template: "Employment contracts for all executives and key employees"
+
+  - name: "Employee Schedule"
+    category: "Employment"
+    folder: "06. Employment/6.2 Employee Matters"
+    priority: required
+    description: "List of all employees"
+    classification_patterns:
+      - "employee.*list"
+      - "staff.*list"
+      - "headcount"
+      - "organogram"
+    request_template: "Employee schedule showing all employees, positions, tenure, and remuneration"
+
+  - name: "Pension/Provident Fund Rules"
+    category: "Employment"
+    folder: "06. Employment/6.3 Benefit Schemes"
+    priority: required
+    description: "Retirement fund documentation"
+    classification_patterns:
+      - "pension.*fund"
+      - "provident.*fund"
+      - "retirement"
+    request_template: "Pension/provident fund rules and latest actuarial valuation"
+
+  # BEE
+  - name: "B-BBEE Certificate"
+    category: "BEE & Transformation"
+    folder: "10. BEE & Transformation"
+    priority: critical
+    description: "Current B-BBEE certificate"
+    classification_patterns:
+      - "b-?bbee"
+      - "bee.*cert"
+      - "empowerment"
+    request_template: "Current B-BBEE certificate from SANAS accredited agency"
+
+  - name: "BEE Ownership Structure"
+    category: "BEE & Transformation"
+    folder: "10. BEE & Transformation"
+    priority: required
+    description: "BEE shareholding analysis"
+    classification_patterns:
+      - "bee.*ownership"
+      - "hdsa"
+      - "black.*ownership"
+    request_template: "BEE ownership structure and flow-through analysis"

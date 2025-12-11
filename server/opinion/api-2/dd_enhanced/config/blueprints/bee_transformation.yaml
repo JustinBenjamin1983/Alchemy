@@ -1,0 +1,145 @@
+transaction_type: "BEE & Transformation"
+code: "bee_transformation"
+description: |
+  Due diligence blueprint for B-BBEE transactions including ownership
+  deals, enterprise development, and transformation compliance.
+
+jurisdiction: "South Africa"
+primary_legislation:
+  - "Broad-Based Black Economic Empowerment Act 53 of 2003"
+  - "B-BBEE Codes of Good Practice"
+  - "Sector Codes (Mining Charter, FSC, Property Sector Code, etc.)"
+
+risk_categories:
+  - name: "BEE Ownership Structure"
+    weight: critical
+    standard_questions:
+      - question: "What is the current verified B-BBEE ownership percentage?"
+        priority: critical
+      - question: "Is ownership direct or through structures?"
+        priority: critical
+      - question: "What flow-through benefits reach black participants?"
+        priority: critical
+      - question: "Is there economic interest as well as voting rights?"
+        priority: critical
+      - question: "Are there any vendor financing arrangements?"
+        priority: high
+      - question: "What are the terms of any notional vendor loans?"
+        priority: high
+      - question: "Is ownership compliant with applicable sector codes?"
+        priority: critical
+      - question: "What is the 'Once Empowered Always Empowered' position?"
+        priority: high
+      - question: "Are BEE participants genuine and independent?"
+        priority: critical
+      - question: "Is there any fronting risk?"
+        priority: critical
+
+  - name: "BEE Verification"
+    weight: critical
+    standard_questions:
+      - question: "Is there a valid B-BBEE certificate from SANAS accredited agency?"
+        priority: critical
+      - question: "When does the current certificate expire?"
+        priority: high
+      - question: "What is the current B-BBEE level?"
+        priority: critical
+      - question: "What is the scorecard breakdown by element?"
+        priority: high
+      - question: "Are there any elements at risk of non-compliance?"
+        priority: high
+      - question: "What is the impact of the transaction on the BEE rating?"
+        priority: critical
+      - question: "Will the transaction trigger re-verification?"
+        priority: high
+      - question: "Are there any amended codes that affect scoring?"
+        priority: medium
+
+  - name: "Ownership Transaction Structure"
+    weight: critical
+    standard_questions:
+      - question: "What ownership percentage will BEE partners hold post-transaction?"
+        priority: critical
+      - question: "How is the BEE transaction being funded?"
+        priority: critical
+      - question: "What are the terms of any preference shares?"
+        priority: high
+      - question: "What lock-in periods apply to BEE shareholders?"
+        priority: high
+      - question: "What exit mechanisms exist for BEE partners?"
+        priority: high
+      - question: "Are there any tag-along or drag-along rights?"
+        priority: high
+      - question: "What anti-dilution protections exist?"
+        priority: high
+      - question: "What governance rights do BEE partners have?"
+        priority: high
+      - question: "Are there any clawback or anti-embarrassment provisions?"
+        priority: medium
+
+  - name: "Mining Charter Compliance"
+    weight: critical
+    applies_to: ["mining_resources"]
+    standard_questions:
+      - question: "Is the target compliant with Mining Charter III ownership requirements?"
+        priority: critical
+      - question: "What is the HDSA ownership percentage as per the Charter?"
+        priority: critical
+      - question: "Is there 'meaningful economic participation'?"
+        priority: critical
+      - question: "Are procurement and HR elements compliant?"
+        priority: high
+      - question: "What is the SLP compliance status?"
+        priority: high
+      - question: "How will the transaction affect Mining Charter compliance?"
+        priority: critical
+      - question: "Will DMRE consent address BEE requirements?"
+        priority: high
+
+  - name: "Management Control & Employment Equity"
+    weight: high
+    standard_questions:
+      - question: "What is the black representation at board level?"
+        priority: high
+      - question: "What is black representation in executive management?"
+        priority: high
+      - question: "What is black representation in senior management?"
+        priority: high
+      - question: "What is the gender breakdown of black representation?"
+        priority: medium
+      - question: "Is the company Employment Equity compliant?"
+        priority: high
+      - question: "Has the EE Plan been submitted and approved?"
+        priority: medium
+
+  - name: "Enterprise & Supplier Development"
+    weight: medium
+    standard_questions:
+      - question: "What enterprise development spend has been incurred?"
+        priority: medium
+      - question: "What supplier development programs exist?"
+        priority: medium
+      - question: "What is the percentage of procurement from BEE suppliers?"
+        priority: high
+      - question: "Are there any ED/SD commitments in the SLP?"
+        priority: high
+      - question: "What is the localisation strategy?"
+        priority: medium
+
+deal_blockers:
+  - description: "Fronting investigation by B-BBEE Commission"
+    severity: absolute
+  - description: "Transaction reduces ownership below sector code minimum"
+    severity: conditional
+  - description: "BEE partner refuses to consent to transaction"
+    severity: conditional
+  - description: "Mining Charter non-compliance affecting DMRE consent"
+    severity: conditional
+
+conditions_precedent_patterns:
+  - pattern: "BEE partner|HDSA|empowerment"
+    cp_type: "BEE Partner Consent"
+  - pattern: "Mining Charter|DMRE"
+    cp_type: "Mining Charter Compliance"
+  - pattern: "verification|certificate"
+    cp_type: "BEE Verification"

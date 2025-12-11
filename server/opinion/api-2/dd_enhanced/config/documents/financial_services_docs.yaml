@@ -1,0 +1,876 @@
+# Document registry for Financial Services transactions
+# Covers: Banking, insurance, asset management, fintech acquisitions
+
+transaction_type: "Financial Services"
+
+folder_structure:
+  - name: "01. Regulatory & Licensing"
+    subfolders:
+      - name: "1.1 Licences"
+      - name: "1.2 Regulatory Correspondence"
+      - name: "1.3 Approvals"
+  - name: "02. Prudential & Capital"
+    subfolders:
+      - name: "2.1 Capital Adequacy"
+      - name: "2.2 Solvency"
+      - name: "2.3 Stress Testing"
+  - name: "03. Conduct & Compliance"
+    subfolders:
+      - name: "3.1 TCF"
+      - name: "3.2 Product Governance"
+      - name: "3.3 Complaints"
+  - name: "04. AML/CFT"
+    subfolders:
+      - name: "4.1 RMCP"
+      - name: "4.2 KYC/CDD"
+      - name: "4.3 Monitoring"
+  - name: "05. Technology & Cyber"
+    subfolders:
+      - name: "5.1 IT Systems"
+      - name: "5.2 Cybersecurity"
+      - name: "5.3 BCP/DR"
+  - name: "06. Insurance-Specific"
+    subfolders:
+      - name: "6.1 Actuarial"
+      - name: "6.2 Reinsurance"
+      - name: "6.3 Claims"
+  - name: "07. Banking-Specific"
+    subfolders:
+      - name: "7.1 Credit Portfolio"
+      - name: "7.2 Treasury/ALM"
+  - name: "08. Asset Management-Specific"
+    subfolders:
+      - name: "8.1 AUM & Performance"
+      - name: "8.2 Mandates"
+  - name: "09. Corporate & Financial"
+    subfolders:
+      - name: "9.1 Corporate Records"
+      - name: "9.2 Financial Statements"
+  - name: "10. Transaction Documents"
+  - name: "11. Tax"
+  - name: "99. Other Documents"
+
+categories:
+  - name: "Regulatory"
+    description: "Licences and regulatory matters"
+    folder: "01. Regulatory & Licensing"
+
+  - name: "Prudential"
+    description: "Capital adequacy and solvency"
+    folder: "02. Prudential & Capital"
+
+  - name: "Conduct"
+    description: "Market conduct and compliance"
+    folder: "03. Conduct & Compliance"
+
+  - name: "AML"
+    description: "AML/CFT compliance"
+    folder: "04. AML/CFT"
+
+  - name: "Technology"
+    description: "IT systems and cybersecurity"
+    folder: "05. Technology & Cyber"
+
+  - name: "Insurance"
+    description: "Insurance-specific matters"
+    folder: "06. Insurance-Specific"
+
+  - name: "Banking"
+    description: "Banking-specific matters"
+    folder: "07. Banking-Specific"
+
+  - name: "AssetManagement"
+    description: "Asset management-specific matters"
+    folder: "08. Asset Management-Specific"
+
+documents:
+  # Regulatory & Licensing
+  - name: "FSCA Licence(s)"
+    category: "Regulatory"
+    folder: "01. Regulatory & Licensing/1.1 Licences"
+    priority: critical
+    description: "FSCA licence certificates"
+    classification_patterns:
+      - "fsca.*licence"
+      - "fsp.*licence"
+      - "fais"
+    content_keywords:
+      - "FSCA"
+      - "licence"
+      - "Financial Services Provider"
+    request_template: "Copies of all FSCA/FSB licences held by the target"
+
+  - name: "PA Registration"
+    category: "Regulatory"
+    folder: "01. Regulatory & Licensing/1.1 Licences"
+    priority: critical
+    description: "Prudential Authority registration (if bank/insurer)"
+    classification_patterns:
+      - "pa.*registration"
+      - "prudential"
+    content_keywords:
+      - "Prudential Authority"
+      - "registered"
+      - "bank"
+      - "insurer"
+    request_template: "Prudential Authority registration certificate"
+
+  - name: "Licence Conditions Register"
+    category: "Regulatory"
+    folder: "01. Regulatory & Licensing/1.1 Licences"
+    priority: critical
+    description: "Register of licence conditions"
+    classification_patterns:
+      - "licence.*conditions"
+      - "conditions.*register"
+    content_keywords:
+      - "conditions"
+      - "licence"
+      - "requirements"
+    request_template: "Register of all licence conditions"
+
+  - name: "Key Individual Approvals"
+    category: "Regulatory"
+    folder: "01. Regulatory & Licensing/1.1 Licences"
+    priority: critical
+    description: "Key individual and representative approvals"
+    classification_patterns:
+      - "key.*individual"
+      - "ki.*approval"
+    content_keywords:
+      - "key individual"
+      - "approved"
+      - "FAIS"
+    request_template: "Key individual approvals from FSCA"
+
+  - name: "Regulatory Correspondence (3 years)"
+    category: "Regulatory"
+    folder: "01. Regulatory & Licensing/1.2 Regulatory Correspondence"
+    priority: critical
+    description: "Correspondence with FSCA/PA"
+    classification_patterns:
+      - "fsca.*correspondence"
+      - "regulator"
+    content_keywords:
+      - "FSCA"
+      - "PA"
+      - "correspondence"
+    request_template: "Regulatory correspondence for the last 3 years"
+
+  - name: "Inspection/Examination Reports"
+    category: "Regulatory"
+    folder: "01. Regulatory & Licensing/1.2 Regulatory Correspondence"
+    priority: critical
+    description: "Regulatory inspection reports"
+    classification_patterns:
+      - "inspection"
+      - "examination"
+      - "regulatory.*report"
+    content_keywords:
+      - "inspection"
+      - "examination"
+      - "findings"
+    request_template: "All regulatory inspection and examination reports"
+
+  - name: "Remediation Plans"
+    category: "Regulatory"
+    folder: "01. Regulatory & Licensing/1.2 Regulatory Correspondence"
+    priority: required
+    description: "Regulatory remediation plans"
+    classification_patterns:
+      - "remediation"
+      - "action.*plan"
+    content_keywords:
+      - "remediation"
+      - "corrective"
+      - "action plan"
+    request_template: "Remediation plans arising from regulatory findings"
+
+  - name: "Change of Control Application"
+    category: "Regulatory"
+    folder: "01. Regulatory & Licensing/1.3 Approvals"
+    priority: critical
+    description: "Application for regulatory approval of transaction"
+    classification_patterns:
+      - "change.*of.*control"
+      - "approval.*application"
+    content_keywords:
+      - "change of control"
+      - "approval"
+      - "application"
+    request_template: "Change of control application to regulators"
+
+  # Prudential & Capital
+  - name: "Capital Adequacy Returns"
+    category: "Prudential"
+    folder: "02. Prudential & Capital/2.1 Capital Adequacy"
+    priority: critical
+    description: "Recent capital adequacy regulatory returns"
+    classification_patterns:
+      - "car"
+      - "capital.*adequacy"
+      - "basel"
+    content_keywords:
+      - "capital adequacy"
+      - "CAR"
+      - "Basel"
+      - "tier 1"
+    request_template: "Capital adequacy returns for the last 12 months"
+
+  - name: "Capital Management Policy"
+    category: "Prudential"
+    folder: "02. Prudential & Capital/2.1 Capital Adequacy"
+    priority: required
+    description: "Capital management and planning policy"
+    classification_patterns:
+      - "capital.*policy"
+      - "capital.*management"
+    content_keywords:
+      - "capital"
+      - "management"
+      - "policy"
+      - "buffer"
+    request_template: "Capital management policy"
+
+  - name: "ICAAP/ORSA Report"
+    category: "Prudential"
+    folder: "02. Prudential & Capital/2.1 Capital Adequacy"
+    priority: required
+    description: "Internal capital adequacy assessment"
+    classification_patterns:
+      - "icaap"
+      - "orsa"
+    content_keywords:
+      - "ICAAP"
+      - "ORSA"
+      - "internal capital"
+    request_template: "Latest ICAAP or ORSA report"
+
+  - name: "Solvency Returns (Insurers)"
+    category: "Prudential"
+    folder: "02. Prudential & Capital/2.2 Solvency"
+    priority: critical
+    description: "SAM/Solvency regulatory returns"
+    classification_patterns:
+      - "sam"
+      - "solvency"
+      - "qrt"
+    content_keywords:
+      - "SAM"
+      - "solvency"
+      - "SCR"
+      - "MCR"
+    request_template: "Solvency returns for the last 4 quarters"
+
+  - name: "Liquidity Coverage Ratio Returns"
+    category: "Prudential"
+    folder: "02. Prudential & Capital/2.2 Solvency"
+    priority: critical
+    description: "LCR and NSFR regulatory returns"
+    classification_patterns:
+      - "lcr"
+      - "nsfr"
+      - "liquidity"
+    content_keywords:
+      - "LCR"
+      - "NSFR"
+      - "liquidity coverage"
+    request_template: "LCR and NSFR returns for the last 12 months"
+
+  - name: "Stress Test Results"
+    category: "Prudential"
+    folder: "02. Prudential & Capital/2.3 Stress Testing"
+    priority: required
+    description: "Regulatory and internal stress test results"
+    classification_patterns:
+      - "stress.*test"
+      - "scenario"
+    content_keywords:
+      - "stress test"
+      - "scenario"
+      - "adverse"
+    request_template: "Latest stress test results"
+
+  # Conduct & Compliance
+  - name: "TCF Framework"
+    category: "Conduct"
+    folder: "03. Conduct & Compliance/3.1 TCF"
+    priority: critical
+    description: "Treating Customers Fairly framework"
+    classification_patterns:
+      - "tcf"
+      - "treating.*customers"
+    content_keywords:
+      - "TCF"
+      - "Treating Customers Fairly"
+      - "outcomes"
+    request_template: "TCF framework and policy documentation"
+
+  - name: "TCF Monitoring Reports"
+    category: "Conduct"
+    folder: "03. Conduct & Compliance/3.1 TCF"
+    priority: required
+    description: "TCF outcome monitoring reports"
+    classification_patterns:
+      - "tcf.*report"
+      - "outcome.*monitoring"
+    content_keywords:
+      - "TCF"
+      - "outcomes"
+      - "monitoring"
+    request_template: "TCF monitoring reports for the last 12 months"
+
+  - name: "Product Approval Policy"
+    category: "Conduct"
+    folder: "03. Conduct & Compliance/3.2 Product Governance"
+    priority: critical
+    description: "Product approval and governance policy"
+    classification_patterns:
+      - "product.*approval"
+      - "product.*governance"
+    content_keywords:
+      - "product"
+      - "approval"
+      - "governance"
+      - "target market"
+    request_template: "Product approval and governance policy"
+
+  - name: "Complaints Register"
+    category: "Conduct"
+    folder: "03. Conduct & Compliance/3.3 Complaints"
+    priority: critical
+    description: "Register of customer complaints"
+    classification_patterns:
+      - "complaints"
+      - "register"
+    content_keywords:
+      - "complaints"
+      - "register"
+      - "customer"
+    request_template: "Complaints register for the last 24 months"
+
+  - name: "Ombud Complaints Summary"
+    category: "Conduct"
+    folder: "03. Conduct & Compliance/3.3 Complaints"
+    priority: required
+    description: "Summary of Ombud complaints and outcomes"
+    classification_patterns:
+      - "ombud"
+      - "fais.*ombud"
+    content_keywords:
+      - "Ombud"
+      - "determination"
+      - "complaint"
+    request_template: "Summary of Ombud complaints and outcomes"
+
+  # AML/CFT
+  - name: "Risk Management and Compliance Programme"
+    category: "AML"
+    folder: "04. AML/CFT/4.1 RMCP"
+    priority: critical
+    description: "FIC Act RMCP"
+    classification_patterns:
+      - "rmcp"
+      - "fica"
+      - "aml.*policy"
+    content_keywords:
+      - "RMCP"
+      - "FICA"
+      - "risk management"
+      - "compliance programme"
+    request_template: "Current RMCP as approved by board"
+
+  - name: "RMCP Board Approval"
+    category: "AML"
+    folder: "04. AML/CFT/4.1 RMCP"
+    priority: critical
+    description: "Board approval of RMCP"
+    classification_patterns:
+      - "rmcp.*approval"
+      - "board.*rmcp"
+    content_keywords:
+      - "RMCP"
+      - "approved"
+      - "board"
+    request_template: "Evidence of board approval of RMCP"
+
+  - name: "ML/TF Risk Assessment"
+    category: "AML"
+    folder: "04. AML/CFT/4.1 RMCP"
+    priority: required
+    description: "Money laundering and terrorist financing risk assessment"
+    classification_patterns:
+      - "ml.*risk"
+      - "tf.*risk"
+      - "risk.*assessment"
+    content_keywords:
+      - "money laundering"
+      - "terrorist financing"
+      - "risk assessment"
+    request_template: "ML/TF risk assessment"
+
+  - name: "KYC/CDD Procedures"
+    category: "AML"
+    folder: "04. AML/CFT/4.2 KYC/CDD"
+    priority: critical
+    description: "KYC and CDD procedures"
+    classification_patterns:
+      - "kyc"
+      - "cdd"
+      - "customer.*identification"
+    content_keywords:
+      - "KYC"
+      - "CDD"
+      - "customer"
+      - "identification"
+    request_template: "KYC/CDD procedures documentation"
+
+  - name: "Transaction Monitoring Rules"
+    category: "AML"
+    folder: "04. AML/CFT/4.3 Monitoring"
+    priority: critical
+    description: "Transaction monitoring system rules"
+    classification_patterns:
+      - "monitoring.*rules"
+      - "transaction.*monitoring"
+    content_keywords:
+      - "monitoring"
+      - "rules"
+      - "suspicious"
+    request_template: "Transaction monitoring rules and thresholds"
+
+  - name: "STR Statistics"
+    category: "AML"
+    folder: "04. AML/CFT/4.3 Monitoring"
+    priority: required
+    description: "Suspicious transaction report statistics"
+    classification_patterns:
+      - "str"
+      - "suspicious.*transaction"
+    content_keywords:
+      - "STR"
+      - "suspicious"
+      - "FIC"
+    request_template: "STR filing statistics for the last 24 months"
+
+  - name: "FIC Inspection Reports"
+    category: "AML"
+    folder: "04. AML/CFT/4.3 Monitoring"
+    priority: critical
+    description: "FIC inspection reports"
+    classification_patterns:
+      - "fic.*inspection"
+      - "fic.*report"
+    content_keywords:
+      - "FIC"
+      - "inspection"
+      - "findings"
+    request_template: "All FIC inspection reports"
+
+  # Technology & Cyber
+  - name: "IT Systems Inventory"
+    category: "Technology"
+    folder: "05. Technology & Cyber/5.1 IT Systems"
+    priority: critical
+    description: "Inventory of core IT systems"
+    classification_patterns:
+      - "it.*inventory"
+      - "systems.*inventory"
+    content_keywords:
+      - "systems"
+      - "inventory"
+      - "IT"
+    request_template: "Inventory of core IT systems"
+
+  - name: "Cybersecurity Framework"
+    category: "Technology"
+    folder: "05. Technology & Cyber/5.2 Cybersecurity"
+    priority: critical
+    description: "Cybersecurity policy and framework"
+    classification_patterns:
+      - "cybersecurity"
+      - "infosec"
+      - "security.*policy"
+    content_keywords:
+      - "cybersecurity"
+      - "information security"
+      - "framework"
+    request_template: "Cybersecurity framework and policies"
+
+  - name: "Penetration Test Results"
+    category: "Technology"
+    folder: "05. Technology & Cyber/5.2 Cybersecurity"
+    priority: critical
+    description: "Recent penetration testing results"
+    classification_patterns:
+      - "pentest"
+      - "penetration"
+      - "vulnerability"
+    content_keywords:
+      - "penetration"
+      - "vulnerability"
+      - "security test"
+    request_template: "Penetration test results from the last 12 months"
+
+  - name: "Incident Register"
+    category: "Technology"
+    folder: "05. Technology & Cyber/5.2 Cybersecurity"
+    priority: critical
+    description: "Cybersecurity incident register"
+    classification_patterns:
+      - "incident"
+      - "breach"
+    content_keywords:
+      - "incident"
+      - "breach"
+      - "cyber"
+    request_template: "Cybersecurity incident register for the last 3 years"
+
+  - name: "Business Continuity Plan"
+    category: "Technology"
+    folder: "05. Technology & Cyber/5.3 BCP/DR"
+    priority: critical
+    description: "Business continuity plan"
+    classification_patterns:
+      - "bcp"
+      - "business.*continuity"
+    content_keywords:
+      - "business continuity"
+      - "BCP"
+    request_template: "Business continuity plan"
+
+  - name: "Disaster Recovery Plan"
+    category: "Technology"
+    folder: "05. Technology & Cyber/5.3 BCP/DR"
+    priority: critical
+    description: "IT disaster recovery plan"
+    classification_patterns:
+      - "drp"
+      - "disaster.*recovery"
+    content_keywords:
+      - "disaster recovery"
+      - "DRP"
+      - "RTO"
+      - "RPO"
+    request_template: "IT disaster recovery plan"
+
+  - name: "BCP/DR Test Results"
+    category: "Technology"
+    folder: "05. Technology & Cyber/5.3 BCP/DR"
+    priority: required
+    description: "BCP/DR testing results"
+    classification_patterns:
+      - "bcp.*test"
+      - "dr.*test"
+    content_keywords:
+      - "test"
+      - "exercise"
+      - "recovery"
+    request_template: "Results of BCP/DR testing"
+
+  # Insurance-Specific
+  - name: "Actuarial Valuation Report"
+    category: "Insurance"
+    folder: "06. Insurance-Specific/6.1 Actuarial"
+    priority: critical
+    description: "Latest actuarial valuation"
+    classification_patterns:
+      - "actuarial"
+      - "valuation"
+    content_keywords:
+      - "actuarial"
+      - "reserves"
+      - "technical provisions"
+    request_template: "Latest actuarial valuation report"
+
+  - name: "Actuarial Function Report"
+    category: "Insurance"
+    folder: "06. Insurance-Specific/6.1 Actuarial"
+    priority: required
+    description: "Actuarial function report to board"
+    classification_patterns:
+      - "actuarial.*function"
+      - "af.*report"
+    content_keywords:
+      - "actuarial function"
+      - "opinion"
+    request_template: "Actuarial function report"
+
+  - name: "Reserve Methodology"
+    category: "Insurance"
+    folder: "06. Insurance-Specific/6.1 Actuarial"
+    priority: required
+    description: "Reserve calculation methodology"
+    classification_patterns:
+      - "methodology"
+      - "reserving"
+    content_keywords:
+      - "methodology"
+      - "reserves"
+      - "best estimate"
+    request_template: "Reserve methodology documentation"
+
+  - name: "Reinsurance Programme Summary"
+    category: "Insurance"
+    folder: "06. Insurance-Specific/6.2 Reinsurance"
+    priority: critical
+    description: "Overview of reinsurance arrangements"
+    classification_patterns:
+      - "reinsurance"
+      - "ri.*summary"
+    content_keywords:
+      - "reinsurance"
+      - "treaty"
+      - "facultative"
+    request_template: "Summary of reinsurance programme"
+
+  - name: "Reinsurance Contracts"
+    category: "Insurance"
+    folder: "06. Insurance-Specific/6.2 Reinsurance"
+    priority: critical
+    description: "Key reinsurance contracts"
+    classification_patterns:
+      - "treaty"
+      - "ri.*contract"
+    content_keywords:
+      - "treaty"
+      - "reinsurance"
+      - "cover"
+    request_template: "Key reinsurance contracts"
+
+  - name: "Claims Statistics"
+    category: "Insurance"
+    folder: "06. Insurance-Specific/6.3 Claims"
+    priority: required
+    description: "Claims experience and statistics"
+    classification_patterns:
+      - "claims.*stats"
+      - "loss.*ratio"
+    content_keywords:
+      - "claims"
+      - "loss ratio"
+      - "experience"
+    request_template: "Claims statistics for the last 5 years"
+
+  # Banking-Specific
+  - name: "Loan Portfolio Analysis"
+    category: "Banking"
+    folder: "07. Banking-Specific/7.1 Credit Portfolio"
+    priority: critical
+    description: "Analysis of loan book"
+    classification_patterns:
+      - "loan.*portfolio"
+      - "credit.*portfolio"
+    content_keywords:
+      - "loan"
+      - "portfolio"
+      - "credit"
+    request_template: "Loan portfolio analysis"
+
+  - name: "NPL Analysis"
+    category: "Banking"
+    folder: "07. Banking-Specific/7.1 Credit Portfolio"
+    priority: critical
+    description: "Non-performing loan analysis"
+    classification_patterns:
+      - "npl"
+      - "non.*performing"
+    content_keywords:
+      - "NPL"
+      - "non-performing"
+      - "impaired"
+    request_template: "NPL analysis and trends"
+
+  - name: "Credit Policy"
+    category: "Banking"
+    folder: "07. Banking-Specific/7.1 Credit Portfolio"
+    priority: required
+    description: "Credit policy and underwriting standards"
+    classification_patterns:
+      - "credit.*policy"
+      - "underwriting"
+    content_keywords:
+      - "credit policy"
+      - "underwriting"
+      - "criteria"
+    request_template: "Credit policy documentation"
+
+  - name: "IFRS 9 Staging Analysis"
+    category: "Banking"
+    folder: "07. Banking-Specific/7.1 Credit Portfolio"
+    priority: required
+    description: "Expected credit loss staging"
+    classification_patterns:
+      - "ifrs9"
+      - "ecl"
+      - "staging"
+    content_keywords:
+      - "IFRS 9"
+      - "ECL"
+      - "staging"
+    request_template: "IFRS 9 staging analysis"
+
+  - name: "ALM Reports"
+    category: "Banking"
+    folder: "07. Banking-Specific/7.2 Treasury/ALM"
+    priority: critical
+    description: "Asset liability management reports"
+    classification_patterns:
+      - "alm"
+      - "asset.*liability"
+    content_keywords:
+      - "ALM"
+      - "asset liability"
+      - "interest rate"
+    request_template: "ALM reports for the last 12 months"
+
+  - name: "Funding Profile Analysis"
+    category: "Banking"
+    folder: "07. Banking-Specific/7.2 Treasury/ALM"
+    priority: required
+    description: "Funding sources and profile"
+    classification_patterns:
+      - "funding"
+      - "deposit"
+    content_keywords:
+      - "funding"
+      - "deposits"
+      - "concentration"
+    request_template: "Funding profile analysis"
+
+  # Asset Management-Specific
+  - name: "AUM Summary"
+    category: "AssetManagement"
+    folder: "08. Asset Management-Specific/8.1 AUM & Performance"
+    priority: critical
+    description: "Assets under management summary"
+    classification_patterns:
+      - "aum"
+      - "assets.*under"
+    content_keywords:
+      - "AUM"
+      - "assets under management"
+    request_template: "AUM summary by product and mandate"
+
+  - name: "Performance Track Record"
+    category: "AssetManagement"
+    folder: "08. Asset Management-Specific/8.1 AUM & Performance"
+    priority: critical
+    description: "Investment performance track record"
+    classification_patterns:
+      - "performance"
+      - "track.*record"
+    content_keywords:
+      - "performance"
+      - "benchmark"
+      - "returns"
+    request_template: "Performance track record for all strategies"
+
+  - name: "Flow Analysis"
+    category: "AssetManagement"
+    folder: "08. Asset Management-Specific/8.1 AUM & Performance"
+    priority: required
+    description: "Fund flow analysis"
+    classification_patterns:
+      - "flows"
+      - "inflows"
+    content_keywords:
+      - "flows"
+      - "net flows"
+      - "redemptions"
+    request_template: "Fund flow analysis for the last 36 months"
+
+  - name: "Investment Mandates"
+    category: "AssetManagement"
+    folder: "08. Asset Management-Specific/8.2 Mandates"
+    priority: critical
+    description: "Client investment mandates"
+    classification_patterns:
+      - "mandate"
+      - "ima"
+    content_keywords:
+      - "mandate"
+      - "investment management agreement"
+    request_template: "Key client investment mandates"
+
+  - name: "Mandate Compliance Reports"
+    category: "AssetManagement"
+    folder: "08. Asset Management-Specific/8.2 Mandates"
+    priority: required
+    description: "Mandate compliance monitoring"
+    classification_patterns:
+      - "mandate.*compliance"
+      - "breach"
+    content_keywords:
+      - "mandate"
+      - "compliance"
+      - "breach"
+    request_template: "Mandate compliance reports"
+
+  # Corporate & Financial
+  - name: "Group Structure"
+    category: "Constitutional Documents"
+    folder: "09. Corporate & Financial/9.1 Corporate Records"
+    priority: critical
+    description: "Legal entity structure"
+    classification_patterns:
+      - "group.*structure"
+      - "organogram"
+    content_keywords:
+      - "group"
+      - "structure"
+      - "subsidiary"
+    request_template: "Group structure diagram"
+
+  - name: "Management Letter"
+    category: "Financial Statements"
+    folder: "09. Corporate & Financial/9.2 Financial Statements"
+    priority: required
+    description: "Auditor's management letter"
+    classification_patterns:
+      - "management.*letter"
+      - "auditor.*letter"
+    content_keywords:
+      - "management letter"
+      - "control deficiencies"
+    request_template: "Auditor's management letter"
+
+  # Transaction Documents
+  - name: "Sale and Purchase Agreement"
+    category: "Transaction"
+    folder: "10. Transaction Documents"
+    priority: critical
+    description: "Transaction agreements"
+    classification_patterns:
+      - "spa"
+      - "sale.*agreement"
+    content_keywords:
+      - "sale"
+      - "purchase"
+      - "agreement"
+    request_template: "Draft or executed sale and purchase agreement"
+
+  - name: "Disclosure Letter"
+    category: "Transaction"
+    folder: "10. Transaction Documents"
+    priority: critical
+    description: "Disclosure against warranties"
+    classification_patterns:
+      - "disclosure"
+    content_keywords:
+      - "disclosure"
+      - "warranties"
+    request_template: "Disclosure letter"
+
+  # Tax
+  - name: "Tax Opinion"
+    category: "Tax"
+    folder: "11. Tax"
+    priority: required
+    description: "Tax opinion on transaction"
+    classification_patterns:
+      - "tax.*opinion"
+    content_keywords:
+      - "tax"
+      - "opinion"
+    request_template: "Tax opinion on transaction structure"

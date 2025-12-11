@@ -1,0 +1,388 @@
+# Document registry for IP & Technology transactions
+
+transaction_type: "IP & Technology"
+
+folder_structure:
+  - name: "01. Corporate"
+    subfolders:
+      - name: "1.1 Constitutional"
+      - name: "1.2 Board & Shareholders"
+
+  - name: "02. Registered IP"
+    subfolders:
+      - name: "2.1 Patents"
+      - name: "2.2 Trademarks"
+      - name: "2.3 Designs"
+      - name: "2.4 Copyright"
+      - name: "2.5 Domains"
+
+  - name: "03. IP Licenses"
+    subfolders:
+      - name: "3.1 Inbound Licenses"
+      - name: "3.2 Outbound Licenses"
+      - name: "3.3 Open Source"
+
+  - name: "04. Technology"
+    subfolders:
+      - name: "4.1 Source Code"
+      - name: "4.2 Architecture"
+      - name: "4.3 Third Party Software"
+      - name: "4.4 Development"
+
+  - name: "05. Data & Privacy"
+    subfolders:
+      - name: "5.1 POPIA Compliance"
+      - name: "5.2 Data Processing"
+      - name: "5.3 Data Breaches"
+
+  - name: "06. Cybersecurity"
+    subfolders:
+      - name: "6.1 Policies"
+      - name: "6.2 Assessments"
+      - name: "6.3 Incidents"
+
+  - name: "07. IP Disputes"
+
+  - name: "08. Employment IP"
+    subfolders:
+      - name: "8.1 Assignment Agreements"
+      - name: "8.2 Contractor IP"
+
+  - name: "99. Other Documents"
+
+categories:
+  - name: "Patents"
+    description: "Patent registrations and applications"
+    folder: "02. Registered IP/2.1 Patents"
+
+  - name: "Trademarks"
+    description: "Trademark registrations"
+    folder: "02. Registered IP/2.2 Trademarks"
+
+  - name: "Licenses"
+    description: "IP licensing arrangements"
+    folder: "03. IP Licenses"
+
+  - name: "Technology"
+    description: "Software and technology"
+    folder: "04. Technology"
+
+  - name: "Data Privacy"
+    description: "Data protection and POPIA"
+    folder: "05. Data & Privacy"
+
+  - name: "Cybersecurity"
+    description: "Security policies and assessments"
+    folder: "06. Cybersecurity"
+
+  - name: "IP Disputes"
+    description: "IP litigation and disputes"
+    folder: "07. IP Disputes"
+
+documents:
+  # Patents
+  - name: "Patent Portfolio Schedule"
+    category: "Patents"
+    folder: "02. Registered IP/2.1 Patents"
+    priority: critical
+    description: "Complete patent portfolio"
+    classification_patterns:
+      - "patent.*portfolio"
+      - "patent.*schedule"
+      - "patent.*list"
+    request_template: "Schedule of all patents and applications with registration details and status"
+
+  - name: "Patent Certificates"
+    category: "Patents"
+    folder: "02. Registered IP/2.1 Patents"
+    priority: critical
+    description: "Patent registration certificates"
+    classification_patterns:
+      - "patent.*cert"
+      - "letters.*patent"
+    request_template: "Patent certificates for all registered patents"
+
+  - name: "Patent Assignment Agreements"
+    category: "Patents"
+    folder: "02. Registered IP/2.1 Patents"
+    priority: critical
+    description: "Patent assignment chain of title"
+    classification_patterns:
+      - "patent.*assignment"
+      - "invention.*assignment"
+    request_template: "All patent assignment agreements showing chain of title"
+
+  # Trademarks
+  - name: "Trademark Portfolio Schedule"
+    category: "Trademarks"
+    folder: "02. Registered IP/2.2 Trademarks"
+    priority: critical
+    description: "Complete trademark portfolio"
+    classification_patterns:
+      - "trademark.*portfolio"
+      - "trademark.*schedule"
+      - "brand.*register"
+    request_template: "Schedule of all trademarks with registration numbers, classes, and status"
+
+  - name: "Trademark Certificates"
+    category: "Trademarks"
+    folder: "02. Registered IP/2.2 Trademarks"
+    priority: required
+    description: "Trademark registration certificates"
+    classification_patterns:
+      - "trademark.*cert"
+      - "registration.*cert.*mark"
+    request_template: "Registration certificates for key trademarks"
+
+  - name: "Domain Name Portfolio"
+    category: "Trademarks"
+    folder: "02. Registered IP/2.5 Domains"
+    priority: required
+    description: "Registered domain names"
+    classification_patterns:
+      - "domain.*list"
+      - "domain.*portfolio"
+      - "url.*list"
+    request_template: "Schedule of all domain names with registrar and expiry dates"
+
+  # Licenses
+  - name: "Inbound License Agreements"
+    category: "Licenses"
+    folder: "03. IP Licenses/3.1 Inbound Licenses"
+    priority: critical
+    description: "IP licenses the company relies on"
+    classification_patterns:
+      - "license.*agreement"
+      - "licence.*agreement"
+      - "technology.*license"
+      - "software.*license"
+    content_keywords:
+      - "licensor"
+      - "licensee"
+      - "royalty"
+      - "grant of rights"
+    request_template: "All IP/technology licenses under which the company operates"
+
+  - name: "Outbound License Agreements"
+    category: "Licenses"
+    folder: "03. IP Licenses/3.2 Outbound Licenses"
+    priority: critical
+    description: "IP licenses granted to third parties"
+    classification_patterns:
+      - "license.*grant"
+      - "sublicense"
+      - "out.*license"
+    request_template: "All IP licenses granted to third parties"
+
+  - name: "Open Source Audit"
+    category: "Licenses"
+    folder: "03. IP Licenses/3.3 Open Source"
+    priority: critical
+    description: "Open source software inventory"
+    classification_patterns:
+      - "open.*source"
+      - "oss.*audit"
+      - "license.*compliance"
+      - "gpl"
+      - "apache"
+      - "mit.*license"
+    request_template: "Open source software inventory with license types and compliance analysis"
+
+  - name: "FOSS Policy"
+    category: "Licenses"
+    folder: "03. IP Licenses/3.3 Open Source"
+    priority: required
+    description: "Open source usage policy"
+    classification_patterns:
+      - "open.*source.*policy"
+      - "foss.*policy"
+    request_template: "Open source/FOSS usage policy"
+
+  # Technology
+  - name: "Source Code Escrow"
+    category: "Technology"
+    folder: "04. Technology/4.1 Source Code"
+    priority: required
+    description: "Source code escrow agreements"
+    classification_patterns:
+      - "escrow"
+      - "source.*code.*escrow"
+    request_template: "Source code escrow agreements if applicable"
+
+  - name: "Technology Architecture"
+    category: "Technology"
+    folder: "04. Technology/4.2 Architecture"
+    priority: required
+    description: "System architecture documentation"
+    classification_patterns:
+      - "architecture"
+      - "system.*design"
+      - "technical.*design"
+    request_template: "High-level technology architecture documentation"
+
+  - name: "Third Party Software Licenses"
+    category: "Technology"
+    folder: "04. Technology/4.3 Third Party Software"
+    priority: critical
+    description: "Commercial software licenses"
+    classification_patterns:
+      - "software.*license"
+      - "saas.*agreement"
+      - "subscription.*agreement"
+    request_template: "All third-party software licenses (Microsoft, Oracle, etc.)"
+
+  - name: "Development Agreements"
+    category: "Technology"
+    folder: "04. Technology/4.4 Development"
+    priority: required
+    description: "Custom development contracts"
+    classification_patterns:
+      - "development.*agreement"
+      - "software.*development"
+      - "custom.*development"
+    request_template: "All software development agreements with IP ownership provisions"
+
+  # Data Privacy
+  - name: "POPIA Compliance Assessment"
+    category: "Data Privacy"
+    folder: "05. Data & Privacy/5.1 POPIA Compliance"
+    priority: critical
+    description: "POPIA gap analysis"
+    classification_patterns:
+      - "popia.*compliance"
+      - "privacy.*assessment"
+      - "data.*protection.*assessment"
+    request_template: "POPIA compliance assessment or gap analysis"
+
+  - name: "Information Officer Registration"
+    category: "Data Privacy"
+    folder: "05. Data & Privacy/5.1 POPIA Compliance"
+    priority: critical
+    description: "Registered Information Officer"
+    classification_patterns:
+      - "information.*officer"
+      - "io.*registration"
+    request_template: "Proof of Information Officer registration with Information Regulator"
+
+  - name: "Privacy Policy"
+    category: "Data Privacy"
+    folder: "05. Data & Privacy/5.1 POPIA Compliance"
+    priority: required
+    description: "External privacy policy"
+    classification_patterns:
+      - "privacy.*policy"
+      - "data.*protection.*policy"
+    request_template: "Website privacy policy and internal PAIA manual"
+
+  - name: "Data Processing Agreements"
+    category: "Data Privacy"
+    folder: "05. Data & Privacy/5.2 Data Processing"
+    priority: critical
+    description: "DPAs with service providers"
+    classification_patterns:
+      - "data.*processing.*agreement"
+      - "dpa"
+      - "operator.*agreement"
+    request_template: "Data processing agreements with all service providers handling personal data"
+
+  - name: "Data Breach Register"
+    category: "Data Privacy"
+    folder: "05. Data & Privacy/5.3 Data Breaches"
+    priority: critical
+    description: "Record of data breaches"
+    classification_patterns:
+      - "data.*breach"
+      - "security.*incident"
+      - "breach.*register"
+    request_template: "Register of data breaches and security incidents with remediation"
+
+  # Cybersecurity
+  - name: "Information Security Policy"
+    category: "Cybersecurity"
+    folder: "06. Cybersecurity/6.1 Policies"
+    priority: required
+    description: "InfoSec policies"
+    classification_patterns:
+      - "information.*security.*policy"
+      - "cybersecurity.*policy"
+      - "it.*security"
+    request_template: "Information security policy and supporting procedures"
+
+  - name: "Security Certifications"
+    category: "Cybersecurity"
+    folder: "06. Cybersecurity/6.2 Assessments"
+    priority: required
+    description: "ISO 27001, SOC 2, etc."
+    classification_patterns:
+      - "iso.*27001"
+      - "soc.*2"
+      - "security.*cert"
+    request_template: "Security certifications (ISO 27001, SOC 2) and audit reports"
+
+  - name: "Penetration Test Reports"
+    category: "Cybersecurity"
+    folder: "06. Cybersecurity/6.2 Assessments"
+    priority: required
+    description: "Recent penetration tests"
+    classification_patterns:
+      - "penetration.*test"
+      - "pen.*test"
+      - "vulnerability.*assessment"
+    request_template: "Penetration test and vulnerability assessment reports (last 12 months)"
+
+  - name: "Cyber Insurance"
+    category: "Cybersecurity"
+    folder: "06. Cybersecurity/6.1 Policies"
+    priority: required
+    description: "Cyber liability insurance"
+    classification_patterns:
+      - "cyber.*insurance"
+      - "cyber.*liability"
+    request_template: "Cyber liability insurance policy"
+
+  # IP Disputes
+  - name: "IP Litigation Register"
+    category: "IP Disputes"
+    folder: "07. IP Disputes"
+    priority: critical
+    description: "IP disputes and claims"
+    classification_patterns:
+      - "ip.*litigation"
+      - "patent.*dispute"
+      - "trademark.*dispute"
+      - "infringement.*claim"
+    request_template: "Schedule of all IP disputes, claims, and cease and desist letters"
+
+  - name: "Freedom to Operate Analysis"
+    category: "IP Disputes"
+    folder: "07. IP Disputes"
+    priority: required
+    description: "FTO opinion"
+    classification_patterns:
+      - "freedom.*operate"
+      - "fto"
+      - "clearance.*opinion"
+    request_template: "Freedom to operate analysis for key products/technology"
+
+  # Employment IP
+  - name: "Employee IP Assignment Agreements"
+    category: "Employment IP"
+    folder: "08. Employment IP/8.1 Assignment Agreements"
+    priority: critical
+    description: "IP assignment from employees"
+    classification_patterns:
+      - "ip.*assignment"
+      - "invention.*assignment"
+      - "work.*for.*hire"
+    request_template: "Standard employee IP assignment agreement and key inventor agreements"
+
+  - name: "Contractor IP Agreements"
+    category: "Employment IP"
+    folder: "08. Employment IP/8.2 Contractor IP"
+    priority: critical
+    description: "IP assignment from contractors"
+    classification_patterns:
+      - "contractor.*ip"
+      - "consultant.*ip"
+      - "contractor.*assignment"
+    request_template: "IP assignment agreements with all contractors who developed IP"

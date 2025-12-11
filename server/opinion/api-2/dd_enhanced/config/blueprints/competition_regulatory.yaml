@@ -1,0 +1,142 @@
+transaction_type: "Competition & Regulatory"
+code: "competition_regulatory"
+description: |
+  Due diligence blueprint for competition law and regulatory compliance
+  in mergers, acquisitions, and joint ventures.
+
+jurisdiction: "South Africa"
+primary_legislation:
+  - "Competition Act 89 of 1998"
+  - "Competition Amendment Act 18 of 2018"
+
+reference_documents:
+  always_include:
+    - pattern: "MOI|Memorandum of Incorporation"
+      reason: "Constitutional document"
+    - pattern: "Shareholder|SHA"
+      reason: "Control analysis"
+    - pattern: "Financial Statements"
+      reason: "Turnover calculations"
+
+risk_categories:
+  - name: "Merger Notification"
+    weight: critical
+    standard_questions:
+      - question: "Does the transaction constitute a merger under the Competition Act?"
+        priority: critical
+      - question: "What are the combined South African turnover figures?"
+        priority: critical
+      - question: "What are the combined asset values in South Africa?"
+        priority: critical
+      - question: "Is this an intermediate or large merger?"
+        priority: critical
+      - question: "What is the applicable merger filing threshold?"
+        priority: critical
+      - question: "Has the transaction been structured to avoid notification?"
+        priority: high
+      - question: "Are there any exemptions that might apply?"
+        priority: high
+      - question: "What is the expected timeline for approval?"
+        priority: high
+
+  - name: "Market Definition & Shares"
+    weight: critical
+    standard_questions:
+      - question: "What are the relevant product markets?"
+        priority: critical
+      - question: "What are the relevant geographic markets?"
+        priority: critical
+      - question: "What are the parties' market shares in each market?"
+        priority: critical
+      - question: "What is the combined market share post-transaction?"
+        priority: critical
+      - question: "What is the change in HHI concentration?"
+        priority: high
+      - question: "Are there any markets where combined share exceeds 35%?"
+        priority: critical
+      - question: "Who are the main competitors and their market shares?"
+        priority: high
+      - question: "Are there any vertical relationships between the parties?"
+        priority: high
+
+  - name: "Competitive Effects"
+    weight: critical
+    standard_questions:
+      - question: "Does the merger raise horizontal competition concerns?"
+        priority: critical
+      - question: "Are there vertical foreclosure concerns?"
+        priority: high
+      - question: "Could the merger facilitate coordinated conduct?"
+        priority: high
+      - question: "What barriers to entry exist?"
+        priority: high
+      - question: "What countervailing buyer power exists?"
+        priority: medium
+      - question: "What efficiency gains will the merger generate?"
+        priority: medium
+      - question: "Is there a failing firm defense available?"
+        priority: medium
+      - question: "What remedies might address competition concerns?"
+        priority: high
+
+  - name: "Public Interest"
+    weight: high
+    standard_questions:
+      - question: "What impact will the merger have on employment?"
+        priority: critical
+      - question: "Are any retrenchments planned post-merger?"
+        priority: critical
+      - question: "What is the impact on small business and BEE?"
+        priority: high
+      - question: "Does the merger affect a particular industrial sector?"
+        priority: high
+      - question: "Is the target South African owned or controlled?"
+        priority: high
+      - question: "What is the impact on international competitiveness?"
+        priority: medium
+      - question: "Will there be technology transfer benefits?"
+        priority: medium
+
+  - name: "Historical Compliance"
+    weight: high
+    standard_questions:
+      - question: "Have the parties been involved in prior competition matters?"
+        priority: high
+      - question: "Are there any pending competition investigations?"
+        priority: critical
+      - question: "Have any cartel or abuse of dominance penalties been imposed?"
+        priority: critical
+      - question: "Are there any outstanding compliance obligations?"
+        priority: high
+      - question: "Are there any leniency applications in progress?"
+        priority: critical
+
+  - name: "Foreign Filings"
+    weight: medium
+    standard_questions:
+      - question: "Are merger filings required in other jurisdictions?"
+        priority: high
+      - question: "What is the timeline for international approvals?"
+        priority: high
+      - question: "Are there any inter-agency coordination requirements?"
+        priority: medium
+      - question: "Could foreign conditions affect South African implementation?"
+        priority: medium
+
+deal_blockers:
+  - description: "Merger prohibited by Competition Commission/Tribunal"
+    severity: absolute
+  - description: "Unacceptable conditions imposed"
+    severity: conditional
+  - description: "Parties subject to ongoing cartel investigation"
+    severity: conditional
+  - description: "Prior gun-jumping violation"
+    severity: conditional
+
+conditions_precedent_patterns:
+  - pattern: "Competition Commission|Commission approval"
+    cp_type: "Competition Approval"
+  - pattern: "Competition Tribunal|Tribunal approval"
+    cp_type: "Competition Approval"
+  - pattern: "merger condition|competition condition"
+    cp_type: "Competition Condition"

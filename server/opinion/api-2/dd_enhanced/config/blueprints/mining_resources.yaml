@@ -1,0 +1,432 @@
+transaction_type: "Mining & Resources Acquisition"
+code: "mining_resources"
+description: |
+  Due diligence blueprint for acquisition of mining operations, including
+  coal, platinum group metals, gold, chrome, manganese, iron ore, and other minerals.
+  Covers MPRDA compliance, environmental obligations, and sector-specific risks.
+
+jurisdiction: "South Africa"
+primary_legislation:
+  - "Mineral and Petroleum Resources Development Act 28 of 2002 (MPRDA)"
+  - "Mine Health and Safety Act 29 of 1996 (MHSA)"
+  - "National Environmental Management Act 107 of 1998 (NEMA)"
+  - "National Water Act 36 of 1998 (NWA)"
+
+reference_documents:
+  always_include:
+    - pattern: "MOI|Memorandum of Incorporation"
+      reason: "Constitutional document - defines approval requirements"
+    - pattern: "Shareholder|SHA"
+      reason: "Constitutional document - defines shareholder rights and restrictions"
+    - pattern: "Board Resolution"
+      reason: "Governance - verifies transaction authorization"
+
+  critical_documents:
+    - type: "Mining Right"
+      description: "New Order Mining Right issued under MPRDA"
+      required: true
+    - type: "Environmental Authorization"
+      description: "EMPr and related environmental approvals"
+      required: true
+    - type: "Water Use License"
+      description: "WUL issued under National Water Act"
+      required: true
+    - type: "Social and Labour Plan"
+      description: "SLP approved by DMRE"
+      required: true
+
+risk_categories:
+  - name: "Mining Rights & Title"
+    weight: critical
+    description: "Validity and status of mineral rights"
+    standard_questions:
+      - question: "Is the mining right valid and in good standing with DMRE?"
+        detail: "Check registration, annual compliance, any suspensions or cancellations"
+        priority: critical
+      - question: "When does the mining right expire and what renewal obligations exist?"
+        detail: "Check Section 102 renewal timeline and requirements"
+        priority: critical
+      - question: "What is the current status of Section 102 compliance?"
+        detail: "Review compliance history, any warnings or directives"
+        priority: critical
+      - question: "Are there any pending DMRE enforcement actions or directives?"
+        detail: "Check for Section 93 directives, compliance notices"
+        priority: critical
+      - question: "Does the mining right cover all intended mining areas?"
+        detail: "Verify coordinates and farm portions match operational areas"
+        priority: high
+      - question: "Are there any overlapping or conflicting mineral rights?"
+        detail: "Check for prospecting rights, other mining rights in area"
+        priority: high
+      - question: "Has the mining works programme been complied with?"
+        detail: "Compare actual vs committed production, development"
+        priority: high
+      - question: "What Section 11 consent is required for transfer?"
+        detail: "Understand DMRE approval process and timeline"
+        priority: critical
+      - question: "Are there any beneficiation obligations under the mining right?"
+        detail: "Check for local processing requirements"
+        priority: medium
+      - question: "What are the conditions attached to the mining right?"
+        detail: "Review all special conditions and compliance status"
+        priority: high
+
+    cross_doc_validations:
+      - check: "Mining right boundaries vs surface lease boundaries"
+        description: "Verify mining right covers all leased surface areas"
+      - check: "Mining right holder vs operating entity"
+        description: "Confirm the correct entity holds the right"
+
+    calculations:
+      - name: "Remaining mine life"
+        formula: "Reserves / Annual production rate"
+      - name: "Section 11 timeline"
+        description: "Estimate DMRE approval timeline (typically 60-120 days)"
+
+  - name: "Environmental Compliance"
+    weight: critical
+    description: "Environmental authorizations, liabilities, and rehabilitation"
+    standard_questions:
+      - question: "What is the total rehabilitation liability and financial provision?"
+        detail: "Compare provision amount vs latest assessment, check adequacy"
+        priority: critical
+      - question: "Is the Environmental Management Programme (EMPr) current and complied with?"
+        detail: "Check approval status, amendments, compliance audits"
+        priority: critical
+      - question: "Is the Water Use License (WUL) current and compliant?"
+        detail: "Check validity, conditions, any pending renewals or amendments"
+        priority: critical
+      - question: "Are there any environmental directives or compliance notices?"
+        detail: "Check for DFFE or DWS enforcement actions"
+        priority: critical
+      - question: "What is the status of concurrent rehabilitation?"
+        detail: "Compare actual vs planned rehabilitation progress"
+        priority: high
+      - question: "Are there any contaminated land or pollution issues?"
+        detail: "Check for soil, groundwater contamination"
+        priority: high
+      - question: "What is the acid mine drainage (AMD) status and management?"
+        detail: "Review AMD risks, treatment systems, long-term liabilities"
+        priority: high
+      - question: "Are air quality permits and monitoring in place?"
+        detail: "Check Atmospheric Emission License, dust management"
+        priority: medium
+      - question: "What environmental incidents have occurred in past 5 years?"
+        detail: "Review incident reports, penalties, remediation"
+        priority: high
+      - question: "Are closure and post-closure plans adequate?"
+        detail: "Review mine closure plan, post-closure monitoring"
+        priority: high
+
+    cross_doc_validations:
+      - check: "Financial provision amount vs auditor's assessment"
+        description: "Verify provision in AFS matches regulatory requirement"
+      - check: "EMPr commitments vs actual environmental performance"
+        description: "Check for gaps between committed and actual"
+
+    calculations:
+      - name: "Total environmental liability"
+        formula: "DMRE provision + Landlord guarantee + Unfunded closure costs"
+      - name: "Rehabilitation backlog cost"
+        formula: "Area to be rehabilitated × Cost per hectare"
+
+  - name: "Change of Control"
+    weight: critical
+    description: "CoC provisions across all material contracts"
+    standard_questions:
+      - question: "Which material contracts contain change of control provisions?"
+        detail: "Identify all CoC triggers across contracts, leases, licenses"
+        priority: critical
+      - question: "What consents are required to complete the transaction?"
+        detail: "Map all third-party consents needed"
+        priority: critical
+      - question: "What are the financial consequences of triggering CoC clauses?"
+        detail: "Calculate liquidated damages, termination fees, acceleration"
+        priority: critical
+      - question: "Are there any termination rights upon change of control?"
+        detail: "Identify contracts that can be terminated on CoC"
+        priority: critical
+      - question: "What notice periods apply to CoC notifications?"
+        detail: "Map notification timelines for each contract"
+        priority: high
+      - question: "Can any CoC provisions be waived?"
+        detail: "Identify waiver mechanisms and likelihood"
+        priority: high
+      - question: "Are there any anti-embarrassment or clawback provisions?"
+        detail: "Check for restrictions on resale, value sharing"
+        priority: medium
+      - question: "Do joint venture agreements have CoC restrictions?"
+        detail: "Review JV partner consent requirements"
+        priority: high
+
+    cross_doc_validations:
+      - check: "All CoC thresholds vs transaction structure"
+        description: "Confirm which provisions are triggered by the deal"
+      - check: "CoC notification timeline vs transaction timeline"
+        description: "Ensure sufficient time for all notifications"
+
+    calculations:
+      - name: "Total CoC financial exposure"
+        formula: "Sum of all liquidated damages + termination fees + acceleration amounts"
+      - name: "Consent timeline critical path"
+        description: "Longest consent process determines minimum timeline"
+
+  - name: "Offtake & Commercial Contracts"
+    weight: critical
+    description: "Sales agreements, supply contracts, key commercial arrangements"
+    standard_questions:
+      - question: "What are the key offtake/sales agreements and their terms?"
+        detail: "Review pricing, volumes, duration, termination rights"
+        priority: critical
+      - question: "What is the revenue concentration risk?"
+        detail: "Calculate % of revenue from largest customers"
+        priority: critical
+      - question: "Do offtake agreements contain CoC or assignment provisions?"
+        detail: "Check consent requirements for transaction"
+        priority: critical
+      - question: "What are the minimum volume or take-or-pay obligations?"
+        detail: "Review volume commitments and consequences of shortfall"
+        priority: high
+      - question: "What pricing mechanisms apply and when do they reset?"
+        detail: "Understand price escalation, benchmarking, review dates"
+        priority: high
+      - question: "Are there any exclusivity or most-favored-customer provisions?"
+        detail: "Check for restrictions on selling to others"
+        priority: medium
+      - question: "What quality specifications apply and what are rejection rights?"
+        detail: "Review quality requirements and consequences of non-conformance"
+        priority: medium
+      - question: "What is the contract backlog and order book?"
+        detail: "Review committed future revenue"
+        priority: medium
+
+    calculations:
+      - name: "Revenue at risk"
+        formula: "Sum of annual revenue from contracts with CoC termination rights"
+      - name: "Customer concentration"
+        formula: "Top customer revenue / Total revenue × 100%"
+
+  - name: "Banking & Finance"
+    weight: critical
+    description: "Loan facilities, security, financial covenants"
+    standard_questions:
+      - question: "What loan facilities exist and what are the outstanding amounts?"
+        detail: "List all facilities, lenders, amounts drawn and available"
+        priority: critical
+      - question: "Are there any covenant breaches or waivers in place?"
+        detail: "Review financial covenants, current compliance, any waivers"
+        priority: critical
+      - question: "Do loan agreements contain change of control triggers?"
+        detail: "Review CoC definitions and consequences"
+        priority: critical
+      - question: "What security has been granted over assets?"
+        detail: "List all security: bonds, cessions, pledges"
+        priority: critical
+      - question: "Are there any cross-default provisions?"
+        detail: "Check if default under one facility triggers others"
+        priority: high
+      - question: "What are the mandatory prepayment triggers?"
+        detail: "Review asset sale, CoC, IPO prepayment requirements"
+        priority: high
+      - question: "Are there any subordination arrangements?"
+        detail: "Check inter-creditor arrangements"
+        priority: medium
+      - question: "What are the cash sweep or excess cash flow requirements?"
+        detail: "Review mandatory debt reduction mechanisms"
+        priority: medium
+      - question: "Are there any financial guarantee or comfort letters?"
+        detail: "Check for parent/shareholder support arrangements"
+        priority: medium
+      - question: "What hedging arrangements are in place?"
+        detail: "Review commodity, currency, interest rate hedges"
+        priority: medium
+
+    cross_doc_validations:
+      - check: "Covenant calculations in loan agreement vs actual financials"
+        description: "Verify current covenant compliance"
+      - check: "Security register vs loan agreement security requirements"
+        description: "Confirm all required security is in place"
+
+    calculations:
+      - name: "Total debt outstanding"
+        formula: "Sum of all facility balances"
+      - name: "Covenant headroom"
+        formula: "Actual ratio - Required ratio for each covenant"
+      - name: "Debt acceleration exposure"
+        formula: "Total debt that could be accelerated on CoC"
+
+  - name: "Surface Rights & Property"
+    weight: high
+    description: "Land tenure, leases, surface rights agreements"
+    standard_questions:
+      - question: "Does the company own or lease the surface rights?"
+        detail: "Distinguish between owned and leased properties"
+        priority: critical
+      - question: "Are surface lease terms aligned with mining right duration?"
+        detail: "Check lease expiry vs mining right expiry"
+        priority: critical
+      - question: "Do lease agreements require consent for CoC or assignment?"
+        detail: "Review landlord consent requirements"
+        priority: critical
+      - question: "What are the rental and royalty payment obligations?"
+        detail: "Review payment terms, escalations, production royalties"
+        priority: high
+      - question: "What infrastructure is located on leased land?"
+        detail: "Assess value at risk if lease terminates"
+        priority: high
+      - question: "What are the restoration/rehabilitation obligations to landlords?"
+        detail: "Compare to regulatory rehabilitation requirements"
+        priority: high
+      - question: "Are there any disputes with landowners or communities?"
+        detail: "Review relationship status, pending claims"
+        priority: high
+      - question: "What surface use agreements exist with third parties?"
+        detail: "Review servitudes, access rights, infrastructure rights"
+        priority: medium
+
+    cross_doc_validations:
+      - check: "Lease area vs mining right area"
+        description: "Verify all mining areas are covered by surface rights"
+      - check: "Landlord rehabilitation requirement vs DMRE requirement"
+        description: "Identify any additional landlord obligations"
+
+    calculations:
+      - name: "Annual lease cost"
+        formula: "Base rental + Production royalties"
+      - name: "Infrastructure at risk"
+        formula: "Value of improvements on leased land"
+
+  - name: "BEE & Mining Charter"
+    weight: high
+    description: "Broad-Based Black Economic Empowerment compliance"
+    standard_questions:
+      - question: "What is the current BEE ownership level?"
+        detail: "Calculate effective HDSA ownership percentage"
+        priority: critical
+      - question: "Is ownership compliant with Mining Charter requirements?"
+        detail: "Check 26% minimum, recognition of historical transactions"
+        priority: critical
+      - question: "What BEE structures are in place?"
+        detail: "Review trusts, SPVs, funding arrangements"
+        priority: high
+      - question: "Are BEE partners genuine and independent?"
+        detail: "Assess fronting risk, flow-through of benefits"
+        priority: high
+      - question: "What happens to BEE ownership on change of control?"
+        detail: "Review tag-along, anti-dilution, exit mechanisms"
+        priority: critical
+      - question: "Is the company Mining Charter compliant across all elements?"
+        detail: "Review scorecard: ownership, procurement, HR, etc."
+        priority: high
+      - question: "Are there any DMRE queries or concerns about BEE compliance?"
+        detail: "Check for correspondence, investigations"
+        priority: high
+      - question: "What is the status of the Social and Labour Plan?"
+        detail: "Review SLP commitments, compliance, next review date"
+        priority: high
+
+    cross_doc_validations:
+      - check: "BEE certificates vs actual ownership structure"
+        description: "Verify BEE credentials are accurate"
+      - check: "SLP commitments vs actual spend"
+        description: "Check for under-delivery on commitments"
+
+  - name: "Employment & Key Persons"
+    weight: high
+    description: "Workforce, unions, key executives"
+    standard_questions:
+      - question: "What are the key person dependencies?"
+        detail: "Identify critical executives and their terms"
+        priority: high
+      - question: "What are the CoC provisions in executive contracts?"
+        detail: "Review golden parachutes, accelerated vesting"
+        priority: high
+      - question: "What is the total severance exposure on CoC?"
+        detail: "Calculate all payments triggered by transaction"
+        priority: high
+      - question: "What is the status of union relationships?"
+        detail: "Review recognition agreements, recent disputes"
+        priority: high
+      - question: "Are there any pending retrenchments or Section 189 processes?"
+        detail: "Check for workforce restructuring"
+        priority: high
+      - question: "What is the status of wage negotiations?"
+        detail: "Review current agreements, upcoming negotiations"
+        priority: medium
+      - question: "Are all statutory employment obligations met?"
+        detail: "Check UIF, COIDA, skills levies"
+        priority: medium
+      - question: "What employee benefit schemes are in place?"
+        detail: "Review pension, medical aid, housing schemes"
+        priority: medium
+      - question: "Are there any unfunded post-retirement obligations?"
+        detail: "Check for medical aid continuation, pension deficits"
+        priority: medium
+
+    calculations:
+      - name: "Total CoC severance exposure"
+        formula: "Sum of all executive severance + general workforce impact"
+      - name: "Key person replacement cost"
+        formula: "Recruitment + onboarding + productivity loss estimate"
+
+  - name: "Health & Safety"
+    weight: high
+    description: "Mine health and safety compliance"
+    standard_questions:
+      - question: "What is the safety performance record?"
+        detail: "Review LTIFR, fatalities, reportable incidents"
+        priority: critical
+      - question: "Are there any pending DMR safety investigations?"
+        detail: "Check for Section 54/55 stoppages, investigations"
+        priority: critical
+      - question: "Is the Certificate of Competency current?"
+        detail: "Verify mine manager qualifications"
+        priority: high
+      - question: "What is the status of occupational health compliance?"
+        detail: "Review medical surveillance, occupational diseases"
+        priority: high
+      - question: "Are there any pending health claims (silicosis, TB)?"
+        detail: "Review occupational disease liability exposure"
+        priority: high
+      - question: "What safety equipment and training programs are in place?"
+        detail: "Assess adequacy of safety systems"
+        priority: medium
+
+deal_blockers:
+  - description: "Mining right suspended, cancelled, or under review for cancellation"
+    severity: absolute
+    consequence: "Transaction cannot proceed without valid mining right"
+
+  - description: "Required shareholder approval not obtained per MOI"
+    severity: absolute
+    consequence: "Board lacks authority to bind company to transaction"
+
+  - description: "Section 11 consent cannot be obtained from DMRE"
+    severity: absolute
+    consequence: "Transfer of mining right will not be registered"
+
+  - description: "Unwaivable material covenant breach with acceleration notice"
+    severity: absolute
+    consequence: "Lender may accelerate debt, crystallizing liability"
+
+  - description: "Criminal prosecution of company or directors pending"
+    severity: conditional
+    consequence: "May affect DMRE fit and proper assessment"
+
+  - description: "Water Use License suspended or cancelled"
+    severity: conditional
+    consequence: "Mining operations may need to cease"
+
+conditions_precedent_patterns:
+  - pattern: "consent of|approval of|permission of"
+    cp_type: "Third Party Consent"
+  - pattern: "Section 11|ministerial consent|DMRE approval"
+    cp_type: "Regulatory Approval"
+  - pattern: "shareholder approval|special resolution"
+    cp_type: "Shareholder Approval"
+  - pattern: "Competition Commission|merger notification"
+    cp_type: "Competition Approval"
+  - pattern: "notice must be given|notify within"
+    cp_type: "Notification"
+  - pattern: "subject to|conditional upon|provided that"
+    cp_type: "Condition"

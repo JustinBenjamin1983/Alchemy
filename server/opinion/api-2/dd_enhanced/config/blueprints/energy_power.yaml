@@ -1,171 +1,463 @@
-transaction_type: "Energy & Power"
-code: "energy_power"
-description: |
-  Due diligence blueprint for energy sector transactions including
+transaction_type: Energy & Power
+code: energy_power
+description: 'Due diligence blueprint for energy sector transactions including
+
   IPPs, PPAs, renewable energy projects, and power infrastructure.
 
-jurisdiction: "South Africa"
+  '
+jurisdiction: South Africa
+folder_structure:
+  01_Corporate_Governance:
+    relevance: high
+    subcategories:
+    - Constitutional
+    - Governance
+    - SPV Structure
+    - BEE
+    expected_documents:
+    - MOI
+    - Board Resolution
+    - Shareholders Agreement
+    - Company Registration
+    - BEE Certificate
+  02_Commercial:
+    relevance: critical
+    subcategories:
+    - PPA
+    - Offtake
+    - EPC
+    - O&M
+    - Equipment Supply
+    expected_documents:
+    - Power Purchase Agreement
+    - Implementation Agreement
+    - EPC Contract
+    - O&M Agreement
+    - Equipment Supply Agreement
+    - Grid Connection Agreement
+  03_Financial:
+    relevance: critical
+    subcategories:
+    - Project Finance
+    - Security
+    - Financial Model
+    - Guarantees
+    expected_documents:
+    - Facility Agreement
+    - Security Agreement
+    - Financial Model
+    - Sponsor Support Agreement
+    - Bank Guarantee
+    - Financial Statements
+  04_Regulatory:
+    relevance: critical
+    subcategories:
+    - Generation License
+    - Environmental
+    - Grid Code
+    - REIPPPP
+    expected_documents:
+    - Generation License
+    - Environmental Authorization
+    - Water Use License
+    - REIPPPP Award Letter
+    - Grid Code Compliance Certificate
+  05_Employment:
+    relevance: medium
+    subcategories:
+    - Operations Staff
+    - Local Content
+    expected_documents:
+    - Employment Contract
+    - Local Content Report
+  06_Property:
+    relevance: high
+    subcategories:
+    - Land Lease
+    - Surface Rights
+    - Servitudes
+    expected_documents:
+    - Land Lease Agreement
+    - Title Deed
+    - Servitude Agreement
+    - Community Agreement
+  07_Insurance:
+    relevance: high
+    subcategories:
+    - Construction
+    - Operations
+    - BI
+    expected_documents:
+    - Construction All Risk Policy
+    - Operational All Risk Policy
+    - Business Interruption Policy
+  08_Litigation:
+    relevance: medium
+    subcategories:
+    - Contractor Disputes
+    - Community
+    - Regulatory
+    expected_documents:
+    - Summons
+    - Settlement Agreement
+  09_Tax:
+    relevance: medium
+    subcategories:
+    - 12B/12I Allowances
+    - Carbon Tax
+    expected_documents:
+    - Tax Return
+    - 12B Certificate
+    - Carbon Tax Return
+  99_Needs_Review:
+    relevance: n/a
+    subcategories:
+    - Unclassified
+    - Low Confidence
+    expected_documents: []
 primary_legislation:
-  - "Electricity Regulation Act 4 of 2006"
-  - "National Energy Act 34 of 2008"
-  - "National Environmental Management Act 107 of 1998"
-  - "Infrastructure Development Act 23 of 2014"
-  - "Carbon Tax Act 15 of 2019"
-
+- Electricity Regulation Act 4 of 2006
+- National Energy Act 34 of 2008
+- National Environmental Management Act 107 of 1998
+- Infrastructure Development Act 23 of 2014
+- Carbon Tax Act 15 of 2019
 risk_categories:
-  - name: "Generation License & Regulatory"
-    weight: critical
-    standard_questions:
-      - question: "Is there a valid generation license from NERSA?"
-        priority: critical
-      - question: "What are the conditions attached to the license?"
-        priority: critical
-      - question: "What is the licensed capacity?"
-        priority: critical
-      - question: "When does the license expire and what is renewal process?"
-        priority: high
-      - question: "Are there any pending license amendments?"
-        priority: high
-      - question: "Is registration as a schedule 2 generator required?"
-        priority: high
-      - question: "Are there any NERSA investigations or disputes?"
-        priority: high
-      - question: "What grid code compliance requirements apply?"
-        priority: high
-      - question: "Is IRP (Integrated Resource Plan) allocation secured?"
-        priority: critical
-
-  - name: "Power Purchase Agreement"
-    weight: critical
-    standard_questions:
-      - question: "Is there a PPA with Eskom or other offtaker?"
-        priority: critical
-      - question: "What is the PPA term and when does it expire?"
-        priority: critical
-      - question: "What is the tariff structure and escalation mechanism?"
-        priority: critical
-      - question: "Are there any minimum generation obligations?"
-        priority: high
-      - question: "What are the curtailment provisions and compensation?"
-        priority: high
-      - question: "Does the PPA contain change of control provisions?"
-        priority: critical
-      - question: "What termination rights exist and what are the consequences?"
-        priority: critical
-      - question: "Is the PPA bankable?"
-        priority: high
-      - question: "What are the deemed energy / availability requirements?"
-        priority: high
-      - question: "Are there any construction or COD milestones outstanding?"
-        priority: critical
-
-  - name: "REIPPPP Compliance"
-    weight: critical
-    applies_to: ["renewable"]
-    standard_questions:
-      - question: "Under which REIPPPP bid window was the project awarded?"
-        priority: critical
-      - question: "What economic development obligations apply?"
-        priority: critical
-      - question: "Is the project compliant with ED commitments?"
-        priority: critical
-      - question: "What local content requirements apply?"
-        priority: high
-      - question: "What community ownership requirements exist?"
-        priority: high
-      - question: "Are there any penalties for ED non-compliance?"
-        priority: high
-      - question: "What reporting obligations apply to DMRE/DOE?"
-        priority: medium
-
-  - name: "Project Contracts"
-    weight: critical
-    standard_questions:
-      - question: "Is there an EPC contract in place and what is its status?"
-        priority: critical
-      - question: "What warranties apply and are they still in force?"
-        priority: high
-      - question: "Is there an O&M agreement and what are its terms?"
-        priority: critical
-      - question: "What performance guarantees exist?"
-        priority: high
-      - question: "What equipment supply and warranty agreements exist?"
-        priority: high
-      - question: "Are there any disputes with contractors or suppliers?"
-        priority: high
-      - question: "What is the status of punch list / defects liability?"
-        priority: medium
-      - question: "Are there any liquidated damages outstanding?"
-        priority: high
-
-  - name: "Grid Connection"
-    weight: critical
-    standard_questions:
-      - question: "Is there a grid connection agreement?"
-        priority: critical
-      - question: "What is the contracted capacity?"
-        priority: critical
-      - question: "What grid charges and use-of-system fees apply?"
-        priority: high
-      - question: "What are the connection works and who is responsible?"
-        priority: high
-      - question: "Are there any grid constraints or curtailment risks?"
-        priority: critical
-      - question: "What reactive power requirements apply?"
-        priority: medium
-      - question: "Is there wheeling for private offtake?"
-        priority: high
-
-  - name: "Land & Surface Rights"
-    weight: high
-    standard_questions:
-      - question: "Is the land owned or leased?"
-        priority: critical
-      - question: "Do lease terms align with PPA term?"
-        priority: critical
-      - question: "What rental/royalty arrangements apply?"
-        priority: high
-      - question: "Are there any competing land uses?"
-        priority: medium
-      - question: "What land rehabilitation obligations exist?"
-        priority: high
-      - question: "Are there any community land claims?"
-        priority: high
-
-  - name: "Environmental & Permitting"
-    weight: high
-    standard_questions:
-      - question: "Is there a valid Environmental Authorization?"
-        priority: critical
-      - question: "What conditions attach to the EA?"
-        priority: high
-      - question: "Are all water use authorizations in place?"
-        priority: high
-      - question: "What bird/bat monitoring is required (for wind/solar)?"
-        priority: medium
-      - question: "Are there any heritage or biodiversity issues?"
-        priority: medium
-      - question: "What decommissioning obligations exist?"
-        priority: high
-
+- name: Generation License & Regulatory
+  weight: critical
+  standard_questions:
+  - question: Is there a valid generation license from NERSA?
+    priority: critical
+  - question: What are the conditions attached to the license?
+    priority: critical
+  - question: What is the licensed capacity?
+    priority: critical
+  - question: When does the license expire and what is renewal process?
+    priority: high
+  - question: Are there any pending license amendments?
+    priority: high
+  - question: Is registration as a schedule 2 generator required?
+    priority: high
+  - question: Are there any NERSA investigations or disputes?
+    priority: high
+  - question: What grid code compliance requirements apply?
+    priority: high
+  - question: Is IRP (Integrated Resource Plan) allocation secured?
+    priority: critical
+- name: Power Purchase Agreement
+  weight: critical
+  standard_questions:
+  - question: Is there a PPA with Eskom or other offtaker?
+    priority: critical
+  - question: What is the PPA term and when does it expire?
+    priority: critical
+  - question: What is the tariff structure and escalation mechanism?
+    priority: critical
+  - question: Are there any minimum generation obligations?
+    priority: high
+  - question: What are the curtailment provisions and compensation?
+    priority: high
+  - question: Does the PPA contain change of control provisions?
+    priority: critical
+  - question: What termination rights exist and what are the consequences?
+    priority: critical
+  - question: Is the PPA bankable?
+    priority: high
+  - question: What are the deemed energy / availability requirements?
+    priority: high
+  - question: Are there any construction or COD milestones outstanding?
+    priority: critical
+- name: REIPPPP Compliance
+  weight: critical
+  applies_to:
+  - renewable
+  standard_questions:
+  - question: Under which REIPPPP bid window was the project awarded?
+    priority: critical
+  - question: What economic development obligations apply?
+    priority: critical
+  - question: Is the project compliant with ED commitments?
+    priority: critical
+  - question: What local content requirements apply?
+    priority: high
+  - question: What community ownership requirements exist?
+    priority: high
+  - question: Are there any penalties for ED non-compliance?
+    priority: high
+  - question: What reporting obligations apply to DMRE/DOE?
+    priority: medium
+- name: Project Contracts
+  weight: critical
+  standard_questions:
+  - question: Is there an EPC contract in place and what is its status?
+    priority: critical
+  - question: What warranties apply and are they still in force?
+    priority: high
+  - question: Is there an O&M agreement and what are its terms?
+    priority: critical
+  - question: What performance guarantees exist?
+    priority: high
+  - question: What equipment supply and warranty agreements exist?
+    priority: high
+  - question: Are there any disputes with contractors or suppliers?
+    priority: high
+  - question: What is the status of punch list / defects liability?
+    priority: medium
+  - question: Are there any liquidated damages outstanding?
+    priority: high
+- name: Grid Connection
+  weight: critical
+  standard_questions:
+  - question: Is there a grid connection agreement?
+    priority: critical
+  - question: What is the contracted capacity?
+    priority: critical
+  - question: What grid charges and use-of-system fees apply?
+    priority: high
+  - question: What are the connection works and who is responsible?
+    priority: high
+  - question: Are there any grid constraints or curtailment risks?
+    priority: critical
+  - question: What reactive power requirements apply?
+    priority: medium
+  - question: Is there wheeling for private offtake?
+    priority: high
+- name: Land & Surface Rights
+  weight: high
+  standard_questions:
+  - question: Is the land owned or leased?
+    priority: critical
+  - question: Do lease terms align with PPA term?
+    priority: critical
+  - question: What rental/royalty arrangements apply?
+    priority: high
+  - question: Are there any competing land uses?
+    priority: medium
+  - question: What land rehabilitation obligations exist?
+    priority: high
+  - question: Are there any community land claims?
+    priority: high
+- name: Environmental & Permitting
+  weight: high
+  standard_questions:
+  - question: Is there a valid Environmental Authorization?
+    priority: critical
+  - question: What conditions attach to the EA?
+    priority: high
+  - question: Are all water use authorizations in place?
+    priority: high
+  - question: What bird/bat monitoring is required (for wind/solar)?
+    priority: medium
+  - question: Are there any heritage or biodiversity issues?
+    priority: medium
+  - question: What decommissioning obligations exist?
+    priority: high
 deal_blockers:
-  - description: "PPA terminated or termination notice received"
-    severity: absolute
-  - description: "Generation license suspended or cancelled"
-    severity: absolute
-  - description: "Grid connection agreement not in place"
-    severity: absolute
-  - description: "REIPPPP ED non-compliance material"
-    severity: conditional
-  - description: "Project has not reached COD and is at risk of termination"
-    severity: conditional
-
+- description: PPA terminated or termination notice received
+  severity: absolute
+- description: Generation license suspended or cancelled
+  severity: absolute
+- description: Grid connection agreement not in place
+  severity: absolute
+- description: REIPPPP ED non-compliance material
+  severity: conditional
+- description: Project has not reached COD and is at risk of termination
+  severity: conditional
 conditions_precedent_patterns:
-  - pattern: "NERSA|generation license"
-    cp_type: "Regulatory Approval"
-  - pattern: "Eskom consent|PPA consent"
-    cp_type: "Offtaker Consent"
-  - pattern: "DMRE|DOE|IPP Office"
-    cp_type: "Government Consent"
-  - pattern: "lender consent|senior lender"
-    cp_type: "Lender Consent"
+- pattern: NERSA|generation license
+  cp_type: Regulatory Approval
+- pattern: Eskom consent|PPA consent
+  cp_type: Offtaker Consent
+- pattern: DMRE|DOE|IPP Office
+  cp_type: Government Consent
+- pattern: lender consent|senior lender
+  cp_type: Lender Consent
+folder_questions:
+  01_Corporate_Governance:
+    display_name: Corporate & Governance
+    relevance: high
+    questions:
+    - question: Is the SPV structure appropriate for the project and transaction?
+      priority: critical
+      detail: Project finance typically requires ringfenced SPV structure
+      cot_hint: Check SPV isolation → bankruptcy remoteness → lender requirements
+    - question: Does the MOI authorize the project activities and borrowing?
+      priority: critical
+      detail: Objects clause must cover power generation and related activities
+      cot_hint: Review objects → check borrowing powers → confirm capacity
+    - question: Is the project BEE compliant for REIPPPP purposes?
+      priority: critical
+      detail: Ownership and ED requirements are critical for REIPPPP projects
+      cot_hint: Check ownership % → ED commitments → compliance status
+    cross_doc_checks:
+    - check: SHA ownership vs REIPPPP bid submission
+      related_folders:
+      - 04_Regulatory
+      description: Verify current ownership matches bid commitments
+  02_Commercial:
+    display_name: Commercial Contracts
+    relevance: critical
+    questions:
+    - question: Does the PPA contain change of control provisions and what consent is required?
+      priority: critical
+      detail: Eskom and DOE consent typically required for ownership changes
+      cot_hint: CoC definition → consent parties → approval process
+    - question: What is the remaining PPA term and tariff escalation mechanism?
+      priority: critical
+      detail: Revenue projections depend on remaining term and escalation
+      cot_hint: PPA term → COD date → remaining years → escalation formula
+    - question: What are the curtailment provisions and compensation arrangements?
+      priority: critical
+      detail: Grid constraints may result in curtailment - check compensation
+      cot_hint: Curtailment definition → compensation mechanism → caps
+    - question: What O&M performance guarantees are in place?
+      priority: high
+      detail: Availability and performance guarantees affect revenue
+      cot_hint: Guaranteed availability → penalty mechanism → cure rights
+    cross_doc_checks:
+    - check: PPA tariff vs financial model assumptions
+      related_folders:
+      - 03_Financial
+      description: Verify model tariff matches contracted terms
+  03_Financial:
+    display_name: Project Finance
+    relevance: critical
+    questions:
+    - question: Do project finance facilities contain change of control triggers?
+      priority: critical
+      detail: Senior lender consent typically required for ownership changes
+      cot_hint: CoC provisions → prepayment triggers → consent requirements
+    - question: What is the current debt outstanding and debt service coverage?
+      priority: critical
+      detail: DSCR compliance affects distribution and refinancing
+      cot_hint: Debt balance → DSCR calculation → covenant headroom
+    - question: What security package is in place over project assets?
+      priority: critical
+      detail: Comprehensive security over SPV shares, assets, contracts
+      cot_hint: Security list → perfection status → release conditions
+    cross_doc_checks:
+    - check: Financial model debt schedule vs facility agreement
+      related_folders: []
+      description: Verify model reflects actual debt terms
+  04_Regulatory:
+    display_name: Regulatory & Environmental
+    relevance: critical
+    questions:
+    - question: Is the generation license valid and are all conditions being met?
+      priority: critical
+      detail: NERSA license is fundamental authorization for operations
+      cot_hint: License validity → conditions → compliance status
+    - question: Is the project compliant with REIPPPP economic development requirements?
+      priority: critical
+      detail: ED non-compliance can result in PPA penalties
+      cot_hint: ED commitments → actual performance → gap analysis
+    - question: Is the Environmental Authorization current with all conditions complied?
+      priority: critical
+      detail: EA conditions must be met for lawful operation
+      cot_hint: EA validity → conditions → compliance
+    cross_doc_checks:
+    - check: REIPPPP ED scorecard vs actual performance reports
+      related_folders: []
+      description: Verify ED compliance status
+  05_Employment:
+    display_name: Employment & Local Content
+    relevance: medium
+    questions:
+    - question: Are local employment requirements being met?
+      priority: high
+      detail: REIPPPP projects have local employment commitments
+      cot_hint: Job creation targets → actual employment → local %
+    cross_doc_checks: []
+  06_Property:
+    display_name: Land & Surface Rights
+    relevance: high
+    questions:
+    - question: Does the land lease term align with the PPA term?
+      priority: critical
+      detail: Land rights must extend beyond PPA to avoid stranded assets
+      cot_hint: Lease term → PPA expiry → buffer period
+    - question: What decommissioning and site restoration obligations exist?
+      priority: high
+      detail: End of life obligations must be provisioned
+      cot_hint: Restoration requirements → provision amounts → timing
+    cross_doc_checks: []
+  07_Insurance:
+    display_name: Insurance
+    relevance: high
+    questions:
+    - question: Is there adequate operational all-risk and BI coverage?
+      priority: critical
+      detail: Lender required insurance for project finance
+      cot_hint: Coverage limits → BI indemnity period → exclusions
+    cross_doc_checks:
+    - check: Facility agreement insurance requirements vs policy schedule
+      related_folders:
+      - 03_Financial
+      description: Verify insurance meets lender requirements
+  08_Litigation:
+    display_name: Litigation
+    relevance: medium
+    questions:
+    - question: Are there any disputes with EPC contractor or equipment suppliers?
+      priority: high
+      detail: Construction and warranty disputes affect project value
+      cot_hint: Identify disputes → quantify exposure
+    cross_doc_checks: []
+  09_Tax:
+    display_name: Tax
+    relevance: medium
+    questions:
+    - question: Has the project claimed Section 12B renewable energy allowance?
+      priority: high
+      detail: Accelerated depreciation benefit for renewable projects
+      cot_hint: 12B election → allowance calculation → remaining benefit
+    cross_doc_checks: []
+cot_questions:
+  ownership_regulatory:
+  - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
+  - How does this transaction change the ownership structure? What is the post-transaction ownership?
+  - What regulatory approvals or notifications are triggered by ownership changes (e.g., >15%, >25%, >49% thresholds)?
+  - Are there any ownership restrictions in constitutional documents, shareholder agreements, or regulatory conditions?
+  - What licenses, permits, or authorizations are dependent on the current ownership structure?
+  - What are the consequences of non-compliance with ownership-based regulatory requirements?
+  - What NERSA or energy regulator approvals are required for ownership changes?
+  - Are there any IPP or generation license conditions tied to ownership?
+  - What BEE requirements apply to energy sector ownership?
+  - Do any power purchase agreements require consent for ownership changes?
+  generation_license:
+  - Is there a valid NERSA generation license and what are its conditions?
+  - What is the licensed capacity and when does it expire?
+  - Are there any pending license amendments or NERSA investigations?
+  - Is IRP allocation secured for the project?
+  - What grid code compliance requirements apply?
+  power_purchase_agreement:
+  - What is the PPA term and tariff structure?
+  - Does the PPA contain CoC provisions? Is Eskom consent required?
+  - What are the termination rights and consequences?
+  - What minimum generation or availability requirements apply?
+  - What curtailment provisions exist and what is the compensation?
+  - Has COD been achieved? Any outstanding milestones?
+  reipppp_compliance:
+  - Under which REIPPPP bid window was the project awarded?
+  - What economic development (ED) obligations apply and is compliance on track?
+  - What local content requirements exist?
+  - What community ownership requirements apply?
+  - What are the penalties for ED non-compliance?
+  project_contracts:
+  - Is there an EPC contract and what is its status (warranties, defects)?
+  - What O&M agreement is in place and what are performance guarantees?
+  - Are there any disputes with contractors or suppliers?
+  - What equipment warranties remain in force?
+  grid_connection:
+  - Is there a grid connection agreement and what is contracted capacity?
+  - What grid constraints or curtailment risks exist?
+  - What use-of-system charges and grid fees apply?
+  - Is wheeling available for private offtake?
+  land_surface_rights:
+  - Is land owned or leased? Does lease term align with PPA?
+  - What rental/royalty arrangements apply?
+  - Are there any community land claims?
+  - What land rehabilitation obligations exist?
+  environmental:
+  - Is there a valid Environmental Authorization and Water Use License?
+  - What conditions attach and is compliance on track?
+  - What decommissioning obligations and financial provision exist?

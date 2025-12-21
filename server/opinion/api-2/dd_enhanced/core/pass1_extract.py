@@ -23,6 +23,60 @@ from .claude_client import ClaudeClient
 from prompts.extraction import EXTRACTION_SYSTEM_PROMPT, build_extraction_prompt
 
 
+def extract_document(
+    doc: Dict[str, Any],
+    client: ClaudeClient
+) -> Dict[str, Any]:
+    """
+    Extract structured data from a single document.
+
+    Args:
+        doc: Document dict with 'filename', 'text', 'doc_type'
+        client: Claude API client
+
+    Returns:
+        Dict with extracted data: key_dates, financial_figures, coc_clauses,
+        consent_requirements, key_parties, summary
+    """
+    filename = doc.get("filename", "unknown")
+
+    # Build extraction prompt
+    prompt = build_extraction_prompt(
+        document_text=doc.get("text", "")[:50000],  # Limit to ~50k chars
+        document_name=filename,
+        doc_type=doc.get("doc_type", "")
+    )
+
+    # Call Claude
+    response = client.complete(
+        prompt=prompt,
+        system=EXTRACTION_SYSTEM_PROMPT,
+        json_mode=True,
+        max_tokens=4096,
+        temperature=0.1
+    )
+
+    if "error" in response:
+        return {
+            "key_dates": [],
+            "financial_figures": [],
+            "coc_clauses": [],
+            "consent_requirements": [],
+            "key_parties": [],
+            "summary": f"Extraction failed: {response.get('error')}"
+        }
+
+    # Normalize field names to match expected format
+    return {
+        "key_dates": response.get("key_dates", []),
+        "financial_figures": response.get("financial_figures", []),
+        "coc_clauses": response.get("change_of_control_clauses", []),
+        "consent_requirements": response.get("consent_requirements", []),
+        "key_parties": response.get("parties", []),
+        "summary": response.get("summary", "")
+    }
+
+
 def run_pass1_extraction(
     documents: List[Dict],
     client: ClaudeClient,

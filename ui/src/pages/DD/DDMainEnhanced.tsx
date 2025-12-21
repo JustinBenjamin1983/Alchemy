@@ -167,7 +167,7 @@ export function DDMainEnhanced() {
     | "Wizard-JoinProject"
     | "DocumentErrors"
     | "Search"
-    | "Risks"
+    | "Analysis"
     | "Questions"
     | "DocumentChanges"
     | "ShowReport"
@@ -281,7 +281,7 @@ export function DDMainEnhanced() {
               {screenState === "DocumentErrors" && "Document Errors"}
               {screenState === "DocumentChanges" && "Document Changes"}
               {screenState === "Search" && "Search"}
-              {screenState === "Risks" && "Risks"}
+              {screenState === "Analysis" && "Analysis"}
               {screenState === "Questions" && "Questions"}
               {screenState === "ShowReport" && "Generate Report"}
               {screenState === "MissingDocs" && "Document Status"}
@@ -294,7 +294,7 @@ export function DDMainEnhanced() {
                 <DocumentChanges dd_id={selectedDDID} />
               )}
               {screenState === "Search" && <Search />}
-              {screenState === "Risks" && <RiskSummary />}
+              {screenState === "Analysis" && <RiskSummary />}
               {screenState === "Questions" && (
                 <Questions dd_id={selectedDDID} />
               )}

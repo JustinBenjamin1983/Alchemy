@@ -1,6 +1,7 @@
 import logging
 import os
 import json
+import re
 
 import azure.functions as func
 from shared.utils import auth_get_email
@@ -10,6 +11,16 @@ from sqlalchemy import exists, case, and_
 from sqlalchemy.orm import joinedload
 
 DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
+
+
+def extract_transaction_type(briefing: str) -> str | None:
+    """Extract transaction type code from briefing text."""
+    if not briefing:
+        return None
+    match = re.search(r"Transaction Type:\s*(\S+)", briefing, re.IGNORECASE)
+    if match:
+        return match.group(1).strip()
+    return None
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
 
@@ -57,10 +68,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 "dd_id": str(due_diligence.id),
                 "name": due_diligence.name,
                 "briefing": due_diligence.briefing,
+                "transaction_type": extract_transaction_type(due_diligence.briefing),
                 "owned_by": due_diligence.owned_by,
                 "original_file_name": due_diligence.original_file_name,
                 "created_at": due_diligence.created_at.isoformat(),
                 "has_in_progress_docs": has_in_progress_docs,
+                "project_setup": due_diligence.project_setup,  # Full wizard data
                 "folders": []
             }
             
@@ -80,7 +93,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             "processing_status": doc.processing_status,
                             "size_in_bytes": doc.size_in_bytes,
                             "is_original": doc.is_original,
-                            "description":doc.description
+                            "description":doc.description,
+                            "readability_status": doc.readability_status or "pending",
+                            "readability_error": doc.readability_error,
+                            # AI Classification fields
+                            "ai_category": doc.ai_category,
+                            "ai_subcategory": doc.ai_subcategory,
+                            "ai_document_type": doc.ai_document_type,
+                            "ai_confidence": doc.ai_confidence,
+                            "classification_status": doc.classification_status
                         }
                         for doc in folder.documents
                     ]

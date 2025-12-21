@@ -878,9 +878,10 @@ export default function ChatbotUI({ folders = [], dd_id }: ChatbotUIProps) {
                         </>
                       )}
                       <p className="text-xs opacity-70 mt-2">
-                        {msg.timestamp.toLocaleTimeString([], {
+                        {msg.timestamp.toLocaleTimeString("en-ZA", {
                           hour: "2-digit",
                           minute: "2-digit",
+                          timeZone: "Africa/Johannesburg",
                         })}
                       </p>
                     </div>

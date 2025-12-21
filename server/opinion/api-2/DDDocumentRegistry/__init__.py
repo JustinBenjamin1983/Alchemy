@@ -156,14 +156,23 @@ def handle_transaction_types():
             blueprint_info = None
             try:
                 blueprint = load_blueprint(reg_name)
+
+                # Count questions from risk_categories (standard_questions)
+                risk_category_questions = sum(
+                    len(cat.get("standard_questions", []))
+                    for cat in blueprint.get("risk_categories", [])
+                )
+
+                # Count questions from folder_questions
+                folder_questions = 0
+                for folder_data in blueprint.get("folder_questions", {}).values():
+                    folder_questions += len(folder_data.get("questions", []))
+
                 blueprint_info = {
                     "name": blueprint.get("transaction_type", reg_name),
                     "description": blueprint.get("description", ""),
                     "risk_categories": len(blueprint.get("risk_categories", [])),
-                    "total_questions": sum(
-                        len(cat.get("questions", []))
-                        for cat in blueprint.get("risk_categories", [])
-                    )
+                    "total_questions": risk_category_questions + folder_questions
                 }
             except Exception:
                 pass

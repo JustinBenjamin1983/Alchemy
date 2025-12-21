@@ -7,14 +7,31 @@ import io
 import azure.functions as func
 import zipfile
 import tempfile
+import threading
 from shared.utils import auth_get_email, generate_identifier, now, send_custom_event_to_eventgrid
 from shared.uploader import extract_file, get_file_type, write_to_blob_storage
 from shared.table_storage import sanitize_string
 from shared.models import DueDiligence, Folder, Document, DocumentHistory
 from shared.session import transactional_session
+from shared.audit import log_audit_event, AuditEventType
 import uuid
 import datetime
 import requests
+
+
+def trigger_classification_background(dd_id: str):
+    """
+    Run document classification in background thread after DD upload.
+    This auto-triggers classification without requiring a separate API call.
+    """
+    try:
+        logging.info(f"[DDStart] Background classification starting for DD: {dd_id}")
+        from DDClassifyDocuments import classify_documents_for_dd
+        result = classify_documents_for_dd(dd_id)
+        logging.info(f"[DDStart] Background classification completed: {result.get('status')}, "
+                     f"classified: {result.get('classified_count', 0)}/{result.get('total_documents', 0)}")
+    except Exception as e:
+        logging.error(f"[DDStart] Background classification failed for DD {dd_id}: {e}")
 
 
 FORBIDDEN_FILES = ["__MACOSX", ".DS_Store"]
@@ -203,7 +220,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 owned_by=email,
                 original_file_name=safe_filename,
                 original_file_doc_id=original_file_doc_id,
-                created_at=datetime.datetime.utcnow()
+                created_at=datetime.datetime.utcnow(),
+                project_setup=req_body.get("projectSetup")  # Store full wizard data
             )
             docs = []
 
@@ -359,6 +377,25 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 session.add_all(db_doc_history)
                 session.commit()
 
+                # Log audit event for DD creation
+                try:
+                    log_audit_event(
+                        session=session,
+                        event_type=AuditEventType.DD_CREATED,
+                        entity_type="dd",
+                        entity_id=str(dd_id),
+                        user_id=None,  # Could extract from email if users table available
+                        dd_id=str(dd_id),
+                        details={
+                            "name": name,
+                            "document_count": len(docs),
+                            "zip_filename": zip_filename if 'zip_filename' in dir() else None
+                        }
+                    )
+                    session.commit()
+                except Exception as audit_err:
+                    logging.warning(f"[DDStart] Audit logging failed: {audit_err}")
+
                 # add first doc to queue for processing
                 if DEV_MODE:
                     logging.info(f"[DEV MODE] Skipping EventGrid notification. Would send: subject:{event_subject} data:{event_data}")
@@ -371,13 +408,24 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             event_type = "AIShop.DD.BlobMetadataUpdated")
 
                 new_dd["files"] = structure_with_hierarchy
-                
+
                 logging.info("done")
+
+            # Auto-trigger classification in background thread
+            # This runs asynchronously after the HTTP response is returned
+            classification_thread = threading.Thread(
+                target=trigger_classification_background,
+                args=(str(dd_id),),
+                daemon=True
+            )
+            classification_thread.start()
+            logging.info(f"[DDStart] Background classification thread started for DD: {dd_id}")
 
             return func.HttpResponse(json.dumps({
                 "dd_id": str(dd_id),
                 "name": name,
-                "created_at": created_at
+                "created_at": created_at,
+                "classification_triggered": True
             }), mimetype="application/json", status_code=200)
            
 

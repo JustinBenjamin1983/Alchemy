@@ -12,6 +12,10 @@ export { default } from './DDProcessingDashboard';
 export { PipelineRings } from './PipelineRings';
 export { LiveFindingsFeed, RiskSummaryCounters } from './FindingsFeed';
 export { DocumentStatusGrid, DocumentCard, ProcessingShimmer } from './DocumentStatus';
+export { TransactionSummary } from './TransactionSummary';
+export { DocumentChecklistPanel } from './DocumentChecklistPanel';
+export { ProcessLog, createLogEntry } from './ProcessLog';
+export { FileTree } from './FileTree';
 
 // Hooks
 export {

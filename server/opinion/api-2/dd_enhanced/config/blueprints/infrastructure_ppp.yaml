@@ -1,144 +1,406 @@
-transaction_type: "Infrastructure & PPP"
-code: "infrastructure_ppp"
-description: |
-  Due diligence blueprint for infrastructure projects and public-private
+transaction_type: Infrastructure & PPP
+code: infrastructure_ppp
+description: 'Due diligence blueprint for infrastructure projects and public-private
+
   partnerships including toll roads, ports, water, and social infrastructure.
 
-jurisdiction: "South Africa"
+  '
+jurisdiction: South Africa
 primary_legislation:
-  - "Public Finance Management Act 1 of 1999"
-  - "Municipal Finance Management Act 56 of 2003"
-  - "National Treasury PPP Regulations"
-  - "Infrastructure Development Act 23 of 2014"
-  - "Preferential Procurement Policy Framework Act 5 of 2000"
-
+- Public Finance Management Act 1 of 1999
+- Municipal Finance Management Act 56 of 2003
+- National Treasury PPP Regulations
+- Infrastructure Development Act 23 of 2014
+- Preferential Procurement Policy Framework Act 5 of 2000
 risk_categories:
-  - name: "Concession Agreement"
-    weight: critical
-    standard_questions:
-      - question: "What is the concession term and remaining duration?"
-        priority: critical
-      - question: "What assets are covered by the concession?"
-        priority: critical
-      - question: "What services must be provided under the concession?"
-        priority: critical
-      - question: "What performance standards apply?"
-        priority: critical
-      - question: "Does the concession contain change of control provisions?"
-        priority: critical
-      - question: "What step-in rights does the authority have?"
-        priority: high
-      - question: "What termination rights exist and what are compensation provisions?"
-        priority: critical
-      - question: "Are there any rebalancing or renegotiation provisions?"
-        priority: high
-      - question: "What benchmarking or market testing applies?"
-        priority: medium
-      - question: "What extension or renewal options exist?"
-        priority: high
-
-  - name: "Revenue & Tariffs"
-    weight: critical
-    standard_questions:
-      - question: "What is the revenue model (availability, usage, combination)?"
-        priority: critical
-      - question: "What tariff or unitary payment structure applies?"
-        priority: critical
-      - question: "What indexation or escalation mechanisms exist?"
-        priority: critical
-      - question: "What demand/volume risk exists?"
-        priority: critical
-      - question: "Are there any minimum revenue guarantees?"
-        priority: high
-      - question: "What penalty or deduction regime applies?"
-        priority: high
-      - question: "What is the payment track record of the authority?"
-        priority: critical
-      - question: "Are there any tariff disputes or regulatory reviews pending?"
-        priority: high
-
-  - name: "Treasury Approvals"
-    weight: critical
-    standard_questions:
-      - question: "Have all required Treasury approvals been obtained?"
-        priority: critical
-      - question: "What conditions were attached to Treasury approval?"
-        priority: high
-      - question: "Is there any contingent liability recorded by government?"
-        priority: high
-      - question: "Does the change of control require Treasury consent?"
-        priority: critical
-      - question: "Are there any PFMA/MFMA compliance issues?"
-        priority: critical
-      - question: "What reporting obligations to Treasury exist?"
-        priority: medium
-
-  - name: "Construction & Asset Condition"
-    weight: high
-    standard_questions:
-      - question: "What is the construction status of the project?"
-        priority: critical
-      - question: "Are there any outstanding construction claims?"
-        priority: high
-      - question: "What warranties remain in force?"
-        priority: high
-      - question: "What is the condition of the infrastructure assets?"
-        priority: critical
-      - question: "What lifecycle replacement obligations exist?"
-        priority: high
-      - question: "What is the maintenance record and current condition?"
-        priority: high
-      - question: "Are there any handback condition requirements?"
-        priority: high
-
-  - name: "BEE & Transformation"
-    weight: high
-    standard_questions:
-      - question: "What BEE ownership requirements apply to the concession?"
-        priority: critical
-      - question: "Is the concessionaire compliant with BEE requirements?"
-        priority: critical
-      - question: "What happens to BEE compliance on change of control?"
-        priority: critical
-      - question: "What local content and procurement obligations apply?"
-        priority: high
-      - question: "What skills transfer obligations exist?"
-        priority: medium
-
-  - name: "Insurance & Risk Allocation"
-    weight: high
-    standard_questions:
-      - question: "What insurance coverage is required under the concession?"
-        priority: high
-      - question: "Is all required insurance in place?"
-        priority: high
-      - question: "What is the risk allocation between authority and concessionaire?"
-        priority: high
-      - question: "What force majeure provisions apply?"
-        priority: high
-      - question: "What change in law protections exist?"
-        priority: high
-      - question: "Are there any political risk protections?"
-        priority: medium
-
+- name: Concession Agreement
+  weight: critical
+  standard_questions:
+  - question: What is the concession term and remaining duration?
+    priority: critical
+  - question: What assets are covered by the concession?
+    priority: critical
+  - question: What services must be provided under the concession?
+    priority: critical
+  - question: What performance standards apply?
+    priority: critical
+  - question: Does the concession contain change of control provisions?
+    priority: critical
+  - question: What step-in rights does the authority have?
+    priority: high
+  - question: What termination rights exist and what are compensation provisions?
+    priority: critical
+  - question: Are there any rebalancing or renegotiation provisions?
+    priority: high
+  - question: What benchmarking or market testing applies?
+    priority: medium
+  - question: What extension or renewal options exist?
+    priority: high
+- name: Revenue & Tariffs
+  weight: critical
+  standard_questions:
+  - question: What is the revenue model (availability, usage, combination)?
+    priority: critical
+  - question: What tariff or unitary payment structure applies?
+    priority: critical
+  - question: What indexation or escalation mechanisms exist?
+    priority: critical
+  - question: What demand/volume risk exists?
+    priority: critical
+  - question: Are there any minimum revenue guarantees?
+    priority: high
+  - question: What penalty or deduction regime applies?
+    priority: high
+  - question: What is the payment track record of the authority?
+    priority: critical
+  - question: Are there any tariff disputes or regulatory reviews pending?
+    priority: high
+- name: Treasury Approvals
+  weight: critical
+  standard_questions:
+  - question: Have all required Treasury approvals been obtained?
+    priority: critical
+  - question: What conditions were attached to Treasury approval?
+    priority: high
+  - question: Is there any contingent liability recorded by government?
+    priority: high
+  - question: Does the change of control require Treasury consent?
+    priority: critical
+  - question: Are there any PFMA/MFMA compliance issues?
+    priority: critical
+  - question: What reporting obligations to Treasury exist?
+    priority: medium
+- name: Construction & Asset Condition
+  weight: high
+  standard_questions:
+  - question: What is the construction status of the project?
+    priority: critical
+  - question: Are there any outstanding construction claims?
+    priority: high
+  - question: What warranties remain in force?
+    priority: high
+  - question: What is the condition of the infrastructure assets?
+    priority: critical
+  - question: What lifecycle replacement obligations exist?
+    priority: high
+  - question: What is the maintenance record and current condition?
+    priority: high
+  - question: Are there any handback condition requirements?
+    priority: high
+- name: BEE & Transformation
+  weight: high
+  standard_questions:
+  - question: What BEE ownership requirements apply to the concession?
+    priority: critical
+  - question: Is the concessionaire compliant with BEE requirements?
+    priority: critical
+  - question: What happens to BEE compliance on change of control?
+    priority: critical
+  - question: What local content and procurement obligations apply?
+    priority: high
+  - question: What skills transfer obligations exist?
+    priority: medium
+- name: Insurance & Risk Allocation
+  weight: high
+  standard_questions:
+  - question: What insurance coverage is required under the concession?
+    priority: high
+  - question: Is all required insurance in place?
+    priority: high
+  - question: What is the risk allocation between authority and concessionaire?
+    priority: high
+  - question: What force majeure provisions apply?
+    priority: high
+  - question: What change in law protections exist?
+    priority: high
+  - question: Are there any political risk protections?
+    priority: medium
 deal_blockers:
-  - description: "Treasury or authority consent cannot be obtained"
-    severity: absolute
-  - description: "Concession terminated or at risk of termination"
-    severity: absolute
-  - description: "Material breach of concession agreement"
-    severity: conditional
-  - description: "BEE non-compliance affecting concession"
-    severity: conditional
-  - description: "Significant infrastructure asset impairment"
-    severity: conditional
-
+- description: Treasury or authority consent cannot be obtained
+  severity: absolute
+- description: Concession terminated or at risk of termination
+  severity: absolute
+- description: Material breach of concession agreement
+  severity: conditional
+- description: BEE non-compliance affecting concession
+  severity: conditional
+- description: Significant infrastructure asset impairment
+  severity: conditional
 conditions_precedent_patterns:
-  - pattern: "Treasury|National Treasury|Provincial Treasury"
-    cp_type: "Treasury Approval"
-  - pattern: "authority consent|government consent|municipality"
-    cp_type: "Authority Consent"
-  - pattern: "lender consent|senior lender|project finance"
-    cp_type: "Lender Consent"
-  - pattern: "BEE|transformation"
-    cp_type: "BEE Compliance"
+- pattern: Treasury|National Treasury|Provincial Treasury
+  cp_type: Treasury Approval
+- pattern: authority consent|government consent|municipality
+  cp_type: Authority Consent
+- pattern: lender consent|senior lender|project finance
+  cp_type: Lender Consent
+- pattern: BEE|transformation
+  cp_type: BEE Compliance
+folder_questions:
+  01_Corporate_Governance:
+    display_name: Corporate & Governance
+    relevance: high
+    questions:
+    - question: Is the SPV/concessionaire properly constituted for the project?
+      priority: critical
+      detail: Special purpose vehicle, ring-fencing, project-specific governance
+      cot_hint: Review SPV structure → check ring-fencing → verify compliance
+    - question: Does the MOI comply with concession requirements?
+      priority: high
+      detail: Concession-required governance provisions
+      cot_hint: Compare MOI → concession requirements → identify gaps
+    cross_doc_checks:
+    - check: Verify MOI provisions match concession requirements
+      related_folders:
+      - 02_Commercial
+      description: MOI vs concession governance requirements
+  02_Commercial:
+    display_name: Commercial Contracts
+    relevance: critical
+    questions:
+    - question: What is the concession term and remaining duration?
+      priority: critical
+      detail: Concession period, extension rights, handback
+      cot_hint: Extract term → calculate remaining → assess extension
+    - question: Does the concession contain change of control provisions?
+      priority: critical
+      detail: CoC triggers, authority consent, termination rights
+      cot_hint: Find CoC clause → identify triggers → assess impact
+    - question: What step-in rights does the contracting authority have?
+      priority: critical
+      detail: Authority step-in, cure periods, contractor rights
+      cot_hint: Review step-in provisions → check triggers → assess risk
+    - question: What termination rights exist and compensation provisions?
+      priority: critical
+      detail: Termination events, compensation formula, handback
+      cot_hint: List termination rights → check compensation → calculate exposure
+    - question: What is the revenue model and tariff structure?
+      priority: critical
+      detail: Availability payments, usage fees, unitary charge
+      cot_hint: Identify revenue model → check indexation → assess risk
+    - question: What performance standards and penalty regime applies?
+      priority: high
+      detail: KPIs, deductions, performance bonds
+      cot_hint: Review KPIs → check deductions → assess performance risk
+    cross_doc_checks:
+    - check: Verify concession terms match project finance documents
+      related_folders:
+      - 03_Financial
+      description: Concession revenue vs debt service
+  03_Financial:
+    display_name: Financial & Banking
+    relevance: critical
+    questions:
+    - question: What project finance facilities are in place?
+      priority: critical
+      detail: Senior debt, mezzanine, shareholder loans, DFI funding
+      cot_hint: List facilities → check terms → calculate debt service
+    - question: Is lender consent required for the transaction?
+      priority: critical
+      detail: Lender consent, inter-creditor provisions
+      cot_hint: Review finance documents → find CoC → assess consent
+    - question: What are the debt service coverage requirements?
+      priority: critical
+      detail: DSCR, LLCR, cash sweep, distribution tests
+      cot_hint: Extract covenant ratios → check compliance → assess headroom
+    - question: What security package is in place?
+      priority: high
+      detail: Share pledge, account security, assignment of concession rights
+      cot_hint: List security → verify perfection → assess release requirements
+    - question: What reserves and accounts are required to be maintained?
+      priority: high
+      detail: DSRA, maintenance reserve, project accounts
+      cot_hint: Check reserve requirements → verify funding → assess adequacy
+    cross_doc_checks:
+    - check: Verify debt service calculations match revenue projections
+      related_folders:
+      - 02_Commercial
+      description: Debt model vs concession revenue
+  04_Regulatory:
+    display_name: Regulatory & Compliance
+    relevance: critical
+    questions:
+    - question: Have all required Treasury approvals been obtained?
+      priority: critical
+      detail: National/Provincial Treasury, PFMA/MFMA compliance
+      cot_hint: Check Treasury approvals → verify conditions → assess compliance
+    - question: Does the transaction require Treasury consent?
+      priority: critical
+      detail: Treasury Regulation 16 consent, PFMA Section 38
+      cot_hint: Review regulations → check CoC requirement → plan consent
+    - question: Are there any PFMA/MFMA compliance issues?
+      priority: critical
+      detail: Unauthorised expenditure, irregular expenditure
+      cot_hint: Review compliance → identify issues → assess risk
+    - question: What conditions were attached to Treasury approval?
+      priority: high
+      detail: Treasury conditions, ongoing obligations
+      cot_hint: List conditions → check compliance → identify breaches
+    cross_doc_checks:
+    - check: Verify Treasury conditions are reflected in concession
+      related_folders:
+      - 02_Commercial
+      description: Treasury conditions vs concession terms
+  05_Employment:
+    display_name: Employment & Labour
+    relevance: medium
+    questions:
+    - question: What O&M contractor arrangements are in place?
+      priority: high
+      detail: O&M contract, contractor employees, Section 197
+      cot_hint: Review O&M → check employment → assess transfer
+    - question: What skills transfer and local employment obligations apply?
+      priority: medium
+      detail: Local content, skills development, SLP-type obligations
+      cot_hint: Check local content → verify compliance → assess obligations
+    cross_doc_checks: []
+  06_Property:
+    display_name: Property & Assets
+    relevance: high
+    questions:
+    - question: What is the status of land rights and servitudes?
+      priority: critical
+      detail: Land leases, servitudes, rights of way
+      cot_hint: Review land rights → check term → verify coverage
+    - question: What handback condition requirements apply?
+      priority: high
+      detail: Handback specifications, asset condition, lifecycle
+      cot_hint: Check handback requirements → assess condition → calculate liability
+    cross_doc_checks:
+    - check: Verify land tenure covers concession term
+      related_folders:
+      - 02_Commercial
+      description: Land rights vs concession duration
+  07_Insurance:
+    display_name: Insurance
+    relevance: high
+    questions:
+    - question: Is the required insurance programme in place?
+      priority: critical
+      detail: Construction all-risks, operational coverage, BI
+      cot_hint: Check required cover → verify policies → assess gaps
+    - question: What force majeure and political risk protections exist?
+      priority: high
+      detail: Force majeure, political risk insurance, termination compensation
+      cot_hint: Review FM provisions → check PRI → assess protection
+    cross_doc_checks:
+    - check: Verify insurance matches concession requirements
+      related_folders:
+      - 02_Commercial
+      description: Policy schedule vs concession insurance clause
+  08_Litigation:
+    display_name: Litigation & Disputes
+    relevance: high
+    questions:
+    - question: Are there any disputes with the contracting authority?
+      priority: critical
+      detail: Concession disputes, claims, arbitrations
+      cot_hint: List disputes → assess status → evaluate exposure
+    - question: Are there any construction claims outstanding?
+      priority: high
+      detail: Contractor claims, delay claims, variations
+      cot_hint: Identify claims → assess quantum → check resolution
+    cross_doc_checks: []
+  09_Tax:
+    display_name: Tax
+    relevance: medium
+    questions:
+    - question: Are there any tax implications of the PPP structure?
+      priority: medium
+      detail: VAT on unitary payments, withholding on cross-border
+      cot_hint: Review structure → check VAT → assess efficiency
+    cross_doc_checks: []
+  10_Technical:
+    display_name: Technical & Assets
+    relevance: critical
+    questions:
+    - question: What is the condition of infrastructure assets?
+      priority: critical
+      detail: Asset condition assessment, maintenance records, lifecycle
+      cot_hint: Review condition → check maintenance → assess capex needs
+    - question: What lifecycle replacement obligations exist?
+      priority: high
+      detail: Lifecycle model, replacement schedule, funding
+      cot_hint: Review lifecycle → check funding → assess gap
+    - question: Is the construction complete or are there outstanding works?
+      priority: high
+      detail: Practical completion, defects, retention
+      cot_hint: Check completion status → identify defects → assess risk
+    cross_doc_checks:
+    - check: Verify asset condition matches lifecycle model
+      related_folders:
+      - 03_Financial
+      description: Condition assessment vs lifecycle provisions
+  11_BEE:
+    display_name: B-BBEE & Transformation
+    relevance: critical
+    questions:
+    - question: What BEE ownership requirements apply to the concession?
+      priority: critical
+      detail: Concession BEE requirements, sector codes
+      cot_hint: Check BEE requirements → verify compliance → assess impact
+    - question: What happens to BEE compliance on change of control?
+      priority: critical
+      detail: BEE lock-in, change of control consent
+      cot_hint: Review BEE provisions → check CoC → assess continuity
+    - question: What local content and procurement obligations apply?
+      priority: high
+      detail: Local procurement, PPPFA, designated sectors
+      cot_hint: Check local content → verify compliance → assess obligations
+    cross_doc_checks:
+    - check: Verify BEE ownership matches concession requirements
+      related_folders:
+      - 02_Commercial
+      description: BEE certificate vs concession threshold
+  99_Needs_Review:
+    display_name: Needs Review
+    relevance: low
+    questions:
+    - question: What infrastructure or PPP issues does this document raise?
+      priority: medium
+      detail: Documents requiring manual classification review
+      cot_hint: Identify PPP content → flag for review
+    cross_doc_checks: []
+cot_questions:
+  ownership_regulatory:
+  - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
+  - How does this transaction change the ownership structure? What is the post-transaction ownership?
+  - What regulatory approvals or notifications are triggered by ownership changes (e.g., >15%, >25%, >49% thresholds)?
+  - Are there any ownership restrictions in constitutional documents, shareholder agreements, or regulatory conditions?
+  - What licenses, permits, or authorizations are dependent on the current ownership structure?
+  - What are the consequences of non-compliance with ownership-based regulatory requirements?
+  - What Treasury or government approvals are required for ownership changes in PPP structures?
+  - Are there any empowerment requirements in the concession agreement?
+  - Does the change of control affect the PPP security package?
+  - What step-in rights do government parties have on ownership change?
+  concession_agreement:
+  - What is the concession term and remaining duration?
+  - Does the concession contain CoC provisions? Is authority consent required?
+  - What step-in rights does the authority have?
+  - What termination rights exist and what is the compensation formula?
+  - What performance standards and penalty regimes apply?
+  - What extension or renewal options exist?
+  revenue_tariffs:
+  - What is the revenue model (availability, usage, combination)?
+  - What tariff/unitary payment structure and indexation applies?
+  - What demand/volume risk exists? Any minimum revenue guarantees?
+  - What is the payment track record of the authority?
+  - Are there any tariff disputes or regulatory reviews pending?
+  treasury_approvals:
+  - Have all required Treasury approvals been obtained?
+  - Does CoC require Treasury consent?
+  - Are there any PFMA/MFMA compliance issues?
+  - What conditions were attached to Treasury approval?
+  construction_assets:
+  - What is the construction status? Any outstanding claims?
+  - What is the condition of infrastructure assets?
+  - What lifecycle replacement obligations exist?
+  - What handback condition requirements apply?
+  bee_transformation:
+  - What BEE ownership requirements apply to the concession?
+  - What happens to BEE compliance on CoC?
+  - What local content and procurement obligations apply?
+  project_finance:
+  - What project finance facilities are in place?
+  - Is lender consent required for CoC?
+  - What are the debt service coverage requirements?
+  - Are there any covenant breaches or waivers?

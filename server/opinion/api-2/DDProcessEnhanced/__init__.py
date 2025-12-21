@@ -34,18 +34,60 @@ from shared.dev_adapters.dev_config import get_dev_config
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'dd_enhanced'))
 
 from config.blueprints.loader import load_blueprint, list_available_blueprints
-from core.claude_client import ClaudeClient
-from core.pass1_extract import run_pass1_extraction
-from core.pass2_analyze import run_pass2_analysis
-from core.pass3_crossdoc import run_pass3_crossdoc_synthesis
-from core.pass4_synthesize import run_pass4_synthesis
+from dd_enhanced.core.claude_client import ClaudeClient
+from dd_enhanced.core.pass1_extract import run_pass1_extraction
+from dd_enhanced.core.pass2_analyze import run_pass2_analysis
+from dd_enhanced.core.pass3_crossdoc import run_pass3_crossdoc_synthesis
+from dd_enhanced.core.pass4_synthesize import run_pass4_synthesis
 
 # NEW: Import optimization modules
-from core.document_clusters import group_documents_by_cluster, get_cluster_summary
-from core.pass3_clustered import run_pass3_clustered
-from core.question_prioritizer import prioritize_questions, get_summary as get_question_summary
+from dd_enhanced.core.document_clusters import group_documents_by_cluster, get_cluster_summary
+from dd_enhanced.core.pass3_clustered import run_pass3_clustered, run_pass3_hybrid, BATCHING_THRESHOLD
+from dd_enhanced.core.question_prioritizer import prioritize_questions, get_summary as get_question_summary
+
+# Phase 4: Import compression and batching modules
+from dd_enhanced.core.document_priority import (
+    prioritize_all_documents,
+    get_priority_stats,
+)
+from dd_enhanced.core.compression_engine import (
+    compress_all_documents,
+    get_compression_stats,
+)
+from dd_enhanced.core.batch_manager import (
+    create_batch_plan,
+    get_batch_stats,
+    should_use_batching,
+    BatchStrategy,
+)
+
+# Phase 5: Import knowledge graph modules
+from dd_enhanced.core.graph import (
+    EntityTransformer,
+    KnowledgeGraphBuilder,
+    RelationshipEnricher,
+    GraphQueryEngine,
+)
+
+# Phase 6: Import parallel processing orchestrator
+from dd_enhanced.core.orchestrator import (
+    ParallelOrchestrator,
+    OrchestratorConfig,
+    ProcessingMode,
+    create_orchestrator,
+)
+
+# Phase 7: Import calculation engine orchestrator
+from dd_enhanced.core.pass_calculations import CalculationOrchestrator
+
+# Phase 7: Import Pass 5 Opus verification
+from dd_enhanced.core.pass5_verify import run_pass5_verification, apply_verification_adjustments
 
 DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
+
+# Phase 6: Parallel processing configuration
+PARALLEL_THRESHOLD = int(os.environ.get("DD_PARALLEL_THRESHOLD", "100"))
+USE_PARALLEL_ORCHESTRATOR = os.environ.get("DD_USE_PARALLEL_ORCHESTRATOR", "true").lower() == "true"
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -131,7 +173,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         # Initialize Claude client with cost tracking
         client = ClaudeClient()
 
-        # Run all 4 passes
+        # Run all 4 passes (Phase 6: auto-switches between sequential/parallel)
         processing_result = _run_all_passes(
             checkpoint_id=checkpoint_id,
             doc_dicts=doc_dicts,
@@ -141,7 +183,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             transaction_context_str=transaction_context_str,
             client=client,
             include_tier3=include_tier3,
-            use_clustered_pass3=use_clustered_pass3
+            use_clustered_pass3=use_clustered_pass3,
+            dd_id=dd_id,  # Phase 6: for parallel orchestrator
+            run_id=checkpoint_id,  # Phase 6: use checkpoint as run_id
         )
 
         if processing_result.get("error"):
@@ -161,6 +205,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         pass3_results = processing_result["pass3_results"]
         pass4_results = processing_result["pass4_results"]
         question_summary = processing_result["question_summary"]
+        graph_stats = processing_result.get("graph_stats")
+        parallel_stats = processing_result.get("parallel_stats")  # Phase 6
+        synthesis_results = processing_result.get("synthesis_results")  # Phase 6
+        calculation_aggregates = processing_result.get("calculation_aggregates")  # Phase 7
+        calculation_summary = processing_result.get("calculation_summary")  # Phase 7
+        verification_result = processing_result.get("verification_result")  # Phase 7
 
         logging.info("[DDProcessEnhanced] Phase 2 complete: All passes finished")
 
@@ -232,6 +282,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     "coc_clauses": len(pass1_results.get("coc_clauses", [])),
                     "consent_requirements": len(pass1_results.get("consent_requirements", []))
                 },
+                "knowledge_graph": {
+                    "vertices": graph_stats.total_vertices if graph_stats else 0,
+                    "edges": graph_stats.total_edges if graph_stats else 0,
+                    "parties": graph_stats.party_count if graph_stats else 0,
+                    "agreements": graph_stats.agreement_count if graph_stats else 0,
+                    "triggers": graph_stats.trigger_count if graph_stats else 0
+                } if graph_stats else None,
                 "pass2": {
                     "findings": len(pass2_findings),
                     "by_severity": _count_by_severity(pass2_findings)
@@ -253,7 +310,29 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             "deal_blockers": pass4_results.get("deal_blockers", [])[:5],  # Top 5
             "executive_summary": pass4_results.get("executive_summary", "")[:1000],
             "cost_summary": cost_summary,
-            "usage_report": usage_report
+            "usage_report": usage_report,
+            # Phase 6: Parallel processing statistics (if applicable)
+            "parallel_processing": parallel_stats if parallel_stats else None,
+            "hierarchical_synthesis": synthesis_results if synthesis_results else None,
+            # Phase 7: Calculation engine statistics
+            "calculation_engine": {
+                "total_calculated_exposure": calculation_aggregates.get("total_exposure") if calculation_aggregates else None,
+                "exposure_currency": calculation_aggregates.get("currency", "ZAR") if calculation_aggregates else None,
+                "calculations_performed": calculation_summary.get("successful", 0) if calculation_summary else 0,
+                "calculations_failed": calculation_summary.get("failed", 0) if calculation_summary else 0,
+                "by_category": calculation_aggregates.get("by_category") if calculation_aggregates else None,
+                "transaction_ratio": calculation_aggregates.get("transaction_ratio") if calculation_aggregates else None,
+            } if calculation_summary or calculation_aggregates else None,
+            # Phase 7: Opus verification results
+            "verification": {
+                "passed": verification_result.get("verification_passed", False) if verification_result else None,
+                "confidence": verification_result.get("overall_confidence", 0) if verification_result else None,
+                "critical_issues": len(verification_result.get("critical_issues", [])) if verification_result else 0,
+                "warnings": len(verification_result.get("warnings", [])) if verification_result else 0,
+                "deal_blockers_verified": len(verification_result.get("blocker_verification", {}).get("blocker_assessments", [])) if verification_result else 0,
+                "calculations_verified": len(verification_result.get("calculation_verification", {}).get("calculation_verifications", [])) if verification_result else 0,
+                "final_recommendation": verification_result.get("final_summary", {}).get("final_recommendation", {}).get("deal_status") if verification_result else None,
+            } if verification_result else None,
         }
 
         logging.info(f"[DDProcessEnhanced] Processing complete. Stored {stored_count + cross_doc_stored} findings.")
@@ -454,15 +533,42 @@ def _run_all_passes(
     transaction_context_str: str,
     client: ClaudeClient,
     include_tier3: bool,
-    use_clustered_pass3: bool
+    use_clustered_pass3: bool,
+    dd_id: Optional[str] = None,
+    run_id: Optional[str] = None,
+    previous_run_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Phase 2: Run all 4 passes of Claude API processing.
 
     NO database session is held during this phase - it can take 10+ minutes.
     Checkpoint updates use _save_checkpoint_safely() which opens fresh sessions.
+
+    PHASE 6: Auto-switches between sequential and parallel processing based on
+    document count. Threshold is configurable via DD_PARALLEL_THRESHOLD.
     """
     try:
+        doc_count = len(doc_dicts)
+
+        # Phase 6: Check if we should use parallel orchestrator
+        if USE_PARALLEL_ORCHESTRATOR and doc_count >= PARALLEL_THRESHOLD:
+            logging.info(f"[DDProcessEnhanced] Using PARALLEL orchestrator for {doc_count} documents "
+                        f"(threshold: {PARALLEL_THRESHOLD})")
+            return _run_parallel_passes(
+                checkpoint_id=checkpoint_id,
+                dd_id=dd_id,
+                run_id=run_id or checkpoint_id,
+                doc_dicts=doc_dicts,
+                reference_docs=reference_docs,
+                blueprint=blueprint,
+                transaction_context_str=transaction_context_str,
+                client=client,
+                include_tier3=include_tier3,
+                previous_run_id=previous_run_id,
+            )
+
+        logging.info(f"[DDProcessEnhanced] Using SEQUENTIAL processing for {doc_count} documents "
+                    f"(threshold: {PARALLEL_THRESHOLD})")
         # ===== PASS 1: Extract & Index (using Haiku) =====
         _save_checkpoint_safely(checkpoint_id, {
             'current_pass': 1,
@@ -486,6 +592,106 @@ def _run_all_passes(
 
         logging.info(f"[DDProcessEnhanced] Pass 1 complete: {len(pass1_results.get('key_dates', []))} dates, "
                     f"{len(pass1_results.get('financial_figures', []))} financials")
+
+        # ===== PHASE 5: Knowledge Graph Building =====
+        # Build graph from Pass 1 entities - runs between Pass 1 and Pass 2
+        # This enables graph-aware clustering in Pass 3
+        graph_stats = None
+        try:
+            _save_checkpoint_safely(checkpoint_id, {
+                'current_stage': 'graph_building'
+            })
+            logging.info("[DDProcessEnhanced] Phase 5: Building knowledge graph from Pass 1 entities")
+
+            # Transform Pass 1 results to graph entities
+            transformer = EntityTransformer()
+            all_entities = []
+            for doc in doc_dicts:
+                doc_id = doc.get('id', '')
+                doc_name = doc.get('filename', '')
+                # Find Pass 1 extraction for this document
+                doc_extraction = _find_doc_extraction(pass1_results, doc_name)
+                if doc_extraction:
+                    entities = transformer.transform_document(
+                        document_id=doc_id,
+                        document_name=doc_name,
+                        pass1_extraction=doc_extraction
+                    )
+                    all_entities.append(entities)
+
+            logging.info(f"[DDProcessEnhanced] Transformed {len(all_entities)} documents to graph entities")
+
+            # Run relationship enrichment (lightweight Claude calls for cross-references)
+            # Only if we have significant number of documents
+            if len(doc_dicts) > 5:
+                _save_checkpoint_safely(checkpoint_id, {
+                    'current_stage': 'graph_enrichment'
+                })
+                logging.info("[DDProcessEnhanced] Running relationship enrichment")
+                enricher = RelationshipEnricher(client)
+
+                def enrichment_progress(current, total, message):
+                    if current % 10 == 0 or current == total:
+                        logging.info(f"[DDProcessEnhanced] Enrichment progress: {current}/{total}")
+
+                enrichments = enricher.enrich_all_documents(
+                    doc_dicts,
+                    progress_callback=enrichment_progress,
+                    max_workers=5
+                )
+                logging.info(f"[DDProcessEnhanced] Enrichment complete: {len(enrichments)} documents enriched")
+
+                # Merge enrichments into entities
+                from dd_enhanced.core.graph.relationship_enricher import merge_enrichments
+                for entities, enrichment in zip(all_entities, enrichments):
+                    if not enrichment.error:
+                        merge_enrichments(entities, enrichment)
+
+            # Build graph in database
+            # Note: We need a fresh connection for graph building
+            from shared.session import engine
+            raw_conn = engine.raw_connection()
+            try:
+                _save_checkpoint_safely(checkpoint_id, {
+                    'current_stage': 'graph_populating'
+                })
+
+                # Get dd_id from first document's folder or from checkpoint
+                # We need to pass dd_id to the graph builder
+                dd_id_for_graph = None
+                with transactional_session() as session:
+                    checkpoint = session.query(DDProcessingCheckpoint).filter(
+                        DDProcessingCheckpoint.id == checkpoint_id
+                    ).first()
+                    if checkpoint:
+                        dd_id_for_graph = str(checkpoint.dd_id)
+
+                if dd_id_for_graph and all_entities:
+                    builder = KnowledgeGraphBuilder(raw_conn)
+
+                    def build_progress(current, total, message):
+                        if current % 20 == 0 or current == total:
+                            logging.info(f"[DDProcessEnhanced] Graph build: {message}")
+
+                    graph_stats = builder.build_graph(
+                        dd_id=dd_id_for_graph,
+                        document_entities=all_entities,
+                        progress_callback=build_progress
+                    )
+                    raw_conn.commit()
+                    logging.info(f"[DDProcessEnhanced] Knowledge graph built: "
+                                f"{graph_stats.total_vertices} vertices, {graph_stats.total_edges} edges")
+
+                    _save_checkpoint_safely(checkpoint_id, {
+                        'graph_vertices': graph_stats.total_vertices,
+                        'graph_edges': graph_stats.total_edges
+                    })
+            finally:
+                raw_conn.close()
+
+        except Exception as e:
+            logging.warning(f"[DDProcessEnhanced] Knowledge graph building failed (non-fatal): {e}")
+            # Graph building failure is not fatal - continue with processing
 
         # ===== PRIORITIZE QUESTIONS for Pass 2 =====
         logging.info("[DDProcessEnhanced] Prioritizing questions based on blueprint and context")
@@ -539,45 +745,187 @@ def _run_all_passes(
 
         logging.info(f"[DDProcessEnhanced] Pass 2 complete: {len(pass2_findings)} findings")
 
+        # ===== PASS 2.5: Financial Calculation Engine =====
+        # Enrich findings with deterministic calculations (AI extracts → Python calculates)
+        _save_checkpoint_safely(checkpoint_id, {
+            'current_stage': 'pass2_5_calculations'
+        })
+
+        logging.info("[DDProcessEnhanced] Starting Pass 2.5: Financial Calculations (Deterministic)")
+
+        # Get transaction value for validation (from Pass 1 if available)
+        transaction_value = None
+        for fig in pass1_results.get('financial_figures', []):
+            if 'purchase' in str(fig.get('description', '')).lower() or 'transaction' in str(fig.get('description', '')).lower():
+                transaction_value = fig.get('amount')
+                break
+
+        calc_orchestrator = CalculationOrchestrator(transaction_value=transaction_value)
+
+        try:
+            # Get findings list (pass2_findings may be a dict with 'findings' key or a list)
+            if isinstance(pass2_findings, dict):
+                findings_list = pass2_findings.get('findings', [])
+            else:
+                findings_list = pass2_findings
+
+            # Process findings with calculation engine
+            enriched_findings = calc_orchestrator.process_pass2_findings(findings_list)
+
+            # Update pass2_findings with enriched data
+            if isinstance(pass2_findings, dict):
+                pass2_findings['findings'] = enriched_findings
+            else:
+                pass2_findings = enriched_findings
+
+            calc_summary = calc_orchestrator.get_calculation_summary()
+            logging.info(f"[DDProcessEnhanced] Pass 2.5 complete: {calc_summary['successful']} calculations performed, "
+                        f"{calc_summary['failed']} failed")
+
+            _save_checkpoint_safely(checkpoint_id, {
+                'calculations_performed': calc_summary['successful'],
+                'calculations_failed': calc_summary['failed']
+            })
+        except Exception as e:
+            logging.warning(f"[DDProcessEnhanced] Pass 2.5 calculation enrichment failed (non-fatal): {e}")
+
         # ===== PASS 3: Cross-Document Synthesis =====
         _save_checkpoint_safely(checkpoint_id, {
             'current_pass': 3,
             'current_stage': 'pass3_crossdoc'
         })
 
-        if use_clustered_pass3:
-            # Use optimized clustered Pass 3
-            logging.info("[DDProcessEnhanced] Starting Pass 3: Cross-Document Synthesis (Clustered)")
+        # Phase 4: Check if we should use compression + batching
+        doc_count = len(doc_dicts)
+        use_batching = should_use_batching(doc_count, BATCHING_THRESHOLD)
+        compressed_docs = None
+        batch_plan = None
+        compression_stats = None
+        batch_stats = None
 
-            # Group documents into clusters
+        if use_batching:
+            # Phase 4: Document Compression + Batching for large document sets
+            logging.info(f"[DDProcessEnhanced] Phase 4: Using compression + batching for {doc_count} documents "
+                        f"(threshold: {BATCHING_THRESHOLD})")
+
+            # Step 1: Prioritize documents
+            _save_checkpoint_safely(checkpoint_id, {
+                'current_stage': 'pass3_prioritization',
+                'compression_enabled': True,
+                'batching_enabled': True
+            })
+
+            logging.info("[DDProcessEnhanced] Phase 4 Step 1: Prioritizing documents")
+            prioritized_docs = prioritize_all_documents(
+                documents=doc_dicts,
+                pass2_findings=pass2_findings,
+                transaction_type=blueprint.get('transaction_type', 'ma_corporate')
+            )
+            priority_stats = get_priority_stats(prioritized_docs)
+            logging.info(f"[DDProcessEnhanced] Prioritization complete: "
+                        f"{priority_stats['by_priority']}")
+
+            # Step 2: Compress documents
+            _save_checkpoint_safely(checkpoint_id, {
+                'current_stage': 'pass3_compression'
+            })
+
+            logging.info("[DDProcessEnhanced] Phase 4 Step 2: Compressing documents with Haiku")
+
+            def compression_progress(current, total, message):
+                if current % 10 == 0 or current == total:
+                    logging.info(f"[DDProcessEnhanced] Compression progress: {current}/{total}")
+                    _save_checkpoint_safely(checkpoint_id, {
+                        'current_stage': f'pass3_compression_{current}_of_{total}'
+                    })
+
+            compressed_docs = compress_all_documents(
+                documents=doc_dicts,
+                prioritized_docs=prioritized_docs,
+                pass2_findings=pass2_findings,
+                claude_client=client,
+                progress_callback=compression_progress
+            )
+            compression_stats = get_compression_stats(compressed_docs)
+            logging.info(f"[DDProcessEnhanced] Compression complete: "
+                        f"{compression_stats['total_compressed_tokens']:,} tokens "
+                        f"({compression_stats['compression_ratio']:.1f}% reduction)")
+
+            # Step 3: Create batch plan
+            _save_checkpoint_safely(checkpoint_id, {
+                'current_stage': 'pass3_batching',
+                'compression_stats': compression_stats
+            })
+
+            logging.info("[DDProcessEnhanced] Phase 4 Step 3: Creating batch plan")
+            batch_plan = create_batch_plan(
+                compressed_docs=compressed_docs,
+                strategy=BatchStrategy.MIXED
+            )
+            batch_stats = get_batch_stats(batch_plan)
+            logging.info(f"[DDProcessEnhanced] Batch plan created: "
+                        f"{batch_stats['total_batches']} batches, "
+                        f"avg {batch_stats['docs_per_batch']['avg']:.1f} docs/batch")
+
+            _save_checkpoint_safely(checkpoint_id, {
+                'total_batches': batch_stats['total_batches'],
+                'batch_stats': batch_stats
+            })
+
+        if use_clustered_pass3:
+            # Use hybrid Pass 3 (auto-switches between clustered and batched)
+            logging.info("[DDProcessEnhanced] Starting Pass 3: Cross-Document Synthesis (Hybrid)")
+
+            # Group documents into clusters (for non-batched mode)
             clustered_docs = group_documents_by_cluster(doc_dicts)
             cluster_summary = get_cluster_summary(clustered_docs)
             logging.info(f"[DDProcessEnhanced] Document clustering: {cluster_summary['total_clusters']} clusters, "
                         f"{cluster_summary['total_documents']} documents")
 
             # Define checkpoint callback for progress tracking
-            def checkpoint_callback(cluster_name: str, status: str):
+            def checkpoint_callback(stage: str = None, data: dict = None):
                 cost_summary = client.get_cost_summary()
-                _save_checkpoint_safely(checkpoint_id, {
-                    'current_stage': f'pass3_{cluster_name}',
+                update = {
+                    'current_stage': f'pass3_{stage}' if stage else 'pass3',
                     'total_input_tokens': cost_summary['total_input_tokens'],
                     'total_output_tokens': cost_summary['total_output_tokens'],
                     'estimated_cost_usd': cost_summary['total_cost_usd'],
                     'cost_by_model': cost_summary['breakdown']
+                }
+                if data:
+                    update.update(data)
+                _save_checkpoint_safely(checkpoint_id, update)
+
+            def progress_callback(current, total, message):
+                logging.info(f"[DDProcessEnhanced] Pass 3 progress: {current}/{total} - {message}")
+                _save_checkpoint_safely(checkpoint_id, {
+                    'current_stage': f'pass3_batch_{current}_of_{total}',
+                    'batches_completed': current
                 })
 
-            pass3_results = run_pass3_clustered(
-                clustered_docs=clustered_docs,
+            pass3_results = run_pass3_hybrid(
+                documents=doc_dicts,
                 pass1_extractions=pass1_results,
+                pass2_findings=pass2_findings,
                 blueprint=blueprint,
                 client=client,
+                compressed_docs=compressed_docs,
+                batch_plan=batch_plan,
                 checkpoint_callback=checkpoint_callback,
-                verbose=False
+                progress_callback=progress_callback,
+                verbose=True,
+                force_batching=False  # Let hybrid decide based on doc count
             )
 
-            logging.info(f"[DDProcessEnhanced] Pass 3 (clustered) complete: "
-                        f"{len(pass3_results.get('cross_doc_findings', []))} cross-doc findings, "
-                        f"{pass3_results.get('clusters_analyzed', 0)} clusters analyzed")
+            # Log results based on mode used
+            if pass3_results.get('batching_enabled'):
+                logging.info(f"[DDProcessEnhanced] Pass 3 (batched) complete: "
+                            f"{len(pass3_results.get('all_cross_doc_findings', []))} cross-doc findings, "
+                            f"{pass3_results.get('batch_stats', {}).get('total_batches', 0)} batches")
+            else:
+                logging.info(f"[DDProcessEnhanced] Pass 3 (clustered) complete: "
+                            f"{len(pass3_results.get('all_cross_doc_findings', []))} cross-doc findings, "
+                            f"{pass3_results.get('clusters_analyzed', 0)} clusters analyzed")
         else:
             # Original Pass 3 (all docs at once)
             logging.info("[DDProcessEnhanced] Starting Pass 3: Cross-Document Synthesis (Original)")
@@ -600,6 +948,37 @@ def _run_all_passes(
             'estimated_cost_usd': cost_summary['total_cost_usd'],
             'cost_by_model': cost_summary['breakdown']
         })
+
+        # ===== PASS 3.5: Aggregate Financial Calculations =====
+        # Aggregate cross-document calculations and resolve dependencies
+        calc_aggregates = None
+        try:
+            _save_checkpoint_safely(checkpoint_id, {
+                'current_stage': 'pass3_5_aggregate_calculations'
+            })
+
+            logging.info("[DDProcessEnhanced] Starting Pass 3.5: Aggregate Calculations")
+
+            cross_doc_findings = pass3_results.get('cross_doc_findings', []) or pass3_results.get('all_cross_doc_findings', [])
+            clusters = pass3_results.get('clusters', [])
+
+            calc_aggregates = calc_orchestrator.process_pass3_aggregates(
+                clusters=clusters,
+                cross_doc_findings=cross_doc_findings
+            )
+
+            logging.info(f"[DDProcessEnhanced] Pass 3.5 complete: Total exposure {calc_aggregates.get('currency', 'ZAR')} "
+                        f"{calc_aggregates.get('total_exposure', 0):,.0f}")
+
+            if calc_aggregates.get('transaction_ratio', {}).get('exceeds_transaction'):
+                logging.warning("[DDProcessEnhanced] WARNING: Total exposure exceeds transaction value!")
+
+            _save_checkpoint_safely(checkpoint_id, {
+                'total_calculated_exposure': calc_aggregates.get('total_exposure', 0),
+                'calculation_aggregates': calc_aggregates
+            })
+        except Exception as e:
+            logging.warning(f"[DDProcessEnhanced] Pass 3.5 aggregate calculations failed (non-fatal): {e}")
 
         # ===== PASS 4: Deal Synthesis =====
         _save_checkpoint_safely(checkpoint_id, {
@@ -627,17 +1006,197 @@ def _run_all_passes(
         })
         logging.info("[DDProcessEnhanced] Pass 4 complete")
 
+        # ===== PASS 5: Opus Verification =====
+        # Final quality check using Opus to verify deal-blockers and calculations
+        verification_result = None
+        try:
+            _save_checkpoint_safely(checkpoint_id, {
+                'current_pass': 5,
+                'current_stage': 'pass5_verification'
+            })
+
+            logging.info("[DDProcessEnhanced] Starting Pass 5: Opus Verification")
+
+            # Get findings list
+            if isinstance(pass2_findings, dict):
+                findings_list = pass2_findings.get('findings', [])
+            else:
+                findings_list = pass2_findings
+
+            # Define checkpoint callback for Pass 5
+            def pass5_checkpoint(stage: str):
+                _save_checkpoint_safely(checkpoint_id, {
+                    'current_stage': f'pass5_{stage}'
+                })
+
+            verification_result = run_pass5_verification(
+                pass4_results=pass4_results,
+                pass3_results=pass3_results,
+                pass2_findings=findings_list,
+                pass1_results=pass1_results,
+                calculation_aggregates=calc_aggregates,
+                transaction_context=transaction_context_str,
+                client=client,
+                verbose=True,
+                checkpoint_callback=pass5_checkpoint
+            )
+
+            if verification_result and not verification_result.error:
+                # Apply verification adjustments to pass4_results
+                pass4_results = apply_verification_adjustments(pass4_results, verification_result)
+
+                logging.info(f"[DDProcessEnhanced] Pass 5 complete: "
+                            f"{'PASSED' if verification_result.verification_passed else 'FAILED'} "
+                            f"({verification_result.overall_confidence:.0%} confidence)")
+
+                if verification_result.critical_issues:
+                    logging.warning(f"[DDProcessEnhanced] Pass 5 found {len(verification_result.critical_issues)} critical issues")
+
+                _save_checkpoint_safely(checkpoint_id, {
+                    'verification_passed': verification_result.verification_passed,
+                    'verification_confidence': verification_result.overall_confidence,
+                    'critical_issues_count': len(verification_result.critical_issues)
+                })
+            else:
+                logging.warning(f"[DDProcessEnhanced] Pass 5 verification had error: {verification_result.error if verification_result else 'No result'}")
+
+        except Exception as e:
+            logging.warning(f"[DDProcessEnhanced] Pass 5 verification failed (non-fatal): {e}")
+            # Continue without verification - it's an enhancement, not critical
+
+        # Save final checkpoint after Pass 5
+        cost_summary = client.get_cost_summary()
+        _save_checkpoint_safely(checkpoint_id, {
+            'total_input_tokens': cost_summary['total_input_tokens'],
+            'total_output_tokens': cost_summary['total_output_tokens'],
+            'estimated_cost_usd': cost_summary['total_cost_usd'],
+            'cost_by_model': cost_summary['breakdown']
+        })
+
         return {
             "pass1_results": pass1_results,
             "pass2_findings": pass2_findings,
             "pass3_results": pass3_results,
             "pass4_results": pass4_results,
-            "question_summary": question_summary
+            "question_summary": question_summary,
+            "graph_stats": graph_stats,
+            "calculation_aggregates": calc_aggregates,
+            "calculation_summary": calc_orchestrator.get_calculation_summary() if calc_orchestrator else None,
+            "verification_result": verification_result.to_dict() if verification_result else None
         }
 
     except Exception as e:
         logging.exception(f"[DDProcessEnhanced] Error in processing passes: {e}")
         return {"error": f"Processing failed: {str(e)}"}
+
+
+def _run_parallel_passes(
+    checkpoint_id: str,
+    dd_id: str,
+    run_id: str,
+    doc_dicts: List[Dict],
+    reference_docs: List[Dict],
+    blueprint: Dict,
+    transaction_context_str: str,
+    client: ClaudeClient,
+    include_tier3: bool,
+    previous_run_id: Optional[str] = None,
+) -> Dict[str, Any]:
+    """
+    Phase 6: Run all passes using the parallel orchestrator.
+
+    Uses worker pool for parallel document processing, hierarchical synthesis
+    for aggregating results, and incremental processing for change detection.
+    """
+    try:
+        # Create orchestrator with client
+        orchestrator = create_orchestrator(
+            claude_client=client,
+            db_session=None,  # We use fresh sessions per operation
+            config=OrchestratorConfig.from_env(),
+        )
+
+        # Define checkpoint callback
+        def checkpoint_callback(stage: str, data: Dict = None):
+            update = {'current_stage': f'parallel_{stage}'}
+            if data:
+                update.update(data)
+            _save_checkpoint_safely(checkpoint_id, update)
+
+        # Define progress callback
+        def progress_callback(current: int, total: int, message: str):
+            logging.info(f"[DDProcessEnhanced] Parallel progress: {current}/{total} - {message}")
+            _save_checkpoint_safely(checkpoint_id, {
+                'current_stage': message,
+                'documents_processed': current
+            })
+
+        # Run processing through orchestrator
+        result = orchestrator.process(
+            dd_id=dd_id,
+            run_id=run_id,
+            documents=doc_dicts,
+            blueprint=blueprint,
+            transaction_context=transaction_context_str,
+            reference_docs=reference_docs,
+            previous_run_id=previous_run_id,
+            progress_callback=progress_callback,
+            checkpoint_callback=checkpoint_callback,
+            include_tier3=include_tier3,
+        )
+
+        # Check for errors
+        if result.error:
+            return {"error": result.error}
+
+        # Build question summary from prioritizer
+        from dd_enhanced.core.question_prioritizer import get_summary as get_question_summary
+        question_summary = {
+            'total_questions': 0,
+            'tier1_count': 0,
+            'tier2_count': 0,
+            'tier3_count': 0,
+        }
+
+        # Log parallel processing results
+        logging.info(f"[DDProcessEnhanced] Parallel processing complete:")
+        logging.info(f"  Mode: {result.mode.value}")
+        logging.info(f"  Documents processed: {result.documents_processed}")
+        logging.info(f"  Documents from cache: {result.documents_from_cache}")
+        logging.info(f"  Documents failed: {result.documents_failed}")
+        logging.info(f"  Findings: {len(result.pass2_findings)}")
+        logging.info(f"  Duration: {result.duration_seconds:.1f}s")
+
+        if result.partial_results:
+            logging.warning(f"[DDProcessEnhanced] Partial results due to {result.documents_failed} failed documents")
+            # Save failed document info to checkpoint
+            _save_checkpoint_safely(checkpoint_id, {
+                'partial_results': True,
+                'failed_documents': result.failed_documents[:10],  # Store first 10
+                'documents_failed': result.documents_failed
+            })
+
+        return {
+            "pass1_results": result.pass1_results,
+            "pass2_findings": result.pass2_findings,
+            "pass3_results": result.pass3_results,
+            "pass4_results": result.pass4_results,
+            "question_summary": question_summary,
+            "graph_stats": result.graph_stats,
+            "parallel_stats": {
+                "mode": result.mode.value,
+                "documents_processed": result.documents_processed,
+                "documents_from_cache": result.documents_from_cache,
+                "documents_failed": result.documents_failed,
+                "duration_seconds": result.duration_seconds,
+                "partial_results": result.partial_results,
+            },
+            "synthesis_results": result.synthesis_results,
+        }
+
+    except Exception as e:
+        logging.exception(f"[DDProcessEnhanced] Error in parallel processing: {e}")
+        return {"error": f"Parallel processing failed: {str(e)}"}
 
 
 def _store_all_findings(
@@ -990,6 +1549,10 @@ def _store_findings(
             exposure_currency = financial_exposure.get("currency", "ZAR") if isinstance(financial_exposure, dict) else "ZAR"
             exposure_calc = financial_exposure.get("calculation", "") if isinstance(financial_exposure, dict) else ""
 
+            # Extract reasoning (Chain of Thought)
+            reasoning_data = finding.get("reasoning")
+            reasoning_json = json.dumps(reasoning_data) if reasoning_data else None
+
             # Create finding with enhanced fields
             db_finding = PerspectiveRiskFinding(
                 perspective_risk_id=risk.id,
@@ -1010,7 +1573,9 @@ def _store_findings(
                 financial_exposure_calculation=exposure_calc[:1000] if exposure_calc else None,
                 clause_reference=finding.get("clause_reference", "")[:100] if finding.get("clause_reference") else None,
                 cross_doc_source=None,  # Not a cross-doc finding
-                analysis_pass=finding.get("pass", 2)
+                analysis_pass=finding.get("pass", 2),
+                # Chain of Thought reasoning
+                reasoning=reasoning_json
             )
             session.add(db_finding)
             stored_count += 1
@@ -1060,6 +1625,10 @@ def _store_cross_doc_findings(
             source_docs = finding.get("source_documents", [])
             cross_doc_source = " vs ".join(source_docs[:3]) if source_docs else finding.get("source_document", "")
 
+            # Extract reasoning (Chain of Thought)
+            reasoning_data = finding.get("reasoning")
+            reasoning_json = json.dumps(reasoning_data) if reasoning_data else None
+
             db_finding = PerspectiveRiskFinding(
                 perspective_risk_id=risk.id,
                 document_id=None,  # Cross-doc findings may not have single source
@@ -1079,7 +1648,9 @@ def _store_cross_doc_findings(
                 financial_exposure_calculation=exposure_calc[:1000] if exposure_calc else None,
                 clause_reference=finding.get("clause_reference", "")[:100] if finding.get("clause_reference") else None,
                 cross_doc_source=cross_doc_source[:200] if cross_doc_source else None,
-                analysis_pass=3  # Cross-doc findings are always from Pass 3
+                analysis_pass=3,  # Cross-doc findings are always from Pass 3
+                # Chain of Thought reasoning
+                reasoning=reasoning_json
             )
             session.add(db_finding)
             stored_count += 1
@@ -1130,3 +1701,53 @@ def _count_by_severity(findings: List[Dict]) -> Dict[str, int]:
         if sev in counts:
             counts[sev] += 1
     return counts
+
+
+def _find_doc_extraction(pass1_results: Dict[str, Any], doc_name: str) -> Optional[Dict[str, Any]]:
+    """
+    Find Pass 1 extraction data for a specific document.
+
+    Pass 1 results are organized by extraction type (key_dates, financial_figures, etc.)
+    with each item having a source_document field. We need to reorganize by document.
+    """
+    doc_extraction = {
+        'key_dates': [],
+        'financial_figures': [],
+        'coc_clauses': [],
+        'consent_requirements': [],
+        'parties': [],
+        'covenants': []
+    }
+
+    # Check if pass1_results has the expected structure
+    if not pass1_results:
+        return None
+
+    # Extract items for this document from each category
+    for date_item in pass1_results.get('key_dates', []):
+        if date_item.get('source_document') == doc_name:
+            doc_extraction['key_dates'].append(date_item)
+
+    for fin_item in pass1_results.get('financial_figures', []):
+        if fin_item.get('source_document') == doc_name:
+            doc_extraction['financial_figures'].append(fin_item)
+
+    for coc_item in pass1_results.get('coc_clauses', []):
+        if coc_item.get('source_document') == doc_name:
+            doc_extraction['coc_clauses'].append(coc_item)
+
+    for consent_item in pass1_results.get('consent_requirements', []):
+        if consent_item.get('source_document') == doc_name:
+            doc_extraction['consent_requirements'].append(consent_item)
+
+    for party_item in pass1_results.get('parties', []):
+        if party_item.get('source_document') == doc_name:
+            doc_extraction['parties'].append(party_item)
+
+    for covenant_item in pass1_results.get('covenants', []):
+        if covenant_item.get('source_document') == doc_name:
+            doc_extraction['covenants'].append(covenant_item)
+
+    # Return None if no extractions found for this document
+    has_data = any(len(v) > 0 for v in doc_extraction.values())
+    return doc_extraction if has_data else None

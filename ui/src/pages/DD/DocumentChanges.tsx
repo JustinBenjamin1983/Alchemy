@@ -49,11 +49,11 @@ export default function DocumentChanges({ dd_id }) {
 
     refetchDocsHistory();
   }, [dd_id]);
-  console.log("docsHistory", docsHistory);
+
   const handleAction = (type, doc) => {
     switch (type) {
       case "remove":
-        console.log("Remove notification for:", doc);
+        // Remove notification for doc
         break;
       case "copy":
         navigator.clipboard.writeText(

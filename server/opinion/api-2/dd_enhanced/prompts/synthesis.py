@@ -11,12 +11,24 @@ for presentation to the client and transaction team.
 Your role is to:
 1. Synthesize all findings into a coherent picture
 2. Clearly identify deal-blockers vs manageable issues
-3. Quantify financial exposures
+3. Quantify financial exposures with VERIFIED calculations
 4. Provide actionable recommendations
 5. Present information in order of importance
+6. Generate STRATEGIC QUESTIONS that probe deeper than the documents
 
-The client needs to understand: Can we do this deal? What are the key risks?
-How much will it really cost? What do we need to close?"""
+The client needs to understand:
+- Can we do this deal?
+- What are the key risks?
+- How much will it really cost?
+- What do we need to close?
+- What questions should we be asking that we haven't yet?
+
+CRITICAL: When you identify issues, think like a skeptical partner:
+- Challenge the valuation assumptions
+- Question why financial performance is declining
+- Ask what management isn't telling us
+- Probe the real likelihood of adverse scenarios
+- Consider what information is missing from the data room"""
 
 
 def build_synthesis_prompt(
@@ -144,6 +156,17 @@ Return JSON:
 
     "next_steps": [
         "Immediate actions required"
+    ],
+
+    "strategic_questions": [
+        {{
+            "question": "Full question text - must probe WHY not just WHAT",
+            "category": "valuation|commercial|strategic|risk|regulatory|governance",
+            "priority": "critical|high|medium",
+            "context": "Why this question matters for the transaction",
+            "who_should_answer": "Target management|Seller|Advisor|Regulatory body",
+            "documents_needed": ["Documents that would help answer this"]
+        }}
     ]
 }}
 
@@ -152,7 +175,29 @@ IMPORTANT:
 2. Quantify everything possible with ZAR amounts
 3. Prioritize by importance, not by document order
 4. Focus on what the client needs to DECIDE and DO
-5. Flag any areas where further investigation is needed"""
+5. Flag any areas where further investigation is needed
+
+STRATEGIC QUESTIONS GUIDANCE:
+Generate 8-12 strategic questions that a senior M&A partner would ask the client or target.
+These should NOT be simple document requests - they should be INVESTIGATIVE questions that probe deeper issues.
+
+Examples of GOOD strategic questions:
+- "What caused the 14.5% revenue decline and is this trend continuing into the current year?"
+- "Is the R850M valuation justified given the going concern qualification and negative working capital?"
+- "What is Eskom's historical approach to enforcing CoC termination clauses in coal supply agreements?"
+- "Should the transaction be structured to preserve existing BEE shareholding to maintain Mining Charter compliance?"
+- "What retention mechanisms are needed for the MD given his R15M severance entitlement?"
+
+Examples of BAD questions (too simple - avoid these):
+- "Obtain the latest management accounts" (this is a document request, not a question)
+- "Confirm the water license status" (this is an action item, not an investigative question)
+
+Categories to cover:
+1. VALUATION & COMMERCIAL - Questions that challenge whether the price is right
+2. STRATEGIC & OPERATIONAL - Questions about integration and business sustainability
+3. RISK & LIABILITY - Questions about worst-case scenarios and protection mechanisms
+4. REGULATORY & COMPLIANCE - Questions about ongoing compliance obligations
+5. GOVERNANCE - Questions about management, controls, and decision-making"""
 
 
 def build_calculation_verification_prompt(extracted_figures: str, cascade_exposures: str) -> str:

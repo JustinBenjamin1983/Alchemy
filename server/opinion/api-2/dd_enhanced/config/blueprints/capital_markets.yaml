@@ -1,398 +1,919 @@
-# Capital Markets Due Diligence Blueprint
-# Covers: IPOs, rights issues, bond issuances, secondary offerings, delistings
-# Jurisdiction: South Africa (JSE focus)
+transaction_type: Capital Markets
+code: capital_markets
+description: 'Due diligence blueprint for securities offerings, listings, and capital raising
 
-transaction_type: "Capital Markets"
-code: "capital_markets"
-description: |
-  Due diligence blueprint for securities offerings, listings, and capital raising
   including IPOs, rights issues, bond issuances, secondary offerings, and delistings.
+
   Covers JSE Listings Requirements, prospectus requirements, and ongoing obligations.
 
+  '
 risk_categories:
-  - name: "Listing & Regulatory Compliance"
-    description: "JSE Listings Requirements and regulatory authority approvals"
-    questions:
-      - id: "CM-LIST-001"
-        question: "Does the issuer meet all JSE listing requirements including minimum capital, spread requirements, and track record?"
-        priority: "critical"
-        document_types: ["JSE application", "Sponsor due diligence report", "Financial statements"]
-        risk_indicators: ["Minimum requirements not met", "Inadequate spread", "Insufficient track record"]
-
-      - id: "CM-LIST-002"
-        question: "Has FSCA approval been obtained or applied for where required?"
-        priority: "critical"
-        document_types: ["FSCA applications", "Regulatory correspondence", "Approval letters"]
-        risk_indicators: ["Pending applications", "Regulatory objections", "Conditions imposed"]
-
-      - id: "CM-LIST-003"
-        question: "Are there any ongoing regulatory investigations or sanctions affecting listing eligibility?"
-        priority: "critical"
-        document_types: ["Regulatory correspondence", "Enforcement notices", "Compliance certificates"]
-        risk_indicators: ["Active investigations", "Past sanctions", "Remediation requirements"]
-
-      - id: "CM-LIST-004"
-        question: "Does the constitutional documents comply with JSE requirements for listed companies?"
-        priority: "high"
-        document_types: ["MOI", "Shareholders agreement", "JSE checklist"]
-        risk_indicators: ["Non-compliant provisions", "Required amendments", "Entrenchment issues"]
-
-      - id: "CM-LIST-005"
-        question: "Are the sponsor arrangements in place and is the sponsor appropriately qualified?"
-        priority: "high"
-        document_types: ["Sponsor agreement", "Sponsor accreditation", "Independence confirmation"]
-        risk_indicators: ["No sponsor appointed", "Independence concerns", "Qualification issues"]
-
-      - id: "CM-LIST-006"
-        question: "Have all category of listing requirements been satisfied (main board, AltX, etc.)?"
-        priority: "high"
-        document_types: ["Listing application", "Board categorization analysis", "JSE correspondence"]
-        risk_indicators: ["Category mismatch", "Migration requirements", "Special conditions"]
-
-      - id: "CM-LIST-007"
-        question: "Are there any restrictions on the free transferability of securities?"
-        priority: "high"
-        document_types: ["MOI", "Shareholders agreements", "Lock-up agreements"]
-        risk_indicators: ["Transfer restrictions", "Pre-emptive rights", "Tag/drag provisions"]
-
-      - id: "CM-LIST-008"
-        question: "Has the issuer complied with continuing obligations for existing listings?"
-        priority: "medium"
-        document_types: ["SENS announcements", "Annual compliance certificates", "JSE correspondence"]
-        risk_indicators: ["Late filings", "Non-compliance notices", "Suspended trading periods"]
-
-  - name: "Prospectus & Disclosure"
-    description: "Prospectus requirements, disclosures, and liability considerations"
-    questions:
-      - id: "CM-PROS-001"
-        question: "Does the prospectus contain all required information under the Companies Act and JSE requirements?"
-        priority: "critical"
-        document_types: ["Draft prospectus", "Completeness checklist", "Legal opinion"]
-        risk_indicators: ["Missing disclosures", "Incomplete sections", "Regulatory comments"]
-
-      - id: "CM-PROS-002"
-        question: "Are all material contracts and risk factors adequately disclosed?"
-        priority: "critical"
-        document_types: ["Material contracts schedule", "Risk factors section", "Management discussion"]
-        risk_indicators: ["Undisclosed contracts", "Inadequate risk disclosure", "Material omissions"]
-
-      - id: "CM-PROS-003"
-        question: "Has proper verification of prospectus statements been conducted?"
-        priority: "critical"
-        document_types: ["Verification notes", "Back-up documentation", "Expert reports"]
-        risk_indicators: ["Unverified statements", "Missing back-up", "Expert qualifications"]
-
-      - id: "CM-PROS-004"
-        question: "Are the financial statements and pro forma financial information properly prepared and reported on?"
-        priority: "critical"
-        document_types: ["Audited financials", "Pro forma statements", "Reporting accountant report"]
-        risk_indicators: ["Audit qualifications", "Pro forma adjustments", "Reporting issues"]
-
-      - id: "CM-PROS-005"
-        question: "Have all directors and proposed directors provided required confirmations?"
-        priority: "high"
-        document_types: ["Director declarations", "Consent letters", "Background checks"]
-        risk_indicators: ["Missing consents", "Disclosure issues", "Disqualification matters"]
-
-      - id: "CM-PROS-006"
-        question: "Are profit forecasts or estimates properly supported and reported on?"
-        priority: "high"
-        document_types: ["Forecast assumptions", "Reporting accountant report", "Board resolutions"]
-        risk_indicators: ["Unsupported assumptions", "Qualified reports", "Historical variance"]
-
-      - id: "CM-PROS-007"
-        question: "Has the use of proceeds been clearly specified and are they permitted?"
-        priority: "high"
-        document_types: ["Use of proceeds section", "Business plan", "Board resolutions"]
-        risk_indicators: ["Vague use of proceeds", "Prohibited purposes", "Working capital concerns"]
-
-      - id: "CM-PROS-008"
-        question: "Are all related party transactions and conflicts of interest disclosed?"
-        priority: "high"
-        document_types: ["Related party schedule", "Conflict disclosures", "Independent opinions"]
-        risk_indicators: ["Undisclosed relationships", "Conflicted transactions", "Fair value concerns"]
-
-      - id: "CM-PROS-009"
-        question: "Has the prospectus been reviewed for potential civil and criminal liability exposure?"
-        priority: "medium"
-        document_types: ["Legal review memorandum", "Liability analysis", "Insurance arrangements"]
-        risk_indicators: ["Misleading statements", "Material omissions", "Inadequate insurance"]
-
-  - name: "Corporate Governance"
-    description: "Board composition, governance structures, and King IV compliance"
-    questions:
-      - id: "CM-GOV-001"
-        question: "Does the board composition meet JSE requirements including independent directors?"
-        priority: "critical"
-        document_types: ["Board composition analysis", "Independence assessments", "Director CVs"]
-        risk_indicators: ["Insufficient independents", "Independence concerns", "Skills gaps"]
-
-      - id: "CM-GOV-002"
-        question: "Are required board committees established with appropriate composition?"
-        priority: "critical"
-        document_types: ["Committee charters", "Committee composition", "Meeting records"]
-        risk_indicators: ["Missing committees", "Composition deficiencies", "Charter issues"]
-
-      - id: "CM-GOV-003"
-        question: "Is there compliance with King IV principles on a substantive basis?"
-        priority: "high"
-        document_types: ["King IV application register", "Governance report", "Gap analysis"]
-        risk_indicators: ["Non-application without explanation", "Governance gaps", "Disclosure deficiencies"]
-
-      - id: "CM-GOV-004"
-        question: "Are director remuneration arrangements compliant and appropriately disclosed?"
-        priority: "high"
-        document_types: ["Remuneration policy", "Remuneration report", "Shareholder resolutions"]
-        risk_indicators: ["Non-compliant arrangements", "Disclosure gaps", "Shareholder concerns"]
-
-      - id: "CM-GOV-005"
-        question: "Are there appropriate policies for director dealings and insider trading?"
-        priority: "high"
-        document_types: ["Dealing policy", "Insider trading policy", "Clearance procedures"]
-        risk_indicators: ["Missing policies", "Inadequate procedures", "Past breaches"]
-
-      - id: "CM-GOV-006"
-        question: "Is the company secretary appropriately qualified and independent?"
-        priority: "medium"
-        document_types: ["Company secretary CV", "Independence assessment", "Appointment letter"]
-        risk_indicators: ["Qualification concerns", "Independence issues", "Capacity constraints"]
-
-      - id: "CM-GOV-007"
-        question: "Are there appropriate succession plans for key executives and board members?"
-        priority: "medium"
-        document_types: ["Succession policy", "Key person analysis", "Contingency plans"]
-        risk_indicators: ["No succession planning", "Key person dependencies", "Board renewal concerns"]
-
-  - name: "Financial Due Diligence"
-    description: "Financial position, working capital, and accounting matters"
-    questions:
-      - id: "CM-FIN-001"
-        question: "Is the working capital statement supportable and has it been properly stress-tested?"
-        priority: "critical"
-        document_types: ["Working capital report", "Cash flow projections", "Sensitivity analysis"]
-        risk_indicators: ["Working capital deficiency", "Unrealistic assumptions", "Funding gaps"]
-
-      - id: "CM-FIN-002"
-        question: "Are there any material changes to financial position since last audited accounts?"
-        priority: "critical"
-        document_types: ["Management accounts", "Material change statement", "Trading update"]
-        risk_indicators: ["Adverse changes", "Undisclosed deterioration", "Trend concerns"]
-
-      - id: "CM-FIN-003"
-        question: "Have all contingent liabilities and off-balance sheet arrangements been identified?"
-        priority: "critical"
-        document_types: ["Contingent liability schedule", "Guarantees register", "Off-balance sheet analysis"]
-        risk_indicators: ["Undisclosed contingencies", "Material guarantees", "Complex structures"]
-
-      - id: "CM-FIN-004"
-        question: "Are accounting policies appropriate and consistently applied?"
-        priority: "high"
-        document_types: ["Accounting policies", "Auditor correspondence", "Policy change analysis"]
-        risk_indicators: ["Aggressive policies", "Inconsistent application", "Policy changes"]
-
-      - id: "CM-FIN-005"
-        question: "Are there any concerns with related party balances or transactions?"
-        priority: "high"
-        document_types: ["Related party schedules", "Transfer pricing documentation", "Arm's length confirmations"]
-        risk_indicators: ["Large related party balances", "Non-arm's length terms", "Settlement concerns"]
-
-      - id: "CM-FIN-006"
-        question: "What is the quality of earnings and are there any non-recurring items to consider?"
-        priority: "high"
-        document_types: ["Quality of earnings analysis", "Normalisation adjustments", "Auditor discussions"]
-        risk_indicators: ["One-off items", "Aggressive revenue recognition", "Earnings manipulation"]
-
-      - id: "CM-FIN-007"
-        question: "Are there any going concern considerations or qualifications?"
-        priority: "high"
-        document_types: ["Auditor reports", "Going concern assessment", "Management representations"]
-        risk_indicators: ["Going concern emphasis", "Qualification", "Material uncertainties"]
-
-      - id: "CM-FIN-008"
-        question: "Have all material debt facilities and covenants been analysed?"
-        priority: "medium"
-        document_types: ["Facility agreements", "Covenant compliance certificates", "Lender consents"]
-        risk_indicators: ["Covenant breaches", "Refinancing risk", "Change of control triggers"]
-
-  - name: "Material Contracts"
-    description: "Key commercial agreements and change of control provisions"
-    questions:
-      - id: "CM-MAT-001"
-        question: "Have all material contracts been identified and are they in good standing?"
-        priority: "critical"
-        document_types: ["Material contracts schedule", "Contract summaries", "Standing confirmations"]
-        risk_indicators: ["Missing contracts", "Breach notices", "Termination rights"]
-
-      - id: "CM-MAT-002"
-        question: "Are there change of control provisions that could be triggered by the transaction?"
-        priority: "critical"
-        document_types: ["Change of control analysis", "Consent requirements", "Waiver letters"]
-        risk_indicators: ["Triggered provisions", "Consent requirements", "Termination rights"]
-
-      - id: "CM-MAT-003"
-        question: "Are there any contracts with unusual or onerous terms?"
-        priority: "high"
-        document_types: ["Contract review summaries", "Risk allocation analysis", "Legal opinions"]
-        risk_indicators: ["One-sided terms", "Unlimited liability", "Unusual obligations"]
-
-      - id: "CM-MAT-004"
-        question: "Are key customer and supplier relationships adequately documented and stable?"
-        priority: "high"
-        document_types: ["Customer contracts", "Supplier agreements", "Concentration analysis"]
-        risk_indicators: ["Concentration risk", "Expiring contracts", "Relationship instability"]
-
-      - id: "CM-MAT-005"
-        question: "Are there any exclusivity, non-compete or restrictive provisions affecting the business?"
-        priority: "high"
-        document_types: ["Restrictive covenant schedule", "Competition analysis", "Legal opinions"]
-        risk_indicators: ["Business restrictions", "Market limitations", "Enforceability issues"]
-
-      - id: "CM-MAT-006"
-        question: "Have all joint venture and partnership arrangements been reviewed?"
-        priority: "medium"
-        document_types: ["JV agreements", "Partnership deeds", "Governance arrangements"]
-        risk_indicators: ["Governance issues", "Exit restrictions", "Deadlock provisions"]
-
-  - name: "Litigation & Disputes"
-    description: "Pending and threatened litigation, regulatory proceedings"
-    questions:
-      - id: "CM-LIT-001"
-        question: "Are there any pending or threatened litigation matters that are material?"
-        priority: "critical"
-        document_types: ["Litigation schedule", "Legal opinions", "Claim assessments"]
-        risk_indicators: ["Material claims", "Class actions", "Criminal proceedings"]
-
-      - id: "CM-LIT-002"
-        question: "Have adequate provisions been made for known litigation and claims?"
-        priority: "critical"
-        document_types: ["Provision analysis", "Auditor correspondence", "Legal opinions"]
-        risk_indicators: ["Under-provisioning", "Contingent exposure", "Disclosure adequacy"]
-
-      - id: "CM-LIT-003"
-        question: "Are there any regulatory proceedings or investigations pending?"
-        priority: "high"
-        document_types: ["Regulatory correspondence", "Investigation status", "Compliance reports"]
-        risk_indicators: ["Active investigations", "Regulatory scrutiny", "Enforcement risk"]
-
-      - id: "CM-LIT-004"
-        question: "Have all historical settlements and judgments been disclosed?"
-        priority: "high"
-        document_types: ["Settlement agreements", "Court orders", "Payment records"]
-        risk_indicators: ["Undisclosed settlements", "Ongoing obligations", "Precedent issues"]
-
-      - id: "CM-LIT-005"
-        question: "Is there adequate insurance coverage for potential claims?"
-        priority: "medium"
-        document_types: ["Insurance policies", "Coverage analysis", "Claims history"]
-        risk_indicators: ["Coverage gaps", "Exclusions", "Limits adequacy"]
-
-  - name: "Underwriting & Distribution"
-    description: "Underwriting arrangements, distribution, and bookbuild process"
-    questions:
-      - id: "CM-UND-001"
-        question: "Are underwriting arrangements appropriate and are underwriters properly qualified?"
-        priority: "critical"
-        document_types: ["Underwriting agreement", "Underwriter licences", "Syndicate arrangements"]
-        risk_indicators: ["No underwriting", "Qualification issues", "Underwriting conditions"]
-
-      - id: "CM-UND-002"
-        question: "Are the pricing methodology and bookbuild process appropriate?"
-        priority: "high"
-        document_types: ["Pricing committee terms", "Bookbuild procedures", "Allocation policy"]
-        risk_indicators: ["Pricing concerns", "Process weaknesses", "Allocation issues"]
-
-      - id: "CM-UND-003"
-        question: "Have selling restrictions for various jurisdictions been properly documented?"
-        priority: "high"
-        document_types: ["Selling restrictions", "Legal opinions", "Jurisdiction analysis"]
-        risk_indicators: ["Missing restrictions", "Compliance risks", "Inadequate analysis"]
-
-      - id: "CM-UND-004"
-        question: "Are there appropriate stabilisation arrangements if applicable?"
-        priority: "medium"
-        document_types: ["Stabilisation agreement", "Regulatory notifications", "Over-allotment arrangements"]
-        risk_indicators: ["Non-compliance", "Disclosure issues", "Operational concerns"]
-
-      - id: "CM-UND-005"
-        question: "Have all fees, commissions and expenses been properly disclosed?"
-        priority: "medium"
-        document_types: ["Fee schedules", "Expense analysis", "Disclosure sections"]
-        risk_indicators: ["Hidden fees", "Excessive costs", "Disclosure gaps"]
-
-  - name: "Tax Considerations"
-    description: "Tax implications of listing and securities transactions"
-    questions:
-      - id: "CM-TAX-001"
-        question: "Have all tax implications of the transaction structure been analysed?"
-        priority: "high"
-        document_types: ["Tax opinion", "Structure analysis", "SARS rulings"]
-        risk_indicators: ["Adverse tax consequences", "Uncertain positions", "Restructuring required"]
-
-      - id: "CM-TAX-002"
-        question: "Are securities transfer tax and other transaction taxes properly provided for?"
-        priority: "high"
-        document_types: ["STT analysis", "Tax calculations", "Exemption analysis"]
-        risk_indicators: ["Unprovided taxes", "Exemption issues", "Compliance gaps"]
-
-      - id: "CM-TAX-003"
-        question: "Have investor tax considerations been adequately disclosed?"
-        priority: "medium"
-        document_types: ["Tax disclosure section", "Tax opinion", "Investor guidance"]
-        risk_indicators: ["Inadequate disclosure", "Complex implications", "International considerations"]
-
-      - id: "CM-TAX-004"
-        question: "Are there any historical tax issues or disputes that require disclosure?"
-        priority: "medium"
-        document_types: ["Tax compliance history", "SARS correspondence", "Assessment status"]
-        risk_indicators: ["Outstanding assessments", "Disputes", "Compliance gaps"]
-
+- name: Listing & Regulatory Compliance
+  description: JSE Listings Requirements and regulatory authority approvals
+  questions:
+  - id: CM-LIST-001
+    question: Does the issuer meet all JSE listing requirements including minimum capital, spread requirements, and track
+      record?
+    priority: critical
+    document_types:
+    - JSE application
+    - Sponsor due diligence report
+    - Financial statements
+    risk_indicators:
+    - Minimum requirements not met
+    - Inadequate spread
+    - Insufficient track record
+  - id: CM-LIST-002
+    question: Has FSCA approval been obtained or applied for where required?
+    priority: critical
+    document_types:
+    - FSCA applications
+    - Regulatory correspondence
+    - Approval letters
+    risk_indicators:
+    - Pending applications
+    - Regulatory objections
+    - Conditions imposed
+  - id: CM-LIST-003
+    question: Are there any ongoing regulatory investigations or sanctions affecting listing eligibility?
+    priority: critical
+    document_types:
+    - Regulatory correspondence
+    - Enforcement notices
+    - Compliance certificates
+    risk_indicators:
+    - Active investigations
+    - Past sanctions
+    - Remediation requirements
+  - id: CM-LIST-004
+    question: Does the constitutional documents comply with JSE requirements for listed companies?
+    priority: high
+    document_types:
+    - MOI
+    - Shareholders agreement
+    - JSE checklist
+    risk_indicators:
+    - Non-compliant provisions
+    - Required amendments
+    - Entrenchment issues
+  - id: CM-LIST-005
+    question: Are the sponsor arrangements in place and is the sponsor appropriately qualified?
+    priority: high
+    document_types:
+    - Sponsor agreement
+    - Sponsor accreditation
+    - Independence confirmation
+    risk_indicators:
+    - No sponsor appointed
+    - Independence concerns
+    - Qualification issues
+  - id: CM-LIST-006
+    question: Have all category of listing requirements been satisfied (main board, AltX, etc.)?
+    priority: high
+    document_types:
+    - Listing application
+    - Board categorization analysis
+    - JSE correspondence
+    risk_indicators:
+    - Category mismatch
+    - Migration requirements
+    - Special conditions
+  - id: CM-LIST-007
+    question: Are there any restrictions on the free transferability of securities?
+    priority: high
+    document_types:
+    - MOI
+    - Shareholders agreements
+    - Lock-up agreements
+    risk_indicators:
+    - Transfer restrictions
+    - Pre-emptive rights
+    - Tag/drag provisions
+  - id: CM-LIST-008
+    question: Has the issuer complied with continuing obligations for existing listings?
+    priority: medium
+    document_types:
+    - SENS announcements
+    - Annual compliance certificates
+    - JSE correspondence
+    risk_indicators:
+    - Late filings
+    - Non-compliance notices
+    - Suspended trading periods
+- name: Prospectus & Disclosure
+  description: Prospectus requirements, disclosures, and liability considerations
+  questions:
+  - id: CM-PROS-001
+    question: Does the prospectus contain all required information under the Companies Act and JSE requirements?
+    priority: critical
+    document_types:
+    - Draft prospectus
+    - Completeness checklist
+    - Legal opinion
+    risk_indicators:
+    - Missing disclosures
+    - Incomplete sections
+    - Regulatory comments
+  - id: CM-PROS-002
+    question: Are all material contracts and risk factors adequately disclosed?
+    priority: critical
+    document_types:
+    - Material contracts schedule
+    - Risk factors section
+    - Management discussion
+    risk_indicators:
+    - Undisclosed contracts
+    - Inadequate risk disclosure
+    - Material omissions
+  - id: CM-PROS-003
+    question: Has proper verification of prospectus statements been conducted?
+    priority: critical
+    document_types:
+    - Verification notes
+    - Back-up documentation
+    - Expert reports
+    risk_indicators:
+    - Unverified statements
+    - Missing back-up
+    - Expert qualifications
+  - id: CM-PROS-004
+    question: Are the financial statements and pro forma financial information properly prepared and reported on?
+    priority: critical
+    document_types:
+    - Audited financials
+    - Pro forma statements
+    - Reporting accountant report
+    risk_indicators:
+    - Audit qualifications
+    - Pro forma adjustments
+    - Reporting issues
+  - id: CM-PROS-005
+    question: Have all directors and proposed directors provided required confirmations?
+    priority: high
+    document_types:
+    - Director declarations
+    - Consent letters
+    - Background checks
+    risk_indicators:
+    - Missing consents
+    - Disclosure issues
+    - Disqualification matters
+  - id: CM-PROS-006
+    question: Are profit forecasts or estimates properly supported and reported on?
+    priority: high
+    document_types:
+    - Forecast assumptions
+    - Reporting accountant report
+    - Board resolutions
+    risk_indicators:
+    - Unsupported assumptions
+    - Qualified reports
+    - Historical variance
+  - id: CM-PROS-007
+    question: Has the use of proceeds been clearly specified and are they permitted?
+    priority: high
+    document_types:
+    - Use of proceeds section
+    - Business plan
+    - Board resolutions
+    risk_indicators:
+    - Vague use of proceeds
+    - Prohibited purposes
+    - Working capital concerns
+  - id: CM-PROS-008
+    question: Are all related party transactions and conflicts of interest disclosed?
+    priority: high
+    document_types:
+    - Related party schedule
+    - Conflict disclosures
+    - Independent opinions
+    risk_indicators:
+    - Undisclosed relationships
+    - Conflicted transactions
+    - Fair value concerns
+  - id: CM-PROS-009
+    question: Has the prospectus been reviewed for potential civil and criminal liability exposure?
+    priority: medium
+    document_types:
+    - Legal review memorandum
+    - Liability analysis
+    - Insurance arrangements
+    risk_indicators:
+    - Misleading statements
+    - Material omissions
+    - Inadequate insurance
+- name: Corporate Governance
+  description: Board composition, governance structures, and King IV compliance
+  questions:
+  - id: CM-GOV-001
+    question: Does the board composition meet JSE requirements including independent directors?
+    priority: critical
+    document_types:
+    - Board composition analysis
+    - Independence assessments
+    - Director CVs
+    risk_indicators:
+    - Insufficient independents
+    - Independence concerns
+    - Skills gaps
+  - id: CM-GOV-002
+    question: Are required board committees established with appropriate composition?
+    priority: critical
+    document_types:
+    - Committee charters
+    - Committee composition
+    - Meeting records
+    risk_indicators:
+    - Missing committees
+    - Composition deficiencies
+    - Charter issues
+  - id: CM-GOV-003
+    question: Is there compliance with King IV principles on a substantive basis?
+    priority: high
+    document_types:
+    - King IV application register
+    - Governance report
+    - Gap analysis
+    risk_indicators:
+    - Non-application without explanation
+    - Governance gaps
+    - Disclosure deficiencies
+  - id: CM-GOV-004
+    question: Are director remuneration arrangements compliant and appropriately disclosed?
+    priority: high
+    document_types:
+    - Remuneration policy
+    - Remuneration report
+    - Shareholder resolutions
+    risk_indicators:
+    - Non-compliant arrangements
+    - Disclosure gaps
+    - Shareholder concerns
+  - id: CM-GOV-005
+    question: Are there appropriate policies for director dealings and insider trading?
+    priority: high
+    document_types:
+    - Dealing policy
+    - Insider trading policy
+    - Clearance procedures
+    risk_indicators:
+    - Missing policies
+    - Inadequate procedures
+    - Past breaches
+  - id: CM-GOV-006
+    question: Is the company secretary appropriately qualified and independent?
+    priority: medium
+    document_types:
+    - Company secretary CV
+    - Independence assessment
+    - Appointment letter
+    risk_indicators:
+    - Qualification concerns
+    - Independence issues
+    - Capacity constraints
+  - id: CM-GOV-007
+    question: Are there appropriate succession plans for key executives and board members?
+    priority: medium
+    document_types:
+    - Succession policy
+    - Key person analysis
+    - Contingency plans
+    risk_indicators:
+    - No succession planning
+    - Key person dependencies
+    - Board renewal concerns
+- name: Financial Due Diligence
+  description: Financial position, working capital, and accounting matters
+  questions:
+  - id: CM-FIN-001
+    question: Is the working capital statement supportable and has it been properly stress-tested?
+    priority: critical
+    document_types:
+    - Working capital report
+    - Cash flow projections
+    - Sensitivity analysis
+    risk_indicators:
+    - Working capital deficiency
+    - Unrealistic assumptions
+    - Funding gaps
+  - id: CM-FIN-002
+    question: Are there any material changes to financial position since last audited accounts?
+    priority: critical
+    document_types:
+    - Management accounts
+    - Material change statement
+    - Trading update
+    risk_indicators:
+    - Adverse changes
+    - Undisclosed deterioration
+    - Trend concerns
+  - id: CM-FIN-003
+    question: Have all contingent liabilities and off-balance sheet arrangements been identified?
+    priority: critical
+    document_types:
+    - Contingent liability schedule
+    - Guarantees register
+    - Off-balance sheet analysis
+    risk_indicators:
+    - Undisclosed contingencies
+    - Material guarantees
+    - Complex structures
+  - id: CM-FIN-004
+    question: Are accounting policies appropriate and consistently applied?
+    priority: high
+    document_types:
+    - Accounting policies
+    - Auditor correspondence
+    - Policy change analysis
+    risk_indicators:
+    - Aggressive policies
+    - Inconsistent application
+    - Policy changes
+  - id: CM-FIN-005
+    question: Are there any concerns with related party balances or transactions?
+    priority: high
+    document_types:
+    - Related party schedules
+    - Transfer pricing documentation
+    - Arm's length confirmations
+    risk_indicators:
+    - Large related party balances
+    - Non-arm's length terms
+    - Settlement concerns
+  - id: CM-FIN-006
+    question: What is the quality of earnings and are there any non-recurring items to consider?
+    priority: high
+    document_types:
+    - Quality of earnings analysis
+    - Normalisation adjustments
+    - Auditor discussions
+    risk_indicators:
+    - One-off items
+    - Aggressive revenue recognition
+    - Earnings manipulation
+  - id: CM-FIN-007
+    question: Are there any going concern considerations or qualifications?
+    priority: high
+    document_types:
+    - Auditor reports
+    - Going concern assessment
+    - Management representations
+    risk_indicators:
+    - Going concern emphasis
+    - Qualification
+    - Material uncertainties
+  - id: CM-FIN-008
+    question: Have all material debt facilities and covenants been analysed?
+    priority: medium
+    document_types:
+    - Facility agreements
+    - Covenant compliance certificates
+    - Lender consents
+    risk_indicators:
+    - Covenant breaches
+    - Refinancing risk
+    - Change of control triggers
+- name: Material Contracts
+  description: Key commercial agreements and change of control provisions
+  questions:
+  - id: CM-MAT-001
+    question: Have all material contracts been identified and are they in good standing?
+    priority: critical
+    document_types:
+    - Material contracts schedule
+    - Contract summaries
+    - Standing confirmations
+    risk_indicators:
+    - Missing contracts
+    - Breach notices
+    - Termination rights
+  - id: CM-MAT-002
+    question: Are there change of control provisions that could be triggered by the transaction?
+    priority: critical
+    document_types:
+    - Change of control analysis
+    - Consent requirements
+    - Waiver letters
+    risk_indicators:
+    - Triggered provisions
+    - Consent requirements
+    - Termination rights
+  - id: CM-MAT-003
+    question: Are there any contracts with unusual or onerous terms?
+    priority: high
+    document_types:
+    - Contract review summaries
+    - Risk allocation analysis
+    - Legal opinions
+    risk_indicators:
+    - One-sided terms
+    - Unlimited liability
+    - Unusual obligations
+  - id: CM-MAT-004
+    question: Are key customer and supplier relationships adequately documented and stable?
+    priority: high
+    document_types:
+    - Customer contracts
+    - Supplier agreements
+    - Concentration analysis
+    risk_indicators:
+    - Concentration risk
+    - Expiring contracts
+    - Relationship instability
+  - id: CM-MAT-005
+    question: Are there any exclusivity, non-compete or restrictive provisions affecting the business?
+    priority: high
+    document_types:
+    - Restrictive covenant schedule
+    - Competition analysis
+    - Legal opinions
+    risk_indicators:
+    - Business restrictions
+    - Market limitations
+    - Enforceability issues
+  - id: CM-MAT-006
+    question: Have all joint venture and partnership arrangements been reviewed?
+    priority: medium
+    document_types:
+    - JV agreements
+    - Partnership deeds
+    - Governance arrangements
+    risk_indicators:
+    - Governance issues
+    - Exit restrictions
+    - Deadlock provisions
+- name: Litigation & Disputes
+  description: Pending and threatened litigation, regulatory proceedings
+  questions:
+  - id: CM-LIT-001
+    question: Are there any pending or threatened litigation matters that are material?
+    priority: critical
+    document_types:
+    - Litigation schedule
+    - Legal opinions
+    - Claim assessments
+    risk_indicators:
+    - Material claims
+    - Class actions
+    - Criminal proceedings
+  - id: CM-LIT-002
+    question: Have adequate provisions been made for known litigation and claims?
+    priority: critical
+    document_types:
+    - Provision analysis
+    - Auditor correspondence
+    - Legal opinions
+    risk_indicators:
+    - Under-provisioning
+    - Contingent exposure
+    - Disclosure adequacy
+  - id: CM-LIT-003
+    question: Are there any regulatory proceedings or investigations pending?
+    priority: high
+    document_types:
+    - Regulatory correspondence
+    - Investigation status
+    - Compliance reports
+    risk_indicators:
+    - Active investigations
+    - Regulatory scrutiny
+    - Enforcement risk
+  - id: CM-LIT-004
+    question: Have all historical settlements and judgments been disclosed?
+    priority: high
+    document_types:
+    - Settlement agreements
+    - Court orders
+    - Payment records
+    risk_indicators:
+    - Undisclosed settlements
+    - Ongoing obligations
+    - Precedent issues
+  - id: CM-LIT-005
+    question: Is there adequate insurance coverage for potential claims?
+    priority: medium
+    document_types:
+    - Insurance policies
+    - Coverage analysis
+    - Claims history
+    risk_indicators:
+    - Coverage gaps
+    - Exclusions
+    - Limits adequacy
+- name: Underwriting & Distribution
+  description: Underwriting arrangements, distribution, and bookbuild process
+  questions:
+  - id: CM-UND-001
+    question: Are underwriting arrangements appropriate and are underwriters properly qualified?
+    priority: critical
+    document_types:
+    - Underwriting agreement
+    - Underwriter licences
+    - Syndicate arrangements
+    risk_indicators:
+    - No underwriting
+    - Qualification issues
+    - Underwriting conditions
+  - id: CM-UND-002
+    question: Are the pricing methodology and bookbuild process appropriate?
+    priority: high
+    document_types:
+    - Pricing committee terms
+    - Bookbuild procedures
+    - Allocation policy
+    risk_indicators:
+    - Pricing concerns
+    - Process weaknesses
+    - Allocation issues
+  - id: CM-UND-003
+    question: Have selling restrictions for various jurisdictions been properly documented?
+    priority: high
+    document_types:
+    - Selling restrictions
+    - Legal opinions
+    - Jurisdiction analysis
+    risk_indicators:
+    - Missing restrictions
+    - Compliance risks
+    - Inadequate analysis
+  - id: CM-UND-004
+    question: Are there appropriate stabilisation arrangements if applicable?
+    priority: medium
+    document_types:
+    - Stabilisation agreement
+    - Regulatory notifications
+    - Over-allotment arrangements
+    risk_indicators:
+    - Non-compliance
+    - Disclosure issues
+    - Operational concerns
+  - id: CM-UND-005
+    question: Have all fees, commissions and expenses been properly disclosed?
+    priority: medium
+    document_types:
+    - Fee schedules
+    - Expense analysis
+    - Disclosure sections
+    risk_indicators:
+    - Hidden fees
+    - Excessive costs
+    - Disclosure gaps
+- name: Tax Considerations
+  description: Tax implications of listing and securities transactions
+  questions:
+  - id: CM-TAX-001
+    question: Have all tax implications of the transaction structure been analysed?
+    priority: high
+    document_types:
+    - Tax opinion
+    - Structure analysis
+    - SARS rulings
+    risk_indicators:
+    - Adverse tax consequences
+    - Uncertain positions
+    - Restructuring required
+  - id: CM-TAX-002
+    question: Are securities transfer tax and other transaction taxes properly provided for?
+    priority: high
+    document_types:
+    - STT analysis
+    - Tax calculations
+    - Exemption analysis
+    risk_indicators:
+    - Unprovided taxes
+    - Exemption issues
+    - Compliance gaps
+  - id: CM-TAX-003
+    question: Have investor tax considerations been adequately disclosed?
+    priority: medium
+    document_types:
+    - Tax disclosure section
+    - Tax opinion
+    - Investor guidance
+    risk_indicators:
+    - Inadequate disclosure
+    - Complex implications
+    - International considerations
+  - id: CM-TAX-004
+    question: Are there any historical tax issues or disputes that require disclosure?
+    priority: medium
+    document_types:
+    - Tax compliance history
+    - SARS correspondence
+    - Assessment status
+    risk_indicators:
+    - Outstanding assessments
+    - Disputes
+    - Compliance gaps
 cross_document_validations:
-  - validation_id: "CM-CROSS-001"
-    description: "Prospectus financial information agrees to audited financial statements"
-    primary_docs: ["Draft prospectus"]
-    secondary_docs: ["Audited financial statements", "Reporting accountant report"]
-    check_type: "financial_consistency"
-
-  - validation_id: "CM-CROSS-002"
-    description: "Material contracts disclosed in prospectus match contracts provided"
-    primary_docs: ["Draft prospectus - material contracts section"]
-    secondary_docs: ["Material contracts", "Contract summaries"]
-    check_type: "completeness"
-
-  - validation_id: "CM-CROSS-003"
-    description: "Director information in prospectus matches director declarations"
-    primary_docs: ["Draft prospectus - directors section"]
-    secondary_docs: ["Director declarations", "Background checks", "CVs"]
-    check_type: "accuracy"
-
-  - validation_id: "CM-CROSS-004"
-    description: "Working capital statement supported by underlying projections"
-    primary_docs: ["Working capital statement"]
-    secondary_docs: ["Cash flow projections", "Working capital report", "Sensitivity analysis"]
-    check_type: "verification"
-
+- validation_id: CM-CROSS-001
+  description: Prospectus financial information agrees to audited financial statements
+  primary_docs:
+  - Draft prospectus
+  secondary_docs:
+  - Audited financial statements
+  - Reporting accountant report
+  check_type: financial_consistency
+- validation_id: CM-CROSS-002
+  description: Material contracts disclosed in prospectus match contracts provided
+  primary_docs:
+  - Draft prospectus - material contracts section
+  secondary_docs:
+  - Material contracts
+  - Contract summaries
+  check_type: completeness
+- validation_id: CM-CROSS-003
+  description: Director information in prospectus matches director declarations
+  primary_docs:
+  - Draft prospectus - directors section
+  secondary_docs:
+  - Director declarations
+  - Background checks
+  - CVs
+  check_type: accuracy
+- validation_id: CM-CROSS-004
+  description: Working capital statement supported by underlying projections
+  primary_docs:
+  - Working capital statement
+  secondary_docs:
+  - Cash flow projections
+  - Working capital report
+  - Sensitivity analysis
+  check_type: verification
 deal_blockers:
-  - blocker_id: "CM-BLOCK-001"
-    condition: "Failure to obtain JSE approval for listing"
-    severity: "critical"
-    mitigation: "Early engagement with JSE, address all requirements"
-
-  - blocker_id: "CM-BLOCK-002"
-    condition: "Material misstatement in prospectus discovered"
-    severity: "critical"
-    mitigation: "Comprehensive verification process, appropriate insurance"
-
-  - blocker_id: "CM-BLOCK-003"
-    condition: "Working capital insufficiency"
-    severity: "critical"
-    mitigation: "Secure additional funding, adjust offer size"
-
-  - blocker_id: "CM-BLOCK-004"
-    condition: "Regulatory objection or prohibition"
-    severity: "critical"
-    mitigation: "Early regulatory engagement, address concerns proactively"
-
-  - blocker_id: "CM-BLOCK-005"
-    condition: "Key underwriter withdrawal"
-    severity: "high"
-    mitigation: "Diversified underwriting syndicate, alternative arrangements"
+- blocker_id: CM-BLOCK-001
+  condition: Failure to obtain JSE approval for listing
+  severity: critical
+  mitigation: Early engagement with JSE, address all requirements
+- blocker_id: CM-BLOCK-002
+  condition: Material misstatement in prospectus discovered
+  severity: critical
+  mitigation: Comprehensive verification process, appropriate insurance
+- blocker_id: CM-BLOCK-003
+  condition: Working capital insufficiency
+  severity: critical
+  mitigation: Secure additional funding, adjust offer size
+- blocker_id: CM-BLOCK-004
+  condition: Regulatory objection or prohibition
+  severity: critical
+  mitigation: Early regulatory engagement, address concerns proactively
+- blocker_id: CM-BLOCK-005
+  condition: Key underwriter withdrawal
+  severity: high
+  mitigation: Diversified underwriting syndicate, alternative arrangements
+folder_questions:
+  01_Corporate_Governance:
+    display_name: Corporate & Governance
+    relevance: critical
+    questions:
+    - question: Does the board composition meet JSE and King IV requirements?
+      priority: critical
+      detail: Independent directors, board committees, diversity
+      cot_hint: Review board → check independence → assess compliance
+    - question: Does the MOI comply with JSE Listings Requirements?
+      priority: critical
+      detail: MOI provisions, JSE checklist, required amendments
+      cot_hint: Check MOI → compare JSE requirements → identify gaps
+    - question: Are all board committees properly constituted?
+      priority: high
+      detail: Audit, remuneration, social and ethics, nomination committees
+      cot_hint: Review committees → check composition → verify charters
+    cross_doc_checks:
+    - check: Verify MOI provisions match prospectus disclosures
+      related_folders:
+      - 11_Prospectus
+      description: MOI vs prospectus corporate section
+  02_Commercial:
+    display_name: Commercial Contracts
+    relevance: high
+    questions:
+    - question: Have all material contracts been identified and summarized?
+      priority: critical
+      detail: Material contracts for prospectus disclosure
+      cot_hint: List contracts → assess materiality → prepare summaries
+    - question: Are there any change of control provisions triggered by listing?
+      priority: high
+      detail: CoC in material contracts affecting listing
+      cot_hint: Review contracts → find CoC → assess impact
+    - question: What related party transactions require disclosure?
+      priority: high
+      detail: Related party contracts, arm's length analysis
+      cot_hint: Identify related parties → list transactions → check disclosure
+    cross_doc_checks:
+    - check: Verify material contracts match prospectus disclosures
+      related_folders:
+      - 11_Prospectus
+      description: Material contracts vs prospectus section
+  03_Financial:
+    display_name: Financial & Banking
+    relevance: critical
+    questions:
+    - question: Is the working capital statement supportable?
+      priority: critical
+      detail: Working capital report, cash flow projections, stress testing
+      cot_hint: Review projections → stress test → assess sufficiency
+    - question: Are there material changes since last audited accounts?
+      priority: critical
+      detail: Trading update, material change statement
+      cot_hint: Check for changes → assess materiality → prepare disclosure
+    - question: What is the quality of earnings and are there normalizations?
+      priority: high
+      detail: QofE analysis, one-off items, pro forma adjustments
+      cot_hint: Review earnings → identify adjustments → prepare pro formas
+    - question: Are there any contingent liabilities or off-balance sheet items?
+      priority: high
+      detail: Contingencies, guarantees, off-balance sheet
+      cot_hint: Identify contingencies → assess disclosure → quantify exposure
+    cross_doc_checks:
+    - check: Verify financial information matches prospectus
+      related_folders:
+      - 11_Prospectus
+      description: AFS vs prospectus financial section
+  04_Regulatory:
+    display_name: Regulatory & Compliance
+    relevance: critical
+    questions:
+    - question: Does the issuer meet all JSE listing requirements?
+      priority: critical
+      detail: Capital requirements, spread, track record
+      cot_hint: Check requirements → verify compliance → identify gaps
+    - question: Has FSCA approval been obtained where required?
+      priority: critical
+      detail: Prospectus registration, exemptions
+      cot_hint: Check requirements → verify submissions → track approval
+    - question: Are sponsor arrangements in place?
+      priority: high
+      detail: Sponsor appointment, due diligence, independence
+      cot_hint: Verify sponsor → check accreditation → confirm independence
+    - question: Are there any ongoing regulatory investigations?
+      priority: high
+      detail: Regulatory matters affecting listing eligibility
+      cot_hint: Check for investigations → assess impact → prepare disclosure
+    cross_doc_checks:
+    - check: Verify regulatory disclosures are complete
+      related_folders:
+      - 11_Prospectus
+      description: Regulatory correspondence vs prospectus
+  05_Employment:
+    display_name: Employment & Labour
+    relevance: medium
+    questions:
+    - question: Are director and key executive disclosures complete?
+      priority: high
+      detail: Director declarations, service contracts, remuneration
+      cot_hint: Collect declarations → verify accuracy → prepare disclosure
+    - question: Is the remuneration policy compliant and disclosed?
+      priority: high
+      detail: King IV remuneration, shareholder vote, disclosure
+      cot_hint: Review policy → check compliance → prepare disclosure
+    cross_doc_checks:
+    - check: Verify director information matches prospectus
+      related_folders:
+      - 11_Prospectus
+      description: Director declarations vs prospectus disclosures
+  06_Property:
+    display_name: Property & Assets
+    relevance: low
+    questions:
+    - question: Are material properties properly valued and disclosed?
+      priority: medium
+      detail: Property valuations for prospectus purposes
+      cot_hint: Check valuations → verify methodology → assess disclosure
+    cross_doc_checks: []
+  07_Insurance:
+    display_name: Insurance
+    relevance: medium
+    questions:
+    - question: Is there adequate D&O insurance for listed company?
+      priority: high
+      detail: D&O coverage for securities claims
+      cot_hint: Review D&O → check limits → assess adequacy
+    - question: Is there prospectus liability insurance?
+      priority: medium
+      detail: POSI coverage, limits, exclusions
+      cot_hint: Check POSI → verify coverage → assess adequacy
+    cross_doc_checks: []
+  08_Litigation:
+    display_name: Litigation & Disputes
+    relevance: high
+    questions:
+    - question: Are all pending or threatened litigation matters disclosed?
+      priority: critical
+      detail: Litigation schedule, materiality, provision adequacy
+      cot_hint: List matters → assess materiality → prepare disclosure
+    - question: Are adequate provisions made for known claims?
+      priority: high
+      detail: Provision analysis, contingent disclosure
+      cot_hint: Review provisions → check adequacy → verify disclosure
+    - question: Are there any regulatory proceedings requiring disclosure?
+      priority: high
+      detail: Regulatory matters, investigations, enforcement
+      cot_hint: Identify proceedings → assess impact → prepare disclosure
+    cross_doc_checks:
+    - check: Verify litigation disclosure is complete and current
+      related_folders:
+      - 11_Prospectus
+      description: Litigation schedule vs prospectus disclosure
+  09_Tax:
+    display_name: Tax
+    relevance: medium
+    questions:
+    - question: Are securities transfer tax implications properly addressed?
+      priority: high
+      detail: STT on primary and secondary issuances
+      cot_hint: Calculate STT → check exemptions → verify treatment
+    - question: Have investor tax implications been disclosed?
+      priority: medium
+      detail: Investor tax section, dividend withholding
+      cot_hint: Review tax disclosure → check accuracy → verify completeness
+    cross_doc_checks: []
+  10_Underwriting:
+    display_name: Underwriting & Distribution
+    relevance: critical
+    questions:
+    - question: Are underwriting arrangements appropriate and committed?
+      priority: critical
+      detail: Underwriting agreement, conditions, fees
+      cot_hint: Review agreement → check commitments → assess conditionality
+    - question: Is the pricing and bookbuild process appropriate?
+      priority: high
+      detail: Pricing methodology, allocation policy, conflicts
+      cot_hint: Review process → check for conflicts → verify fairness
+    - question: Have selling restrictions been properly documented?
+      priority: high
+      detail: Jurisdictional restrictions, US securities law
+      cot_hint: Check restrictions → verify documentation → confirm compliance
+    cross_doc_checks:
+    - check: Verify underwriting terms match prospectus disclosure
+      related_folders:
+      - 11_Prospectus
+      description: Underwriting agreement vs prospectus fees section
+  11_Prospectus:
+    display_name: Prospectus & Disclosure
+    relevance: critical
+    questions:
+    - question: Does the prospectus contain all required Companies Act disclosures?
+      priority: critical
+      detail: Regulation 50-55, Schedule 3, completeness
+      cot_hint: Check requirements → verify completeness → identify gaps
+    - question: Has proper verification of prospectus statements been conducted?
+      priority: critical
+      detail: Verification notes, back-up documentation
+      cot_hint: Review verification → check documentation → identify gaps
+    - question: Are profit forecasts properly supported and reported on?
+      priority: high
+      detail: Forecast assumptions, reporting accountant report
+      cot_hint: Review forecasts → check support → verify report
+    - question: Is the use of proceeds clearly specified?
+      priority: high
+      detail: Use of proceeds disclosure, permitted purposes
+      cot_hint: Check disclosure → verify permitted use → assess adequacy
+    - question: Are all risk factors adequately disclosed?
+      priority: high
+      detail: Risk factors section, materiality, specificity
+      cot_hint: Review risks → check completeness → assess disclosure
+    cross_doc_checks:
+    - check: Verify all prospectus statements are verified
+      related_folders: []
+      description: Prospectus statements vs verification notes
+  99_Needs_Review:
+    display_name: Needs Review
+    relevance: low
+    questions:
+    - question: What capital markets issues does this document raise?
+      priority: medium
+      detail: Documents requiring manual classification review
+      cot_hint: Identify CM content → flag for review
+    cross_doc_checks: []
+cot_questions:
+  ownership_regulatory:
+  - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
+  - How does this transaction change the ownership structure? What is the post-transaction ownership?
+  - What regulatory approvals or notifications are triggered by ownership changes (e.g., >15%, >25%, >49% thresholds)?
+  - Are there any ownership restrictions in constitutional documents, shareholder agreements, or regulatory conditions?
+  - What licenses, permits, or authorizations are dependent on the current ownership structure?
+  - What are the consequences of non-compliance with ownership-based regulatory requirements?
+  - What JSE or exchange requirements apply to the change in ownership?
+  - Are there any mandatory offer thresholds triggered by the transaction?
+  - What shareholder disclosure requirements apply post-transaction?
+  - Does the transaction trigger any takeover regulation requirements?
+  listing_requirements:
+  - What stock exchange listing requirements apply?
+  - Is the transaction a Category 1, 2, or 3 transaction?
+  - What shareholder approval requirements apply?
+  - What circular and announcement requirements exist?
+  takeover_regulation:
+  - Does the Takeover Regulation Panel have jurisdiction?
+  - What mandatory offer thresholds apply?
+  - Are there any frustrating action restrictions?
+  - What fair and reasonable opinion requirements apply?
+  securities_disclosure:
+  - What ongoing disclosure obligations apply?
+  - Are there any price sensitive information considerations?
+  - What insider trading restrictions apply?
+  - What SENS announcement requirements exist?
+  scheme_arrangement:
+  - Is a scheme of arrangement the appropriate mechanism?
+  - What voting thresholds apply for scheme approval?
+  - What court processes are required?
+  - What is the timeline for scheme implementation?

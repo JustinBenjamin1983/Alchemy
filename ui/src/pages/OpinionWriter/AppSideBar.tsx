@@ -19,6 +19,7 @@ import { useGetOpinions } from "@/hooks/useGetOpinions";
 import { useNavigate } from "react-router-dom";
 import { useGetDDListing } from "@/hooks/useGetDDListing";
 import { useGetWizardDrafts } from "@/hooks/useWizardDraft";
+import { TRANSACTION_TYPE_INFO, TransactionTypeCode } from "../DD/Wizard/types";
 
 export function AppSidebar({
   isOpinion = true,
@@ -32,7 +33,6 @@ export function AppSidebar({
   const { data: opinions } = useGetOpinions();
   const { data: dds } = useGetDDListing("involves_me");
   const { data: wizardDrafts } = useGetWizardDrafts();
-  console.log("dds", dds);
   const navigate = useNavigate();
 
   // Build DD items - completed projects + incomplete wizard drafts
@@ -41,9 +41,16 @@ export function AppSidebar({
 
     // Add completed DD projects
     if (dds?.due_diligences) {
-      dds.due_diligences.forEach((dd) => {
+      dds.due_diligences.forEach((dd: { id: string; name: string; transaction_type?: string }) => {
+        // Get transaction type info if available
+        const typeCode = dd.transaction_type as TransactionTypeCode | undefined;
+        const typeInfo = typeCode ? TRANSACTION_TYPE_INFO[typeCode] : null;
+        const displayTitle = typeInfo
+          ? `${dd.name} – ${typeInfo.name}`
+          : dd.name;
+
         items.push({
-          title: dd.name,
+          title: displayTitle,
           id: dd.id,
           isDraft: false,
           onClick: (evtData) => {

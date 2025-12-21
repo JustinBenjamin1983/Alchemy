@@ -9,10 +9,11 @@ from shared.utils import auth_get_email
 from shared.session import transactional_session
 from shared.models import DueDiligence, PerspectiveRisk, Perspective, DueDiligenceMember
 
+DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    
-    if req.headers.get('function-key') != os.environ["FUNCTION_KEY"]:
+
+    if not DEV_MODE and req.headers.get('function-key') != os.environ.get("FUNCTION_KEY"):
         logging.info("no matching value in header")
         return func.HttpResponse("", status_code=401)
     

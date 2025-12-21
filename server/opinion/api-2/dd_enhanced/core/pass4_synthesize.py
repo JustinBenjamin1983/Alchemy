@@ -50,6 +50,12 @@ def run_pass4_synthesis(
         Complete synthesis with deal-blockers, exposures, CP register, summary
     """
 
+    # Defensive: ensure inputs are not None
+    documents = documents or []
+    pass1_extracts = pass1_extracts or {}
+    pass2_findings = pass2_findings or []
+    pass3_results = pass3_results or {}
+
     results = {
         "all_findings": [],
         "financial_exposures": {},
@@ -70,7 +76,8 @@ def run_pass4_synthesis(
     # 4.2 Consolidate all findings
     if verbose:
         print("  [4.2] Consolidating findings...")
-    all_findings = _consolidate_findings(pass2_findings, pass3_results)
+    # Defensive: ensure inputs are not None before consolidation
+    all_findings = _consolidate_findings(pass2_findings or [], pass3_results or {})
     results["all_findings"] = all_findings
 
     # 4.3 Generate synthesis via Claude
@@ -125,6 +132,10 @@ def _calculate_exposures(
     KEY IMPROVEMENT: Actually performs calculations instead of just quoting clauses.
     """
 
+    # Defensive: handle None inputs
+    extracts = extracts or {}
+    cascade = cascade or {}
+
     exposures = {
         "items": [],
         "total": Decimal("0"),
@@ -132,8 +143,9 @@ def _calculate_exposures(
         "calculation_notes": [],
     }
 
-    # Process cascade items for financial exposure
-    for item in cascade.get("cascade_items", []):
+    # Process cascade items for financial exposure (defensive: handle None)
+    cascade_items = cascade.get("cascade_items") or []
+    for item in cascade_items:
         fin_exp = item.get("financial_exposure", {})
         if fin_exp and fin_exp.get("amount"):
             try:
@@ -154,8 +166,8 @@ def _calculate_exposures(
 
     # Look for specific calculations we can derive
     # Example: Eskom liquidated damages
-    financial_figures = extracts.get("financial_figures", [])
-    coc_clauses = extracts.get("coc_clauses", [])
+    financial_figures = extracts.get("financial_figures") or []
+    coc_clauses = extracts.get("coc_clauses") or []
 
     for coc in coc_clauses:
         financial_consequence = coc.get("financial_consequence") or ""
@@ -185,19 +197,23 @@ def _consolidate_findings(
     pass2_findings: List[Dict],
     pass3_results: Dict
 ) -> List[Dict]:
-    """Consolidate findings from Pass 2 and Pass 3."""
+    """Consolidate findings from Pass 2 and Pass 3 with deduplication."""
 
     all_findings = []
 
-    # Add Pass 2 findings
-    for finding in pass2_findings:
+    # Add Pass 2 findings (defensive: handle None)
+    for finding in (pass2_findings or []):
         finding["pass"] = 2
         all_findings.append(finding)
 
-    # Add Pass 3 cross-doc findings
-    for finding in pass3_results.get("cross_doc_findings", []):
+    # Add Pass 3 cross-doc findings (defensive: handle None or missing key)
+    cross_doc = pass3_results.get("cross_doc_findings") if pass3_results else []
+    for finding in (cross_doc or []):
         finding["pass"] = 3
         all_findings.append(finding)
+
+    # Deduplicate findings - merge similar findings about the same issue
+    all_findings = _deduplicate_findings(all_findings)
 
     # Sort by severity (critical first) then by deal impact
     severity_order = {"critical": 0, "high": 1, "medium": 2, "low": 3, "info": 4}
@@ -218,6 +234,95 @@ def _consolidate_findings(
     return all_findings
 
 
+def _deduplicate_findings(findings: List[Dict]) -> List[Dict]:
+    """
+    Deduplicate findings that cover the same issue.
+
+    Strategy:
+    1. Group findings by category + key terms in description
+    2. For each group, keep the most severe/detailed finding
+    3. Merge document references into the kept finding
+    """
+    if not findings:
+        return []
+
+    # Normalize text for comparison
+    def normalize(text: str) -> str:
+        if not text:
+            return ""
+        # Remove punctuation, lowercase, extract key terms
+        import re
+        text = text.lower()
+        text = re.sub(r'[^\w\s]', ' ', text)
+        # Remove common words
+        stop_words = {'the', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been',
+                     'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will',
+                     'would', 'could', 'should', 'may', 'might', 'must', 'shall',
+                     'can', 'of', 'in', 'to', 'for', 'with', 'on', 'at', 'by',
+                     'from', 'this', 'that', 'these', 'those', 'which', 'who',
+                     'whom', 'whose', 'and', 'or', 'but', 'if', 'then', 'than'}
+        words = [w for w in text.split() if w not in stop_words and len(w) > 2]
+        return ' '.join(sorted(set(words)))
+
+    # Group by category + normalized description key terms
+    groups: Dict[str, List[Dict]] = {}
+
+    for finding in findings:
+        category = finding.get("category", "other")
+        desc = finding.get("description", "")
+
+        # Create a key from category + top terms
+        desc_normalized = normalize(desc)
+        desc_words = desc_normalized.split()[:5]  # First 5 significant words
+        key = f"{category}:{' '.join(desc_words)}"
+
+        if key not in groups:
+            groups[key] = []
+        groups[key].append(finding)
+
+    # For each group, keep the best finding
+    severity_rank = {"critical": 0, "high": 1, "medium": 2, "low": 3, "info": 4}
+    impact_rank = {"deal_blocker": 0, "condition_precedent": 1, "price_chip": 2,
+                   "warranty_indemnity": 3, "post_closing": 4, "noted": 5}
+
+    deduplicated = []
+
+    for key, group in groups.items():
+        if len(group) == 1:
+            deduplicated.append(group[0])
+            continue
+
+        # Sort by severity + impact + description length (more detail = better)
+        group.sort(key=lambda f: (
+            severity_rank.get(f.get("severity", "medium"), 2),
+            impact_rank.get(f.get("deal_impact", "noted"), 5),
+            -len(f.get("description", ""))  # Longer descriptions first
+        ))
+
+        # Keep the best finding
+        best = group[0].copy()
+
+        # Merge document references from all findings in group
+        all_docs = set()
+        all_clauses = set()
+        for f in group:
+            if f.get("document"):
+                all_docs.add(f.get("document"))
+            if f.get("clause_reference"):
+                all_clauses.add(f.get("clause_reference"))
+
+        if len(all_docs) > 1:
+            best["merged_from_documents"] = list(all_docs)
+        if len(all_clauses) > 1:
+            best["all_clause_references"] = list(all_clauses)
+
+        best["duplicate_count"] = len(group)
+
+        deduplicated.append(best)
+
+    return deduplicated
+
+
 def _generate_synthesis(
     pass2_findings: List[Dict],
     pass3_results: Dict,
@@ -226,12 +331,17 @@ def _generate_synthesis(
 ) -> Dict[str, Any]:
     """Generate final synthesis via Claude."""
 
+    # Defensive: handle None inputs
+    pass2_findings = pass2_findings or []
+    pass3_results = pass3_results or {}
+
     # Prepare inputs as strings
     pass2_str = json.dumps(pass2_findings[:20], indent=2)  # Limit for context
-    conflicts_str = json.dumps(pass3_results.get("conflicts", []), indent=2)
-    cascade_str = json.dumps(pass3_results.get("cascade_analysis", {}), indent=2)
-    auth_str = json.dumps(pass3_results.get("authorization_issues", []), indent=2)
-    consents_str = json.dumps(pass3_results.get("consent_matrix", [])[:15], indent=2)
+    conflicts_str = json.dumps(pass3_results.get("conflicts") or [], indent=2)
+    cascade_str = json.dumps(pass3_results.get("cascade_analysis") or {}, indent=2)
+    auth_str = json.dumps(pass3_results.get("authorization_issues") or [], indent=2)
+    consents = pass3_results.get("consent_matrix") or []
+    consents_str = json.dumps(consents[:15], indent=2)
 
     prompt = build_synthesis_prompt(
         pass2_findings=pass2_str,
@@ -242,10 +352,10 @@ def _generate_synthesis(
         transaction_value=transaction_value
     )
 
+    # Note: complete_critical already sets json_mode=True internally
     response = client.complete_critical(
         prompt=prompt,
         system=SYNTHESIS_SYSTEM_PROMPT,
-        json_mode=True,
         max_tokens=8192
     )
 
@@ -265,8 +375,8 @@ def _build_cp_register(
     cp_register = []
     cp_num = 1
 
-    # Add CPs from consent matrix
-    for consent in consent_matrix:
+    # Add CPs from consent matrix (defensive: handle None)
+    for consent in (consent_matrix or []):
         if consent.get("is_deal_blocker") or consent.get("consequence_if_not_obtained"):
             cp_register.append({
                 "cp_number": cp_num,
@@ -279,8 +389,8 @@ def _build_cp_register(
             })
             cp_num += 1
 
-    # Add CPs from findings
-    for finding in findings:
+    # Add CPs from findings (defensive: handle None)
+    for finding in (findings or []):
         if finding.get("deal_impact") == "condition_precedent":
             cp_register.append({
                 "cp_number": cp_num,

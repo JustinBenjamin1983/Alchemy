@@ -44,6 +44,11 @@ DOCUMENTS REVIEWED ({doc_count}):
 RISK FINDINGS ({finding_count} total):
 {findings_summary}
 
+DEAL IMPACT DATA:
+- Deal Blockers: {deal_blocker_count} findings
+- Conditions Precedent: {cp_count} findings
+- Total Financial Exposure: {total_exposure}
+
 TASK: Generate a comprehensive synthesis for the DD report. This will be used to populate a professional Word document.
 
 KEY FIELD DEFINITIONS:
@@ -51,6 +56,8 @@ KEY FIELD DEFINITIONS:
 - detail: The due diligence question or risk title from the perspective
 - phrase: The specific clause or text found in the document
 - status: Risk severity indicator (Red=critical/high, Amber=material/medium, Green=low risk)
+- deal_impact: Classification of deal impact (deal_blocker, condition_precedent, price_chip, warranty_indemnity, etc.)
+- financial_exposure: Amount and currency of financial risk
 - document_name: Source document where finding was identified
 - page_number: Page reference in the source document
 - requires_action: Whether this finding needs follow-up action
@@ -63,13 +70,64 @@ Provide your response in the following JSON structure:
         "key_findings": ["List of 5-7 most critical findings across all categories"],
         "risk_profile": "Overall risk assessment (High/Medium/Low) with justification"
     }},
+    "deal_assessment": {{
+        "overall_viability": "Go/Conditional Go/No Go recommendation with justification",
+        "key_concerns": ["List of 3-5 primary concerns affecting deal viability"],
+        "mitigating_factors": ["List of positive factors supporting the transaction"],
+        "negotiation_points": ["Key points that should be negotiated in the SPA"],
+        "deal_structure_recommendations": "Recommendations on deal structure, pricing adjustments, or escrow arrangements"
+    }},
+    "financial_exposures": {{
+        "total_quantified_exposure": "Total quantified financial exposure with currency",
+        "exposure_breakdown": [
+            {{
+                "category": "Category name",
+                "amount": "Amount with currency",
+                "description": "Brief description of exposure",
+                "source_document": "Document name",
+                "mitigation": "Suggested mitigation approach"
+            }}
+        ],
+        "unquantified_risks": ["List of financial risks that could not be quantified"],
+        "recommended_provisions": "Recommended financial provisions (escrow, price adjustment, indemnity caps)"
+    }},
+    "deal_blockers": {{
+        "summary": "Overview of deal-blocking issues",
+        "blockers": [
+            {{
+                "title": "Blocker title",
+                "category": "Category",
+                "description": "Detailed description of the blocking issue",
+                "source_document": "Document name",
+                "resolution_path": "How this could potentially be resolved",
+                "criticality": "Why this is deal-blocking"
+            }}
+        ],
+        "resolution_timeline": "Estimated timeline to resolve blockers if possible"
+    }},
+    "conditions_precedent": {{
+        "summary": "Overview of conditions that must be satisfied before closing",
+        "conditions": [
+            {{
+                "title": "Condition title",
+                "category": "Category",
+                "description": "What needs to be satisfied",
+                "responsible_party": "Seller/Buyer/Third Party",
+                "estimated_timeline": "Timeline to satisfy",
+                "risk_if_not_met": "Consequence if condition is not satisfied"
+            }}
+        ],
+        "critical_path_items": ["Items on critical path that could delay closing"]
+    }},
     "statistics": {{
         "total_documents": {doc_count},
         "total_findings": {finding_count},
         "high_risk_count": <count of Red/High severity findings>,
         "medium_risk_count": <count of Amber/Medium severity findings>,
         "low_risk_count": <count of Green/Low severity findings>,
-        "action_required_count": <count of findings requiring action>
+        "action_required_count": <count of findings requiring action>,
+        "deal_blocker_count": {deal_blocker_count},
+        "condition_precedent_count": {cp_count}
     }},
     "category_summaries": {{
         "<category_name>": {{
@@ -80,20 +138,31 @@ Provide your response in the following JSON structure:
     }},
     "action_items": [
         {{
-            "priority": "high|medium|low",
+            "priority": "critical|high|medium|low",
             "description": "Action item description",
             "category": "Related category",
-            "source": "Source document name"
+            "source": "Source document name",
+            "deal_impact": "deal_blocker|condition_precedent|price_chip|warranty_indemnity|none"
+        }}
+    ],
+    "recommendations": [
+        {{
+            "priority": 1,
+            "title": "Recommendation title",
+            "description": "Detailed recommendation",
+            "category": "Category this relates to",
+            "implementation": "How to implement this recommendation"
         }}
     ],
     "conclusion": {{
         "overall_assessment": "2-3 paragraph overall assessment and deal impact analysis",
-        "recommendations": ["List of 3-5 key recommendations"],
-        "next_steps": ["List of suggested next steps"]
+        "deal_recommendation": "Final recommendation on proceeding with the deal",
+        "key_negotiation_items": ["Items to prioritize in SPA negotiation"],
+        "next_steps": ["List of suggested next steps in priority order"]
     }}
 }}
 
-Be thorough but concise. Focus on actionable insights. Respond ONLY with valid JSON."""
+Be thorough but concise. Focus on actionable insights. Ensure all deal blockers and conditions precedent from the findings are captured. Respond ONLY with valid JSON."""
 
 
 def get_report_synthesis(
@@ -177,6 +246,22 @@ def get_report_synthesis(
     low_count = sum(1 for f in findings if f.get('severity') == 'Low')
     action_count = sum(1 for f in findings if f.get('requires_action'))
 
+    # Calculate deal impact statistics
+    deal_blocker_count = sum(1 for f in findings if f.get('deal_impact') == 'deal_blocker')
+    cp_count = sum(1 for f in findings if f.get('deal_impact') == 'condition_precedent')
+
+    # Calculate total financial exposure
+    total_exposure = 0
+    exposure_currency = 'ZAR'
+    for f in findings:
+        fin_exp = f.get('financial_exposure')
+        if fin_exp and fin_exp.get('amount'):
+            total_exposure += fin_exp['amount']
+            if fin_exp.get('currency'):
+                exposure_currency = fin_exp['currency']
+
+    total_exposure_str = f"{exposure_currency} {total_exposure:,.0f}" if total_exposure > 0 else "Not quantified"
+
     # Build the prompt
     prompt = SYNTHESIS_PROMPT.format(
         dd_name=dd_name,
@@ -185,7 +270,10 @@ def get_report_synthesis(
         doc_count=len(documents),
         doc_list=doc_list,
         finding_count=len(findings),
-        findings_summary=findings_summary
+        findings_summary=findings_summary,
+        deal_blocker_count=deal_blocker_count,
+        cp_count=cp_count,
+        total_exposure=total_exposure_str
     )
 
     messages = [
@@ -245,6 +333,26 @@ def get_default_synthesis(dd_name: str, findings: List[Dict], documents: List[st
     low_count = sum(1 for f in findings if f.get('severity') == 'Low')
     action_count = sum(1 for f in findings if f.get('requires_action'))
 
+    # Calculate deal impact statistics
+    deal_blocker_count = sum(1 for f in findings if f.get('deal_impact') == 'deal_blocker')
+    cp_count = sum(1 for f in findings if f.get('deal_impact') == 'condition_precedent')
+
+    # Calculate total financial exposure
+    total_exposure = 0
+    exposure_currency = 'ZAR'
+    exposure_findings = []
+    for f in findings:
+        fin_exp = f.get('financial_exposure')
+        if fin_exp and fin_exp.get('amount'):
+            total_exposure += fin_exp['amount']
+            if fin_exp.get('currency'):
+                exposure_currency = fin_exp['currency']
+            exposure_findings.append(f)
+
+    # Get deal blockers and conditions precedent
+    deal_blocker_findings = [f for f in findings if f.get('deal_impact') == 'deal_blocker']
+    cp_findings = [f for f in findings if f.get('deal_impact') == 'condition_precedent']
+
     # Get top high-risk findings - use 'detail' for risk title, 'phrase' for finding text
     high_findings = [f for f in findings if f.get('severity') == 'High']
     key_findings = []
@@ -260,7 +368,9 @@ def get_default_synthesis(dd_name: str, findings: List[Dict], documents: List[st
         key_findings = ["No critical findings identified"]
 
     # Determine overall risk profile
-    if high_count >= 5:
+    if deal_blocker_count > 0:
+        risk_profile = "Critical - Deal blockers identified that must be resolved"
+    elif high_count >= 5:
         risk_profile = "High - Multiple critical issues identified requiring immediate attention"
     elif high_count >= 1:
         risk_profile = "Medium-High - Some critical issues identified that require attention"
@@ -268,6 +378,16 @@ def get_default_synthesis(dd_name: str, findings: List[Dict], documents: List[st
         risk_profile = "Medium - Several notable concerns identified"
     else:
         risk_profile = "Low - No significant issues identified"
+
+    # Determine deal viability
+    if deal_blocker_count > 0:
+        deal_viability = "Conditional Go - Deal blockers must be resolved before proceeding"
+    elif high_count >= 3:
+        deal_viability = "Conditional Go - High-risk items require mitigation"
+    elif high_count >= 1:
+        deal_viability = "Go with Caution - Address high-risk items in SPA"
+    else:
+        deal_viability = "Go - No significant impediments identified"
 
     # Build category summaries
     categories = {}
@@ -298,10 +418,47 @@ def get_default_synthesis(dd_name: str, findings: List[Dict], documents: List[st
     for f in high_findings[:10]:
         detail = f.get('detail', '') or f.get('phrase', '') or 'Review this finding'
         action_items.append({
-            "priority": "high",
+            "priority": "critical" if f.get('deal_impact') == 'deal_blocker' else "high",
             "description": detail[:150],
             "category": f.get('category', 'General') or 'General',
-            "source": (f.get('document_name', 'Unknown') or 'Unknown')[:50]
+            "source": (f.get('document_name', 'Unknown') or 'Unknown')[:50],
+            "deal_impact": f.get('deal_impact', 'none')
+        })
+
+    # Build deal blockers list
+    blockers = []
+    for f in deal_blocker_findings[:10]:
+        blockers.append({
+            "title": f.get('direct_answer', '') or f.get('detail', '') or 'Deal Blocker',
+            "category": f.get('category', 'General'),
+            "description": f.get('phrase', '') or f.get('detail', ''),
+            "source_document": f.get('document_name', 'Unknown'),
+            "resolution_path": "Requires resolution before transaction can proceed",
+            "criticality": "This issue could prevent the transaction from closing"
+        })
+
+    # Build conditions precedent list
+    conditions = []
+    for f in cp_findings[:10]:
+        conditions.append({
+            "title": f.get('direct_answer', '') or f.get('detail', '') or 'Condition Precedent',
+            "category": f.get('category', 'General'),
+            "description": f.get('phrase', '') or f.get('detail', ''),
+            "responsible_party": "To be determined",
+            "estimated_timeline": "Before closing",
+            "risk_if_not_met": "Transaction cannot close"
+        })
+
+    # Build financial exposures list
+    exposure_breakdown = []
+    for f in exposure_findings[:10]:
+        fin_exp = f.get('financial_exposure', {})
+        exposure_breakdown.append({
+            "category": f.get('category', 'General'),
+            "amount": f"{fin_exp.get('currency', 'ZAR')} {fin_exp.get('amount', 0):,.0f}",
+            "description": f.get('direct_answer', '') or f.get('detail', ''),
+            "source_document": f.get('document_name', 'Unknown'),
+            "mitigation": "Consider indemnity or price adjustment"
         })
 
     return {
@@ -309,9 +466,33 @@ def get_default_synthesis(dd_name: str, findings: List[Dict], documents: List[st
             "overview": f"This due diligence report presents findings from the review of {dd_name}. "
                        f"A total of {len(documents)} documents were analyzed, yielding {len(findings)} findings. "
                        f"Of these, {high_count} are classified as high risk (Red), {medium_count} as medium risk (Amber), "
-                       f"and {low_count} as low risk (Green).",
+                       f"and {low_count} as low risk (Green). "
+                       f"{deal_blocker_count} deal blockers and {cp_count} conditions precedent were identified.",
             "key_findings": key_findings,
             "risk_profile": risk_profile
+        },
+        "deal_assessment": {
+            "overall_viability": deal_viability,
+            "key_concerns": [f.get('detail', 'Unspecified concern')[:100] for f in high_findings[:5]] or ["No major concerns identified"],
+            "mitigating_factors": ["Further review may identify mitigating factors"],
+            "negotiation_points": ["Review high-risk items for SPA negotiation"],
+            "deal_structure_recommendations": "Consider standard protections including warranties, indemnities, and escrow arrangements"
+        },
+        "financial_exposures": {
+            "total_quantified_exposure": f"{exposure_currency} {total_exposure:,.0f}" if total_exposure > 0 else "Not quantified",
+            "exposure_breakdown": exposure_breakdown if exposure_breakdown else [],
+            "unquantified_risks": ["Some risks may not have been quantified"],
+            "recommended_provisions": "Standard indemnity provisions recommended"
+        },
+        "deal_blockers": {
+            "summary": f"{deal_blocker_count} deal-blocking issues identified" if deal_blocker_count > 0 else "No deal blockers identified",
+            "blockers": blockers,
+            "resolution_timeline": "To be determined based on specific issues"
+        },
+        "conditions_precedent": {
+            "summary": f"{cp_count} conditions precedent identified" if cp_count > 0 else "Standard conditions precedent apply",
+            "conditions": conditions,
+            "critical_path_items": ["Review conditions for critical path items"]
         },
         "statistics": {
             "total_documents": len(documents),
@@ -319,20 +500,28 @@ def get_default_synthesis(dd_name: str, findings: List[Dict], documents: List[st
             "high_risk_count": high_count,
             "medium_risk_count": medium_count,
             "low_risk_count": low_count,
-            "action_required_count": action_count
+            "action_required_count": action_count,
+            "deal_blocker_count": deal_blocker_count,
+            "condition_precedent_count": cp_count
         },
         "category_summaries": category_summaries,
         "action_items": action_items,
+        "recommendations": [
+            {"priority": 1, "title": "Review Deal Blockers", "description": "Address all deal-blocking issues before proceeding", "category": "General", "implementation": "Engage with counterparty on resolution"},
+            {"priority": 2, "title": "Negotiate SPA Protections", "description": "Ensure adequate warranty and indemnity coverage", "category": "Legal", "implementation": "Include specific warranties for identified risks"},
+            {"priority": 3, "title": "Verify Conditions Precedent", "description": "Track satisfaction of all CPs", "category": "General", "implementation": "Create CP checklist and timeline"}
+        ],
         "conclusion": {
             "overall_assessment": f"Based on the review of {len(documents)} documents, we have identified "
                                  f"{len(findings)} findings that require attention. The overall risk profile "
-                                 f"is {risk_profile.split(' - ')[0]}. Further analysis may be required for "
+                                 f"is {risk_profile.split(' - ')[0]}. {deal_blocker_count} deal blockers and "
+                                 f"{cp_count} conditions precedent have been identified. Further analysis may be required for "
                                  f"specific areas flagged as high risk.",
-            "recommendations": [
-                "Review all high-risk (Red) findings with legal counsel",
-                "Address medium-risk (Amber) items in transaction documentation",
-                "Consider further investigation of flagged regulatory matters",
-                "Update due diligence checklist based on findings"
+            "deal_recommendation": deal_viability,
+            "key_negotiation_items": [
+                "Adequate warranty coverage for identified risks",
+                "Indemnity provisions for financial exposures",
+                "Escrow arrangements if appropriate"
             ],
             "next_steps": [
                 "Complete review of any outstanding documents",

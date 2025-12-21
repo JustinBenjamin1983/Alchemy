@@ -26,7 +26,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     # In dev mode, use mock email
     if DEV_MODE:
-        email = "dev@localhost"
+        email = "dev@alchemy.local"
         logging.info(f"[DEV MODE] Using mock email: {email}")
     else:
         email, err = auth_get_email(req)
@@ -116,8 +116,9 @@ def handle_post(req: func.HttpRequest, email: str) -> func.HttpResponse:
         known_deal_breakers=json.dumps(req_body.get("knownDealBreakers", [])),
         deprioritized_areas=json.dumps(req_body.get("deprioritizedAreas", [])),
         target_company_name=req_body.get("targetCompanyName", ""),
-        key_persons=json.dumps(req_body.get("keyPersons", [])),
-        counterparties=json.dumps(req_body.get("counterparties", [])),
+        # Map new frontend field names to DB columns
+        key_persons=json.dumps(req_body.get("keyIndividuals", req_body.get("keyPersons", []))),
+        counterparties=json.dumps(req_body.get("keyCustomers", req_body.get("counterparties", []))),
         key_lenders=json.dumps(req_body.get("keyLenders", [])),
         key_regulators=json.dumps(req_body.get("keyRegulators", [])),
         created_at=datetime.datetime.utcnow(),
@@ -187,9 +188,14 @@ def handle_put(req: func.HttpRequest, email: str) -> func.HttpResponse:
             draft.deprioritized_areas = json.dumps(req_body["deprioritizedAreas"])
         if "targetCompanyName" in req_body:
             draft.target_company_name = req_body["targetCompanyName"]
-        if "keyPersons" in req_body:
+        # Support both old and new field names
+        if "keyIndividuals" in req_body:
+            draft.key_persons = json.dumps(req_body["keyIndividuals"])
+        elif "keyPersons" in req_body:
             draft.key_persons = json.dumps(req_body["keyPersons"])
-        if "counterparties" in req_body:
+        if "keyCustomers" in req_body:
+            draft.counterparties = json.dumps(req_body["keyCustomers"])
+        elif "counterparties" in req_body:
             draft.counterparties = json.dumps(req_body["counterparties"])
         if "keyLenders" in req_body:
             draft.key_lenders = json.dumps(req_body["keyLenders"])
@@ -267,10 +273,13 @@ def draft_to_dict(draft: DDWizardDraft) -> dict:
         "knownDealBreakers": json.loads(draft.known_deal_breakers) if draft.known_deal_breakers else [],
         "deprioritizedAreas": json.loads(draft.deprioritized_areas) if draft.deprioritized_areas else [],
         "targetCompanyName": draft.target_company_name or "",
-        "keyPersons": json.loads(draft.key_persons) if draft.key_persons else [],
-        "counterparties": json.loads(draft.counterparties) if draft.counterparties else [],
+        # Map old DB columns to new frontend field names
+        "keyIndividuals": json.loads(draft.key_persons) if draft.key_persons else [],
+        "keySuppliers": [],  # New field - not in old schema
+        "keyCustomers": json.loads(draft.counterparties) if draft.counterparties else [],  # Map counterparties to customers
         "keyLenders": json.loads(draft.key_lenders) if draft.key_lenders else [],
         "keyRegulators": json.loads(draft.key_regulators) if draft.key_regulators else [],
+        "keyOther": [],  # New field - not in old schema
         "createdAt": draft.created_at.isoformat() if draft.created_at else None,
         "updatedAt": draft.updated_at.isoformat() if draft.updated_at else None,
     }

@@ -47,6 +47,8 @@ from dd_enhanced.core.pass1_extract import run_pass1_extraction
 from dd_enhanced.core.pass2_analyze import run_pass2_analysis
 from dd_enhanced.core.pass3_crossdoc import run_pass3_crossdoc_synthesis, get_cascade_summary
 from dd_enhanced.core.pass4_synthesize import run_pass4_synthesis, format_executive_summary
+from dd_enhanced.core.pass_calculations import CalculationOrchestrator
+from dd_enhanced.core.pass5_verify import run_pass5_verification, apply_verification_adjustments
 from dd_enhanced.config import load_blueprint
 
 
@@ -179,13 +181,19 @@ def main():
     print_header("PASS 2: PER-DOCUMENT ANALYSIS")
     print("(Reference documents injected into every analysis)")
 
-    pass2_findings = run_pass2_analysis(
+    pass2_result = run_pass2_analysis(
         doc_dicts,
         ref_docs,
         blueprint,
         client,
         verbose=True
     )
+
+    # Handle dict or list return
+    if isinstance(pass2_result, dict):
+        pass2_findings = pass2_result.get('findings', [])
+    else:
+        pass2_findings = pass2_result
 
     print_success(f"Generated {len(pass2_findings)} per-document findings")
 
@@ -195,6 +203,30 @@ def main():
         sev = f.get("severity", "medium")
         by_severity[sev] = by_severity.get(sev, 0) + 1
     print(f"  Severity breakdown: {by_severity}")
+
+    # ========================================
+    # PASS 2.5: Financial Calculation Engine
+    # ========================================
+    print_header("PASS 2.5: FINANCIAL CALCULATIONS")
+    print("[Deterministic Python calculations - AI extracts, Python calculates]")
+
+    # Get transaction value from Pass 1 if available
+    transaction_value = None
+    for fig in pass1_results.get('financial_figures', []):
+        if 'purchase' in str(fig.get('description', '')).lower() or 'transaction' in str(fig.get('description', '')).lower():
+            transaction_value = fig.get('amount')
+            break
+
+    calc_orchestrator = CalculationOrchestrator(transaction_value=transaction_value)
+
+    try:
+        pass2_findings = calc_orchestrator.process_pass2_findings(pass2_findings)
+        calc_summary = calc_orchestrator.get_calculation_summary()
+        print_success(f"Calculations performed: {calc_summary['successful']}")
+        print_success(f"Calculations failed: {calc_summary['failed']}")
+    except Exception as e:
+        print_warning(f"Calculation engine error: {e}")
+        calc_summary = {"successful": 0, "failed": 0}
 
     # ========================================
     # PASS 3: Cross-Document Synthesis
@@ -221,6 +253,26 @@ def main():
     print_success(f"Built consent matrix with {len(consents)} items")
 
     # ========================================
+    # PASS 3.5: Aggregate Calculations
+    # ========================================
+    print_header("PASS 3.5: AGGREGATE CALCULATIONS")
+    print("[Cross-document calculation aggregation and dependency resolution]")
+
+    calc_aggregates = None
+    try:
+        cross_doc_findings = pass3_results.get('cross_doc_findings', [])
+        clusters = pass3_results.get('clusters', [])
+        calc_aggregates = calc_orchestrator.process_pass3_aggregates(
+            clusters=clusters,
+            cross_doc_findings=cross_doc_findings
+        )
+        print_success(f"Total calculated exposure: ZAR {calc_aggregates.get('total_exposure', 0):,.0f}")
+        if calc_aggregates.get('transaction_ratio', {}).get('exceeds_transaction'):
+            print_warning("WARNING: Total exposure exceeds transaction value!")
+    except Exception as e:
+        print_warning(f"Aggregate calculation error: {e}")
+
+    # ========================================
     # PASS 4: Deal Synthesis
     # ========================================
     print_header("PASS 4: DEAL SYNTHESIS")
@@ -233,6 +285,50 @@ def main():
         client,
         verbose=True
     )
+
+    # ========================================
+    # PASS 5: Opus Verification
+    # ========================================
+    print_header("PASS 5: OPUS VERIFICATION")
+    print("[Final quality check using Claude Opus]")
+
+    verification_result = None
+    try:
+        # Build transaction context
+        transaction_context = f"""
+This is a 100% share sale acquisition of Karoo Mining (Pty) Ltd.
+The buyer will acquire all issued shares from the current shareholders.
+Transaction type: Mining acquisition
+"""
+        verification_result = run_pass5_verification(
+            pass4_results=pass4_results,
+            pass3_results=pass3_results,
+            pass2_findings=pass2_findings,
+            pass1_results=pass1_results,
+            calculation_aggregates=calc_aggregates,
+            transaction_context=transaction_context,
+            client=client,
+            verbose=True
+        )
+
+        if verification_result and not verification_result.error:
+            # Apply verification adjustments
+            pass4_results = apply_verification_adjustments(pass4_results, verification_result)
+
+            status = "PASSED" if verification_result.verification_passed else "FAILED"
+            print_success(f"Verification {status} ({verification_result.overall_confidence:.0%} confidence)")
+
+            if verification_result.critical_issues:
+                print_warning(f"Critical issues found: {len(verification_result.critical_issues)}")
+                for issue in verification_result.critical_issues[:3]:
+                    print_error(f"  - {issue.get('issue', 'Unknown')[:80]}")
+
+            if verification_result.warnings:
+                print_warning(f"Warnings: {len(verification_result.warnings)}")
+        else:
+            print_warning(f"Verification had error: {verification_result.error if verification_result else 'No result'}")
+    except Exception as e:
+        print_warning(f"Pass 5 verification error (non-fatal): {e}")
 
     # ========================================
     # DISPLAY RESULTS

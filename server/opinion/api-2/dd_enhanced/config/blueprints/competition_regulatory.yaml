@@ -1,142 +1,440 @@
-transaction_type: "Competition & Regulatory"
-code: "competition_regulatory"
-description: |
-  Due diligence blueprint for competition law and regulatory compliance
+transaction_type: Competition & Regulatory
+code: competition_regulatory
+description: 'Due diligence blueprint for competition law and regulatory compliance
+
   in mergers, acquisitions, and joint ventures.
 
-jurisdiction: "South Africa"
+  '
+jurisdiction: South Africa
 primary_legislation:
-  - "Competition Act 89 of 1998"
-  - "Competition Amendment Act 18 of 2018"
-
+- Competition Act 89 of 1998
+- Competition Amendment Act 18 of 2018
 reference_documents:
   always_include:
-    - pattern: "MOI|Memorandum of Incorporation"
-      reason: "Constitutional document"
-    - pattern: "Shareholder|SHA"
-      reason: "Control analysis"
-    - pattern: "Financial Statements"
-      reason: "Turnover calculations"
-
+  - pattern: MOI|Memorandum of Incorporation
+    reason: Constitutional document
+  - pattern: Shareholder|SHA
+    reason: Control analysis
+  - pattern: Financial Statements
+    reason: Turnover calculations
 risk_categories:
-  - name: "Merger Notification"
-    weight: critical
-    standard_questions:
-      - question: "Does the transaction constitute a merger under the Competition Act?"
-        priority: critical
-      - question: "What are the combined South African turnover figures?"
-        priority: critical
-      - question: "What are the combined asset values in South Africa?"
-        priority: critical
-      - question: "Is this an intermediate or large merger?"
-        priority: critical
-      - question: "What is the applicable merger filing threshold?"
-        priority: critical
-      - question: "Has the transaction been structured to avoid notification?"
-        priority: high
-      - question: "Are there any exemptions that might apply?"
-        priority: high
-      - question: "What is the expected timeline for approval?"
-        priority: high
-
-  - name: "Market Definition & Shares"
-    weight: critical
-    standard_questions:
-      - question: "What are the relevant product markets?"
-        priority: critical
-      - question: "What are the relevant geographic markets?"
-        priority: critical
-      - question: "What are the parties' market shares in each market?"
-        priority: critical
-      - question: "What is the combined market share post-transaction?"
-        priority: critical
-      - question: "What is the change in HHI concentration?"
-        priority: high
-      - question: "Are there any markets where combined share exceeds 35%?"
-        priority: critical
-      - question: "Who are the main competitors and their market shares?"
-        priority: high
-      - question: "Are there any vertical relationships between the parties?"
-        priority: high
-
-  - name: "Competitive Effects"
-    weight: critical
-    standard_questions:
-      - question: "Does the merger raise horizontal competition concerns?"
-        priority: critical
-      - question: "Are there vertical foreclosure concerns?"
-        priority: high
-      - question: "Could the merger facilitate coordinated conduct?"
-        priority: high
-      - question: "What barriers to entry exist?"
-        priority: high
-      - question: "What countervailing buyer power exists?"
-        priority: medium
-      - question: "What efficiency gains will the merger generate?"
-        priority: medium
-      - question: "Is there a failing firm defense available?"
-        priority: medium
-      - question: "What remedies might address competition concerns?"
-        priority: high
-
-  - name: "Public Interest"
-    weight: high
-    standard_questions:
-      - question: "What impact will the merger have on employment?"
-        priority: critical
-      - question: "Are any retrenchments planned post-merger?"
-        priority: critical
-      - question: "What is the impact on small business and BEE?"
-        priority: high
-      - question: "Does the merger affect a particular industrial sector?"
-        priority: high
-      - question: "Is the target South African owned or controlled?"
-        priority: high
-      - question: "What is the impact on international competitiveness?"
-        priority: medium
-      - question: "Will there be technology transfer benefits?"
-        priority: medium
-
-  - name: "Historical Compliance"
-    weight: high
-    standard_questions:
-      - question: "Have the parties been involved in prior competition matters?"
-        priority: high
-      - question: "Are there any pending competition investigations?"
-        priority: critical
-      - question: "Have any cartel or abuse of dominance penalties been imposed?"
-        priority: critical
-      - question: "Are there any outstanding compliance obligations?"
-        priority: high
-      - question: "Are there any leniency applications in progress?"
-        priority: critical
-
-  - name: "Foreign Filings"
-    weight: medium
-    standard_questions:
-      - question: "Are merger filings required in other jurisdictions?"
-        priority: high
-      - question: "What is the timeline for international approvals?"
-        priority: high
-      - question: "Are there any inter-agency coordination requirements?"
-        priority: medium
-      - question: "Could foreign conditions affect South African implementation?"
-        priority: medium
-
+- name: Merger Notification
+  weight: critical
+  standard_questions:
+  - question: Does the transaction constitute a merger under the Competition Act?
+    priority: critical
+  - question: What are the combined South African turnover figures?
+    priority: critical
+  - question: What are the combined asset values in South Africa?
+    priority: critical
+  - question: Is this an intermediate or large merger?
+    priority: critical
+  - question: What is the applicable merger filing threshold?
+    priority: critical
+  - question: Has the transaction been structured to avoid notification?
+    priority: high
+  - question: Are there any exemptions that might apply?
+    priority: high
+  - question: What is the expected timeline for approval?
+    priority: high
+- name: Market Definition & Shares
+  weight: critical
+  standard_questions:
+  - question: What are the relevant product markets?
+    priority: critical
+  - question: What are the relevant geographic markets?
+    priority: critical
+  - question: What are the parties' market shares in each market?
+    priority: critical
+  - question: What is the combined market share post-transaction?
+    priority: critical
+  - question: What is the change in HHI concentration?
+    priority: high
+  - question: Are there any markets where combined share exceeds 35%?
+    priority: critical
+  - question: Who are the main competitors and their market shares?
+    priority: high
+  - question: Are there any vertical relationships between the parties?
+    priority: high
+- name: Competitive Effects
+  weight: critical
+  standard_questions:
+  - question: Does the merger raise horizontal competition concerns?
+    priority: critical
+  - question: Are there vertical foreclosure concerns?
+    priority: high
+  - question: Could the merger facilitate coordinated conduct?
+    priority: high
+  - question: What barriers to entry exist?
+    priority: high
+  - question: What countervailing buyer power exists?
+    priority: medium
+  - question: What efficiency gains will the merger generate?
+    priority: medium
+  - question: Is there a failing firm defense available?
+    priority: medium
+  - question: What remedies might address competition concerns?
+    priority: high
+- name: Public Interest
+  weight: high
+  standard_questions:
+  - question: What impact will the merger have on employment?
+    priority: critical
+  - question: Are any retrenchments planned post-merger?
+    priority: critical
+  - question: What is the impact on small business and BEE?
+    priority: high
+  - question: Does the merger affect a particular industrial sector?
+    priority: high
+  - question: Is the target South African owned or controlled?
+    priority: high
+  - question: What is the impact on international competitiveness?
+    priority: medium
+  - question: Will there be technology transfer benefits?
+    priority: medium
+- name: Historical Compliance
+  weight: high
+  standard_questions:
+  - question: Have the parties been involved in prior competition matters?
+    priority: high
+  - question: Are there any pending competition investigations?
+    priority: critical
+  - question: Have any cartel or abuse of dominance penalties been imposed?
+    priority: critical
+  - question: Are there any outstanding compliance obligations?
+    priority: high
+  - question: Are there any leniency applications in progress?
+    priority: critical
+- name: Foreign Filings
+  weight: medium
+  standard_questions:
+  - question: Are merger filings required in other jurisdictions?
+    priority: high
+  - question: What is the timeline for international approvals?
+    priority: high
+  - question: Are there any inter-agency coordination requirements?
+    priority: medium
+  - question: Could foreign conditions affect South African implementation?
+    priority: medium
 deal_blockers:
-  - description: "Merger prohibited by Competition Commission/Tribunal"
-    severity: absolute
-  - description: "Unacceptable conditions imposed"
-    severity: conditional
-  - description: "Parties subject to ongoing cartel investigation"
-    severity: conditional
-  - description: "Prior gun-jumping violation"
-    severity: conditional
-
+- description: Merger prohibited by Competition Commission/Tribunal
+  severity: absolute
+- description: Unacceptable conditions imposed
+  severity: conditional
+- description: Parties subject to ongoing cartel investigation
+  severity: conditional
+- description: Prior gun-jumping violation
+  severity: conditional
 conditions_precedent_patterns:
-  - pattern: "Competition Commission|Commission approval"
-    cp_type: "Competition Approval"
-  - pattern: "Competition Tribunal|Tribunal approval"
-    cp_type: "Competition Approval"
-  - pattern: "merger condition|competition condition"
-    cp_type: "Competition Condition"
+- pattern: Competition Commission|Commission approval
+  cp_type: Competition Approval
+- pattern: Competition Tribunal|Tribunal approval
+  cp_type: Competition Approval
+- pattern: merger condition|competition condition
+  cp_type: Competition Condition
+folder_questions:
+  01_Corporate_Governance:
+    display_name: Corporate & Governance
+    relevance: critical
+    questions:
+    - question: What is the full corporate structure including all subsidiaries and associates?
+      priority: critical
+      detail: Competition analysis requires understanding of all controlled entities
+      cot_hint: Map group structure → identify all entities → determine control
+    - question: Are there any existing joint ventures or consortia?
+      priority: high
+      detail: JVs may constitute mergers requiring prior notification
+      cot_hint: List JVs → assess control → determine if mergers
+    - question: What are the voting and control mechanisms in governance documents?
+      priority: critical
+      detail: MOI and SHA provisions affecting control determination
+      cot_hint: Review MOI/SHA → identify control provisions → determine control
+    cross_doc_checks:
+    - check: Verify corporate structure matches group chart
+      related_folders:
+      - 03_Financial
+      description: MOI shareholder provisions vs actual shareholding
+  02_Commercial:
+    display_name: Commercial Contracts
+    relevance: critical
+    questions:
+    - question: Are there any exclusive supply or distribution agreements?
+      priority: critical
+      detail: Exclusive arrangements may raise vertical foreclosure concerns
+      cot_hint: List exclusives → assess duration → identify foreclosure risk
+    - question: Are there any long-term contracts that could lock in customers?
+      priority: high
+      detail: Long-term contracts may constitute barriers to entry
+      cot_hint: Identify long-term contracts → check termination → assess lock-in
+    - question: Are there any minimum purchase or requirements contracts?
+      priority: high
+      detail: May constitute exclusionary conduct if dominant
+      cot_hint: Find requirements contracts → assess exclusivity → check market position
+    - question: Are there any most-favored customer clauses?
+      priority: medium
+      detail: MFN clauses can facilitate coordination or foreclose competition
+      cot_hint: Identify MFN clauses → assess competitive effect
+    - question: Are there any information sharing arrangements with competitors?
+      priority: critical
+      detail: Information exchange may constitute prohibited horizontal practice
+      cot_hint: Identify info sharing → assess competitive sensitivity → evaluate risk
+    - question: Are there any non-compete agreements with former competitors?
+      priority: high
+      detail: Non-competes must be ancillary and proportionate
+      cot_hint: Find non-competes → assess scope → check reasonableness
+    cross_doc_checks:
+    - check: Cross-reference supplier agreements with market share data
+      related_folders:
+      - 03_Financial
+      description: Exclusive arrangements vs market position
+  03_Financial:
+    display_name: Financial & Banking
+    relevance: critical
+    questions:
+    - question: What is the South African turnover for Competition Act threshold calculation?
+      priority: critical
+      detail: Turnover thresholds determine filing category (small/intermediate/large)
+      cot_hint: Extract SA turnover → apply thresholds → determine filing category
+    - question: What is the value of South African assets?
+      priority: critical
+      detail: Asset thresholds are alternative to turnover thresholds
+      cot_hint: Extract SA assets → check threshold → confirm filing category
+    - question: What is the market share in each relevant product market?
+      priority: critical
+      detail: Market shares above 35% raise prima facie concerns
+      cot_hint: Calculate market share → compare to 35% threshold → assess risk
+    - question: What is the revenue breakdown by product line and geography?
+      priority: high
+      detail: Required for market definition and competitive assessment
+      cot_hint: Segment revenue → map to markets → assess concentration
+    - question: What are the combined turnover/assets post-transaction?
+      priority: critical
+      detail: Combined figures determine notification obligation
+      cot_hint: Calculate combined → check thresholds → confirm notification
+    cross_doc_checks:
+    - check: Verify turnover figures match merger filing calculations
+      related_folders: []
+      description: AFS figures vs notification form calculations
+    - check: Cross-reference market share claims with financial data
+      related_folders: []
+      description: Market share calculations vs revenue data
+  04_Regulatory:
+    display_name: Regulatory & Compliance
+    relevance: critical
+    questions:
+    - question: Has the company had any prior competition law investigations?
+      priority: critical
+      detail: Prior matters affect risk assessment and Commission scrutiny
+      cot_hint: Search for investigations → list outcomes → assess implications
+    - question: Are there any pending Competition Commission or Tribunal matters?
+      priority: critical
+      detail: Pending matters may delay or complicate merger approval
+      cot_hint: Identify pending matters → assess status → determine impact
+    - question: Has the company ever applied for or received leniency?
+      priority: critical
+      detail: Leniency applications indicate cartel involvement
+      cot_hint: Check for leniency → assess implications → evaluate risk
+    - question: Are there any conditions from prior merger approvals still in effect?
+      priority: high
+      detail: Existing conditions may affect new transaction
+      cot_hint: List prior conditions → check ongoing obligations → assess conflict
+    - question: Is there a competition compliance program in place?
+      priority: high
+      detail: Compliance program indicates awareness of competition obligations
+      cot_hint: Find compliance program → assess adequacy → check training records
+    - question: Have there been any dawn raids or information requests?
+      priority: critical
+      detail: Dawn raids indicate active investigation
+      cot_hint: Check for inspections → assess scope → evaluate exposure
+    cross_doc_checks:
+    - check: Cross-reference compliance declarations with litigation history
+      related_folders:
+      - 08_Litigation
+      description: Compliance statements vs actual competition matters
+  05_Employment:
+    display_name: Employment & Labour
+    relevance: high
+    questions:
+    - question: What is the current headcount by location and category?
+      priority: critical
+      detail: Required for public interest assessment on employment
+      cot_hint: Extract headcount → segment by location → prepare employment analysis
+    - question: Are any retrenchments planned post-transaction?
+      priority: critical
+      detail: Retrenchments are a key public interest factor
+      cot_hint: Identify planned retrenchments → calculate number → assess mitigation
+    - question: What employment commitments or moratoriums might be required?
+      priority: high
+      detail: Commission often imposes employment conditions
+      cot_hint: Assess job security risk → consider moratorium → prepare proposal
+    - question: Will the transaction result in any operational integration affecting jobs?
+      priority: high
+      detail: Integration synergies often involve job losses
+      cot_hint: Map synergies → identify job impact → prepare mitigation
+    cross_doc_checks:
+    - check: Verify employment figures match financial statements
+      related_folders:
+      - 03_Financial
+      description: Employment records vs staff costs/headcount in AFS
+  06_Property:
+    display_name: Property & Assets
+    relevance: low
+    questions:
+    - question: Does the transaction involve any property or facility rationalization?
+      priority: medium
+      detail: Facility closures may affect employment public interest
+      cot_hint: Identify facility plans → assess job impact → evaluate
+    cross_doc_checks: []
+  07_Insurance:
+    display_name: Insurance
+    relevance: low
+    questions:
+    - question: Is there competition law compliance insurance in place?
+      priority: low
+      detail: Some D&O policies include competition law coverage
+      cot_hint: Check D&O policy → identify competition coverage
+    cross_doc_checks: []
+  08_Litigation:
+    display_name: Litigation & Disputes
+    relevance: critical
+    questions:
+    - question: Are there any pending or threatened competition law proceedings?
+      priority: critical
+      detail: Competition Tribunal, CAC, or High Court matters
+      cot_hint: List competition matters → assess status → quantify exposure
+    - question: Are there any cartel or collusion investigations?
+      priority: critical
+      detail: Cartel involvement is a serious red flag
+      cot_hint: Identify cartel investigations → assess exposure → evaluate risk
+    - question: Are there any abuse of dominance complaints or investigations?
+      priority: critical
+      detail: Section 8 or 9 investigations indicate dominance concerns
+      cot_hint: Find dominance matters → assess claims → evaluate defenses
+    - question: Have there been any private competition damages claims?
+      priority: high
+      detail: Follow-on damages claims from competition breaches
+      cot_hint: Identify claims → assess quantum → check insurance
+    - question: Are there any warranty or disclosure breaches in prior deals?
+      priority: medium
+      detail: Prior deal representations may be relevant
+      cot_hint: Review prior SPA disclosures → check for competition claims
+    cross_doc_checks:
+    - check: Cross-reference Competition Commission matters with regulatory disclosures
+      related_folders:
+      - 04_Regulatory
+      description: Litigation list vs regulatory compliance records
+  09_Tax:
+    display_name: Tax
+    relevance: low
+    questions:
+    - question: Are there any administrative penalties for competition breaches to consider?
+      priority: medium
+      detail: Competition fines are not tax deductible
+      cot_hint: Check for competition penalties → assess tax treatment
+    cross_doc_checks: []
+  10_Competition:
+    display_name: Competition Analysis
+    relevance: critical
+    questions:
+    - question: What are the relevant product market definitions?
+      priority: critical
+      detail: Product market definition for merger analysis
+      cot_hint: Apply SSNIP test → define substitutes → delineate market
+    - question: What are the relevant geographic market definitions?
+      priority: critical
+      detail: Geographic scope of competition
+      cot_hint: Assess supply patterns → check transport costs → define geography
+    - question: What is the pre- and post-merger HHI concentration?
+      priority: high
+      detail: HHI measures market concentration
+      cot_hint: Calculate HHI → compare pre/post → assess delta
+    - question: Are there any vertical relationships between the merging parties?
+      priority: high
+      detail: Vertical mergers may raise foreclosure concerns
+      cot_hint: Map vertical links → assess foreclosure → identify concerns
+    - question: What barriers to entry exist in the relevant markets?
+      priority: high
+      detail: Barriers affect likely competitive effects
+      cot_hint: List barriers → assess significance → evaluate constraint
+    - question: Are there any efficiency justifications for the merger?
+      priority: medium
+      detail: Efficiencies may offset competitive concerns
+      cot_hint: Identify efficiencies → check verifiability → assess pass-through
+    - question: What remedies might be required to address concerns?
+      priority: high
+      detail: Behavioral or structural remedies to address concerns
+      cot_hint: Assess concerns → design remedies → evaluate effectiveness
+    cross_doc_checks:
+    - check: Verify market data matches industry reports
+      related_folders:
+      - 03_Financial
+      description: Internal market share vs external data
+  11_Public_Interest:
+    display_name: Public Interest Factors
+    relevance: high
+    questions:
+    - question: What is the impact on employment levels post-transaction?
+      priority: critical
+      detail: Section 12A(3)(b) employment effect
+      cot_hint: Assess job impact → document mitigation → prepare commitments
+    - question: What is the impact on small business and BEE?
+      priority: high
+      detail: Section 12A(3)(c) competitive ability of small business/HDSA
+      cot_hint: Assess supplier impact → check BEE levels → evaluate effect
+    - question: Is the target historically disadvantaged owned or controlled?
+      priority: high
+      detail: HDSA ownership affects public interest assessment
+      cot_hint: Check ownership → assess HDSA status → evaluate impact
+    - question: Are there any technology transfer or local content benefits?
+      priority: medium
+      detail: Section 12A(3)(e) industrial sector factors
+      cot_hint: Identify tech transfer → assess local content → document benefits
+    - question: Does the merger affect any designated sectors?
+      priority: medium
+      detail: Special consideration for strategic sectors
+      cot_hint: Check sector → apply special factors → assess impact
+    cross_doc_checks:
+    - check: Verify BEE credentials match ownership records
+      related_folders:
+      - 01_Corporate
+      description: BEE certificate vs shareholder register
+  99_Needs_Review:
+    display_name: Needs Review
+    relevance: low
+    questions:
+    - question: What competition or regulatory issues does this document raise?
+      priority: medium
+      detail: Documents requiring manual classification review
+      cot_hint: Identify competition content → flag for review
+    cross_doc_checks: []
+cot_questions:
+  ownership_regulatory:
+  - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
+  - How does this transaction change the ownership structure? What is the post-transaction ownership?
+  - What regulatory approvals or notifications are triggered by ownership changes (e.g., >15%, >25%, >49% thresholds)?
+  - Are there any ownership restrictions in constitutional documents, shareholder agreements, or regulatory conditions?
+  - What licenses, permits, or authorizations are dependent on the current ownership structure?
+  - What are the consequences of non-compliance with ownership-based regulatory requirements?
+  - What competition authority merger thresholds are triggered?
+  - Are there any sector-specific regulatory approvals required?
+  - What public interest considerations apply to this transaction?
+  - Are there any conditions or undertakings from prior transactions that apply?
+  merger_control:
+  - Does the transaction meet merger notification thresholds?
+  - What is the appropriate filing (small, intermediate, large)?
+  - What is the expected timeline for approval?
+  - Are there any competition concerns (market definition, market share)?
+  competition_assessment:
+  - What is the relevant market definition?
+  - What are the combined market shares post-merger?
+  - Are there any vertical or conglomerate concerns?
+  - What is the likelihood of conditions being imposed?
+  public_interest:
+  - What public interest considerations apply?
+  - Are there any employment impact concerns?
+  - What is the impact on HDSA ownership?
+  - Are there any industrial policy considerations?
+  remedies:
+  - What behavioral or structural remedies might be required?
+  - What is the process for negotiating conditions?
+  - What monitoring requirements might apply?

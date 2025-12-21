@@ -20,10 +20,12 @@ export interface WizardDraftData {
   knownDealBreakers: string[];
   deprioritizedAreas: string[];
   targetCompanyName: string;
-  keyPersons: string[];
-  counterparties: string[];
+  keyIndividuals: string[];
+  keySuppliers: string[];
+  keyCustomers: string[];
   keyLenders: string[];
   keyRegulators: string[];
+  keyOther: string[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -38,6 +40,10 @@ export function useGetWizardDrafts() {
       const response = await axios.get("/dd-wizard-draft");
       return response.data.drafts as WizardDraftData[];
     },
+    // Always refetch on mount and window focus to keep drafts up-to-date
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
+    staleTime: 0,
   });
 }
 

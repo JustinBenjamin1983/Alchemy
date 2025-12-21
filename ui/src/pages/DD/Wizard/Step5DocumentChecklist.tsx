@@ -23,6 +23,22 @@ import {
 import { useGetDocumentRegistry, DocumentRegistryDocument } from "@/hooks/useGetDocumentRegistry";
 import { useGetDocumentRequestList } from "@/hooks/useGetDocumentRequestList";
 import { DDProjectSetup, TRANSACTION_TYPE_INFO } from "./types";
+import {
+  Document,
+  Packer,
+  Paragraph,
+  TextRun,
+  Table,
+  TableRow,
+  TableCell,
+  AlignmentType,
+  HeadingLevel,
+  BorderStyle,
+  WidthType,
+  ShadingType,
+  LevelFormat,
+} from "docx";
+import { saveAs } from "file-saver";
 
 interface Step5Props {
   data: DDProjectSetup;
@@ -218,18 +234,265 @@ export function Step5DocumentChecklist({ data, onChange }: Step5Props) {
     }
   };
 
-  const downloadChecklist = () => {
-    if (requestList?.markdown) {
-      const blob = new Blob([requestList.markdown], { type: "text/markdown" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `dd-checklist-${data.transactionType}.md`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
+  const downloadChecklist = async () => {
+    if (!registry?.documents || filteredDocuments.length === 0) return;
+
+    const transactionName = TRANSACTION_TYPE_INFO[data.transactionType!]?.name || data.transactionType || "Due Diligence";
+
+    // Priority styling for Word
+    const priorityColors: Record<Priority, { bg: string; text: string }> = {
+      critical: { bg: "FEE2E2", text: "DC2626" },
+      required: { bg: "FFEDD5", text: "EA580C" },
+      recommended: { bg: "FEF9C3", text: "CA8A04" },
+      optional: { bg: "F3F4F6", text: "4B5563" },
+    };
+
+    // Table borders
+    const tableBorder = { style: BorderStyle.SINGLE, size: 1, color: "D1D5DB" };
+    const cellBorders = {
+      top: tableBorder,
+      bottom: tableBorder,
+      left: tableBorder,
+      right: tableBorder,
+    };
+
+    // Build document content
+    const children: (Paragraph | Table)[] = [];
+
+    // Title
+    children.push(
+      new Paragraph({
+        heading: HeadingLevel.TITLE,
+        alignment: AlignmentType.CENTER,
+        children: [new TextRun({ text: "Due Diligence Document Checklist", bold: true, size: 48 })],
+      }),
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        spacing: { before: 120, after: 240 },
+        children: [new TextRun({ text: transactionName, size: 32, color: "4B5563" })],
+      }),
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 480 },
+        children: [
+          new TextRun({ text: `Generated: ${new Date().toLocaleDateString()}`, size: 22, color: "6B7280" }),
+        ],
+      })
+    );
+
+    // Summary Section
+    children.push(
+      new Paragraph({
+        heading: HeadingLevel.HEADING_1,
+        children: [new TextRun("Summary")],
+      }),
+      new Paragraph({
+        spacing: { after: 240 },
+        children: [
+          new TextRun({ text: `Total Documents: ${filteredDocuments.length}`, size: 24 }),
+        ],
+      })
+    );
+
+    // Priority breakdown table
+    const criticalCount = filteredDocuments.filter(d => d.priority === "critical").length;
+    const requiredCount = filteredDocuments.filter(d => d.priority === "required").length;
+    const recommendedCount = filteredDocuments.filter(d => d.priority === "recommended").length;
+    const optionalCount = filteredDocuments.filter(d => d.priority === "optional").length;
+
+    children.push(
+      new Table({
+        columnWidths: [2340, 2340, 2340, 2340],
+        rows: [
+          new TableRow({
+            children: [
+              new TableCell({
+                borders: cellBorders,
+                shading: { fill: priorityColors.critical.bg, type: ShadingType.CLEAR },
+                children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: `Critical: ${criticalCount}`, bold: true, color: priorityColors.critical.text })] })],
+              }),
+              new TableCell({
+                borders: cellBorders,
+                shading: { fill: priorityColors.required.bg, type: ShadingType.CLEAR },
+                children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: `Required: ${requiredCount}`, bold: true, color: priorityColors.required.text })] })],
+              }),
+              new TableCell({
+                borders: cellBorders,
+                shading: { fill: priorityColors.recommended.bg, type: ShadingType.CLEAR },
+                children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: `Recommended: ${recommendedCount}`, bold: true, color: priorityColors.recommended.text })] })],
+              }),
+              new TableCell({
+                borders: cellBorders,
+                shading: { fill: priorityColors.optional.bg, type: ShadingType.CLEAR },
+                children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: `Optional: ${optionalCount}`, bold: true, color: priorityColors.optional.text })] })],
+              }),
+            ],
+          }),
+        ],
+      }),
+      new Paragraph({ spacing: { after: 480 }, children: [] })
+    );
+
+    // Documents by Category
+    children.push(
+      new Paragraph({
+        heading: HeadingLevel.HEADING_1,
+        children: [new TextRun("Documents by Category")],
+      })
+    );
+
+    // Group and sort categories
+    const sortedCategories = Object.entries(groupedByCategory).sort(([a], [b]) => a.localeCompare(b));
+
+    sortedCategories.forEach(([category, docs]) => {
+      // Category heading
+      children.push(
+        new Paragraph({
+          heading: HeadingLevel.HEADING_2,
+          spacing: { before: 360, after: 180 },
+          children: [new TextRun({ text: category, bold: true })],
+        }),
+        new Paragraph({
+          spacing: { after: 120 },
+          children: [new TextRun({ text: `${docs.length} document${docs.length !== 1 ? "s" : ""} in this category`, size: 22, color: "6B7280", italics: true })],
+        })
+      );
+
+      // Sort documents by priority within category
+      const sortedDocs = [...docs].sort((a, b) =>
+        PRIORITY_ORDER.indexOf(a.priority) - PRIORITY_ORDER.indexOf(b.priority)
+      );
+
+      // Create table for documents in this category
+      const tableRows = [
+        new TableRow({
+          tableHeader: true,
+          children: [
+            new TableCell({
+              borders: cellBorders,
+              width: { size: 1200, type: WidthType.DXA },
+              shading: { fill: "F3F4F6", type: ShadingType.CLEAR },
+              children: [new Paragraph({ children: [new TextRun({ text: "Priority", bold: true, size: 20 })] })],
+            }),
+            new TableCell({
+              borders: cellBorders,
+              width: { size: 3600, type: WidthType.DXA },
+              shading: { fill: "F3F4F6", type: ShadingType.CLEAR },
+              children: [new Paragraph({ children: [new TextRun({ text: "Document", bold: true, size: 20 })] })],
+            }),
+            new TableCell({
+              borders: cellBorders,
+              width: { size: 4560, type: WidthType.DXA },
+              shading: { fill: "F3F4F6", type: ShadingType.CLEAR },
+              children: [new Paragraph({ children: [new TextRun({ text: "Request / Description", bold: true, size: 20 })] })],
+            }),
+          ],
+        }),
+      ];
+
+      sortedDocs.forEach((doc) => {
+        const pColors = priorityColors[doc.priority];
+        tableRows.push(
+          new TableRow({
+            children: [
+              new TableCell({
+                borders: cellBorders,
+                width: { size: 1200, type: WidthType.DXA },
+                shading: { fill: pColors.bg, type: ShadingType.CLEAR },
+                children: [new Paragraph({
+                  alignment: AlignmentType.CENTER,
+                  children: [new TextRun({ text: PRIORITY_STYLES[doc.priority].label, bold: true, size: 18, color: pColors.text })]
+                })],
+              }),
+              new TableCell({
+                borders: cellBorders,
+                width: { size: 3600, type: WidthType.DXA },
+                children: [
+                  new Paragraph({ children: [new TextRun({ text: doc.name, bold: true, size: 22 })] }),
+                  ...(doc.description ? [new Paragraph({ children: [new TextRun({ text: doc.description, size: 20, italics: true, color: "6B7280" })] })] : []),
+                ],
+              }),
+              new TableCell({
+                borders: cellBorders,
+                width: { size: 4560, type: WidthType.DXA },
+                children: [
+                  new Paragraph({ children: [new TextRun({ text: doc.request_template || "Please provide this document", size: 20 })] }),
+                  new Paragraph({ spacing: { before: 60 }, children: [new TextRun({ text: `Folder: ${doc.folder}`, size: 18, color: "9CA3AF" })] }),
+                ],
+              }),
+            ],
+          })
+        );
+      });
+
+      children.push(
+        new Table({
+          columnWidths: [1200, 3600, 4560],
+          rows: tableRows,
+        }),
+        new Paragraph({ spacing: { after: 240 }, children: [] })
+      );
+    });
+
+    // Footer
+    children.push(
+      new Paragraph({
+        spacing: { before: 480 },
+        alignment: AlignmentType.CENTER,
+        children: [
+          new TextRun({ text: "Generated by Alchemy Law AI", size: 20, color: "9CA3AF", italics: true }),
+        ],
+      })
+    );
+
+    // Create document
+    const doc = new Document({
+      styles: {
+        default: {
+          document: {
+            run: { font: "Arial", size: 24 },
+          },
+        },
+        paragraphStyles: [
+          {
+            id: "Title",
+            name: "Title",
+            basedOn: "Normal",
+            run: { size: 48, bold: true, font: "Arial" },
+            paragraph: { spacing: { before: 240, after: 120 }, alignment: AlignmentType.CENTER },
+          },
+          {
+            id: "Heading1",
+            name: "Heading 1",
+            basedOn: "Normal",
+            run: { size: 32, bold: true, color: "1F2937", font: "Arial" },
+            paragraph: { spacing: { before: 360, after: 180 } },
+          },
+          {
+            id: "Heading2",
+            name: "Heading 2",
+            basedOn: "Normal",
+            run: { size: 26, bold: true, color: "374151", font: "Arial" },
+            paragraph: { spacing: { before: 240, after: 120 } },
+          },
+        ],
+      },
+      sections: [
+        {
+          properties: {
+            page: {
+              margin: { top: 1440, right: 1080, bottom: 1440, left: 1080 },
+            },
+          },
+          children,
+        },
+      ],
+    });
+
+    // Generate and download
+    const blob = await Packer.toBlob(doc);
+    const fileName = `DD_Document_Checklist_${transactionName.replace(/[^a-z0-9]/gi, "_")}_${new Date().toISOString().split("T")[0]}.docx`;
+    saveAs(blob, fileName);
   };
 
   return (
@@ -328,7 +591,7 @@ export function Step5DocumentChecklist({ data, onChange }: Step5Props) {
             <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={downloadChecklist}>
                 <Download className="h-4 w-4 mr-1" />
-                Export List
+                Export Template DD List
               </Button>
               <Button
                 variant="outline"

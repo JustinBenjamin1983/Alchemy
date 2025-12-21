@@ -316,7 +316,7 @@ const RiskCounter: React.FC<RiskCounterProps> = ({ label, value, color, bgColor,
   return (
     <motion.div
       variants={reducedMotion ? reducedMotionVariants : staggerChildVariants}
-      className="relative flex flex-col items-center p-3 rounded-lg shadow-sm overflow-hidden"
+      className="relative flex flex-col items-center justify-center p-3 rounded-lg shadow-sm overflow-hidden min-h-[88px]"
       style={{ backgroundColor: bgColor || 'white' }}
     >
       {/* Pulse effect for non-zero critical values */}
@@ -333,9 +333,9 @@ const RiskCounter: React.FC<RiskCounterProps> = ({ label, value, color, bgColor,
           transition={{ duration: 2, repeat: Infinity }}
         />
       )}
-      <div className="flex items-center gap-1.5 mb-1 relative z-10">
-        {icon}
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+      <div className="flex flex-col items-center justify-center gap-0.5 mb-1 relative z-10">
+        {icon && <span className="flex-shrink-0 mb-0.5">{icon}</span>}
+        <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide text-center leading-tight">
           {label}
         </span>
       </div>
@@ -372,7 +372,7 @@ export const RiskSummaryCounters: React.FC<RiskSummaryCountersProps> = ({
       variants={reducedMotion ? undefined : staggerContainerVariants}
       initial="initial"
       animate="animate"
-      className={`grid grid-cols-2 md:grid-cols-4 gap-3 ${className}`}
+      className={`grid grid-cols-2 md:grid-cols-4 gap-4 ${className}`}
     >
       <RiskCounter
         label="Critical"

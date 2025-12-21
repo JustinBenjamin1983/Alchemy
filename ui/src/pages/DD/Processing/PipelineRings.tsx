@@ -1,26 +1,20 @@
 /**
- * Pipeline Rings Visualization
+ * Pipeline Rings Visualization - Concentric Design
  *
- * Animated concentric rings showing the 4-pass processing pipeline.
- * Each ring represents a pass: Extract, Analyze, Cross-Doc, Synthesize.
- *
- * Enhanced with:
- * - Orbiting particles along active ring path
- * - Pulse glow effect on active ring
- * - Completion checkmarks for finished passes
- * - Rotating gradient border effect
+ * Apple Watch-style concentric rings showing the 7-pass processing pipeline.
+ * Rings progress from outside (Extract) to inside (Verify), each with its own color.
+ * Center displays a green checkmark when all passes complete.
  */
-import React, { useMemo, useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ProcessingPass, ProcessingProgress, PASS_CONFIG } from './types';
 import {
-  ringPulseVariants,
-  ringProgressVariants,
-  particleVariants,
-  reducedMotionVariants,
-  SPRING_GENTLE,
-  SPRING_BOUNCY
-} from './animations';
+  ProcessingPass,
+  ProcessingProgress,
+  PASS_CONFIG,
+  PASS_ORDER,
+  RING_COLORS,
+  STATUS_COLORS
+} from './types';
 import { useReducedMotion } from './hooks';
 
 interface PipelineRingsProps {
@@ -29,246 +23,285 @@ interface PipelineRingsProps {
   className?: string;
 }
 
-interface PipelineRingProps {
+interface RingConfig {
   pass: ProcessingPass;
   radius: number;
-  strokeWidth: number;
+  color: string;
+}
+
+// Calculate ring configurations based on size
+const calculateRings = (size: number): RingConfig[] => {
+  const center = size / 2;
+  const strokeWidth = 12;
+  const gap = 6;
+  const ringSpacing = strokeWidth + gap;
+  const centerReserved = 45; // Space for center checkmark
+
+  // Build rings from inside out, then reverse for outside-in order
+  const rings: RingConfig[] = [];
+
+  // PASS_ORDER is outside-to-inside, so we reverse it to calculate from center out
+  const reversedOrder = [...PASS_ORDER].reverse();
+
+  reversedOrder.forEach((pass, index) => {
+    const radius = centerReserved + (index * ringSpacing);
+    rings.push({
+      pass,
+      radius,
+      color: RING_COLORS[pass],
+    });
+  });
+
+  // Reverse back so we render outside-to-inside (Extract first, Verify last)
+  return rings.reverse();
+};
+
+// Single concentric ring component
+const ConcentricRing: React.FC<{
+  pass: ProcessingPass;
+  radius: number;
+  color: string;
   progress: number;
   isActive: boolean;
   isCompleted: boolean;
-  reducedMotion: boolean;
+  isFailed: boolean;
   centerX: number;
   centerY: number;
-}
-
-interface ParticleFlowProps {
-  pass: ProcessingPass;
-  radius: number;
-  isActive: boolean;
+  strokeWidth: number;
   reducedMotion: boolean;
-  centerX: number;
-  centerY: number;
-}
-
-// Individual ring component
-const PipelineRing: React.FC<PipelineRingProps> = ({
+}> = ({
   pass,
   radius,
-  strokeWidth,
+  color,
   progress,
   isActive,
   isCompleted,
-  reducedMotion,
+  isFailed,
   centerX,
-  centerY
+  centerY,
+  strokeWidth,
+  reducedMotion,
 }) => {
-  const config = PASS_CONFIG[pass];
   const circumference = 2 * Math.PI * radius;
-
-  // Calculate the dash offset for progress
   const dashOffset = circumference - (progress / 100) * circumference;
+
+  // Determine the progress color
+  const progressColor = isFailed
+    ? STATUS_COLORS.failed
+    : isCompleted
+      ? color // Use ring's own color when complete
+      : isActive
+        ? color // Use ring's own color when active
+        : STATUS_COLORS.default;
+
+  // Background track opacity
+  const trackOpacity = isCompleted ? 0.3 : 0.15;
 
   return (
     <g>
-      {/* Background ring */}
+      {/* Background track */}
       <circle
         cx={centerX}
         cy={centerY}
         r={radius}
         fill="none"
-        stroke="currentColor"
+        stroke={color}
         strokeWidth={strokeWidth}
-        className="text-gray-200 dark:text-gray-700"
-        opacity={0.3}
+        opacity={trackOpacity}
       />
 
-      {/* Progress ring */}
+      {/* Progress arc */}
       <motion.circle
         cx={centerX}
         cy={centerY}
         r={radius}
         fill="none"
-        stroke={config.color}
+        stroke={progressColor}
         strokeWidth={strokeWidth}
         strokeLinecap="round"
         strokeDasharray={circumference}
         strokeDashoffset={dashOffset}
         transform={`rotate(-90 ${centerX} ${centerY})`}
-        variants={reducedMotion ? reducedMotionVariants : ringProgressVariants}
-        initial="initial"
-        animate="animate"
-        custom={progress}
-        style={{
-          filter: isActive ? `drop-shadow(0 0 8px ${config.color})` : 'none'
-        }}
+        initial={{ strokeDashoffset: circumference }}
+        animate={{ strokeDashoffset: dashOffset }}
+        transition={reducedMotion ? { duration: 0 } : { duration: 0.5, ease: 'easeOut' }}
       />
 
-      {/* Glow effect for active ring */}
+      {/* Active pulse effect */}
       {isActive && !reducedMotion && (
         <motion.circle
           cx={centerX}
           cy={centerY}
           r={radius}
           fill="none"
-          stroke={config.color}
+          stroke={color}
           strokeWidth={strokeWidth + 4}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={dashOffset}
-          transform={`rotate(-90 ${centerX} ${centerY})`}
-          opacity={0.3}
-          variants={ringPulseVariants}
-          initial="idle"
-          animate="active"
+          opacity={0}
+          animate={{
+            opacity: [0, 0.3, 0],
+            strokeWidth: [strokeWidth, strokeWidth + 8, strokeWidth],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
         />
-      )}
-
-      {/* Completion indicator - full ring glow + checkmark position marker */}
-      {isCompleted && (
-        <>
-          <motion.circle
-            cx={centerX}
-            cy={centerY}
-            r={radius}
-            fill="none"
-            stroke={config.color}
-            strokeWidth={2}
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.3 }}
-            transition={SPRING_GENTLE}
-          />
-          {/* Checkmark at the end of the ring */}
-          <motion.g
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={SPRING_BOUNCY}
-          >
-            <circle
-              cx={centerX + radius}
-              cy={centerY}
-              r={8}
-              fill={config.color}
-            />
-            <path
-              d={`M${centerX + radius - 3} ${centerY} l2 2 l4 -4`}
-              stroke="white"
-              strokeWidth={2}
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </motion.g>
-        </>
       )}
     </g>
   );
 };
 
-// Orbiting particle component that follows circular path
-const OrbitingParticle: React.FC<{
-  radius: number;
-  delay: number;
-  duration: number;
-  color: string;
-  size: number;
+// Center completion indicator
+const CenterIndicator: React.FC<{
+  isAllCompleted: boolean;
+  isFailed: boolean;
+  isCancelled: boolean;
+  isProcessing: boolean;
   centerX: number;
   centerY: number;
-}> = ({ radius, delay, duration, color, size, centerX, centerY }) => {
-  return (
-    <motion.circle
-      cx={centerX + radius}
-      cy={centerY}
-      r={size}
-      fill={color}
-      initial={{ opacity: 0 }}
-      animate={{
-        opacity: [0.3, 1, 0.3],
-      }}
-      style={{
-        transformOrigin: `${centerX}px ${centerY}px`,
-      }}
-      transition={{
-        opacity: {
-          duration: duration / 2,
-          repeat: Infinity,
-          ease: 'easeInOut',
-          delay
-        }
-      }}
-    >
-      <animateTransform
-        attributeName="transform"
-        type="rotate"
-        from={`0 ${centerX} ${centerY}`}
-        to={`360 ${centerX} ${centerY}`}
-        dur={`${duration}s`}
-        repeatCount="indefinite"
-        begin={`${delay}s`}
-      />
-    </motion.circle>
-  );
-};
-
-// Particle flow animation between rings - Enhanced with orbiting particles
-const ParticleFlow: React.FC<ParticleFlowProps> = ({
-  pass,
-  radius,
-  isActive,
-  reducedMotion,
+  reducedMotion: boolean;
+}> = ({
+  isAllCompleted,
+  isFailed,
+  isCancelled,
+  isProcessing,
   centerX,
-  centerY
+  centerY,
+  reducedMotion,
 }) => {
-  const config = PASS_CONFIG[pass];
+  const circleRadius = 32;
 
-  // Generate orbiting particles - 4 particles at different positions
-  const particles = useMemo(() => {
-    if (reducedMotion || !isActive) return [];
-
-    return Array.from({ length: 4 }, (_, i) => ({
-      id: `${pass}-orbit-${i}`,
-      delay: i * 0.75, // Stagger start times
-      size: 3 - i * 0.3, // Slightly smaller trailing particles
-    }));
-  }, [pass, isActive, reducedMotion]);
-
-  if (!isActive || reducedMotion) return null;
-
-  return (
-    <g>
-      {particles.map((particle) => (
-        <OrbitingParticle
-          key={particle.id}
-          radius={radius}
-          delay={particle.delay}
-          duration={3} // 3 seconds for full orbit
-          color={config.color}
-          size={particle.size}
-          centerX={centerX}
-          centerY={centerY}
+  if (isAllCompleted) {
+    return (
+      <motion.g
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      >
+        {/* Alchemy orange circle background */}
+        <circle
+          cx={centerX}
+          cy={centerY}
+          r={circleRadius}
+          fill="#ff6b00"
         />
-      ))}
-    </g>
+        {/* White checkmark */}
+        <motion.path
+          d={`M${centerX - 12} ${centerY + 2} l8 8 l16 -18`}
+          stroke="white"
+          strokeWidth={4}
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        />
+      </motion.g>
+    );
+  }
+
+  if (isFailed) {
+    return (
+      <motion.g
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      >
+        <circle
+          cx={centerX}
+          cy={centerY}
+          r={circleRadius}
+          fill={STATUS_COLORS.failed}
+        />
+        <path
+          d={`M${centerX - 10} ${centerY - 10} l20 20 M${centerX + 10} ${centerY - 10} l-20 20`}
+          stroke="white"
+          strokeWidth={4}
+          fill="none"
+          strokeLinecap="round"
+        />
+      </motion.g>
+    );
+  }
+
+  if (isCancelled) {
+    return (
+      <motion.g
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+      >
+        <circle
+          cx={centerX}
+          cy={centerY}
+          r={circleRadius}
+          fill="#9ca3af"
+        />
+        <rect
+          x={centerX - 10}
+          y={centerY - 10}
+          width={20}
+          height={20}
+          rx={3}
+          fill="white"
+        />
+      </motion.g>
+    );
+  }
+
+  if (isProcessing) {
+    return (
+      <g>
+        {/* Subtle pulsing circle */}
+        <motion.circle
+          cx={centerX}
+          cy={centerY}
+          r={circleRadius - 8}
+          fill="none"
+          stroke={STATUS_COLORS.default}
+          strokeWidth={2}
+          animate={reducedMotion ? {} : {
+            opacity: [0.3, 0.6, 0.3],
+            r: [circleRadius - 10, circleRadius - 6, circleRadius - 10],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      </g>
+    );
+  }
+
+  // Idle/waiting state
+  return (
+    <circle
+      cx={centerX}
+      cy={centerY}
+      r={circleRadius - 8}
+      fill="none"
+      stroke={STATUS_COLORS.default}
+      strokeWidth={2}
+      opacity={0.3}
+    />
   );
 };
 
-// Main Pipeline Rings component
+// Main Pipeline Rings component - Concentric Design
 export const PipelineRings: React.FC<PipelineRingsProps> = ({
   progress,
-  size = 320,
+  size = 280,
   className = ''
 }) => {
   const reducedMotion = useReducedMotion();
-
+  const strokeWidth = 12;
   const centerX = size / 2;
   const centerY = size / 2;
 
-  // Calculate ring radii (outermost to innermost)
-  const rings: { pass: ProcessingPass; radius: number; strokeWidth: number }[] = useMemo(() => [
-    { pass: 'extract', radius: (size / 2) - 20, strokeWidth: 12 },
-    { pass: 'analyze', radius: (size / 2) - 50, strokeWidth: 12 },
-    { pass: 'crossdoc', radius: (size / 2) - 80, strokeWidth: 12 },
-    { pass: 'synthesize', radius: (size / 2) - 110, strokeWidth: 12 }
-  ], [size]);
+  // Calculate ring configurations
+  const rings = useMemo(() => calculateRings(size), [size]);
 
   const getPassProgress = useCallback((pass: ProcessingPass): number => {
     if (!progress) return 0;
@@ -285,190 +318,59 @@ export const PipelineRings: React.FC<PipelineRingsProps> = ({
     return progress.passProgress[pass]?.status === 'completed';
   }, [progress]);
 
-  // Current pass info for center display
-  const currentPassInfo = useMemo(() => {
-    if (!progress || progress.status !== 'processing') return null;
-    return PASS_CONFIG[progress.currentPass];
+  const isPassFailed = useCallback((pass: ProcessingPass): boolean => {
+    if (!progress) return false;
+    return progress.passProgress[pass]?.status === 'failed' ||
+           (progress.status === 'failed' && progress.currentPass === pass);
   }, [progress]);
 
+  // Overall status
+  const isAllCompleted = progress?.status === 'completed';
+  const isFailed = progress?.status === 'failed';
+  const isCancelled = progress?.status === 'cancelled';
+  const isProcessing = progress?.status === 'processing';
+
+  // Current active pass info
+  const currentPassConfig = progress?.currentPass ? PASS_CONFIG[progress.currentPass] : null;
+
   return (
-    <div className={`relative ${className}`}>
+    <div className={`flex flex-col items-center ${className}`}>
+      {/* Concentric rings SVG */}
       <svg
         width={size}
         height={size}
         viewBox={`0 0 ${size} ${size}`}
         className="overflow-visible"
       >
-        {/* Rings */}
-        {rings.map(({ pass, radius, strokeWidth }) => (
-          <React.Fragment key={pass}>
-            <PipelineRing
-              pass={pass}
-              radius={radius}
-              strokeWidth={strokeWidth}
-              progress={getPassProgress(pass)}
-              isActive={isPassActive(pass)}
-              isCompleted={isPassCompleted(pass)}
-              reducedMotion={reducedMotion}
-              centerX={centerX}
-              centerY={centerY}
-            />
-            <ParticleFlow
-              pass={pass}
-              radius={radius}
-              isActive={isPassActive(pass)}
-              reducedMotion={reducedMotion}
-              centerX={centerX}
-              centerY={centerY}
-            />
-          </React.Fragment>
+        {/* Render rings from outside to inside */}
+        {rings.map((ring) => (
+          <ConcentricRing
+            key={ring.pass}
+            pass={ring.pass}
+            radius={ring.radius}
+            color={ring.color}
+            progress={getPassProgress(ring.pass)}
+            isActive={isPassActive(ring.pass)}
+            isCompleted={isPassCompleted(ring.pass)}
+            isFailed={isPassFailed(ring.pass)}
+            centerX={centerX}
+            centerY={centerY}
+            strokeWidth={strokeWidth}
+            reducedMotion={reducedMotion}
+          />
         ))}
+
+        {/* Center indicator */}
+        <CenterIndicator
+          isAllCompleted={isAllCompleted}
+          isFailed={isFailed}
+          isCancelled={isCancelled}
+          isProcessing={isProcessing}
+          centerX={centerX}
+          centerY={centerY}
+          reducedMotion={reducedMotion}
+        />
       </svg>
-
-      {/* Center content */}
-      <div
-        className="absolute inset-0 flex items-center justify-center"
-        style={{ pointerEvents: 'none' }}
-      >
-        <AnimatePresence mode="wait">
-          {progress?.status === 'completed' ? (
-            <motion.div
-              key="completed"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={SPRING_GENTLE}
-              className="flex flex-col items-center"
-            >
-              <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mb-2">
-                <svg
-                  className="w-8 h-8 text-emerald-600 dark:text-emerald-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-                Complete
-              </span>
-            </motion.div>
-          ) : currentPassInfo ? (
-            <motion.div
-              key={progress?.currentPass}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-              className="flex flex-col items-center text-center px-4"
-            >
-              <div
-                className="w-12 h-12 rounded-full flex items-center justify-center mb-2"
-                style={{ backgroundColor: `${currentPassInfo.color}20` }}
-              >
-                <motion.div
-                  animate={reducedMotion ? {} : { rotate: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke={currentPassInfo.color}
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                    />
-                  </svg>
-                </motion.div>
-              </div>
-              <span
-                className="text-sm font-semibold"
-                style={{ color: currentPassInfo.color }}
-              >
-                {currentPassInfo.shortLabel}
-              </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-[120px]">
-                {currentPassInfo.description}
-              </span>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="idle"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex flex-col items-center"
-            >
-              <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-2">
-                <svg
-                  className="w-6 h-6 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                Waiting
-              </span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Ring labels */}
-      <div className="absolute inset-0 pointer-events-none">
-        {rings.map(({ pass, radius }, index) => {
-          const config = PASS_CONFIG[pass];
-          const isActive = isPassActive(pass);
-          const isCompleted = isPassCompleted(pass);
-
-          // Position labels at top of each ring
-          const labelY = centerY - radius - 16;
-
-          return (
-            <motion.div
-              key={pass}
-              className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap"
-              style={{ top: labelY }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <span
-                className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                  isActive
-                    ? 'text-white'
-                    : isCompleted
-                    ? 'text-white'
-                    : 'text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800'
-                }`}
-                style={{
-                  backgroundColor: isActive || isCompleted ? config.color : undefined
-                }}
-              >
-                {config.shortLabel}
-              </span>
-            </motion.div>
-          );
-        })}
-      </div>
     </div>
   );
 };

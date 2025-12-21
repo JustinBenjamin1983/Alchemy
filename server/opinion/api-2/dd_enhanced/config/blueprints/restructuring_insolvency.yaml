@@ -1,418 +1,1021 @@
-# Restructuring & Insolvency Due Diligence Blueprint
-# Covers: Business rescue, liquidations, schemes of arrangement, debt restructuring
-# Jurisdiction: South Africa
+transaction_type: Restructuring & Insolvency
+code: restructuring_insolvency
+description: 'Due diligence blueprint for distressed situations including business rescue proceedings,
 
-transaction_type: "Restructuring & Insolvency"
-code: "restructuring_insolvency"
-description: |
-  Due diligence blueprint for distressed situations including business rescue proceedings,
   liquidations, schemes of arrangement, and debt restructuring. Covers Companies Act
+
   Chapter 6 requirements, creditor rights, and insolvency law considerations.
 
+  '
 risk_categories:
-  - name: "Insolvency Status & Proceedings"
-    description: "Current insolvency status, proceedings, and statutory compliance"
-    questions:
-      - id: "RI-INS-001"
-        question: "What is the current insolvency status and have any formal proceedings been commenced?"
-        priority: "critical"
-        document_types: ["Company records", "Court filings", "CIPC records", "Master's correspondence"]
-        risk_indicators: ["Formal insolvency", "Pending applications", "Multiple proceedings"]
-
-      - id: "RI-INS-002"
-        question: "Has a business rescue practitioner been appointed and are they properly qualified?"
-        priority: "critical"
-        document_types: ["BRP appointment", "CIPC registration", "Qualification certificates", "Independence declaration"]
-        risk_indicators: ["Unqualified practitioner", "Conflicts of interest", "Removal applications"]
-
-      - id: "RI-INS-003"
-        question: "Are there factual or commercial insolvency indicators present?"
-        priority: "critical"
-        document_types: ["Balance sheet", "Cash flow analysis", "Creditor age analysis", "Solvency assessment"]
-        risk_indicators: ["Balance sheet insolvency", "Cash flow insolvency", "Creditor pressure"]
-
-      - id: "RI-INS-004"
-        question: "Has the moratorium on legal proceedings been properly implemented?"
-        priority: "high"
-        document_types: ["Moratorium notices", "Court orders", "Creditor correspondence", "Legal proceedings register"]
-        risk_indicators: ["Moratorium breaches", "Excluded proceedings", "Enforcement attempts"]
-
-      - id: "RI-INS-005"
-        question: "Are all statutory filing and notification requirements being met?"
-        priority: "high"
-        document_types: ["Filing register", "CIPC correspondence", "Master notifications", "Publication evidence"]
-        risk_indicators: ["Late filings", "Non-compliance", "Regulatory sanctions"]
-
-      - id: "RI-INS-006"
-        question: "What is the timeline for business rescue proceedings and key deadlines?"
-        priority: "high"
-        document_types: ["Business rescue timeline", "Court orders", "Extension applications", "Creditor meeting notices"]
-        risk_indicators: ["Approaching deadlines", "Extension denials", "Delayed proceedings"]
-
-      - id: "RI-INS-007"
-        question: "Are there any connected company insolvencies or group considerations?"
-        priority: "medium"
-        document_types: ["Group structure", "Connected company status", "Intercompany claims", "Substantive consolidation analysis"]
-        risk_indicators: ["Multiple group insolvencies", "Intercompany complexities", "Consolidated proceedings"]
-
-  - name: "Creditor Analysis"
-    description: "Creditor identification, claims, and priority rankings"
-    questions:
-      - id: "RI-CRED-001"
-        question: "Have all creditors been identified and have their claims been verified?"
-        priority: "critical"
-        document_types: ["Creditor register", "Proof of claims", "Claims verification report", "Disputed claims schedule"]
-        risk_indicators: ["Unknown creditors", "Disputed claims", "Incomplete verification"]
-
-      - id: "RI-CRED-002"
-        question: "What is the creditor priority ranking and are there any secured creditors?"
-        priority: "critical"
-        document_types: ["Security register", "Priority analysis", "PPSA registrations", "Notarial bonds"]
-        risk_indicators: ["Complex security structures", "Priority disputes", "Competing claims"]
-
-      - id: "RI-CRED-003"
-        question: "Are there any creditors with preferential claims under the Insolvency Act?"
-        priority: "critical"
-        document_types: ["Preferent creditor schedule", "Employee claims", "SARS claims", "Statutory preferences"]
-        risk_indicators: ["Large preferent claims", "Employee exposure", "Tax arrears"]
-
-      - id: "RI-CRED-004"
-        question: "What are the total concurrent creditor claims and expected recovery rate?"
-        priority: "high"
-        document_types: ["Concurrent creditor schedule", "Recovery analysis", "Dividend projections", "Comparative outcomes"]
-        risk_indicators: ["Low recovery expectations", "Large concurrent claims", "Asset shortfall"]
-
-      - id: "RI-CRED-005"
-        question: "Are there any post-commencement creditors with super-priority claims?"
-        priority: "high"
-        document_types: ["PCF register", "Post-commencement contracts", "BRP reports", "Super-priority analysis"]
-        risk_indicators: ["Large PCF exposure", "Unpaid PCF creditors", "Priority disputes"]
-
-      - id: "RI-CRED-006"
-        question: "Have all creditor meetings been properly convened and conducted?"
-        priority: "high"
-        document_types: ["Meeting notices", "Attendance registers", "Meeting minutes", "Voting records"]
-        risk_indicators: ["Procedural defects", "Creditor opposition", "Disputed resolutions"]
-
-      - id: "RI-CRED-007"
-        question: "Are there any related party creditor claims requiring scrutiny?"
-        priority: "medium"
-        document_types: ["Related party claims", "Intercompany balances", "Subordination agreements", "Arm's length analysis"]
-        risk_indicators: ["Large related party claims", "Subordination issues", "Preference risk"]
-
-  - name: "Business Rescue Plan"
-    description: "Plan development, approval, and implementation"
-    questions:
-      - id: "RI-PLAN-001"
-        question: "Is there a published business rescue plan and has it been adopted?"
-        priority: "critical"
-        document_types: ["Business rescue plan", "Adoption certificate", "Voting analysis", "Court sanction order"]
-        risk_indicators: ["No plan published", "Plan rejection", "Implementation delays"]
-
-      - id: "RI-PLAN-002"
-        question: "Does the plan demonstrate a reasonable prospect of rescuing the company?"
-        priority: "critical"
-        document_types: ["Viability analysis", "Projections", "Turnaround strategy", "Independent review"]
-        risk_indicators: ["Weak viability case", "Unrealistic projections", "No turnaround strategy"]
-
-      - id: "RI-PLAN-003"
-        question: "Does the plan provide for better returns than immediate liquidation?"
-        priority: "critical"
-        document_types: ["Comparative analysis", "Liquidation valuation", "Plan dividend analysis", "Independent opinion"]
-        risk_indicators: ["Liquidation preference", "Marginal improvement", "Disputed valuations"]
-
-      - id: "RI-PLAN-004"
-        question: "Are the funding arrangements for the rescue plan adequate and committed?"
-        priority: "critical"
-        document_types: ["Funding commitments", "Term sheets", "Conditions precedent", "Security arrangements"]
-        risk_indicators: ["Conditional funding", "Insufficient commitments", "Funding gaps"]
-
-      - id: "RI-PLAN-005"
-        question: "Does the plan adequately address employee interests and obligations?"
-        priority: "high"
-        document_types: ["Employee section of plan", "Retrenchment provisions", "Union consultations", "CCMA compliance"]
-        risk_indicators: ["Mass retrenchments", "Employee opposition", "Labour law breaches"]
-
-      - id: "RI-PLAN-006"
-        question: "Are all conditions precedent to plan implementation achievable?"
-        priority: "high"
-        document_types: ["CP schedule", "Status report", "Waiver provisions", "Longstop dates"]
-        risk_indicators: ["Unachievable CPs", "Approaching longstop", "Waiver dependencies"]
-
-      - id: "RI-PLAN-007"
-        question: "What are the key milestones and has progress been satisfactory?"
-        priority: "high"
-        document_types: ["Implementation timeline", "Progress reports", "Milestone tracking", "BRP updates"]
-        risk_indicators: ["Missed milestones", "Implementation delays", "Plan amendments required"]
-
-      - id: "RI-PLAN-008"
-        question: "Are there any affected persons who have not consented or may challenge the plan?"
-        priority: "medium"
-        document_types: ["Affected persons register", "Consent analysis", "Objection notices", "Court challenges"]
-        risk_indicators: ["Objecting creditors", "Court challenges", "Hold-out risks"]
-
-  - name: "Asset Analysis"
-    description: "Asset identification, valuation, and preservation"
-    questions:
-      - id: "RI-ASS-001"
-        question: "Have all assets been identified and properly valued?"
-        priority: "critical"
-        document_types: ["Asset register", "Valuation reports", "Physical verification", "Title documents"]
-        risk_indicators: ["Missing assets", "Valuation disputes", "Title issues"]
-
-      - id: "RI-ASS-002"
-        question: "Are there any assets subject to security interests or retention of title?"
-        priority: "critical"
-        document_types: ["Security register", "ROT analysis", "PPSA searches", "Creditor claims"]
-        risk_indicators: ["Extensive security", "ROT claims", "Asset shortfall"]
-
-      - id: "RI-ASS-003"
-        question: "Are there any assets that may be subject to clawback or avoidance?"
-        priority: "critical"
-        document_types: ["Disposition analysis", "Preference payments schedule", "Voidable transaction review", "BRP recommendations"]
-        risk_indicators: ["Voidable dispositions", "Preference payments", "Uncommercial transactions"]
-
-      - id: "RI-ASS-004"
-        question: "Have intellectual property and other intangible assets been secured?"
-        priority: "high"
-        document_types: ["IP register", "Licence agreements", "Domain registrations", "Know-how documentation"]
-        risk_indicators: ["Unregistered IP", "Licence terminations", "IP disputes"]
-
-      - id: "RI-ASS-005"
-        question: "What is the status of any going concern sale processes?"
-        priority: "high"
-        document_types: ["Sale process documents", "Indicative offers", "Due diligence access", "Transaction timeline"]
-        risk_indicators: ["No buyer interest", "Low offers", "Process delays"]
-
-      - id: "RI-ASS-006"
-        question: "Are there any environmental or other contingent liabilities attached to assets?"
-        priority: "high"
-        document_types: ["Environmental assessments", "Contamination reports", "Compliance certificates", "Remediation costs"]
-        risk_indicators: ["Environmental contamination", "Remediation obligations", "Regulatory orders"]
-
-      - id: "RI-ASS-007"
-        question: "Have intercompany and related party receivables been analysed for recoverability?"
-        priority: "medium"
-        document_types: ["Intercompany balances", "Recoverability assessment", "Related party analysis", "Write-off recommendations"]
-        risk_indicators: ["Irrecoverable balances", "Related party exposure", "Circular arrangements"]
-
-  - name: "Director & Management Conduct"
-    description: "Director duties, potential claims, and management issues"
-    questions:
-      - id: "RI-DIR-001"
-        question: "Have directors complied with their duties including the duty to prevent reckless trading?"
-        priority: "critical"
-        document_types: ["Board minutes", "Director declarations", "Solvency assessments", "Legal opinions"]
-        risk_indicators: ["Reckless trading", "Breach of duties", "Personal liability exposure"]
-
-      - id: "RI-DIR-002"
-        question: "Are there any potential claims against current or former directors?"
-        priority: "critical"
-        document_types: ["Claims analysis", "D&O insurance", "Legal opinions", "BRP investigations"]
-        risk_indicators: ["Breach of duty claims", "Fraud indicators", "Inadequate insurance"]
-
-      - id: "RI-DIR-003"
-        question: "Has there been any inappropriate disposition of assets before or during proceedings?"
-        priority: "critical"
-        document_types: ["Transaction review", "Asset dispositions", "Related party transactions", "Value analysis"]
-        risk_indicators: ["Asset stripping", "Uncommercial transactions", "Related party benefits"]
-
-      - id: "RI-DIR-004"
-        question: "Are current management appropriate to continue during rescue/wind-down?"
-        priority: "high"
-        document_types: ["Management assessment", "BRP recommendations", "Conflict analysis", "Skills evaluation"]
-        risk_indicators: ["Management conflicts", "Skills gaps", "Trust issues"]
-
-      - id: "RI-DIR-005"
-        question: "Have all director loans and related party transactions been disclosed?"
-        priority: "high"
-        document_types: ["Director loan register", "Related party schedule", "Disclosure analysis", "Recovery potential"]
-        risk_indicators: ["Undisclosed transactions", "Unrecovered loans", "Preference issues"]
-
-      - id: "RI-DIR-006"
-        question: "Are there any delinquency orders or director disqualifications to consider?"
-        priority: "medium"
-        document_types: ["CIPC records", "Court orders", "Delinquency analysis", "Director declarations"]
-        risk_indicators: ["Prior disqualifications", "Delinquency applications", "Fitness concerns"]
-
-  - name: "Employee & Labour Matters"
-    description: "Employee claims, retrenchments, and labour law compliance"
-    questions:
-      - id: "RI-EMP-001"
-        question: "What is the total employee exposure including all statutory and contractual obligations?"
-        priority: "critical"
-        document_types: ["Employee liability schedule", "Employment contracts", "Statutory calculations", "Benefits analysis"]
-        risk_indicators: ["Large employee claims", "Unfunded benefits", "Statutory non-compliance"]
-
-      - id: "RI-EMP-002"
-        question: "Are there any pending or required section 189/189A processes?"
-        priority: "critical"
-        document_types: ["S189 notices", "Consultation records", "CCMA referrals", "Facilitation process"]
-        risk_indicators: ["Non-compliance", "CCMA disputes", "Process delays"]
-
-      - id: "RI-EMP-003"
-        question: "What is the status of pension and provident fund obligations?"
-        priority: "high"
-        document_types: ["Fund certificates", "Contribution records", "Surplus analysis", "Withdrawal calculations"]
-        risk_indicators: ["Contribution arrears", "Surplus disputes", "Withdrawal delays"]
-
-      - id: "RI-EMP-004"
-        question: "Are there any transfer of undertaking (section 197) considerations?"
-        priority: "high"
-        document_types: ["S197 analysis", "Employee lists", "Transfer agreements", "Consultation records"]
-        risk_indicators: ["S197 disputes", "Incomplete transfers", "Employee objections"]
-
-      - id: "RI-EMP-005"
-        question: "Have all key employee retention arrangements been considered?"
-        priority: "medium"
-        document_types: ["Retention agreements", "KEIP analysis", "Critical skills assessment", "BRP recommendations"]
-        risk_indicators: ["Key person departures", "Retention failures", "Skills drain"]
-
-  - name: "Contractual Considerations"
-    description: "Contract treatment, terminations, and ongoing obligations"
-    questions:
-      - id: "RI-CON-001"
-        question: "Which contracts should be continued, terminated, or renegotiated?"
-        priority: "critical"
-        document_types: ["Contract analysis", "BRP recommendations", "Cost-benefit analysis", "Termination notices"]
-        risk_indicators: ["Onerous contracts", "Critical dependencies", "Termination costs"]
-
-      - id: "RI-CON-002"
-        question: "Are there any ipso facto clauses that have been triggered?"
-        priority: "critical"
-        document_types: ["Ipso facto analysis", "Contract review", "Counterparty notices", "Legal opinions"]
-        risk_indicators: ["Triggered terminations", "Critical contract losses", "Supply interruptions"]
-
-      - id: "RI-CON-003"
-        question: "What are the key supplier and customer contracts required for business continuation?"
-        priority: "high"
-        document_types: ["Critical contracts list", "Supplier agreements", "Customer contracts", "Continuity analysis"]
-        risk_indicators: ["Supplier withdrawals", "Customer losses", "Revenue impact"]
-
-      - id: "RI-CON-004"
-        question: "Are there any lease agreements requiring attention in the restructuring?"
-        priority: "high"
-        document_types: ["Lease schedule", "Landlord correspondence", "Surrender negotiations", "New lease terms"]
-        risk_indicators: ["Lease terminations", "Arrears", "Personal guarantees"]
-
-      - id: "RI-CON-005"
-        question: "Have all guarantees and suretyships been identified and analysed?"
-        priority: "high"
-        document_types: ["Guarantee register", "Suretyship agreements", "Indemnity analysis", "Contingent claims"]
-        risk_indicators: ["Called guarantees", "Personal exposure", "Group guarantees"]
-
-  - name: "Transaction Structure"
-    description: "Restructuring or acquisition structure and implementation"
-    questions:
-      - id: "RI-TXN-001"
-        question: "What is the proposed transaction structure and is it legally effective?"
-        priority: "critical"
-        document_types: ["Structure memorandum", "Legal opinions", "Tax analysis", "Implementation steps"]
-        risk_indicators: ["Structural weaknesses", "Legal challenges", "Implementation risks"]
-
-      - id: "RI-TXN-002"
-        question: "Are all required regulatory and court approvals obtainable?"
-        priority: "critical"
-        document_types: ["Approval requirements", "Applications", "Regulatory correspondence", "Court orders"]
-        risk_indicators: ["Approval delays", "Regulatory objections", "Court challenges"]
-
-      - id: "RI-TXN-003"
-        question: "Have all stakeholder consents been obtained or are they achievable?"
-        priority: "high"
-        document_types: ["Consent requirements", "Stakeholder analysis", "Consent letters", "Hold-out strategy"]
-        risk_indicators: ["Missing consents", "Hold-out creditors", "Shareholder opposition"]
-
-      - id: "RI-TXN-004"
-        question: "Is the proposed consideration and funding structure appropriate?"
-        priority: "high"
-        document_types: ["Consideration analysis", "Funding structure", "Sources and uses", "Condition precedent"]
-        risk_indicators: ["Funding gaps", "Consideration disputes", "Conditional funding"]
-
-      - id: "RI-TXN-005"
-        question: "Have successor liability and assumption of liabilities been properly addressed?"
-        priority: "high"
-        document_types: ["Liability analysis", "Assumption schedule", "Indemnities", "Legal opinions"]
-        risk_indicators: ["Successor liability risk", "Incomplete assumptions", "Indemnity coverage"]
-
-  - name: "Tax & Regulatory"
-    description: "Tax implications and regulatory considerations in restructuring"
-    questions:
-      - id: "RI-TAX-001"
-        question: "What are the tax implications of the proposed restructuring?"
-        priority: "high"
-        document_types: ["Tax opinion", "SARS correspondence", "Tax provisions", "Structure analysis"]
-        risk_indicators: ["Adverse tax consequences", "SARS claims", "Tax inefficiency"]
-
-      - id: "RI-TAX-002"
-        question: "Are there any outstanding SARS claims or disputes?"
-        priority: "high"
-        document_types: ["SARS claims", "Assessment notices", "Objections/appeals", "Settlement negotiations"]
-        risk_indicators: ["Large SARS claims", "Disputed assessments", "Penalties and interest"]
-
-      - id: "RI-TAX-003"
-        question: "Can any corporate reorganisation tax relief be utilised?"
-        priority: "medium"
-        document_types: ["Reorganisation analysis", "SARS rulings", "Relief applications", "Tax opinions"]
-        risk_indicators: ["Relief unavailable", "Qualifying issues", "Timing constraints"]
-
-      - id: "RI-TAX-004"
-        question: "Are there any sector-specific regulatory approvals required?"
-        priority: "medium"
-        document_types: ["Regulatory analysis", "Licence requirements", "Approval applications", "Regulatory correspondence"]
-        risk_indicators: ["Licence issues", "Regulatory delays", "Compliance requirements"]
-
+- name: Insolvency Status & Proceedings
+  description: Current insolvency status, proceedings, and statutory compliance
+  questions:
+  - id: RI-INS-001
+    question: What is the current insolvency status and have any formal proceedings been commenced?
+    priority: critical
+    document_types:
+    - Company records
+    - Court filings
+    - CIPC records
+    - Master's correspondence
+    risk_indicators:
+    - Formal insolvency
+    - Pending applications
+    - Multiple proceedings
+  - id: RI-INS-002
+    question: Has a business rescue practitioner been appointed and are they properly qualified?
+    priority: critical
+    document_types:
+    - BRP appointment
+    - CIPC registration
+    - Qualification certificates
+    - Independence declaration
+    risk_indicators:
+    - Unqualified practitioner
+    - Conflicts of interest
+    - Removal applications
+  - id: RI-INS-003
+    question: Are there factual or commercial insolvency indicators present?
+    priority: critical
+    document_types:
+    - Balance sheet
+    - Cash flow analysis
+    - Creditor age analysis
+    - Solvency assessment
+    risk_indicators:
+    - Balance sheet insolvency
+    - Cash flow insolvency
+    - Creditor pressure
+  - id: RI-INS-004
+    question: Has the moratorium on legal proceedings been properly implemented?
+    priority: high
+    document_types:
+    - Moratorium notices
+    - Court orders
+    - Creditor correspondence
+    - Legal proceedings register
+    risk_indicators:
+    - Moratorium breaches
+    - Excluded proceedings
+    - Enforcement attempts
+  - id: RI-INS-005
+    question: Are all statutory filing and notification requirements being met?
+    priority: high
+    document_types:
+    - Filing register
+    - CIPC correspondence
+    - Master notifications
+    - Publication evidence
+    risk_indicators:
+    - Late filings
+    - Non-compliance
+    - Regulatory sanctions
+  - id: RI-INS-006
+    question: What is the timeline for business rescue proceedings and key deadlines?
+    priority: high
+    document_types:
+    - Business rescue timeline
+    - Court orders
+    - Extension applications
+    - Creditor meeting notices
+    risk_indicators:
+    - Approaching deadlines
+    - Extension denials
+    - Delayed proceedings
+  - id: RI-INS-007
+    question: Are there any connected company insolvencies or group considerations?
+    priority: medium
+    document_types:
+    - Group structure
+    - Connected company status
+    - Intercompany claims
+    - Substantive consolidation analysis
+    risk_indicators:
+    - Multiple group insolvencies
+    - Intercompany complexities
+    - Consolidated proceedings
+- name: Creditor Analysis
+  description: Creditor identification, claims, and priority rankings
+  questions:
+  - id: RI-CRED-001
+    question: Have all creditors been identified and have their claims been verified?
+    priority: critical
+    document_types:
+    - Creditor register
+    - Proof of claims
+    - Claims verification report
+    - Disputed claims schedule
+    risk_indicators:
+    - Unknown creditors
+    - Disputed claims
+    - Incomplete verification
+  - id: RI-CRED-002
+    question: What is the creditor priority ranking and are there any secured creditors?
+    priority: critical
+    document_types:
+    - Security register
+    - Priority analysis
+    - PPSA registrations
+    - Notarial bonds
+    risk_indicators:
+    - Complex security structures
+    - Priority disputes
+    - Competing claims
+  - id: RI-CRED-003
+    question: Are there any creditors with preferential claims under the Insolvency Act?
+    priority: critical
+    document_types:
+    - Preferent creditor schedule
+    - Employee claims
+    - SARS claims
+    - Statutory preferences
+    risk_indicators:
+    - Large preferent claims
+    - Employee exposure
+    - Tax arrears
+  - id: RI-CRED-004
+    question: What are the total concurrent creditor claims and expected recovery rate?
+    priority: high
+    document_types:
+    - Concurrent creditor schedule
+    - Recovery analysis
+    - Dividend projections
+    - Comparative outcomes
+    risk_indicators:
+    - Low recovery expectations
+    - Large concurrent claims
+    - Asset shortfall
+  - id: RI-CRED-005
+    question: Are there any post-commencement creditors with super-priority claims?
+    priority: high
+    document_types:
+    - PCF register
+    - Post-commencement contracts
+    - BRP reports
+    - Super-priority analysis
+    risk_indicators:
+    - Large PCF exposure
+    - Unpaid PCF creditors
+    - Priority disputes
+  - id: RI-CRED-006
+    question: Have all creditor meetings been properly convened and conducted?
+    priority: high
+    document_types:
+    - Meeting notices
+    - Attendance registers
+    - Meeting minutes
+    - Voting records
+    risk_indicators:
+    - Procedural defects
+    - Creditor opposition
+    - Disputed resolutions
+  - id: RI-CRED-007
+    question: Are there any related party creditor claims requiring scrutiny?
+    priority: medium
+    document_types:
+    - Related party claims
+    - Intercompany balances
+    - Subordination agreements
+    - Arm's length analysis
+    risk_indicators:
+    - Large related party claims
+    - Subordination issues
+    - Preference risk
+- name: Business Rescue Plan
+  description: Plan development, approval, and implementation
+  questions:
+  - id: RI-PLAN-001
+    question: Is there a published business rescue plan and has it been adopted?
+    priority: critical
+    document_types:
+    - Business rescue plan
+    - Adoption certificate
+    - Voting analysis
+    - Court sanction order
+    risk_indicators:
+    - No plan published
+    - Plan rejection
+    - Implementation delays
+  - id: RI-PLAN-002
+    question: Does the plan demonstrate a reasonable prospect of rescuing the company?
+    priority: critical
+    document_types:
+    - Viability analysis
+    - Projections
+    - Turnaround strategy
+    - Independent review
+    risk_indicators:
+    - Weak viability case
+    - Unrealistic projections
+    - No turnaround strategy
+  - id: RI-PLAN-003
+    question: Does the plan provide for better returns than immediate liquidation?
+    priority: critical
+    document_types:
+    - Comparative analysis
+    - Liquidation valuation
+    - Plan dividend analysis
+    - Independent opinion
+    risk_indicators:
+    - Liquidation preference
+    - Marginal improvement
+    - Disputed valuations
+  - id: RI-PLAN-004
+    question: Are the funding arrangements for the rescue plan adequate and committed?
+    priority: critical
+    document_types:
+    - Funding commitments
+    - Term sheets
+    - Conditions precedent
+    - Security arrangements
+    risk_indicators:
+    - Conditional funding
+    - Insufficient commitments
+    - Funding gaps
+  - id: RI-PLAN-005
+    question: Does the plan adequately address employee interests and obligations?
+    priority: high
+    document_types:
+    - Employee section of plan
+    - Retrenchment provisions
+    - Union consultations
+    - CCMA compliance
+    risk_indicators:
+    - Mass retrenchments
+    - Employee opposition
+    - Labour law breaches
+  - id: RI-PLAN-006
+    question: Are all conditions precedent to plan implementation achievable?
+    priority: high
+    document_types:
+    - CP schedule
+    - Status report
+    - Waiver provisions
+    - Longstop dates
+    risk_indicators:
+    - Unachievable CPs
+    - Approaching longstop
+    - Waiver dependencies
+  - id: RI-PLAN-007
+    question: What are the key milestones and has progress been satisfactory?
+    priority: high
+    document_types:
+    - Implementation timeline
+    - Progress reports
+    - Milestone tracking
+    - BRP updates
+    risk_indicators:
+    - Missed milestones
+    - Implementation delays
+    - Plan amendments required
+  - id: RI-PLAN-008
+    question: Are there any affected persons who have not consented or may challenge the plan?
+    priority: medium
+    document_types:
+    - Affected persons register
+    - Consent analysis
+    - Objection notices
+    - Court challenges
+    risk_indicators:
+    - Objecting creditors
+    - Court challenges
+    - Hold-out risks
+- name: Asset Analysis
+  description: Asset identification, valuation, and preservation
+  questions:
+  - id: RI-ASS-001
+    question: Have all assets been identified and properly valued?
+    priority: critical
+    document_types:
+    - Asset register
+    - Valuation reports
+    - Physical verification
+    - Title documents
+    risk_indicators:
+    - Missing assets
+    - Valuation disputes
+    - Title issues
+  - id: RI-ASS-002
+    question: Are there any assets subject to security interests or retention of title?
+    priority: critical
+    document_types:
+    - Security register
+    - ROT analysis
+    - PPSA searches
+    - Creditor claims
+    risk_indicators:
+    - Extensive security
+    - ROT claims
+    - Asset shortfall
+  - id: RI-ASS-003
+    question: Are there any assets that may be subject to clawback or avoidance?
+    priority: critical
+    document_types:
+    - Disposition analysis
+    - Preference payments schedule
+    - Voidable transaction review
+    - BRP recommendations
+    risk_indicators:
+    - Voidable dispositions
+    - Preference payments
+    - Uncommercial transactions
+  - id: RI-ASS-004
+    question: Have intellectual property and other intangible assets been secured?
+    priority: high
+    document_types:
+    - IP register
+    - Licence agreements
+    - Domain registrations
+    - Know-how documentation
+    risk_indicators:
+    - Unregistered IP
+    - Licence terminations
+    - IP disputes
+  - id: RI-ASS-005
+    question: What is the status of any going concern sale processes?
+    priority: high
+    document_types:
+    - Sale process documents
+    - Indicative offers
+    - Due diligence access
+    - Transaction timeline
+    risk_indicators:
+    - No buyer interest
+    - Low offers
+    - Process delays
+  - id: RI-ASS-006
+    question: Are there any environmental or other contingent liabilities attached to assets?
+    priority: high
+    document_types:
+    - Environmental assessments
+    - Contamination reports
+    - Compliance certificates
+    - Remediation costs
+    risk_indicators:
+    - Environmental contamination
+    - Remediation obligations
+    - Regulatory orders
+  - id: RI-ASS-007
+    question: Have intercompany and related party receivables been analysed for recoverability?
+    priority: medium
+    document_types:
+    - Intercompany balances
+    - Recoverability assessment
+    - Related party analysis
+    - Write-off recommendations
+    risk_indicators:
+    - Irrecoverable balances
+    - Related party exposure
+    - Circular arrangements
+- name: Director & Management Conduct
+  description: Director duties, potential claims, and management issues
+  questions:
+  - id: RI-DIR-001
+    question: Have directors complied with their duties including the duty to prevent reckless trading?
+    priority: critical
+    document_types:
+    - Board minutes
+    - Director declarations
+    - Solvency assessments
+    - Legal opinions
+    risk_indicators:
+    - Reckless trading
+    - Breach of duties
+    - Personal liability exposure
+  - id: RI-DIR-002
+    question: Are there any potential claims against current or former directors?
+    priority: critical
+    document_types:
+    - Claims analysis
+    - D&O insurance
+    - Legal opinions
+    - BRP investigations
+    risk_indicators:
+    - Breach of duty claims
+    - Fraud indicators
+    - Inadequate insurance
+  - id: RI-DIR-003
+    question: Has there been any inappropriate disposition of assets before or during proceedings?
+    priority: critical
+    document_types:
+    - Transaction review
+    - Asset dispositions
+    - Related party transactions
+    - Value analysis
+    risk_indicators:
+    - Asset stripping
+    - Uncommercial transactions
+    - Related party benefits
+  - id: RI-DIR-004
+    question: Are current management appropriate to continue during rescue/wind-down?
+    priority: high
+    document_types:
+    - Management assessment
+    - BRP recommendations
+    - Conflict analysis
+    - Skills evaluation
+    risk_indicators:
+    - Management conflicts
+    - Skills gaps
+    - Trust issues
+  - id: RI-DIR-005
+    question: Have all director loans and related party transactions been disclosed?
+    priority: high
+    document_types:
+    - Director loan register
+    - Related party schedule
+    - Disclosure analysis
+    - Recovery potential
+    risk_indicators:
+    - Undisclosed transactions
+    - Unrecovered loans
+    - Preference issues
+  - id: RI-DIR-006
+    question: Are there any delinquency orders or director disqualifications to consider?
+    priority: medium
+    document_types:
+    - CIPC records
+    - Court orders
+    - Delinquency analysis
+    - Director declarations
+    risk_indicators:
+    - Prior disqualifications
+    - Delinquency applications
+    - Fitness concerns
+- name: Employee & Labour Matters
+  description: Employee claims, retrenchments, and labour law compliance
+  questions:
+  - id: RI-EMP-001
+    question: What is the total employee exposure including all statutory and contractual obligations?
+    priority: critical
+    document_types:
+    - Employee liability schedule
+    - Employment contracts
+    - Statutory calculations
+    - Benefits analysis
+    risk_indicators:
+    - Large employee claims
+    - Unfunded benefits
+    - Statutory non-compliance
+  - id: RI-EMP-002
+    question: Are there any pending or required section 189/189A processes?
+    priority: critical
+    document_types:
+    - S189 notices
+    - Consultation records
+    - CCMA referrals
+    - Facilitation process
+    risk_indicators:
+    - Non-compliance
+    - CCMA disputes
+    - Process delays
+  - id: RI-EMP-003
+    question: What is the status of pension and provident fund obligations?
+    priority: high
+    document_types:
+    - Fund certificates
+    - Contribution records
+    - Surplus analysis
+    - Withdrawal calculations
+    risk_indicators:
+    - Contribution arrears
+    - Surplus disputes
+    - Withdrawal delays
+  - id: RI-EMP-004
+    question: Are there any transfer of undertaking (section 197) considerations?
+    priority: high
+    document_types:
+    - S197 analysis
+    - Employee lists
+    - Transfer agreements
+    - Consultation records
+    risk_indicators:
+    - S197 disputes
+    - Incomplete transfers
+    - Employee objections
+  - id: RI-EMP-005
+    question: Have all key employee retention arrangements been considered?
+    priority: medium
+    document_types:
+    - Retention agreements
+    - KEIP analysis
+    - Critical skills assessment
+    - BRP recommendations
+    risk_indicators:
+    - Key person departures
+    - Retention failures
+    - Skills drain
+- name: Contractual Considerations
+  description: Contract treatment, terminations, and ongoing obligations
+  questions:
+  - id: RI-CON-001
+    question: Which contracts should be continued, terminated, or renegotiated?
+    priority: critical
+    document_types:
+    - Contract analysis
+    - BRP recommendations
+    - Cost-benefit analysis
+    - Termination notices
+    risk_indicators:
+    - Onerous contracts
+    - Critical dependencies
+    - Termination costs
+  - id: RI-CON-002
+    question: Are there any ipso facto clauses that have been triggered?
+    priority: critical
+    document_types:
+    - Ipso facto analysis
+    - Contract review
+    - Counterparty notices
+    - Legal opinions
+    risk_indicators:
+    - Triggered terminations
+    - Critical contract losses
+    - Supply interruptions
+  - id: RI-CON-003
+    question: What are the key supplier and customer contracts required for business continuation?
+    priority: high
+    document_types:
+    - Critical contracts list
+    - Supplier agreements
+    - Customer contracts
+    - Continuity analysis
+    risk_indicators:
+    - Supplier withdrawals
+    - Customer losses
+    - Revenue impact
+  - id: RI-CON-004
+    question: Are there any lease agreements requiring attention in the restructuring?
+    priority: high
+    document_types:
+    - Lease schedule
+    - Landlord correspondence
+    - Surrender negotiations
+    - New lease terms
+    risk_indicators:
+    - Lease terminations
+    - Arrears
+    - Personal guarantees
+  - id: RI-CON-005
+    question: Have all guarantees and suretyships been identified and analysed?
+    priority: high
+    document_types:
+    - Guarantee register
+    - Suretyship agreements
+    - Indemnity analysis
+    - Contingent claims
+    risk_indicators:
+    - Called guarantees
+    - Personal exposure
+    - Group guarantees
+- name: Transaction Structure
+  description: Restructuring or acquisition structure and implementation
+  questions:
+  - id: RI-TXN-001
+    question: What is the proposed transaction structure and is it legally effective?
+    priority: critical
+    document_types:
+    - Structure memorandum
+    - Legal opinions
+    - Tax analysis
+    - Implementation steps
+    risk_indicators:
+    - Structural weaknesses
+    - Legal challenges
+    - Implementation risks
+  - id: RI-TXN-002
+    question: Are all required regulatory and court approvals obtainable?
+    priority: critical
+    document_types:
+    - Approval requirements
+    - Applications
+    - Regulatory correspondence
+    - Court orders
+    risk_indicators:
+    - Approval delays
+    - Regulatory objections
+    - Court challenges
+  - id: RI-TXN-003
+    question: Have all stakeholder consents been obtained or are they achievable?
+    priority: high
+    document_types:
+    - Consent requirements
+    - Stakeholder analysis
+    - Consent letters
+    - Hold-out strategy
+    risk_indicators:
+    - Missing consents
+    - Hold-out creditors
+    - Shareholder opposition
+  - id: RI-TXN-004
+    question: Is the proposed consideration and funding structure appropriate?
+    priority: high
+    document_types:
+    - Consideration analysis
+    - Funding structure
+    - Sources and uses
+    - Condition precedent
+    risk_indicators:
+    - Funding gaps
+    - Consideration disputes
+    - Conditional funding
+  - id: RI-TXN-005
+    question: Have successor liability and assumption of liabilities been properly addressed?
+    priority: high
+    document_types:
+    - Liability analysis
+    - Assumption schedule
+    - Indemnities
+    - Legal opinions
+    risk_indicators:
+    - Successor liability risk
+    - Incomplete assumptions
+    - Indemnity coverage
+- name: Tax & Regulatory
+  description: Tax implications and regulatory considerations in restructuring
+  questions:
+  - id: RI-TAX-001
+    question: What are the tax implications of the proposed restructuring?
+    priority: high
+    document_types:
+    - Tax opinion
+    - SARS correspondence
+    - Tax provisions
+    - Structure analysis
+    risk_indicators:
+    - Adverse tax consequences
+    - SARS claims
+    - Tax inefficiency
+  - id: RI-TAX-002
+    question: Are there any outstanding SARS claims or disputes?
+    priority: high
+    document_types:
+    - SARS claims
+    - Assessment notices
+    - Objections/appeals
+    - Settlement negotiations
+    risk_indicators:
+    - Large SARS claims
+    - Disputed assessments
+    - Penalties and interest
+  - id: RI-TAX-003
+    question: Can any corporate reorganisation tax relief be utilised?
+    priority: medium
+    document_types:
+    - Reorganisation analysis
+    - SARS rulings
+    - Relief applications
+    - Tax opinions
+    risk_indicators:
+    - Relief unavailable
+    - Qualifying issues
+    - Timing constraints
+  - id: RI-TAX-004
+    question: Are there any sector-specific regulatory approvals required?
+    priority: medium
+    document_types:
+    - Regulatory analysis
+    - Licence requirements
+    - Approval applications
+    - Regulatory correspondence
+    risk_indicators:
+    - Licence issues
+    - Regulatory delays
+    - Compliance requirements
 cross_document_validations:
-  - validation_id: "RI-CROSS-001"
-    description: "Creditor claims in plan agree to verified claims register"
-    primary_docs: ["Business rescue plan - creditor section"]
-    secondary_docs: ["Claims verification report", "Creditor register"]
-    check_type: "financial_consistency"
-
-  - validation_id: "RI-CROSS-002"
-    description: "Asset valuations support recovery projections in plan"
-    primary_docs: ["Business rescue plan - asset section"]
-    secondary_docs: ["Valuation reports", "Asset register"]
-    check_type: "verification"
-
-  - validation_id: "RI-CROSS-003"
-    description: "Employee numbers and claims consistent across documents"
-    primary_docs: ["Employee liability schedule"]
-    secondary_docs: ["S189 documents", "Plan employee section", "Payroll records"]
-    check_type: "completeness"
-
-  - validation_id: "RI-CROSS-004"
-    description: "Funding commitments match plan requirements"
-    primary_docs: ["Funding term sheets"]
-    secondary_docs: ["Business rescue plan - funding section", "Cash flow projections"]
-    check_type: "financial_consistency"
-
+- validation_id: RI-CROSS-001
+  description: Creditor claims in plan agree to verified claims register
+  primary_docs:
+  - Business rescue plan - creditor section
+  secondary_docs:
+  - Claims verification report
+  - Creditor register
+  check_type: financial_consistency
+- validation_id: RI-CROSS-002
+  description: Asset valuations support recovery projections in plan
+  primary_docs:
+  - Business rescue plan - asset section
+  secondary_docs:
+  - Valuation reports
+  - Asset register
+  check_type: verification
+- validation_id: RI-CROSS-003
+  description: Employee numbers and claims consistent across documents
+  primary_docs:
+  - Employee liability schedule
+  secondary_docs:
+  - S189 documents
+  - Plan employee section
+  - Payroll records
+  check_type: completeness
+- validation_id: RI-CROSS-004
+  description: Funding commitments match plan requirements
+  primary_docs:
+  - Funding term sheets
+  secondary_docs:
+  - Business rescue plan - funding section
+  - Cash flow projections
+  check_type: financial_consistency
 deal_blockers:
-  - blocker_id: "RI-BLOCK-001"
-    condition: "Business rescue plan rejected by required majority"
-    severity: "critical"
-    mitigation: "Engage creditors early, consider plan amendments, address objections"
-
-  - blocker_id: "RI-BLOCK-002"
-    condition: "No reasonable prospect of rescue demonstrated"
-    severity: "critical"
-    mitigation: "Detailed viability analysis, secure committed funding, demonstrate turnaround"
-
-  - blocker_id: "RI-BLOCK-003"
-    condition: "Post-commencement funding not available"
-    severity: "critical"
-    mitigation: "Early engagement with funders, alternative funding sources, staged funding"
-
-  - blocker_id: "RI-BLOCK-004"
-    condition: "Material reckless trading liability discovered"
-    severity: "high"
-    mitigation: "D&O insurance review, director indemnities, ring-fence liability"
-
-  - blocker_id: "RI-BLOCK-005"
-    condition: "Critical contracts terminated under ipso facto clauses"
-    severity: "high"
-    mitigation: "Early stakeholder engagement, alternative arrangements, injunctive relief"
-
-  - blocker_id: "RI-BLOCK-006"
-    condition: "SARS preferent claim exceeds asset value"
-    severity: "high"
-    mitigation: "SARS engagement, instalment arrangements, compromise discussions"
+- blocker_id: RI-BLOCK-001
+  condition: Business rescue plan rejected by required majority
+  severity: critical
+  mitigation: Engage creditors early, consider plan amendments, address objections
+- blocker_id: RI-BLOCK-002
+  condition: No reasonable prospect of rescue demonstrated
+  severity: critical
+  mitigation: Detailed viability analysis, secure committed funding, demonstrate turnaround
+- blocker_id: RI-BLOCK-003
+  condition: Post-commencement funding not available
+  severity: critical
+  mitigation: Early engagement with funders, alternative funding sources, staged funding
+- blocker_id: RI-BLOCK-004
+  condition: Material reckless trading liability discovered
+  severity: high
+  mitigation: D&O insurance review, director indemnities, ring-fence liability
+- blocker_id: RI-BLOCK-005
+  condition: Critical contracts terminated under ipso facto clauses
+  severity: high
+  mitigation: Early stakeholder engagement, alternative arrangements, injunctive relief
+- blocker_id: RI-BLOCK-006
+  condition: SARS preferent claim exceeds asset value
+  severity: high
+  mitigation: SARS engagement, instalment arrangements, compromise discussions
+folder_questions:
+  01_Corporate_Governance:
+    display_name: Corporate & Governance
+    relevance: critical
+    questions:
+    - question: What is the current insolvency status and are there formal proceedings?
+      priority: critical
+      detail: Business rescue, liquidation, scheme of arrangement
+      cot_hint: Check status → identify proceedings → verify filings
+    - question: Has a business rescue practitioner been properly appointed?
+      priority: critical
+      detail: BRP appointment, CIPC registration, independence
+      cot_hint: Verify appointment → check qualifications → assess conflicts
+    - question: Have directors complied with duties including reckless trading?
+      priority: critical
+      detail: Director duties, Section 22, reckless trading liability
+      cot_hint: Review conduct → assess compliance → identify exposure
+    cross_doc_checks:
+    - check: Verify BRP appointment matches CIPC records
+      related_folders: []
+      description: Appointment letter vs CIPC registration
+  02_Commercial:
+    display_name: Commercial Contracts
+    relevance: critical
+    questions:
+    - question: Which contracts should be continued, terminated, or renegotiated?
+      priority: critical
+      detail: Contract analysis, onerous contracts, essential services
+      cot_hint: Categorize contracts → assess value → recommend treatment
+    - question: Are there ipso facto clauses that have been triggered?
+      priority: critical
+      detail: Insolvency triggers, termination rights, cure provisions
+      cot_hint: Identify ipso facto → assess triggers → evaluate impact
+    - question: What key supplier and customer contracts are required for continuation?
+      priority: high
+      detail: Critical contracts, supply chain, revenue dependencies
+      cot_hint: List critical contracts → assess continuation → negotiate
+    cross_doc_checks:
+    - check: Verify contract treatment aligns with rescue plan
+      related_folders:
+      - 11_Rescue
+      description: Contract analysis vs plan assumptions
+  03_Financial:
+    display_name: Financial & Banking
+    relevance: critical
+    questions:
+    - question: Is the company commercially or factually insolvent?
+      priority: critical
+      detail: Balance sheet test, cash flow test, solvency assessment
+      cot_hint: Apply tests → assess position → determine status
+    - question: What is the total creditor exposure and priority ranking?
+      priority: critical
+      detail: Secured, preferent, concurrent claims
+      cot_hint: List claims → apply rankings → calculate recovery
+    - question: What post-commencement funding is available or required?
+      priority: critical
+      detail: PCF terms, super-priority, funding commitments
+      cot_hint: Assess funding needs → identify sources → structure PCF
+    - question: What is the expected recovery rate compared to liquidation?
+      priority: critical
+      detail: Comparative analysis, going concern value, liquidation value
+      cot_hint: Compare outcomes → calculate dividends → demonstrate benefit
+    cross_doc_checks:
+    - check: Verify creditor claims match verified claims register
+      related_folders:
+      - 11_Rescue
+      description: Creditor schedule vs claims verification
+  04_Regulatory:
+    display_name: Regulatory & Compliance
+    relevance: high
+    questions:
+    - question: Are all statutory filing and notification requirements being met?
+      priority: critical
+      detail: CIPC filings, Master notifications, publication
+      cot_hint: Check filings → verify notifications → confirm compliance
+    - question: Has the moratorium on legal proceedings been properly implemented?
+      priority: high
+      detail: Moratorium scope, excluded proceedings, enforcement
+      cot_hint: Review moratorium → check enforcement → identify exceptions
+    - question: Are there any sector-specific regulatory approvals required?
+      priority: high
+      detail: Licence transfers, regulatory consents
+      cot_hint: Identify regulators → check requirements → plan approvals
+    cross_doc_checks: []
+  05_Employment:
+    display_name: Employment & Labour
+    relevance: critical
+    questions:
+    - question: What is the total employee exposure including statutory and contractual?
+      priority: critical
+      detail: Employee claims, severance, leave pay, pension
+      cot_hint: Calculate claims → identify statutory → quantify exposure
+    - question: Are there pending or required Section 189/189A processes?
+      priority: critical
+      detail: Retrenchment consultations, CCMA referrals
+      cot_hint: Check for notices → assess status → plan process
+    - question: What are the pension and provident fund obligations?
+      priority: high
+      detail: Fund contributions, arrears, withdrawal benefits
+      cot_hint: Check fund status → identify arrears → calculate liability
+    - question: Are there Section 197 transfer considerations?
+      priority: high
+      detail: Transfer of undertaking, automatic transfer
+      cot_hint: Assess transfer → identify employees → plan consultation
+    cross_doc_checks:
+    - check: Verify employee claims match payroll records
+      related_folders:
+      - 03_Financial
+      description: Employee liability vs HR/payroll records
+  06_Property:
+    display_name: Property & Assets
+    relevance: high
+    questions:
+    - question: Have all assets been identified and properly valued?
+      priority: critical
+      detail: Asset register, valuations, physical verification
+      cot_hint: Verify assets → check valuations → identify discrepancies
+    - question: Are there assets subject to security or retention of title?
+      priority: critical
+      detail: Secured assets, ROT claims, PPSA registrations
+      cot_hint: List secured assets → verify registrations → assess priority
+    - question: Are there any assets subject to clawback or avoidance?
+      priority: critical
+      detail: Dispositions at undervalue, preferences, voidable transactions
+      cot_hint: Review transactions → apply tests → identify voidable
+    cross_doc_checks:
+    - check: Verify security registrations match creditor claims
+      related_folders:
+      - 03_Financial
+      description: Security register vs secured creditor schedule
+  07_Insurance:
+    display_name: Insurance
+    relevance: medium
+    questions:
+    - question: Is D&O insurance in place and adequate?
+      priority: high
+      detail: D&O coverage, claims notifications, coverage adequacy
+      cot_hint: Check D&O → notify claims → assess coverage
+    - question: Have claims been notified to insurers?
+      priority: high
+      detail: Claims notification, policy triggers, coverage analysis
+      cot_hint: List claims → notify insurers → preserve coverage
+    cross_doc_checks: []
+  08_Litigation:
+    display_name: Litigation & Disputes
+    relevance: high
+    questions:
+    - question: What litigation is stayed by the moratorium?
+      priority: high
+      detail: Stayed proceedings, excluded claims, secured creditor enforcement
+      cot_hint: List proceedings → check moratorium → identify exceptions
+    - question: Are there potential claims against directors?
+      priority: critical
+      detail: Reckless trading, breach of duty, personal liability
+      cot_hint: Assess conduct → identify claims → evaluate recourse
+    - question: Are there any related party transactions to investigate?
+      priority: high
+      detail: Related party dispositions, preferences, uncommercial transactions
+      cot_hint: Review transactions → identify related parties → assess voidable
+    cross_doc_checks:
+    - check: Cross-reference director claims with D&O insurance
+      related_folders:
+      - 07_Insurance
+      description: Director liability vs insurance coverage
+  09_Tax:
+    display_name: Tax
+    relevance: high
+    questions:
+    - question: What are the outstanding SARS claims and priority?
+      priority: critical
+      detail: SARS preferent claims, VAT, PAYE arrears
+      cot_hint: Quantify SARS claims → confirm priority → assess impact
+    - question: What are the tax implications of the restructuring?
+      priority: high
+      detail: Debt forgiveness, CGT on disposals, reorganization relief
+      cot_hint: Analyze structure → identify triggers → optimize treatment
+    - question: Can any corporate reorganization tax relief be utilized?
+      priority: medium
+      detail: Section 41-47 relief, SARS rulings
+      cot_hint: Check qualifying requirements → apply for relief
+    cross_doc_checks:
+    - check: Verify SARS claims match preferent creditor schedule
+      related_folders:
+      - 03_Financial
+      description: SARS claims vs creditor priority analysis
+  10_Transaction:
+    display_name: Transaction Structure
+    relevance: critical
+    questions:
+    - question: What is the proposed transaction structure and is it legally effective?
+      priority: critical
+      detail: Structure design, legal opinions, implementation steps
+      cot_hint: Review structure → check legal validity → plan implementation
+    - question: Are all required stakeholder consents obtainable?
+      priority: critical
+      detail: Creditor consents, shareholder approval, regulatory consents
+      cot_hint: Identify consents → assess likelihood → plan approach
+    - question: Have successor liability issues been addressed?
+      priority: high
+      detail: Assumption of liabilities, indemnities, ring-fencing
+      cot_hint: Analyze liability → structure protection → document indemnities
+    cross_doc_checks:
+    - check: Verify transaction structure matches rescue plan
+      related_folders:
+      - 11_Rescue
+      description: Transaction docs vs business rescue plan
+  11_Rescue:
+    display_name: Business Rescue Plan
+    relevance: critical
+    questions:
+    - question: Has a business rescue plan been published and adopted?
+      priority: critical
+      detail: Plan publication, creditor vote, adoption
+      cot_hint: Check plan status → verify vote → confirm adoption
+    - question: Does the plan demonstrate reasonable prospect of rescue?
+      priority: critical
+      detail: Viability analysis, turnaround strategy, projections
+      cot_hint: Assess viability → review strategy → evaluate prospects
+    - question: Does the plan provide better returns than liquidation?
+      priority: critical
+      detail: Comparative analysis, dividend projections
+      cot_hint: Compare outcomes → calculate dividends → demonstrate benefit
+    - question: Are funding arrangements adequate and committed?
+      priority: critical
+      detail: Funding commitments, conditions, security
+      cot_hint: Check funding → verify commitments → assess conditionality
+    - question: Are all conditions precedent achievable?
+      priority: high
+      detail: CP schedule, longstop dates, waiver provisions
+      cot_hint: List CPs → assess achievability → plan satisfaction
+    cross_doc_checks:
+    - check: Verify plan assumptions match financial projections
+      related_folders:
+      - 03_Financial
+      description: Plan projections vs financial model
+  99_Needs_Review:
+    display_name: Needs Review
+    relevance: low
+    questions:
+    - question: What restructuring or insolvency issues does this document raise?
+      priority: medium
+      detail: Documents requiring manual classification review
+      cot_hint: Identify restructuring content → flag for review
+    cross_doc_checks: []
+cot_questions:
+  ownership_regulatory:
+  - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
+  - How does this transaction change the ownership structure? What is the post-transaction ownership?
+  - What regulatory approvals or notifications are triggered by ownership changes (e.g., >15%, >25%, >49% thresholds)?
+  - Are there any ownership restrictions in constitutional documents, shareholder agreements, or regulatory conditions?
+  - What licenses, permits, or authorizations are dependent on the current ownership structure?
+  - What are the consequences of non-compliance with ownership-based regulatory requirements?
+  financial_distress:
+  - What is the current liquidity position and cash runway?
+  - Is the company commercially or factually insolvent?
+  - What are the directors' duties given the financial position?
+  - What is the debt maturity profile and refinancing exposure?
+  stakeholder_position:
+  - Who are the key creditors and what are their claims?
+  - What is the inter-creditor position and priority of claims?
+  - Are there any secured vs unsecured creditor conflicts?
+  - What is the employee and trade creditor exposure?
+  restructuring_options:
+  - What restructuring options are available (business rescue, compromise)?
+  - What are the prospects of a successful restructuring?
+  - What stakeholder support exists for restructuring?
+  - What is the timeline and cost of restructuring?
+  business_rescue:
+  - Has business rescue been commenced or is it contemplated?
+  - Who is the business rescue practitioner?
+  - What is the status of the business rescue plan?
+  - What creditor voting thresholds apply?
+  asset_disposal:
+  - What assets are available for disposal?
+  - What is the likely realization value vs book value?
+  - Are there any restrictions on asset disposals?
+  - What is the process for asset sales?

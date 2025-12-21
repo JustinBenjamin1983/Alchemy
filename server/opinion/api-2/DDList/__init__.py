@@ -3,6 +3,7 @@
 import logging
 import os
 import json
+import re
 
 import azure.functions as func
 from shared.utils import auth_get_email
@@ -11,6 +12,16 @@ from shared.session import transactional_session
 from shared.models import DueDiligence, DueDiligenceMember, Folder, Document
 
 DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
+
+
+def extract_transaction_type(briefing: str) -> str | None:
+    """Extract transaction type code from briefing text."""
+    if not briefing:
+        return None
+    match = re.search(r"Transaction Type:\s*(\S+)", briefing, re.IGNORECASE)
+    if match:
+        return match.group(1).strip()
+    return None
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('working')
@@ -110,6 +121,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             projected_results = [
                 {
                     **{k: v for k, v in dd.to_dict().items() if k in ["id", "name", "created_at"]},
+                    "transaction_type": extract_transaction_type(dd.briefing),
                     "has_in_progress_docs": has_progress
                 }
                 for dd, has_progress in results

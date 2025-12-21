@@ -1,58 +1,44 @@
 // File: ui/src/pages/DD/RiskSummary.tsx
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
-import { DiligenceDashboard } from "./DiligenceDashboard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  CheckCircle,
-  AlertCircle,
-  Info,
-  FileCheck2,
-  MoreVertical,
-  Filter,
-  Download,
-  Eye,
-  EyeOff,
-  AlertTriangle,
-  FileText,
-  TrendingUp,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useGetDDRiskResults } from "@/hooks/useGetDDRiskResults";
-import { useMutateGetLink } from "@/hooks/useMutateGetLink";
-import Markdown from "react-markdown";
-import { useMutatePerspectiveRiskFindingStatusChange } from "@/hooks/useMutatePerspectiveRiskFindingStatusChange";
-import { useMutatePerspectiveRiskFindingSetIsReviewed } from "@/hooks/useMutatePerspectiveRiskFindingSetIsReviewed";
-import { AlertCheckFor } from "@/components/AlertCheckFor";
 import { useMutateDDRiskAdd } from "@/hooks/useMutateDDRiskAdd";
-import SingleTextPrompt from "@/components/SingleTextPrompt";
 import { useMutateDDRiskEdit } from "@/hooks/useMutateDDRiskEdit";
-import { useGetDDRisks } from "@/hooks/useGetDDRisks";
 import { useGetDD } from "@/hooks/useGetDD";
 import EnhancedRiskManager from "./EnhancedRiskManager";
-import { generateDDReport } from "@/utils/reportGenerator";
-import { useAxiosWithAuth } from "@/hooks/useAxiosWithAuth";
+import SingleTextPrompt from "@/components/SingleTextPrompt";
+import { useAnalysisRunsList } from "@/hooks/useAnalysisRuns";
+import { FindingsExplorer } from "./FindingsExplorer";
+import { useMutateExportDDReport } from "@/hooks/useMutateExportDDReport";
+import { useMutateGetLink } from "@/hooks/useMutateGetLink";
+import { useMutateChat } from "@/hooks/useMutateChat";
+import type {
+  Finding as ExplorerFinding,
+  RunInfo,
+  HumanReview,
+  ChatMessage,
+  CompletenessCheckData,
+  MissingItemStatus
+} from "./FindingsExplorer/types";
 
 type DocRef = {
   id: string;
   original_file_name: string;
-  folder: { path: string };
+  folder: { path: string; category?: string };
+};
+
+type FindingReasoning = {
+  step_1_identification?: string;
+  step_2_context?: string;
+  step_3_transaction_impact?: string;
+  step_4_severity_reasoning?: string;
+  step_5_deal_impact_reasoning?: string;
+  step_6_financial_quantification?: string;
+};
+
+type FinancialExposure = {
+  amount: number | null;
+  currency: string;
+  calculation: string | null;
 };
 
 type Finding = {
@@ -65,202 +51,143 @@ type Finding = {
   phrase?: string;
   evidence_quote?: string;
   requires_action?: boolean;
-  action_items?: string; // JSON string
-  missing_documents?: string; // JSON string
+  action_items?: string;
+  missing_documents?: string;
   document: DocRef;
   page_number?: number;
   finding_is_reviewed?: boolean;
   detail?: string;
   category?: string;
+  // Chain of Thought reasoning from AI
+  reasoning?: FindingReasoning;
+  // Financial exposure with calculation details
+  financial_exposure?: FinancialExposure;
+  deal_impact?: string;
+  // Gap-specific fields
+  gap_reason?: 'documents_not_provided' | 'information_not_found' | 'inconclusive';
+  gap_detail?: string;
+  documents_analyzed_count?: number;
 };
 
-type CategoryGroup = {
-  all: Finding[];
-  positive: Finding[];
-  negative: Finding[];
-  neutral: Finding[];
-  gaps: Finding[];
-  questions: Record<string, Finding[]>;
-};
+// Helper to format structured reasoning into readable chain of thought
+function formatReasoningToChainOfThought(reasoning?: FindingReasoning): string | undefined {
+  if (!reasoning) return undefined;
 
-// Helper functions
-function getUnmatchedPerspectiveRisks(risks, findingsByCategory) {
-  const allFindingIds = new Set();
-  findingsByCategory.forEach((category) => {
-    category.findings.forEach((finding) => {
-      allFindingIds.add(finding.perspective_risk_id);
-    });
-  });
-  return risks.filter((risk) => !allFindingIds.has(risk.perspective_risk_id));
-}
+  const sections: string[] = [];
 
-function isEmptyFinding(finding) {
-  return (
-    !finding.phrase ||
-    finding.phrase.trim() === "" ||
-    finding.phrase.includes("Nothing useful found") ||
-    finding.phrase.includes("No relevant content found") ||
-    finding.phrase.includes("Unable to find relevant information")
-  );
-}
-
-function filterFindings(findings, showEmptyFindings) {
-  if (showEmptyFindings) {
-    return findings;
+  if (reasoning.step_1_identification) {
+    sections.push(`**Identification:** ${reasoning.step_1_identification}`);
   }
-  return findings.filter((finding) => !isEmptyFinding(finding));
+  if (reasoning.step_2_context) {
+    sections.push(`**Context:** ${reasoning.step_2_context}`);
+  }
+  if (reasoning.step_3_transaction_impact) {
+    sections.push(`**Transaction Impact:** ${reasoning.step_3_transaction_impact}`);
+  }
+  if (reasoning.step_4_severity_reasoning) {
+    sections.push(`**Severity Reasoning:** ${reasoning.step_4_severity_reasoning}`);
+  }
+  if (reasoning.step_5_deal_impact_reasoning) {
+    sections.push(`**Deal Impact Reasoning:** ${reasoning.step_5_deal_impact_reasoning}`);
+  }
+  if (reasoning.step_6_financial_quantification) {
+    sections.push(`**Financial Quantification:** ${reasoning.step_6_financial_quantification}`);
+  }
+
+  return sections.length > 0 ? sections.join('\n\n') : undefined;
 }
 
 // Main component
 export function RiskSummary() {
-  const [selectedDDID, setSelectedDDID] = useState(() => {
+  const [selectedDDID] = useState(() => {
     const query = new URLSearchParams(location.search);
     return query.get("id");
   });
 
   // State management
-  const [viewMode, setViewMode] = useState<
-    "dashboard" | "detailed" | "risks" | "compliance"
-  >("dashboard");
-  const [filterType, setFilterType] = useState<
-    "all" | "positive" | "negative" | "gaps" | "neutral"
-  >("all");
-  const [filterConfidence, setFilterConfidence] = useState<
-    "all" | "high" | "medium" | "low"
-  >("all");
-  const [filterCategory, setFilterCategory] = useState<string>("all");
-  const [showEmptyFindings, setShowEmptyFindings] = useState(false);
-  const [selectedFindingId, setSelectedFindingId] = useState(null);
-  const [showAskToDelete, setShowAskToDelete] = useState(false);
   const [showEnhancedRiskManager, setShowEnhancedRiskManager] = useState(false);
   const [showEditRisk, setShowEditRisk] = useState(false);
-  const [selectedRisk, setSelectedRisk] = useState(null);
-  const [currentTab, setCurrentTab] = useState<string>(null);
-  const [risksNotProcessed, setRisksNotProcessed] = useState(null);
+  const [selectedRisk, setSelectedRisk] = useState<{ id: string; detail: string } | null>(null);
+  const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
 
-  // Polling state
-  const [isPolling, setIsPolling] = useState(false);
-  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  // Human Review state
+  const [findingReviews, setFindingReviews] = useState<Record<string, HumanReview>>({});
+
+  // AI Chat state
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [isChatLoading, setIsChatLoading] = useState(false);
+
+  // Completeness Check state (mock data for now - will be fetched from API)
+  const [completenessData, setCompletenessData] = useState<CompletenessCheckData>({
+    missing_documents: [],
+    unanswered_questions: [],
+    completeness_score: 100,
+    documents_received: 0,
+    documents_expected: 0,
+    questions_answered: 0,
+    questions_total: 0,
+    last_checked_at: new Date().toISOString()
+  });
+  const [isCompletenessLoading, setIsCompletenessLoading] = useState(false);
+
+  // Report generation state
+  const [reportTypeLoading, setReportTypeLoading] = useState<'preliminary' | 'final' | null>(null);
 
   // Hooks
-  const mutateRiskFindingSetIsReviewed =
-    useMutatePerspectiveRiskFindingSetIsReviewed();
-  const mutateGetLink = useMutateGetLink();
-  const mutateChangeRiskStatus = useMutatePerspectiveRiskFindingStatusChange();
   const mutateAddRisk = useMutateDDRiskAdd();
   const mutateEditRisk = useMutateDDRiskEdit();
-  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
-  const [isExportingReport, setIsExportingReport] = useState(false);
-  const axios = useAxiosWithAuth();
+  const exportReportMutation = useMutateExportDDReport();
+  const mutateGetLink = useMutateGetLink();
+  const chatMutation = useMutateChat();
 
-  const handleGenerateReport = async () => {
-    if (!dd || filteredFindings.length === 0) {
-      alert("No findings available to generate report");
-      return;
-    }
-    setIsGeneratingReport(true);
-    try {
-      await generateDDReport(dd.name, filteredFindings, categories);
-    } catch (error) {
-      console.error("Failed to generate report:", error);
-      alert("Failed to generate report. Please try again.");
-    } finally {
-      setIsGeneratingReport(false);
-    }
-  };
+  const { data: runsData } = useAnalysisRunsList(selectedDDID || undefined);
+  const { data: dd } = useGetDD(selectedDDID);
 
-  const { data: risks, refetch: refetchRisks } = useGetDDRisks(selectedDDID);
   const {
     data: riskResultsRaw,
-    isSuccess: ddRiskResultsSuccess,
     refetch: refetchRiskResults,
     isFetching: isRiskResultsFetching,
-  } = useGetDDRiskResults(selectedDDID);
+  } = useGetDDRiskResults(selectedDDID, selectedRunId);
 
   const riskResults = (riskResultsRaw ?? []) as Array<{
     category?: string;
     findings?: Finding[];
   }>;
 
-  const { data: dd } = useGetDD(selectedDDID);
+  // Auto-select the most recent completed run if none selected
+  useEffect(() => {
+    if (runsData?.runs && runsData.runs.length > 0 && !selectedRunId) {
+      const completedRuns = runsData.runs.filter((r) => r.status === "completed");
+      if (completedRuns.length > 0) {
+        setSelectedRunId(completedRuns[0].run_id);
+      }
+    }
+  }, [runsData, selectedRunId]);
 
-  // Manual refresh function (same as your working refresh button)
+  // Get synthesis data from selected run
+  const selectedRunSynthesis = useMemo(() => {
+    if (!runsData?.runs || !selectedRunId) return null;
+    const selectedRun = runsData.runs.find((r) => r.run_id === selectedRunId);
+    return selectedRun?.synthesis_data || null;
+  }, [runsData, selectedRunId]);
+
+  // Get all analyzed documents from selected run
+  const selectedRunDocuments = useMemo(() => {
+    if (!runsData?.runs || !selectedRunId) return [];
+    const selectedRun = runsData.runs.find((r) => r.run_id === selectedRunId);
+    return selectedRun?.selected_documents || [];
+  }, [runsData, selectedRunId]);
+
+  // Manual refresh function
   const handleManualRefresh = useCallback(async () => {
     try {
-      await Promise.all([refetchRisks(), refetchRiskResults()]);
+      await refetchRiskResults();
     } catch (error) {
       console.warn("Refresh error:", error);
     }
-  }, [refetchRisks, refetchRiskResults]);
+  }, [refetchRiskResults]);
 
-  // Start polling function
-  const startPolling = useCallback(() => {
-    if (pollingIntervalRef.current) {
-      clearInterval(pollingIntervalRef.current);
-    }
-
-    pollingIntervalRef.current = setInterval(() => {
-      handleManualRefresh();
-    }, 5000); // Poll every 5 seconds
-
-    setIsPolling(true);
-  }, [handleManualRefresh]);
-
-  // Stop polling function
-  const stopPolling = useCallback(() => {
-    if (pollingIntervalRef.current) {
-      clearInterval(pollingIntervalRef.current);
-      pollingIntervalRef.current = null;
-    }
-    setIsPolling(false);
-  }, []);
-
-  // Clean up polling on unmount
-  useEffect(() => {
-    return () => {
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-      }
-    };
-  }, []);
-
-  // Smart polling logic - start/stop based on processing status
-  useEffect(() => {
-    if (risks && riskResults) {
-      const unprocessedRisks = getUnmatchedPerspectiveRisks(risks, riskResults);
-      const hasUnprocessedRisks =
-        unprocessedRisks && unprocessedRisks.length > 0;
-
-      setRisksNotProcessed(unprocessedRisks);
-
-      if (hasUnprocessedRisks && !isPolling) {
-        // Start polling when we have unprocessed risks
-        console.log(
-          "Starting polling - unprocessed risks found:",
-          unprocessedRisks.length
-        );
-        startPolling();
-      } else if (!hasUnprocessedRisks && isPolling) {
-        // Stop polling when processing is complete
-        console.log("Stopping polling - all risks processed");
-        stopPolling();
-
-        // Do one final refresh after stopping
-        setTimeout(() => {
-          handleManualRefresh();
-        }, 2000);
-      }
-    }
-  }, [
-    risks,
-    riskResults,
-    isPolling,
-    startPolling,
-    stopPolling,
-    handleManualRefresh,
-  ]);
-
-  // Process and filter findings
+  // Process findings
   const allFindings: Finding[] = useMemo(() => {
     if (!riskResults) return [];
     return riskResults.flatMap((category) =>
@@ -271,193 +198,102 @@ export function RiskSummary() {
     );
   }, [riskResults]);
 
-  const filteredFindings: Finding[] = useMemo(() => {
-    let findings = [...allFindings];
-    // Apply category filter
-    if (filterCategory !== "all") {
-      findings = findings.filter((f) => f.category === filterCategory);
-    }
-    // Apply type filter
-    if (filterType !== "all") {
-      findings = findings.filter((f) => {
-        const findingType = f.finding_type || "neutral";
-        if (filterType === "positive")
-          return findingType === "positive" || f.finding_status === "Green";
-        if (filterType === "negative")
-          return (
-            findingType === "negative" ||
-            ["Red", "Amber"].includes(f.finding_status)
-          );
-        if (filterType === "gaps")
-          return findingType === "gap" || f.finding_status === "Info";
-        if (filterType === "neutral")
-          return findingType === "neutral" || findingType === "informational";
-        return true;
-      });
-    }
-    // Apply confidence filter
-    if (filterConfidence !== "all") {
-      findings = findings.filter((f) => {
-        const confidence = f.confidence_score || 0.5;
-        if (filterConfidence === "high") return confidence >= 0.8;
-        if (filterConfidence === "medium")
-          return confidence >= 0.5 && confidence < 0.8;
-        if (filterConfidence === "low") return confidence < 0.5;
-        return true;
-      });
-    }
-    // Apply empty findings filter
-    if (!showEmptyFindings) {
-      findings = findings.filter((f) => !isEmptyFinding(f));
-    }
-    return findings;
-  }, [
-    allFindings,
-    filterType,
-    filterConfidence,
-    filterCategory,
-    showEmptyFindings,
-  ]);
+  // Transform findings for FindingsExplorer component
+  const explorerFindings: ExplorerFinding[] = useMemo(() => {
+    return allFindings.map((f, index) => {
+      let severity: ExplorerFinding['severity'] = 'medium';
+      if (f.finding_status === 'Red' || f.finding_type === 'negative') {
+        severity = f.finding_status === 'Red' ? 'critical' : 'high';
+      } else if (f.finding_status === 'Amber') {
+        severity = 'medium';
+      } else if (f.finding_status === 'Green' || f.finding_type === 'positive') {
+        severity = 'positive';
+      } else if (f.finding_type === 'gap' || f.finding_status === 'Info') {
+        severity = 'gap';
+      } else if (f.finding_type === 'neutral' || f.finding_type === 'informational') {
+        severity = 'low';
+      }
 
-  // Group findings by category and type
-  const findingsByCategory = useMemo<Record<string, CategoryGroup>>(() => {
-    const grouped: Record<string, CategoryGroup> = {};
-    filteredFindings.forEach((finding) => {
-      const category = finding.category ?? "Uncategorized";
-      if (!grouped[category]) {
-        grouped[category] = {
-          all: [],
-          positive: [],
-          negative: [],
-          neutral: [],
-          gaps: [],
-          questions: {},
-        };
-      }
-      grouped[category].all.push(finding);
-      const type = finding.finding_type ?? "neutral";
-      if (type === "positive" || finding.finding_status === "Green") {
-        grouped[category].positive.push(finding);
-      } else if (
-        type === "negative" ||
-        ["Red", "Amber"].includes(finding.finding_status ?? "")
-      ) {
-        grouped[category].negative.push(finding);
-      } else if (type === "gap" || finding.finding_status === "Info") {
-        grouped[category].gaps.push(finding);
-      } else {
-        grouped[category].neutral.push(finding);
-      }
-      const questionKey = finding.detail ?? "Unknown Question";
-      (grouped[category].questions[questionKey] ??= []).push(finding);
+      // Use folder_category directly from the API (e.g., "01_Corporate")
+      const folderCategory = f.document?.folder?.category || undefined;
+
+      return {
+        id: f.finding_id || `finding-${index}`,
+        title: f.direct_answer || f.phrase || 'Finding',
+        severity,
+        category: f.category || 'Uncategorized',
+        document_id: f.document?.id || '',
+        document_name: f.document?.original_file_name || 'Unknown Document',
+        page_reference: f.page_number ? `Page ${f.page_number}` : undefined,
+        source_text: f.evidence_quote,
+        analysis: f.phrase || f.direct_answer || '',
+        chain_of_thought: formatReasoningToChainOfThought(f.reasoning),
+        recommendation: f.action_items ? JSON.parse(f.action_items).join('\n') : undefined,
+        confidence_score: f.confidence_score,
+        folder_category: folderCategory,
+        // Financial exposure with calculation details
+        financial_exposure: f.financial_exposure ? {
+          amount: f.financial_exposure.amount,
+          currency: f.financial_exposure.currency || 'ZAR',
+          calculation: f.financial_exposure.calculation
+        } : undefined,
+        deal_impact: f.deal_impact,
+        // Gap-specific fields
+        gap_reason: f.gap_reason,
+        gap_detail: f.gap_detail,
+        documents_analyzed_count: f.documents_analyzed_count,
+      };
     });
-    return grouped;
-  }, [filteredFindings]);
+  }, [allFindings]);
 
-  // Get unique categories
-  const categories: string[] = useMemo(() => {
-    if (!riskResults) return [];
-    return Array.from(
-      new Set(riskResults.map((r) => r.category ?? "Uncategorized"))
-    );
-  }, [riskResults]);
+  // Transform runs for FindingsExplorer component
+  const explorerRuns: RunInfo[] = useMemo(() => {
+    if (!runsData?.runs) return [];
+    return runsData.runs.map((run) => ({
+      id: run.run_id,
+      run_number: run.run_number || 1,
+      status: run.status,
+      created_at: run.created_at,
+      completed_at: run.completed_at,
+      total_findings: run.findings_total || 0,
+      critical_findings: run.findings_critical || 0,
+      documents_processed: run.total_documents || run.selected_documents?.length || 0,
+      total_tokens: run.total_tokens,
+      total_cost: run.total_cost,
+    }));
+  }, [runsData]);
 
-  const onFilterTypeChange = (v: string) =>
-    setFilterType(v as "all" | "positive" | "negative" | "gaps" | "neutral");
-
-  const onFilterConfidenceChange = (v: string) =>
-    setFilterConfidence(v as "all" | "high" | "medium" | "low");
-
-  // Effects
+  // Effects for mutations
   useEffect(() => {
-    if (!ddRiskResultsSuccess) return;
-    setCurrentTab(riskResults?.[0]?.category);
-  }, [ddRiskResultsSuccess]);
-
-  useEffect(() => {
-    if (!mutateGetLink.isSuccess) return;
-    window.open(mutateGetLink.data.data.url, "_blank", "noopener,noreferrer");
-  }, [mutateGetLink.isSuccess]);
-
-  useEffect(() => {
-    if (!mutateChangeRiskStatus.isSuccess) return;
-    setTimeout(() => {
-      document.body.style.pointerEvents = "auto";
-    }, 500);
-    setShowAskToDelete(false);
-  }, [mutateChangeRiskStatus]);
-
-  useEffect(() => {
-    if (!mutateAddRisk.isSuccess) return;
-    setShowEnhancedRiskManager(false);
+    if (mutateAddRisk.isSuccess) {
+      setShowEnhancedRiskManager(false);
+    }
   }, [mutateAddRisk.isSuccess]);
 
   useEffect(() => {
-    if (!mutateEditRisk.isSuccess) return;
-    setShowEditRisk(false);
-    setSelectedRisk(null);
+    if (mutateEditRisk.isSuccess) {
+      setShowEditRisk(false);
+      setSelectedRisk(null);
+    }
   }, [mutateEditRisk.isSuccess]);
 
   // Handlers
-  const viewDoc = (perspective_risk_finding_id, doc_id) => {
-    mutateRiskFindingSetIsReviewed.mutate({
-      dd_id: selectedDDID,
-      perspective_risk_finding_id,
-    });
-    mutateGetLink.mutate({ doc_id: doc_id, is_dd: true });
-  };
-
-  const changeRiskStatus = (perspective_risk_finding_id, status) => {
-    if (status === "Deleted") {
-      setSelectedFindingId(perspective_risk_finding_id);
-      setShowAskToDelete(true);
-    } else {
-      mutateChangeRiskStatus.mutate({
-        dd_id: selectedDDID,
-        perspective_risk_finding_id,
-        status,
-      });
-    }
-  };
-
-  const changeRiskStatusToDeleted = () => {
-    mutateChangeRiskStatus.mutate({
-      dd_id: selectedDDID,
-      perspective_risk_finding_id: selectedFindingId,
-      status: "Deleted",
-    });
-  };
-
-  const handleEnhancedRiskManagerSubmit = (risks) => {
-    const formattedRisks = risks.map((risk) => ({
+  const handleEnhancedRiskManagerSubmit = (newRisks: any[]) => {
+    const formattedRisks = newRisks.map((risk) => ({
       category: risk.category,
       detail: risk.detail,
       folder_scope: risk.folder_scope,
     }));
     mutateAddRisk.mutate(
-      {
-        dd_id: selectedDDID,
-        risks: formattedRisks,
-      },
-      {
-        onSuccess: () => {
-          // Trigger immediate refresh and start polling
-          handleManualRefresh();
-          // Polling will start automatically when unprocessed risks are detected
-        },
-      }
+      { dd_id: selectedDDID, risks: formattedRisks },
+      { onSuccess: () => handleManualRefresh() }
     );
   };
 
-  const handleEditRisk = (id, detail) => {
-    setSelectedRisk({ id, detail });
-    setShowEditRisk(true);
-  };
-
-  const closingEditRisk = (value) => {
+  const closingEditRisk = (value: string | null) => {
     if (value == null) {
       setShowEditRisk(false);
-    } else {
+    } else if (selectedRisk) {
       mutateEditRisk.mutate({
         dd_id: selectedDDID,
         perspective_risk_id: selectedRisk.id,
@@ -466,333 +302,178 @@ export function RiskSummary() {
     }
   };
 
-  const copyInfo = (finding) => {
-    const text = `Category: ${finding.category}\nQuestion: ${
-      finding.detail
-    }\n\nFinding: ${finding.phrase || finding.direct_answer}\nDocument: ${
-      finding.document.original_file_name
-    }\nPage: ${finding.page_number}\nLocation: ${
-      finding.document.folder.path
-    }\nConfidence: ${Math.round((finding.confidence_score || 0.5) * 100)}%`;
-    navigator.clipboard.writeText(text);
-  };
+  // Human Review handlers
+  const handleUpdateFindingReview = useCallback((findingId: string, review: Partial<HumanReview>) => {
+    setFindingReviews(prev => ({
+      ...prev,
+      [findingId]: {
+        ...prev[findingId],
+        ...review,
+        reviewed_at: new Date().toISOString()
+      } as HumanReview
+    }));
+    // TODO: Persist to backend API
+    console.log('Review updated:', findingId, review);
+  }, []);
 
-  const exportFindings = async () => {
+  // AI Chat handlers
+  const handleSendChatMessage = useCallback((message: string, context?: { findingId?: string; documentId?: string }) => {
+    if (!selectedDDID) return;
+
+    const userMessage: ChatMessage = {
+      id: `msg-${Date.now()}`,
+      role: 'user',
+      content: message,
+      timestamp: new Date().toISOString(),
+      finding_id: context?.findingId,
+      document_id: context?.documentId
+    };
+    setChatMessages(prev => [...prev, userMessage]);
+    setIsChatLoading(true);
+
+    // Call the actual DDChat API with Claude
+    chatMutation.mutate(
+      {
+        question: message,
+        dd_id: selectedDDID,
+        document_id: context?.documentId,
+      },
+      {
+        onSuccess: (response) => {
+          const answer = response?.data?.answer || 'No response received from the AI.';
+          const assistantMessage: ChatMessage = {
+            id: `msg-${Date.now() + 1}`,
+            role: 'assistant',
+            content: answer,
+            timestamp: new Date().toISOString(),
+            finding_id: context?.findingId,
+            document_id: context?.documentId
+          };
+          setChatMessages(prev => [...prev, assistantMessage]);
+          setIsChatLoading(false);
+        },
+        onError: (error) => {
+          console.error('Chat error:', error);
+          const errorMessage: ChatMessage = {
+            id: `msg-${Date.now() + 1}`,
+            role: 'assistant',
+            content: 'Sorry, I encountered an error processing your question. Please try again.',
+            timestamp: new Date().toISOString(),
+            finding_id: context?.findingId,
+            document_id: context?.documentId
+          };
+          setChatMessages(prev => [...prev, errorMessage]);
+          setIsChatLoading(false);
+        }
+      }
+    );
+  }, [selectedDDID, chatMutation]);
+
+  // Completeness Check handlers
+  const handleUpdateDocumentStatus = useCallback((docId: string, status: MissingItemStatus, note?: string) => {
+    setCompletenessData(prev => ({
+      ...prev,
+      missing_documents: prev.missing_documents.map(doc =>
+        doc.id === docId ? { ...doc, status, note: note ?? doc.note } : doc
+      )
+    }));
+    // TODO: Persist to backend API
+    console.log('Document status updated:', docId, status);
+  }, []);
+
+  const handleUpdateQuestionStatus = useCallback((questionId: string, status: MissingItemStatus, note?: string) => {
+    setCompletenessData(prev => ({
+      ...prev,
+      unanswered_questions: prev.unanswered_questions.map(q =>
+        q.id === questionId ? { ...q, status, note: note ?? q.note } : q
+      )
+    }));
+    // TODO: Persist to backend API
+    console.log('Question status updated:', questionId, status);
+  }, []);
+
+  const handleGenerateRequestLetter = useCallback(() => {
+    // TODO: Call API to generate request letter using Claude
+    console.log('Generating request letter...');
+    alert('Request letter generation will be implemented with Claude API integration.');
+  }, []);
+
+  const handleRefreshCompletenessAssessment = useCallback(() => {
+    setIsCompletenessLoading(true);
+    // TODO: Call API to refresh completeness assessment using Claude
+    console.log('Refreshing completeness assessment...');
+    setTimeout(() => {
+      // Mock assessment result
+      setCompletenessData(prev => ({
+        ...prev,
+        last_checked_at: new Date().toISOString()
+      }));
+      setIsCompletenessLoading(false);
+    }, 2000);
+  }, []);
+
+  // Report download handler - calls API to generate Word document
+  const handleDownloadReport = useCallback((type: 'preliminary' | 'final') => {
+    console.log('[Report] Download requested:', { type, ddId: selectedDDID, runId: selectedRunId });
     if (!selectedDDID) {
-      alert("No DD selected");
+      console.warn('[Report] No DD ID selected');
       return;
     }
 
-    setIsExportingReport(true);
-    try {
-      // Call backend endpoint to generate Word document
-      const response = await axios({
-        url: `/dd-export-report?dd_id=${selectedDDID}`,
-        method: "GET",
-        responseType: "blob",
-      });
-
-      // Get filename from Content-Disposition header or generate one
-      const contentDisposition = response.headers["content-disposition"];
-      let filename = `DD_Report_${dd?.name || selectedDDID}_${new Date().toISOString().split("T")[0]}.docx`;
-      if (contentDisposition) {
-        const match = contentDisposition.match(/filename="?([^"]+)"?/);
-        if (match) {
-          filename = match[1];
-        }
+    console.log('[Report] Calling export API with run_id:', selectedRunId);
+    setReportTypeLoading(type);
+    exportReportMutation.mutate(
+      {
+        dd_id: selectedDDID,
+        run_id: selectedRunId,  // Pass selected run to filter findings
+        report_type: type,
+      },
+      {
+        onSettled: () => {
+          setReportTypeLoading(null);
+        },
       }
-
-      // Create download link
-      const blob = new Blob([response.data], {
-        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Failed to export report:", error);
-      alert("Failed to export report. Please try again.");
-    } finally {
-      setIsExportingReport(false);
-    }
-  };
-
-  // Render finding card (keeping original implementation)
-  const renderFindingCard = (finding, index) => {
-    const findingType = finding.finding_type || "neutral";
-    const confidence = finding.confidence_score || 0.5;
-    const isDeleted = finding.finding_status === "Deleted";
-    let bgColor = "bg-gray-50";
-    let borderColor = "border-gray-200";
-    let iconComponent = <Info className="w-5 h-5 text-gray-500" />;
-
-    if (findingType === "positive" || finding.finding_status === "Green") {
-      bgColor = "bg-green-50";
-      borderColor = "border-green-200";
-      iconComponent = <CheckCircle className="w-5 h-5 text-green-500" />;
-    } else if (
-      findingType === "negative" ||
-      ["Red", "Amber"].includes(finding.finding_status)
-    ) {
-      bgColor = finding.finding_status === "Red" ? "bg-red-50" : "bg-orange-50";
-      borderColor =
-        finding.finding_status === "Red"
-          ? "border-red-200"
-          : "border-orange-200";
-      iconComponent = (
-        <AlertCircle
-          className={`w-5 h-5 ${
-            finding.finding_status === "Red"
-              ? "text-red-500"
-              : "text-orange-500"
-          }`}
-        />
-      );
-    } else if (findingType === "gap") {
-      bgColor = "bg-blue-50";
-      borderColor = "border-blue-200";
-      iconComponent = <Info className="w-5 h-5 text-blue-500" />;
-    }
-
-    return (
-      <div
-        key={finding.finding_id || index}
-        className={cn(
-          "p-4 rounded-lg border transition-all",
-          bgColor,
-          borderColor,
-          isDeleted && "opacity-50"
-        )}
-      >
-        <div className="flex justify-between items-start gap-4">
-          <div className="flex gap-3 flex-1">
-            <div className="mt-1">{iconComponent}</div>
-            <div className="flex-1 space-y-2">
-              {/* Direct Answer if available */}
-              {finding.direct_answer && (
-                <div className="font-medium text-sm">
-                  {finding.direct_answer}
-                </div>
-              )}
-              {/* Main finding text */}
-              {finding.phrase && !isEmptyFinding(finding) && (
-                <div className="text-sm text-gray-700">
-                  <Markdown className="prose prose-sm max-w-none">
-                    {finding.phrase}
-                  </Markdown>
-                </div>
-              )}
-              {/* Evidence quote if available */}
-              {finding.evidence_quote && (
-                <blockquote className="border-l-4 border-gray-300 pl-3 italic text-sm text-gray-600">
-                  "{finding.evidence_quote}"
-                </blockquote>
-              )}
-              {/* Action items if required */}
-              {finding.requires_action && finding.action_items && (
-                <div className="mt-3 p-2 bg-yellow-50 rounded">
-                  <p className="text-sm font-medium text-yellow-900 mb-1">
-                    Required Actions:
-                  </p>
-                  <ul className="list-disc list-inside text-sm text-yellow-800">
-                    {JSON.parse(finding.action_items || "[]").map(
-                      (action, i) => (
-                        <li key={i}>{action}</li>
-                      )
-                    )}
-                  </ul>
-                </div>
-              )}
-              {/* Missing documents */}
-              {finding.missing_documents &&
-                JSON.parse(finding.missing_documents || "[]").length > 0 && (
-                  <div className="mt-2">
-                    <p className="text-sm font-medium text-gray-700">
-                      Missing Documents:
-                    </p>
-                    <ul className="list-disc list-inside text-sm text-gray-600">
-                      {JSON.parse(finding.missing_documents).map((doc, i) => (
-                        <li key={i}>{doc}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              {/* Metadata badges */}
-              <div className="flex flex-wrap gap-2 mt-3">
-                <Badge variant="outline" className="text-xs">
-                  {finding.document.original_file_name}
-                </Badge>
-                {finding.page_number && (
-                  <Badge variant="outline" className="text-xs">
-                    Page {finding.page_number}
-                  </Badge>
-                )}
-                <Badge variant="outline" className="text-xs">
-                  Confidence: {Math.round(confidence * 100)}%
-                </Badge>
-                {finding.finding_status && finding.finding_status !== "New" && (
-                  <Badge
-                    className={cn(
-                      "text-xs",
-                      finding.finding_status === "Red" && "bg-red-600",
-                      finding.finding_status === "Amber" && "bg-orange-500",
-                      finding.finding_status === "Green" && "bg-green-600",
-                      finding.finding_status === "Info" && "bg-blue-600"
-                    )}
-                  >
-                    {finding.finding_status}
-                  </Badge>
-                )}
-                {finding.finding_is_reviewed && (
-                  <Badge variant="secondary" className="text-xs">
-                    <FileCheck2 className="w-3 h-3 mr-1" />
-                    Reviewed
-                  </Badge>
-                )}
-              </div>
-            </div>
-          </div>
-          {/* Actions dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm">
-                <MoreVertical className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => viewDoc(finding.finding_id, finding.document.id)}
-              >
-                View Document
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => copyInfo(finding)}>
-                Copy Info
-              </DropdownMenuItem>
-              {finding.perspective_risk_id && (
-                <DropdownMenuItem
-                  onClick={() =>
-                    handleEditRisk(finding.perspective_risk_id, finding.detail)
-                  }
-                >
-                  Edit Question
-                </DropdownMenuItem>
-              )}
-              {finding.finding_status === "Deleted" ? (
-                <DropdownMenuItem
-                  onClick={() => changeRiskStatus(finding.finding_id, "New")}
-                >
-                  Restore
-                </DropdownMenuItem>
-              ) : (
-                <>
-                  <DropdownMenuItem
-                    onClick={() =>
-                      changeRiskStatus(finding.finding_id, "Deleted")
-                    }
-                  >
-                    Delete
-                  </DropdownMenuItem>
-                  {finding.finding_status !== "Green" && (
-                    <DropdownMenuItem
-                      onClick={() =>
-                        changeRiskStatus(finding.finding_id, "Green")
-                      }
-                    >
-                      Mark as Positive
-                    </DropdownMenuItem>
-                  )}
-                  {finding.finding_status !== "Amber" && (
-                    <DropdownMenuItem
-                      onClick={() =>
-                        changeRiskStatus(finding.finding_id, "Amber")
-                      }
-                    >
-                      Mark as Amber Risk
-                    </DropdownMenuItem>
-                  )}
-                  {finding.finding_status !== "Red" && (
-                    <DropdownMenuItem
-                      onClick={() =>
-                        changeRiskStatus(finding.finding_id, "Red")
-                      }
-                    >
-                      Mark as Red Risk
-                    </DropdownMenuItem>
-                  )}
-                  {["Red", "Amber", "Green"].includes(
-                    finding.finding_status
-                  ) && (
-                    <DropdownMenuItem
-                      onClick={() =>
-                        changeRiskStatus(finding.finding_id, "New")
-                      }
-                    >
-                      Clear Status
-                    </DropdownMenuItem>
-                  )}
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
     );
-  };
+  }, [selectedDDID, selectedRunId, exportReportMutation]);
+
+  // Document view handler - opens document in new tab
+  const handleOpenDocumentInTab = useCallback((docId: string) => {
+    mutateGetLink.mutate(
+      { doc_id: docId, is_dd: true },
+      {
+        onSuccess: (data) => {
+          const url = data?.data?.url;
+          if (url) {
+            window.open(url, "_blank", "noopener,noreferrer");
+          }
+        },
+      }
+    );
+  }, [mutateGetLink]);
+
+  // Document download handler
+  const handleDownloadDocument = useCallback((docId: string) => {
+    mutateGetLink.mutate(
+      { doc_id: docId, is_dd: true },
+      {
+        onSuccess: (data) => {
+          const url = data?.data?.url;
+          if (url) {
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }
+        },
+      }
+    );
+  }, [mutateGetLink]);
 
   return (
-    <div className="p-6 space-y-4">
-      {/* Enhanced Processing Status with polling indicator */}
-      {risksNotProcessed && risksNotProcessed.length > 0 && (
-        <div className="text-sm pb-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {isPolling && (
-              <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
-            )}
-            <span>
-              You have <Badge>{risksNotProcessed.length}</Badge> question
-              {risksNotProcessed.length > 1 ? "s" : ""} still being processed
-            </span>
-            {isPolling && (
-              <span className="text-xs text-muted-foreground">(...)</span>
-            )}
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleManualRefresh}
-            disabled={isRiskResultsFetching}
-          >
-            {isRiskResultsFetching ? "Refreshing..." : "Refresh"}
-          </Button>
-        </div>
-      )}
-
-      {/* Progress bar for processing */}
-      {isPolling && risks && risksNotProcessed && (
-        <div className="pb-4">
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-blue-500 h-2 rounded-full transition-all duration-500"
-              style={{
-                width: `${
-                  ((risks.length - risksNotProcessed.length) / risks.length) *
-                  100
-                }%`,
-              }}
-            ></div>
-          </div>
-          <div className="text-xs text-muted-foreground mt-1">
-            {risks.length - risksNotProcessed.length} of {risks.length}{" "}
-            questions processed
-          </div>
-        </div>
-      )}
-
-      {/* Rest of component - modals, controls, view content */}
+    <div className="p-6 pb-32 space-y-4">
+      {/* Modals */}
       <EnhancedRiskManager
         folders={dd?.folders ?? []}
         isOpen={showEnhancedRiskManager}
@@ -805,378 +486,45 @@ export function RiskSummary() {
         show={showEditRisk}
         onClosing={closingEditRisk}
         header={`Edit question - ${selectedRisk?.detail}`}
-        label={`Question Detail`}
-        warning={"Editing a question will invalidate all findings linked to it"}
+        label="Question Detail"
+        warning="Editing a question will invalidate all findings linked to it"
       />
 
-      <AlertCheckFor
-        title="Delete Finding"
-        blurb={`Are you sure you want to mark this finding as deleted?`}
-        show={showAskToDelete}
-        okText={"Yes, delete it"}
-        onOK={changeRiskStatusToDeleted}
-        cancelText={"No"}
-        onCancel={() => {
-          setShowAskToDelete(false);
-          setTimeout(() => {
-            document.body.style.pointerEvents = "auto";
-          }, 500);
-        }}
-      />
-
-      {/* Main Content */}
-      {riskResults?.length > 0 ? (
-        <>
-          {/* Controls Bar */}
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-            {/* View Mode Buttons */}
-            <div className="flex gap-2 flex-wrap">
-              <Button
-                variant={viewMode === "dashboard" ? "default" : "outline"}
-                onClick={() => setViewMode("dashboard")}
-                size="sm"
-              >
-                <TrendingUp className="w-4 h-4 mr-2" />
-                Dashboard
-              </Button>
-              <Button
-                variant={viewMode === "detailed" ? "default" : "outline"}
-                onClick={() => setViewMode("detailed")}
-                size="sm"
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                Detailed
-              </Button>
-              <Button
-                variant={viewMode === "risks" ? "default" : "outline"}
-                onClick={() => setViewMode("risks")}
-                size="sm"
-              >
-                <AlertTriangle className="w-4 h-4 mr-2" />
-                Risks Only
-              </Button>
-              <Button
-                variant={viewMode === "compliance" ? "default" : "outline"}
-                onClick={() => setViewMode("compliance")}
-                size="sm"
-              >
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Compliance
-              </Button>
-            </div>
-            {/* Filters and Actions */}
-            <div className="flex gap-2 items-center flex-wrap">
-              <Filter className="w-4 h-4" />
-              {/* Category Filter */}
-              <Select value={filterCategory} onValueChange={setFilterCategory}>
-                <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {/* Type Filter */}
-              <Select value={filterType} onValueChange={onFilterTypeChange}>
-                <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="positive">Positive</SelectItem>
-                  <SelectItem value="negative">Negative</SelectItem>
-                  <SelectItem value="gaps">Gaps</SelectItem>
-                  <SelectItem value="neutral">Neutral</SelectItem>
-                </SelectContent>
-              </Select>
-              {/* Confidence Filter */}
-              <Select
-                value={filterConfidence}
-                onValueChange={onFilterConfidenceChange}
-              >
-                <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="Confidence" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Confidence</SelectItem>
-                  <SelectItem value="high">High (80%+)</SelectItem>
-                  <SelectItem value="medium">Medium (50-79%)</SelectItem>
-                  <SelectItem value="low">Low (&lt;50%)</SelectItem>
-                </SelectContent>
-              </Select>
-              {/* Empty Findings Toggle */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowEmptyFindings(!showEmptyFindings)}
-                className="flex items-center gap-2"
-              >
-                {showEmptyFindings ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
-                Empty
-              </Button>
-              {/* Add Questions Button */}
-              <Button
-                onClick={() => setShowEnhancedRiskManager(true)}
-                size="sm"
-              >
-                Add Questions
-              </Button>
-              {/* Export Button */}
-              <Button
-                variant="outline"
-                onClick={exportFindings}
-                size="sm"
-                disabled={isExportingReport}
-              >
-                <Download className="w-4 h-4 mr-2" />
-                {isExportingReport ? "Generating Report..." : "Export Report"}
-              </Button>
-            </div>
-          </div>
-
-          {/* View Content */}
-          {viewMode === "dashboard" && (
-            <DiligenceDashboard
-              findings={filteredFindings}
-              ddId={selectedDDID}
-            />
-          )}
-          {viewMode === "detailed" && (
-            <Tabs
-              defaultValue={Object.keys(findingsByCategory)[0] || "all"}
-              className="w-full"
-            >
-              <TabsList className="flex-wrap h-auto">
-                {Object.keys(findingsByCategory).map((category) => {
-                  const categoryFindings = findingsByCategory[category];
-                  const totalCount = categoryFindings.all.length;
-                  return (
-                    <TabsTrigger
-                      key={category}
-                      value={category}
-                      className="data-[state=active]:bg-primary"
-                    >
-                      {category}
-                      <Badge className="ml-2" variant="secondary">
-                        {totalCount}
-                      </Badge>
-                    </TabsTrigger>
-                  );
-                })}
-              </TabsList>
-              {Object.entries(findingsByCategory).map(
-                ([category, categoryData]) => (
-                  <TabsContent
-                    key={category}
-                    value={category}
-                    className="space-y-4"
-                  >
-                    {/* Questions Overview */}
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Questions in {category}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          {Object.entries(categoryData.questions).map(
-                            ([question, questionFindings]) => (
-                              <div
-                                key={question}
-                                className="border rounded-lg p-4"
-                              >
-                                <h3 className="font-medium mb-3">{question}</h3>
-                                <div className="space-y-2">
-                                  {questionFindings.map((finding, idx) =>
-                                    renderFindingCard(finding, idx)
-                                  )}
-                                </div>
-                              </div>
-                            )
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-                )
-              )}
-            </Tabs>
-          )}
-          {viewMode === "risks" && (
-            <div className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5 text-red-500" />
-                    Risk Findings
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {/* Red Risks */}
-                    {filteredFindings.filter((f) => f.finding_status === "Red")
-                      .length > 0 && (
-                      <div>
-                        <h3 className="font-medium text-red-700 mb-2">
-                          Critical Risks
-                        </h3>
-                        <div className="space-y-2">
-                          {filteredFindings
-                            .filter((f) => f.finding_status === "Red")
-                            .map((finding, idx) =>
-                              renderFindingCard(finding, idx)
-                            )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Amber Risks */}
-                    {filteredFindings.filter(
-                      (f) => f.finding_status === "Amber"
-                    ).length > 0 && (
-                      <div>
-                        <h3 className="font-medium text-orange-700 mb-2">
-                          Medium Risks
-                        </h3>
-                        <div className="space-y-2">
-                          {filteredFindings
-                            .filter((f) => f.finding_status === "Amber")
-                            .map((finding, idx) =>
-                              renderFindingCard(finding, idx)
-                            )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Other Negative Findings */}
-                    {filteredFindings.filter(
-                      (f) =>
-                        f.finding_type === "negative" &&
-                        !["Red", "Amber"].includes(f.finding_status as string)
-                    ).length > 0 && (
-                      <div>
-                        <h3 className="font-medium text-gray-700 mb-2">
-                          Other Risk Indicators
-                        </h3>
-                        <div className="space-y-2">
-                          {filteredFindings
-                            .filter(
-                              (f) =>
-                                f.finding_type === "negative" &&
-                                !["Red", "Amber"].includes(
-                                  f.finding_status as string
-                                )
-                            )
-                            .map((finding, idx) =>
-                              renderFindingCard(finding, idx)
-                            )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-
-          {viewMode === "compliance" && (
-            <div className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    Compliance Confirmations
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {Object.entries(findingsByCategory).map(
-                      ([category, categoryData]) => {
-                        if (categoryData.positive.length === 0) return null;
-                        return (
-                          <div key={category}>
-                            <h3 className="font-medium text-green-700 mb-2">
-                              {category}
-                            </h3>
-                            <div className="space-y-2">
-                              {categoryData.positive.map((finding, idx) =>
-                                renderFindingCard(finding, idx)
-                              )}
-                            </div>
-                          </div>
-                        );
-                      }
-                    )}
-
-                    {filteredFindings.filter(
-                      (f) =>
-                        f.finding_type === "positive" ||
-                        f.finding_status === "Green"
-                    ).length === 0 && (
-                      <p className="text-gray-500 text-center py-4">
-                        No compliance confirmations found with current filters
-                      </p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Information Gaps */}
-              {filteredFindings.filter((f) => f.finding_type === "gap").length >
-                0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Info className="w-5 h-5 text-blue-500" />
-                      Information Gaps
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {filteredFindings
-                        .filter((f) => f.finding_type === "gap")
-                        .map((finding, idx) => renderFindingCard(finding, idx))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          )}
-        </>
-      ) : (
-        /* Empty State */
-        <div className="text-center py-12">
-          <div className="text-lg font-medium mb-2">
-            No findings available for this due diligence
-          </div>
-          <div className="text-sm text-gray-600">
-            {!dd?.has_in_progress_docs ? (
-              <>
-                This could be due to:
-                <ul className="list-disc list-inside text-sm text-gray-600 mt-2 text-left max-w-md mx-auto">
-                  <li>You haven't joined this due diligence yet</li>
-                  <li>Questions are still being processed</li>
-                  <li>No questions have been added</li>
-                </ul>
-                <Button
-                  className="mt-4"
-                  onClick={() => setShowEnhancedRiskManager(true)}
-                >
-                  Add Questions to Start
-                </Button>
-              </>
-            ) : (
-              <>Documents are still being processed. Please check back later.</>
-            )}
-          </div>
+      {/* Main Content - Explorer View */}
+      {selectedDDID && (
+        <div>
+          <FindingsExplorer
+            ddId={selectedDDID}
+            runs={explorerRuns}
+            selectedRunId={selectedRunId}
+            onRunSelect={setSelectedRunId}
+            findings={explorerFindings}
+            isLoading={isRiskResultsFetching}
+            // Human Review
+            findingReviews={findingReviews}
+            onUpdateFindingReview={handleUpdateFindingReview}
+            // AI Chat
+            chatMessages={chatMessages}
+            onSendChatMessage={handleSendChatMessage}
+            isChatLoading={isChatLoading}
+            // Completeness Check
+            completenessData={completenessData}
+            onUpdateDocumentStatus={handleUpdateDocumentStatus}
+            onUpdateQuestionStatus={handleUpdateQuestionStatus}
+            onGenerateRequestLetter={handleGenerateRequestLetter}
+            onRefreshCompletenessAssessment={handleRefreshCompletenessAssessment}
+            isCompletenessLoading={isCompletenessLoading}
+            // Report Generation
+            onDownloadReport={handleDownloadReport}
+            reportTypeLoading={reportTypeLoading}
+            // Synthesis Data
+            synthesisData={selectedRunSynthesis}
+            // All analyzed documents from the run
+            analyzedDocuments={selectedRunDocuments}
+            // Document Actions
+            onOpenDocumentInTab={handleOpenDocumentInTab}
+            onDownloadDocument={handleDownloadDocument}
+          />
         </div>
       )}
     </div>

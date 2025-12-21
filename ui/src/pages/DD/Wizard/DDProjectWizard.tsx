@@ -25,15 +25,27 @@ const STEPS = [
   { id: 1, title: "Transaction Type", description: "Select transaction type and basics" },
   { id: 2, title: "Deal Context", description: "Provide context for the deal" },
   { id: 3, title: "Focus Areas", description: "Set priorities and deal breakers" },
-  { id: 4, title: "Key Parties", description: "Identify important parties" },
+  { id: 4, title: "Key Stakeholders", description: "Identify key stakeholders" },
   { id: 5, title: "Documents", description: "Review document checklist" },
 ];
 
 // Convert draft data to project setup
 function draftToProjectSetup(draft: WizardDraftData): DDProjectSetup {
+  // Handle keyOther migration from old format (string[]) to new format (OtherStakeholder[])
+  const keyOther = (draft.keyOther || []).map((item: any) => {
+    if (typeof item === 'string') {
+      // Old format: convert string to OtherStakeholder
+      return { name: item, role: '' };
+    }
+    // New format: already an OtherStakeholder object
+    return item;
+  });
+
   return {
     transactionType: draft.transactionType as any,
     transactionName: draft.transactionName || "",
+    clientName: (draft as any).clientName || "",
+    targetEntityName: (draft as any).targetEntityName || "",
     clientRole: draft.clientRole as any,
     dealStructure: draft.dealStructure as any,
     estimatedValue: draft.estimatedValue,
@@ -44,10 +56,28 @@ function draftToProjectSetup(draft: WizardDraftData): DDProjectSetup {
     knownDealBreakers: draft.knownDealBreakers || [],
     deprioritizedAreas: draft.deprioritizedAreas || [],
     targetCompanyName: draft.targetCompanyName || "",
-    keyPersons: draft.keyPersons || [],
-    counterparties: draft.counterparties || [],
-    keyLenders: draft.keyLenders || [],
+    keyIndividuals: draft.keyIndividuals || [],
+    keySuppliers: draft.keySuppliers || [],
+    keyCustomers: ((draft.keyCustomers || []) as any[]).map((item: any) => {
+      if (typeof item === 'string') {
+        // Old format: convert string to CounterpartyStakeholder
+        return { name: item, description: '', exposure: '' };
+      }
+      // New format: already a CounterpartyStakeholder object
+      return { ...item, description: item.description || '', exposure: item.exposure || '' };
+    }),
+    keyLenders: ((draft.keyLenders || []) as any[]).map((item: any) => {
+      if (typeof item === 'string') {
+        // Old format: convert string to LenderStakeholder
+        return { name: item, description: '', facilityAmount: '' };
+      }
+      // Ensure description field exists (migration from 2-field to 3-field format)
+      return { ...item, description: item.description || '' };
+    }),
     keyRegulators: draft.keyRegulators || [],
+    keyOther,
+    shareholderEntityName: (draft as any).shareholderEntityName || "",
+    shareholders: (draft as any).shareholders || [],
     uploadedFile: null, // Files can't be restored from draft
   };
 }
@@ -58,6 +88,8 @@ function projectSetupToDraft(setup: DDProjectSetup, currentStep: number): Partia
     currentStep,
     transactionType: setup.transactionType,
     transactionName: setup.transactionName,
+    clientName: setup.clientName,
+    targetEntityName: setup.targetEntityName,
     clientRole: setup.clientRole,
     dealStructure: setup.dealStructure,
     estimatedValue: setup.estimatedValue,
@@ -68,11 +100,15 @@ function projectSetupToDraft(setup: DDProjectSetup, currentStep: number): Partia
     knownDealBreakers: setup.knownDealBreakers,
     deprioritizedAreas: setup.deprioritizedAreas,
     targetCompanyName: setup.targetCompanyName,
-    keyPersons: setup.keyPersons,
-    counterparties: setup.counterparties,
-    keyLenders: setup.keyLenders,
+    keyIndividuals: setup.keyIndividuals,
+    keySuppliers: setup.keySuppliers,
+    keyCustomers: setup.keyCustomers as any, // CounterpartyStakeholder[] stored as JSON
+    keyLenders: setup.keyLenders as any, // LenderStakeholder[] stored as JSON
     keyRegulators: setup.keyRegulators,
-  };
+    keyOther: setup.keyOther as any, // OtherStakeholder[] stored as JSON
+    shareholderEntityName: setup.shareholderEntityName,
+    shareholders: setup.shareholders as any, // Shareholder[] stored as JSON
+  } as Partial<WizardDraftData>;
 }
 
 export function DDProjectWizard({ onComplete, onCancel, initialDraft }: DDProjectWizardProps) {
@@ -188,7 +224,7 @@ export function DDProjectWizard({ onComplete, onCancel, initialDraft }: DDProjec
       case 3:
         return true; // All optional in step 3
       case 4:
-        return projectSetup.targetCompanyName.trim();
+        return true; // All optional in step 4 - stakeholders are optional
       case 5:
         return !!projectSetup.uploadedFile; // Require file upload
       default:

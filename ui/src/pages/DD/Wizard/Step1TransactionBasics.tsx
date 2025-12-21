@@ -14,6 +14,10 @@ import {
   TransactionTypeCode,
   ClientRole,
   DealStructure,
+  TARGET_ENTITY_LABELS,
+  CLIENT_ROLE_OPTIONS,
+  DEAL_STRUCTURE_OPTIONS,
+  VALUE_DATE_LABELS,
 } from "./types";
 
 interface Step1Props {
@@ -63,6 +67,16 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
     }
   };
 
+  // Get dynamic target entity label based on transaction type
+  const targetEntityConfig = data.transactionType
+    ? TARGET_ENTITY_LABELS[data.transactionType]
+    : { label: "Target Entity", placeholder: "Select transaction type first" };
+
+  // Get dynamic value/date labels based on transaction type
+  const valueDateConfig = data.transactionType
+    ? VALUE_DATE_LABELS[data.transactionType]
+    : { valueLabel: "Estimated Value (ZAR)", valuePlaceholder: "e.g., R500,000,000", dateLabel: "Target Closing Date" };
+
   return (
     <div className="space-y-4">
       <div>
@@ -70,7 +84,7 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
         <TransactionTypeSelector
           selected={data.transactionType}
           onSelect={(type: TransactionTypeCode) =>
-            onChange({ transactionType: type })
+            onChange({ transactionType: type, clientRole: null, dealStructure: null })
           }
         />
         {data.transactionType && (
@@ -95,21 +109,50 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
         </div>
 
         <div>
+          <Label htmlFor="clientName" className="text-xs text-muted-foreground mb-1 block">
+            Client Name
+          </Label>
+          <Input
+            id="clientName"
+            className="h-9"
+            placeholder="e.g., Acme Corp (Pty) Ltd"
+            value={data.clientName}
+            onChange={(e) => onChange({ clientName: e.target.value })}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="targetEntityName" className="text-xs text-muted-foreground mb-1 block">
+            {targetEntityConfig.label}
+          </Label>
+          <Input
+            id="targetEntityName"
+            className="h-9"
+            placeholder={targetEntityConfig.placeholder}
+            value={data.targetEntityName}
+            onChange={(e) => onChange({ targetEntityName: e.target.value })}
+            disabled={!data.transactionType}
+          />
+        </div>
+
+        <div>
           <Label htmlFor="clientRole" className="text-xs text-muted-foreground mb-1 block">
             Client Role
           </Label>
           <Select
             value={data.clientRole || ""}
             onValueChange={(v: ClientRole) => onChange({ clientRole: v })}
+            disabled={!data.transactionType}
           >
             <SelectTrigger className="bg-white h-9 w-full">
-              <SelectValue placeholder="Select client role" />
+              <SelectValue placeholder={data.transactionType ? "Select client role" : "Select transaction type first"} />
             </SelectTrigger>
             <SelectContent className="bg-white">
-              <SelectItem value="buyer">Buyer / Acquirer</SelectItem>
-              <SelectItem value="seller">Seller / Vendor</SelectItem>
-              <SelectItem value="target">Target Company</SelectItem>
-              <SelectItem value="advisor">Independent Advisor</SelectItem>
+              {data.transactionType && CLIENT_ROLE_OPTIONS[data.transactionType]?.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -121,28 +164,30 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
           <Select
             value={data.dealStructure || ""}
             onValueChange={(v: DealStructure) => onChange({ dealStructure: v })}
+            disabled={!data.transactionType}
           >
             <SelectTrigger className="bg-white h-9 w-full">
-              <SelectValue placeholder="Select deal structure" />
+              <SelectValue placeholder={data.transactionType ? "Select deal structure" : "Select transaction type first"} />
             </SelectTrigger>
             <SelectContent className="bg-white">
-              <SelectItem value="share_purchase">Share Purchase</SelectItem>
-              <SelectItem value="asset_purchase">Asset Purchase</SelectItem>
-              <SelectItem value="merger">Merger</SelectItem>
-              <SelectItem value="scheme">Scheme of Arrangement</SelectItem>
+              {data.transactionType && DEAL_STRUCTURE_OPTIONS[data.transactionType]?.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
 
         <div>
           <Label htmlFor="estimatedValue" className="text-xs text-muted-foreground mb-1 block">
-            Estimated Value (ZAR)
+            {valueDateConfig.valueLabel}
           </Label>
           <Input
             id="estimatedValue"
             type="text"
             className="h-9"
-            placeholder="e.g., R500,000,000"
+            placeholder={valueDateConfig.valuePlaceholder}
             value={valueInput}
             onChange={handleValueChange}
             onFocus={handleValueFocus}
@@ -152,7 +197,7 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
 
         <div>
           <Label htmlFor="targetClosingDate" className="text-xs text-muted-foreground mb-1 block">
-            Target Closing Date
+            {valueDateConfig.dateLabel}
           </Label>
           <Input
             id="targetClosingDate"

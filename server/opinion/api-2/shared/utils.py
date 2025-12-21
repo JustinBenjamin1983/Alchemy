@@ -3,8 +3,11 @@
 import os
 import uuid
 import jwt
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import logging
+
+# South African Standard Time (UTC+2)
+TZ_SAST = timezone(timedelta(hours=2))
 import azure.functions as func
 import requests
 import time
@@ -52,7 +55,21 @@ def generate_identifier():
     return str(uuid.uuid4())
 
 def now():
+    """Returns current UTC time as ISO string."""
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def now_sast():
+    """Returns current SAST (South African Standard Time, UTC+2) as ISO string."""
+    return datetime.now(TZ_SAST).isoformat()
+
+
+def to_sast(dt: datetime) -> datetime:
+    """Convert a datetime to SAST timezone."""
+    if dt.tzinfo is None:
+        # Assume UTC if naive
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(TZ_SAST)
 
 def auth_get_email(req: func.HttpRequest):
     # Bypass auth in dev mode

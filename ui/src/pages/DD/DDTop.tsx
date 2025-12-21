@@ -1,8 +1,6 @@
 // DDTop.tsx
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DDProgressBar } from "@/components/DDProgressBar";
-import { Trash2, Loader2, Play, Activity } from "lucide-react";
+import { Trash2, Loader2, Activity } from "lucide-react";
 import { useState } from "react";
 import {
   Dialog,
@@ -12,26 +10,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { DEV_MODE } from "@/authConfig";
-import { useProcessAllDocuments } from "@/hooks/useProcessAllDocuments";
+import { TRANSACTION_TYPE_INFO, TransactionTypeCode } from "./Wizard/types";
 
 type ScreenState =
-  | "Documents"
   | "Wizard-Chooser"
   | "Wizard-NewProject"
   | "Wizard-JoinProject"
-  | "DocumentErrors"
-  | "Search"
-  | "Risks"
-  | "Questions"
-  | "DocumentChanges"
-  | "ShowReport"
+  | "Analysis"
   | "Processing";
 
 interface DDTopProps {
   ddId: string;
   ddName: string;
-  docHistoryCount?: number;
+  transactionType?: string | null;
   screenState: ScreenState;
   setScreenState: (state: ScreenState) => void;
   onDelete?: (ddId: string) => void;
@@ -43,7 +34,7 @@ interface DDTopProps {
 export function DDTop({
   ddId,
   ddName,
-  docHistoryCount,
+  transactionType,
   screenState,
   setScreenState,
   onDelete,
@@ -51,9 +42,10 @@ export function DDTop({
   onGenerateReport,
   isGeneratingReport = false,
 }: DDTopProps) {
+  // Get transaction type info for display
+  const typeCode = transactionType as TransactionTypeCode | undefined;
+  const typeInfo = typeCode ? TRANSACTION_TYPE_INFO[typeCode] : null;
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showProcessDialog, setShowProcessDialog] = useState(false);
-  const processAllDocs = useProcessAllDocuments(ddId);
 
   const handleDeleteClick = () => {
     setShowDeleteDialog(true);
@@ -71,130 +63,71 @@ export function DDTop({
       <header className="flex flex-col shrink-0 gap-3 p-4 border-b bg-white">
         {ddName && (
           <>
-            {/* Top row: Title and Progress Bar */}
-            <div className="flex justify-between items-center">
-              <p className="font-semibold text-gray-700 text-lg">{ddName}</p>
-              <div className="flex items-center gap-3">
-                <DDProgressBar ddId={ddId} />
+            {/* Title row */}
+            <p className="font-semibold text-gray-700 text-lg">
+              {ddName}
+              {typeInfo && (
+                <span className="text-gray-500 font-normal">
+                  {" "}&mdash; {typeInfo.name}
+                </span>
+              )}
+            </p>
+            {/* Navigation Buttons */}
+            <div className="flex gap-4 justify-between items-center">
+              <div className="flex gap-4">
+                <Button
+                  className={
+                    screenState === "Processing"
+                      ? "bg-alchemyPrimaryGoldenWeb"
+                      : ""
+                  }
+                  variant="outline"
+                  onClick={() => setScreenState("Processing")}
+                >
+                  <Activity className="mr-2 h-4 w-4" />
+                  Console
+                </Button>
+                <Button
+                  className={
+                    screenState === "Analysis" ? "bg-alchemyPrimaryGoldenWeb" : ""
+                  }
+                  variant="outline"
+                  onClick={() => setScreenState("Analysis")}
+                >
+                  Analysis
+                </Button>
                 <Button
                   variant="outline"
-                  size="sm"
-                  onClick={handleDeleteClick}
-                  disabled={isDeleting}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                  onClick={() => setScreenState("Wizard-Chooser")}
                 >
-                  {isDeleting ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Trash2 className="h-4 w-4" />
+                  Start / join
+                </Button>
+                <Button
+                  className="bg-alchemyPrimaryNavyBlue text-white"
+                  variant="outline"
+                  onClick={onGenerateReport}
+                  disabled={isGeneratingReport || !onGenerateReport}
+                >
+                  {isGeneratingReport && (
+                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
                   )}
+                  Generate Report
                 </Button>
               </div>
-            </div>
-            {/* Bottom row: Navigation Buttons */}
-            <div className="flex gap-4 justify-start">
+              {/* Delete button - positioned at far right */}
               <Button
-                className={
-                  screenState === "Documents"
-                    ? "bg-alchemyPrimaryGoldenWeb"
-                    : ""
-                }
-                variant="outline"
-                onClick={() => setScreenState("Documents")}
+                variant="ghost"
+                size="sm"
+                onClick={handleDeleteClick}
+                disabled={isDeleting}
+                className="text-gray-400 hover:text-red-600 hover:bg-red-50"
+                title="Delete project"
               >
-                Documents
-              </Button>
-              <Button
-                className={
-                  screenState === "DocumentChanges"
-                    ? "bg-alchemyPrimaryGoldenWeb"
-                    : ""
-                }
-                variant="outline"
-                onClick={() => setScreenState("DocumentChanges")}
-              >
-                Document Changes
-                {docHistoryCount && (
-                  <div className="pl-2">
-                    <Badge variant="destructive">{docHistoryCount}</Badge>
-                  </div>
+                {isDeleting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
                 )}
-              </Button>
-              <Button
-                className={
-                  screenState === "Search" ? "bg-alchemyPrimaryGoldenWeb" : ""
-                }
-                variant="outline"
-                onClick={() => setScreenState("Search")}
-              >
-                Search
-              </Button>
-              <Button
-                className={
-                  screenState === "Risks" ? "bg-alchemyPrimaryGoldenWeb" : ""
-                }
-                variant="outline"
-                onClick={() => setScreenState("Risks")}
-              >
-                Risks
-              </Button>
-              <Button
-                className={
-                  screenState === "Questions"
-                    ? "bg-alchemyPrimaryGoldenWeb"
-                    : ""
-                }
-                variant="outline"
-                onClick={() => setScreenState("Questions")}
-              >
-                Questions
-              </Button>
-              <Button
-                className={
-                  screenState === "Processing"
-                    ? "bg-alchemyPrimaryGoldenWeb"
-                    : ""
-                }
-                variant="outline"
-                onClick={() => setScreenState("Processing")}
-              >
-                <Activity className="mr-2 h-4 w-4" />
-                Processing
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setScreenState("Wizard-Chooser")}
-              >
-                Start / join
-              </Button>
-              {DEV_MODE && (
-                <Button
-                  className="bg-green-600 hover:bg-green-700 text-white"
-                  variant="outline"
-                  onClick={() => {
-                    console.log("[DDTop] Process All Docs clicked, ddId:", ddId, "isPending:", processAllDocs.isPending);
-                    processAllDocs.mutate();
-                  }}
-                  disabled={processAllDocs.isPending}
-                >
-                  {processAllDocs.isPending ? (
-                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                  ) : (
-                    <Play className="mr-2 h-4 w-4" />
-                  )}
-                  {processAllDocs.isPending ? "Processing..." : "Process All Docs"}
-                </Button>
-              )}
-              <Button
-                className="bg-alchemyPrimaryNavyBlue text-white"
-                variant="outline"
-                onClick={onGenerateReport}
-                disabled={isGeneratingReport || !onGenerateReport}
-              >
-                {isGeneratingReport && (
-                  <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                )}
-                Generate Report
               </Button>
             </div>
           </>

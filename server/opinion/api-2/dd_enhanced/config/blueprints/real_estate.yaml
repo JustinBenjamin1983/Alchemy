@@ -1,164 +1,518 @@
-transaction_type: "Real Estate"
-code: "real_estate"
-description: |
-  Due diligence blueprint for property transactions including acquisitions,
+transaction_type: Real Estate
+code: real_estate
+description: 'Due diligence blueprint for property transactions including acquisitions,
+
   disposals, developments, and commercial leases.
 
-jurisdiction: "South Africa"
+  '
+jurisdiction: South Africa
+folder_structure:
+  01_Corporate_Governance:
+    relevance: high
+    subcategories:
+    - Seller Corporate
+    - Buyer Corporate
+    - SPV Documents
+    expected_documents:
+    - MOI
+    - Board Resolution
+    - Company Registration
+    - Power of Attorney
+  02_Commercial:
+    relevance: critical
+    subcategories:
+    - Leases
+    - Tenant Agreements
+    - Service Contracts
+    - Management Agreements
+    expected_documents:
+    - Lease Agreement
+    - Rental Statement
+    - Tenant Deposit Schedule
+    - Property Management Agreement
+    - Service Level Agreement
+  03_Financial:
+    relevance: high
+    subcategories:
+    - Mortgage Bonds
+    - Financial Statements
+    - Valuations
+    expected_documents:
+    - Mortgage Bond
+    - Property Valuation
+    - Financial Statements
+    - Rates Clearance Certificate
+  04_Regulatory:
+    relevance: critical
+    subcategories:
+    - Zoning
+    - Building Plans
+    - Occupation Certificates
+    - Heritage
+    expected_documents:
+    - Zoning Certificate
+    - Approved Building Plans
+    - Occupation Certificate
+    - Heritage Consent
+    - Environmental Authorization
+  05_Employment:
+    relevance: low
+    subcategories:
+    - On-site Staff
+    - Security
+    - Maintenance
+    expected_documents:
+    - Employment Contract
+  06_Property:
+    relevance: critical
+    subcategories:
+    - Title Deeds
+    - Survey Diagrams
+    - Servitudes
+    - Diagrams
+    expected_documents:
+    - Title Deed
+    - Survey Diagram
+    - Servitude Agreement
+    - Notarial Lease
+    - Deeds Search
+  07_Insurance:
+    relevance: high
+    subcategories:
+    - Building Insurance
+    - Public Liability
+    - Sectional Title
+    expected_documents:
+    - Insurance Policy
+    - Certificate of Insurance
+    - Claims Record
+  08_Litigation:
+    relevance: medium
+    subcategories:
+    - Tenant Disputes
+    - Boundary Disputes
+    - Building Defects
+    expected_documents:
+    - Summons
+    - Settlement Agreement
+    - Legal Opinion
+  09_Tax:
+    relevance: high
+    subcategories:
+    - Transfer Duty
+    - CGT
+    - VAT
+    - Rates
+    expected_documents:
+    - Tax Clearance Certificate
+    - Municipal Rates Account
+    - Body Corporate Levy Statement
+  99_Needs_Review:
+    relevance: n/a
+    subcategories:
+    - Unclassified
+    - Low Confidence
+    expected_documents: []
 primary_legislation:
-  - "Deeds Registries Act 47 of 1937"
-  - "Alienation of Land Act 68 of 1981"
-  - "Sectional Titles Act 95 of 1986"
-  - "Property Practitioners Act 22 of 2019"
-  - "Spatial Planning and Land Use Management Act 16 of 2013 (SPLUMA)"
-
+- Deeds Registries Act 47 of 1937
+- Alienation of Land Act 68 of 1981
+- Sectional Titles Act 95 of 1986
+- Property Practitioners Act 22 of 2019
+- Spatial Planning and Land Use Management Act 16 of 2013 (SPLUMA)
 risk_categories:
-  - name: "Title & Ownership"
-    weight: critical
-    standard_questions:
-      - question: "Is the seller the registered owner of the property?"
-        priority: critical
-      - question: "What is the extent and description of the property?"
-        priority: critical
-      - question: "Are there any title deed conditions or restrictions?"
-        priority: critical
-      - question: "Are there any servitudes registered against the property?"
-        priority: critical
-      - question: "Are there any mortgage bonds registered?"
-        priority: critical
-      - question: "Are there any caveats or interdict noted on the title?"
-        priority: critical
-      - question: "Is the property subject to any expropriation notice?"
-        priority: critical
-      - question: "Are there any boundary disputes?"
-        priority: high
-      - question: "What mineral rights apply to the property?"
-        priority: high
-      - question: "Is there a valid survey diagram?"
-        priority: medium
-
-  - name: "Zoning & Land Use"
-    weight: critical
-    standard_questions:
-      - question: "What is the current zoning of the property?"
-        priority: critical
-      - question: "Is the current use compliant with zoning?"
-        priority: critical
-      - question: "Are there any pending rezoning applications?"
-        priority: high
-      - question: "What building plan approvals have been obtained?"
-        priority: critical
-      - question: "Is there an occupation certificate for all buildings?"
-        priority: critical
-      - question: "Are there any building contraventions?"
-        priority: high
-      - question: "What development rights attach to the property?"
-        priority: high
-      - question: "Are there any heritage or environmental restrictions?"
-        priority: high
-      - question: "What bulk and coverage allowances apply?"
-        priority: medium
-      - question: "Are there any spatial development framework implications?"
-        priority: medium
-
-  - name: "Rates, Taxes & Levies"
-    weight: high
-    standard_questions:
-      - question: "Are all municipal rates and taxes paid up to date?"
-        priority: critical
-      - question: "What is the current municipal valuation?"
-        priority: high
-      - question: "Are there any objections to municipal valuation pending?"
-        priority: medium
-      - question: "Is the property located in a special rating area?"
-        priority: medium
-      - question: "What body corporate or homeowners levies apply?"
-        priority: high
-      - question: "Are all levies paid up to date?"
-        priority: high
-      - question: "Are there any special levies pending?"
-        priority: medium
-
-  - name: "Leases & Tenancies"
-    weight: high
-    standard_questions:
-      - question: "What leases are in place and to whom?"
-        priority: critical
-      - question: "What is the total monthly rental and escalation terms?"
-        priority: high
-      - question: "What is the lease expiry profile?"
-        priority: high
-      - question: "Are there any tenant disputes or arrears?"
-        priority: high
-      - question: "Do leases contain change of control or assignment provisions?"
-        priority: critical
-      - question: "What tenant deposits are held?"
-        priority: medium
-      - question: "Are there any unusual lease provisions?"
-        priority: medium
-      - question: "What are the vacancy rates and marketing status?"
-        priority: high
-      - question: "Are there any options to renew or purchase?"
-        priority: high
-      - question: "What tenant improvements have been made?"
-        priority: low
-
-  - name: "Physical Condition"
-    weight: medium
-    standard_questions:
-      - question: "What is the age and condition of buildings?"
-        priority: high
-      - question: "Are there any latent or patent defects?"
-        priority: high
-      - question: "What capital expenditure is required?"
-        priority: high
-      - question: "Are all services (water, electricity, sewer) connected and compliant?"
-        priority: high
-      - question: "Are there any asbestos or hazardous materials present?"
-        priority: high
-      - question: "What is the status of fire and safety compliance?"
-        priority: high
-      - question: "Are lifts and escalators certified?"
-        priority: medium
-      - question: "What is the energy efficiency rating?"
-        priority: low
-
-  - name: "Environmental"
-    weight: high
-    standard_questions:
-      - question: "Has environmental due diligence been conducted?"
-        priority: high
-      - question: "Is there any soil or groundwater contamination?"
-        priority: critical
-      - question: "Are there any environmental authorizations required?"
-        priority: high
-      - question: "What is the flood risk for the property?"
-        priority: medium
-      - question: "Are there any protected species or ecosystems?"
-        priority: medium
-      - question: "What waste management systems are in place?"
-        priority: medium
-
+- name: Title & Ownership
+  weight: critical
+  standard_questions:
+  - question: Is the seller the registered owner of the property?
+    priority: critical
+  - question: What is the extent and description of the property?
+    priority: critical
+  - question: Are there any title deed conditions or restrictions?
+    priority: critical
+  - question: Are there any servitudes registered against the property?
+    priority: critical
+  - question: Are there any mortgage bonds registered?
+    priority: critical
+  - question: Are there any caveats or interdict noted on the title?
+    priority: critical
+  - question: Is the property subject to any expropriation notice?
+    priority: critical
+  - question: Are there any boundary disputes?
+    priority: high
+  - question: What mineral rights apply to the property?
+    priority: high
+  - question: Is there a valid survey diagram?
+    priority: medium
+- name: Zoning & Land Use
+  weight: critical
+  standard_questions:
+  - question: What is the current zoning of the property?
+    priority: critical
+  - question: Is the current use compliant with zoning?
+    priority: critical
+  - question: Are there any pending rezoning applications?
+    priority: high
+  - question: What building plan approvals have been obtained?
+    priority: critical
+  - question: Is there an occupation certificate for all buildings?
+    priority: critical
+  - question: Are there any building contraventions?
+    priority: high
+  - question: What development rights attach to the property?
+    priority: high
+  - question: Are there any heritage or environmental restrictions?
+    priority: high
+  - question: What bulk and coverage allowances apply?
+    priority: medium
+  - question: Are there any spatial development framework implications?
+    priority: medium
+- name: Rates, Taxes & Levies
+  weight: high
+  standard_questions:
+  - question: Are all municipal rates and taxes paid up to date?
+    priority: critical
+  - question: What is the current municipal valuation?
+    priority: high
+  - question: Are there any objections to municipal valuation pending?
+    priority: medium
+  - question: Is the property located in a special rating area?
+    priority: medium
+  - question: What body corporate or homeowners levies apply?
+    priority: high
+  - question: Are all levies paid up to date?
+    priority: high
+  - question: Are there any special levies pending?
+    priority: medium
+- name: Leases & Tenancies
+  weight: high
+  standard_questions:
+  - question: What leases are in place and to whom?
+    priority: critical
+  - question: What is the total monthly rental and escalation terms?
+    priority: high
+  - question: What is the lease expiry profile?
+    priority: high
+  - question: Are there any tenant disputes or arrears?
+    priority: high
+  - question: Do leases contain change of control or assignment provisions?
+    priority: critical
+  - question: What tenant deposits are held?
+    priority: medium
+  - question: Are there any unusual lease provisions?
+    priority: medium
+  - question: What are the vacancy rates and marketing status?
+    priority: high
+  - question: Are there any options to renew or purchase?
+    priority: high
+  - question: What tenant improvements have been made?
+    priority: low
+- name: Physical Condition
+  weight: medium
+  standard_questions:
+  - question: What is the age and condition of buildings?
+    priority: high
+  - question: Are there any latent or patent defects?
+    priority: high
+  - question: What capital expenditure is required?
+    priority: high
+  - question: Are all services (water, electricity, sewer) connected and compliant?
+    priority: high
+  - question: Are there any asbestos or hazardous materials present?
+    priority: high
+  - question: What is the status of fire and safety compliance?
+    priority: high
+  - question: Are lifts and escalators certified?
+    priority: medium
+  - question: What is the energy efficiency rating?
+    priority: low
+- name: Environmental
+  weight: high
+  standard_questions:
+  - question: Has environmental due diligence been conducted?
+    priority: high
+  - question: Is there any soil or groundwater contamination?
+    priority: critical
+  - question: Are there any environmental authorizations required?
+    priority: high
+  - question: What is the flood risk for the property?
+    priority: medium
+  - question: Are there any protected species or ecosystems?
+    priority: medium
+  - question: What waste management systems are in place?
+    priority: medium
 deal_blockers:
-  - description: "Defect in title that cannot be cured"
-    severity: absolute
-  - description: "Property subject to expropriation"
-    severity: absolute
-  - description: "Unlawful use that cannot be regularized"
-    severity: conditional
-  - description: "Significant undisclosed environmental contamination"
-    severity: conditional
-  - description: "Failure to obtain rates clearance"
-    severity: absolute
-
+- description: Defect in title that cannot be cured
+  severity: absolute
+- description: Property subject to expropriation
+  severity: absolute
+- description: Unlawful use that cannot be regularized
+  severity: conditional
+- description: Significant undisclosed environmental contamination
+  severity: conditional
+- description: Failure to obtain rates clearance
+  severity: absolute
 conditions_precedent_patterns:
-  - pattern: "rates clearance|municipal clearance"
-    cp_type: "Rates Clearance"
-  - pattern: "transfer duty|SARS"
-    cp_type: "Transfer Duty"
-  - pattern: "bondholder consent|bond cancellation"
-    cp_type: "Bond Cancellation"
-  - pattern: "body corporate|HOA|trustees"
-    cp_type: "Body Corporate Consent"
-  - pattern: "rezoning|land use"
-    cp_type: "Zoning Approval"
+- pattern: rates clearance|municipal clearance
+  cp_type: Rates Clearance
+- pattern: transfer duty|SARS
+  cp_type: Transfer Duty
+- pattern: bondholder consent|bond cancellation
+  cp_type: Bond Cancellation
+- pattern: body corporate|HOA|trustees
+  cp_type: Body Corporate Consent
+- pattern: rezoning|land use
+  cp_type: Zoning Approval
+folder_questions:
+  01_Corporate_Governance:
+    display_name: Corporate & Authority
+    relevance: high
+    questions:
+    - question: Is the seller the registered owner and authorized to sell the property?
+      priority: critical
+      detail: Verify registered ownership matches seller, check MOI for disposal powers
+      cot_hint: Title deed owner → seller identity → MOI disposal powers
+    - question: Has the board properly authorized the sale or purchase?
+      priority: critical
+      detail: Check resolution covers the specific property and transaction terms
+      cot_hint: Resolution property description → transaction authorization
+    - question: Are there any shareholder approvals required for the transaction?
+      priority: high
+      detail: Check MOI for asset disposal thresholds and approval requirements
+      cot_hint: Identify materiality thresholds → check approval mechanism
+    cross_doc_checks:
+    - check: Title deed registered owner vs seller in agreement
+      related_folders:
+      - 06_Property
+      description: Verify seller is the registered owner
+  02_Commercial:
+    display_name: Leases & Commercial
+    relevance: critical
+    questions:
+    - question: What is the total monthly rental income and vacancy rate?
+      priority: critical
+      detail: Calculate gross rental, vacancies, and net effective rent
+      cot_hint: Sum contracted rents → deduct vacancies → net effective
+    - question: What is the lease expiry profile and weighted average lease term?
+      priority: critical
+      detail: WALT affects property value and income security
+      cot_hint: Plot expiries → calculate WALT → identify concentration risk
+    - question: Do leases contain change of control or assignment provisions?
+      priority: critical
+      detail: Tenant consent may be required for change of landlord
+      cot_hint: Check assignment clauses → identify consent requirements
+    - question: What tenant deposits are held and how are they treated on transfer?
+      priority: high
+      detail: Deposits transfer with property - verify amounts and interest
+      cot_hint: Sum deposits → verify interest calculations → transfer mechanism
+    - question: Are there any tenant arrears or disputes?
+      priority: high
+      detail: Current arrears and disputes affect property value
+      cot_hint: Extract arrears → assess collectability → quantify disputes
+    - question: What escalation mechanisms apply to rentals?
+      priority: medium
+      detail: Fixed vs CPI-linked escalations affect income growth
+      cot_hint: Identify escalation types → project income growth
+    cross_doc_checks:
+    - check: Rental roll totals vs AFS property income
+      related_folders:
+      - 03_Financial
+      description: Verify rental income matches financial records
+  03_Financial:
+    display_name: Financial & Valuation
+    relevance: high
+    questions:
+    - question: What mortgage bonds are registered over the property?
+      priority: critical
+      detail: Bonds must be cancelled before transfer or assumed by buyer
+      cot_hint: Check title deed for bond endorsements → amounts → holders
+    - question: Is the purchase price supported by the property valuation?
+      priority: critical
+      detail: Compare purchase price to market valuation and methodology
+      cot_hint: Valuation amount → methodology → purchase price comparison
+    - question: What is the net operating income and capitalization rate?
+      priority: high
+      detail: NOI and cap rate determine investment value
+      cot_hint: Income - opex = NOI → NOI / purchase price = cap rate
+    - question: Are rates and levies paid up to date?
+      priority: critical
+      detail: Clearance certificates required for transfer
+      cot_hint: Check rates account → outstanding amounts → clearance status
+    cross_doc_checks:
+    - check: Valuation property description vs title deed extent
+      related_folders:
+      - 06_Property
+      description: Verify valuation covers the correct property
+  04_Regulatory:
+    display_name: Zoning & Compliance
+    relevance: critical
+    questions:
+    - question: Is the current use of the property compliant with zoning?
+      priority: critical
+      detail: Non-compliant use creates enforcement risk
+      cot_hint: Zoning permission → actual use → compliance assessment
+    - question: Are all buildings covered by approved building plans?
+      priority: critical
+      detail: Unapproved structures may need to be demolished or regularized
+      cot_hint: Compare actual buildings to approved plans
+    - question: Is there a valid occupation certificate for all buildings?
+      priority: critical
+      detail: Required for lawful occupation - affects insurance and liability
+      cot_hint: OC for each building → check dates → verify completeness
+    - question: Are there any heritage or conservation restrictions?
+      priority: high
+      detail: Heritage buildings have restrictions on alterations
+      cot_hint: Check heritage register → identify restrictions
+    - question: What development potential exists on the property?
+      priority: medium
+      detail: Bulk and coverage allowances for future development
+      cot_hint: Zoning bulk → existing bulk used → remaining development potential
+    cross_doc_checks:
+    - check: Approved building plans vs actual structures on site
+      related_folders: []
+      description: Verify no unauthorized structures exist
+  05_Employment:
+    display_name: Employment
+    relevance: low
+    questions:
+    - question: Are there any on-site staff that will transfer with the property?
+      priority: medium
+      detail: Section 197 may apply to building staff
+      cot_hint: Identify on-site employees → check transfer implications
+    cross_doc_checks: []
+  06_Property:
+    display_name: Title & Ownership
+    relevance: critical
+    questions:
+    - question: Is the title deed free of restrictive conditions affecting use?
+      priority: critical
+      detail: Title conditions may restrict development or use
+      cot_hint: Read title conditions → identify restrictions → assess impact
+    - question: Are there any servitudes that affect the property?
+      priority: critical
+      detail: Servitudes burden property with third party rights
+      cot_hint: Identify registered servitudes → assess practical impact
+    - question: Are there any caveats, interdicts, or disputed ownership claims?
+      priority: critical
+      detail: These prevent or delay transfer registration
+      cot_hint: Check deeds search for endorsements → identify blockers
+    - question: Is there a valid survey diagram consistent with the title?
+      priority: high
+      detail: Diagram defines exact property boundaries
+      cot_hint: Compare diagram to title deed → verify consistency
+    - question: What mineral rights apply and are they severed?
+      priority: medium
+      detail: Mineral rights may be held separately under MPRDA
+      cot_hint: Check if mineral rights severed → who holds them
+    cross_doc_checks:
+    - check: Title deed property description vs agreement property description
+      related_folders: []
+      description: Verify agreement correctly describes the property
+  07_Insurance:
+    display_name: Insurance
+    relevance: high
+    questions:
+    - question: Is the property adequately insured for replacement value?
+      priority: high
+      detail: Underinsurance creates gap risk
+      cot_hint: Compare insured value to replacement cost estimate
+    - question: Is there public liability insurance in place?
+      priority: high
+      detail: Required for tenant and visitor injuries
+      cot_hint: Check liability limit → assess adequacy
+    - question: Are there any pending insurance claims?
+      priority: medium
+      detail: Outstanding claims may indicate property issues
+      cot_hint: Review claims history → pending matters
+    cross_doc_checks:
+    - check: Insured property description vs title deed
+      related_folders:
+      - 06_Property
+      description: Verify insurance covers the correct property
+  08_Litigation:
+    display_name: Litigation
+    relevance: medium
+    questions:
+    - question: Are there any pending disputes with tenants?
+      priority: high
+      detail: Tenant disputes affect occupancy and income
+      cot_hint: Identify tenant disputes → quantify exposure
+    - question: Are there any boundary or servitude disputes?
+      priority: high
+      detail: Could delay or prevent transfer
+      cot_hint: Check for correspondence → assess resolution status
+    - question: Are there any building defect claims pending?
+      priority: medium
+      detail: Construction defects create liability
+      cot_hint: Identify claims → assess warranty status
+    cross_doc_checks: []
+  09_Tax:
+    display_name: Tax & Duties
+    relevance: high
+    questions:
+    - question: What is the transfer duty payable on the transaction?
+      priority: critical
+      detail: Transfer duty rates depend on value and entity type
+      cot_hint: Calculate duty at applicable rate → exemptions
+    - question: Is the property a VAT transaction or exempt?
+      priority: critical
+      detail: VAT treatment affects pricing and cash flow
+      cot_hint: Check if seller is VAT vendor → election for zero-rating
+    - question: Are municipal rates and levies current?
+      priority: critical
+      detail: Rates clearance required for transfer
+      cot_hint: Verify accounts paid → clearance obtainable
+    - question: What is the seller's CGT position on the sale?
+      priority: medium
+      detail: CGT affects seller's net proceeds
+      cot_hint: Base cost → proceeds → taxable gain
+    cross_doc_checks:
+    - check: Municipal valuation vs purchase price
+      related_folders:
+      - 03_Financial
+      description: Check for transfer duty calculation basis
+cot_questions:
+  ownership_regulatory:
+  - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
+  - How does this transaction change the ownership structure? What is the post-transaction ownership?
+  - What regulatory approvals or notifications are triggered by ownership changes (e.g., >15%, >25%, >49% thresholds)?
+  - Are there any ownership restrictions in constitutional documents, shareholder agreements, or regulatory conditions?
+  - What licenses, permits, or authorizations are dependent on the current ownership structure?
+  - What are the consequences of non-compliance with ownership-based regulatory requirements?
+  - Are there any property ownership restrictions (e.g., agricultural land, foreign ownership)?
+  - Do any property-related licenses require ownership change approval?
+  - Are there any sectoral BEE requirements for property holding companies?
+  - What landlord consents are required for change of ownership?
+  title_ownership:
+  - Is the seller the registered owner per the title deed?
+  - Are there any mortgage bonds, servitudes, or conditions registered?
+  - Are there any caveats, interdicts, or expropriation notices?
+  - What mineral rights apply to the property?
+  - Are there any boundary disputes or encroachments?
+  zoning_land_use:
+  - What is the current zoning and is the use compliant?
+  - Are there valid building plans and occupation certificates for all structures?
+  - Are there any building contraventions or illegal structures?
+  - What development rights and bulk allowances apply?
+  - Are there any heritage or environmental restrictions?
+  rates_taxes:
+  - Are all municipal rates and taxes paid up to date?
+  - Can a rates clearance certificate be obtained?
+  - What is the municipal valuation vs purchase price?
+  - Are there any special levies or rating area charges?
+  leases_tenancies:
+  - What leases are in place and what is the total rental income?
+  - Do leases contain CoC or assignment provisions requiring consent?
+  - What is the lease expiry profile and renewal options?
+  - Are there any tenant arrears or disputes?
+  - What tenant deposits are held and how will they transfer?
+  physical_condition:
+  - What is the age and condition of buildings?
+  - What capital expenditure is required (deferred maintenance)?
+  - Are there any asbestos, hazardous materials, or contamination issues?
+  - Are all services (water, electricity, sewer) connected and compliant?
+  - What is the fire and safety compliance status?
+  environmental:
+  - Is there any soil or groundwater contamination?
+  - What environmental authorizations are required?
+  - What is the flood risk and stormwater management?
+  - Are there any protected species or ecosystems?

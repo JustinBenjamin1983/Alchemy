@@ -1,191 +1,508 @@
-# DD Blueprint: Mining/Resources Acquisition
-# ============================================
-# This blueprint defines the due diligence framework for acquiring
-# mining operations, specifically tailored for South African mining sector.
-
-transaction_type: "Mining/Resources Acquisition"
-description: "Due diligence blueprint for acquisition of mining operations"
-jurisdiction: "South Africa"
-
-# Reference documents that should always be included in analysis context
+transaction_type: Mining/Resources Acquisition
+description: Due diligence blueprint for acquisition of mining operations
+jurisdiction: South Africa
 reference_documents:
   always_include:
-    - pattern: "MOI"
-      reason: "Constitutional document - defines approval requirements for change of control"
-    - pattern: "Shareholder"
-      reason: "Constitutional document - defines shareholder rights, pre-emption, tag/drag"
-    - pattern: "Board Resolution"
-      reason: "Governance - verifies transaction has been properly authorized"
-
-# Risk categories with specific focus areas
+  - pattern: MOI
+    reason: Constitutional document - defines approval requirements for change of control
+  - pattern: Shareholder
+    reason: Constitutional document - defines shareholder rights, pre-emption, tag/drag
+  - pattern: Board Resolution
+    reason: Governance - verifies transaction has been properly authorized
 risk_categories:
-  - name: "Change of Control"
-    weight: critical
-    description: "Provisions triggered by the acquisition"
-    standard_questions:
-      - "Which material contracts contain change of control provisions?"
-      - "What consents are required to complete the transaction?"
-      - "What are the financial consequences of triggering CoC clauses?"
-      - "Are there any termination rights upon change of control?"
-      - "What notice periods apply?"
-    cross_doc_validations:
-      - check: "MOI approval requirements vs Board Resolution authorizations"
-        description: "Verify board has authority for what it approved"
-      - check: "CoC thresholds across all contracts"
-        description: "Ensure transaction structure triggers (or avoids) CoC"
-      - check: "Definition consistency"
-        description: "Compare CoC definitions across documents"
-    calculations:
-      - "Aggregate all liquidated damages exposure"
-      - "Sum all potential termination costs"
-      - "Calculate acceleration amounts for loan facilities"
-
-  - name: "Mining Rights & Regulatory"
-    weight: critical
-    description: "Mining right validity and regulatory compliance"
-    standard_questions:
-      - "Is the mining right valid and in good standing?"
-      - "When does it expire and what renewal steps are required?"
-      - "What DMRE consents are required for transfer of control?"
-      - "Are there any Section 102 (MPRDA) compliance issues?"
-      - "Is the mining work programme being followed?"
-      - "What are the Social and Labour Plan obligations?"
-    cross_doc_validations:
-      - check: "Mining right area vs lease agreement property description"
-        description: "Verify mining right covers leased land"
-      - check: "Mining right holder vs company name"
-        description: "Verify consistency of holder identity"
-    regulatory_approvals:
-      - "DMRE Section 11 consent (if share transfer)"
-      - "Competition Commission (if thresholds met)"
-      - "Ministerial consent (if required by Mining Charter)"
-
-  - name: "Financial & Banking"
-    weight: critical
-    description: "Loan facilities, covenants, and financial position"
-    standard_questions:
-      - "What loan facilities exist and what are the outstanding amounts?"
-      - "Are there any covenant breaches or existing waivers?"
-      - "Do loan agreements contain CoC triggers or acceleration rights?"
-      - "What security has been provided over company assets?"
-      - "Are there any cross-default provisions?"
-    cross_doc_validations:
-      - check: "Loan security vs asset register"
-        description: "Verify all secured assets are identified"
-      - check: "Covenant calculations vs financial statements"
-        description: "Verify current covenant compliance"
-    calculations:
-      - "Total debt outstanding"
-      - "Covenant compliance ratios (DSCR, Interest Cover, etc.)"
-      - "Acceleration exposure if CoC triggered"
-      - "Early repayment penalties"
-
-  - name: "Environmental"
-    weight: high
-    description: "Environmental compliance and rehabilitation liabilities"
-    standard_questions:
-      - "What is the total rehabilitation liability provision?"
-      - "Is there a valid Environmental Management Programme?"
-      - "Is the water use license current and compliant?"
-      - "Are there any pending environmental actions or notices?"
-      - "What financial provision/guarantee is in place for rehabilitation?"
-    key_documents:
-      - "Environmental Compliance Certificate"
-      - "Water Use License"
-      - "Environmental Management Programme"
-      - "Financial Provision Certificate"
-
-  - name: "Material Contracts"
-    weight: high
-    description: "Key commercial contracts and their terms"
-    standard_questions:
-      - "What are the key revenue contracts (offtake/supply agreements)?"
-      - "Do they contain assignment restrictions or CoC triggers?"
-      - "What is the revenue concentration risk?"
-      - "Are there minimum volume/take-or-pay obligations?"
-      - "What are the pricing mechanisms and escalation provisions?"
-    cross_doc_validations:
-      - check: "Supply agreement volumes vs production capacity"
-        description: "Verify company can meet contractual commitments"
-    calculations:
-      - "Revenue at risk if contracts terminate on CoC"
-      - "Liquidated damages for supply shortfall"
-      - "Take-or-pay exposure"
-
-  - name: "Property & Leases"
-    weight: medium
-    description: "Real property and lease arrangements"
-    standard_questions:
-      - "What properties are owned vs leased?"
-      - "Do leases contain assignment/CoC restrictions?"
-      - "When do key leases expire?"
-      - "What renewal rights exist?"
-    cross_doc_validations:
-      - check: "Leased property vs mining right area"
-        description: "Verify mining rights cover necessary land"
-
-  - name: "Employment & Key Persons"
-    weight: medium
-    description: "Employment matters and key person dependencies"
-    standard_questions:
-      - "Are there key person dependencies?"
-      - "What are the CoC provisions in executive contracts?"
-      - "What is the severance exposure on CoC?"
-      - "Are there any retention arrangements?"
-      - "What are the union/collective agreement obligations?"
-    calculations:
-      - "Total severance exposure on CoC"
-      - "Retention bonus costs"
-
-# Deal blocker definitions
+- name: Change of Control
+  weight: critical
+  description: Provisions triggered by the acquisition
+  standard_questions:
+  - Which material contracts contain change of control provisions?
+  - What consents are required to complete the transaction?
+  - What are the financial consequences of triggering CoC clauses?
+  - Are there any termination rights upon change of control?
+  - What notice periods apply?
+  cross_doc_validations:
+  - check: MOI approval requirements vs Board Resolution authorizations
+    description: Verify board has authority for what it approved
+  - check: CoC thresholds across all contracts
+    description: Ensure transaction structure triggers (or avoids) CoC
+  - check: Definition consistency
+    description: Compare CoC definitions across documents
+  calculations:
+  - Aggregate all liquidated damages exposure
+  - Sum all potential termination costs
+  - Calculate acceleration amounts for loan facilities
+- name: Mining Rights & Regulatory
+  weight: critical
+  description: Mining right validity and regulatory compliance
+  standard_questions:
+  - Is the mining right valid and in good standing?
+  - When does it expire and what renewal steps are required?
+  - What DMRE consents are required for transfer of control?
+  - Are there any Section 102 (MPRDA) compliance issues?
+  - Is the mining work programme being followed?
+  - What are the Social and Labour Plan obligations?
+  cross_doc_validations:
+  - check: Mining right area vs lease agreement property description
+    description: Verify mining right covers leased land
+  - check: Mining right holder vs company name
+    description: Verify consistency of holder identity
+  regulatory_approvals:
+  - DMRE Section 11 consent (if share transfer)
+  - Competition Commission (if thresholds met)
+  - Ministerial consent (if required by Mining Charter)
+- name: Financial & Banking
+  weight: critical
+  description: Loan facilities, covenants, and financial position
+  standard_questions:
+  - What loan facilities exist and what are the outstanding amounts?
+  - Are there any covenant breaches or existing waivers?
+  - Do loan agreements contain CoC triggers or acceleration rights?
+  - What security has been provided over company assets?
+  - Are there any cross-default provisions?
+  cross_doc_validations:
+  - check: Loan security vs asset register
+    description: Verify all secured assets are identified
+  - check: Covenant calculations vs financial statements
+    description: Verify current covenant compliance
+  calculations:
+  - Total debt outstanding
+  - Covenant compliance ratios (DSCR, Interest Cover, etc.)
+  - Acceleration exposure if CoC triggered
+  - Early repayment penalties
+- name: Environmental
+  weight: high
+  description: Environmental compliance and rehabilitation liabilities
+  standard_questions:
+  - What is the total rehabilitation liability provision?
+  - Is there a valid Environmental Management Programme?
+  - Is the water use license current and compliant?
+  - Are there any pending environmental actions or notices?
+  - What financial provision/guarantee is in place for rehabilitation?
+  key_documents:
+  - Environmental Compliance Certificate
+  - Water Use License
+  - Environmental Management Programme
+  - Financial Provision Certificate
+- name: Material Contracts
+  weight: high
+  description: Key commercial contracts and their terms
+  standard_questions:
+  - What are the key revenue contracts (offtake/supply agreements)?
+  - Do they contain assignment restrictions or CoC triggers?
+  - What is the revenue concentration risk?
+  - Are there minimum volume/take-or-pay obligations?
+  - What are the pricing mechanisms and escalation provisions?
+  cross_doc_validations:
+  - check: Supply agreement volumes vs production capacity
+    description: Verify company can meet contractual commitments
+  calculations:
+  - Revenue at risk if contracts terminate on CoC
+  - Liquidated damages for supply shortfall
+  - Take-or-pay exposure
+- name: Property & Leases
+  weight: medium
+  description: Real property and lease arrangements
+  standard_questions:
+  - What properties are owned vs leased?
+  - Do leases contain assignment/CoC restrictions?
+  - When do key leases expire?
+  - What renewal rights exist?
+  cross_doc_validations:
+  - check: Leased property vs mining right area
+    description: Verify mining rights cover necessary land
+- name: Employment & Key Persons
+  weight: medium
+  description: Employment matters and key person dependencies
+  standard_questions:
+  - Are there key person dependencies?
+  - What are the CoC provisions in executive contracts?
+  - What is the severance exposure on CoC?
+  - Are there any retention arrangements?
+  - What are the union/collective agreement obligations?
+  calculations:
+  - Total severance exposure on CoC
+  - Retention bonus costs
 deal_blockers:
-  - description: "Mining right suspended, cancelled, or under forfeiture proceedings"
-    severity: "absolute"
-    remediation: "Cannot proceed - fundamental to transaction"
-
-  - description: "Required shareholder approval not obtained per MOI"
-    severity: "absolute"
-    remediation: "Must obtain shareholder approval before signing"
-
-  - description: "Material third-party consent cannot reasonably be obtained"
-    severity: "conditional"
-    remediation: "Condition precedent - evaluate likelihood and alternatives"
-
-  - description: "Unwaivable covenant breach with acceleration risk"
-    severity: "conditional"
-    remediation: "Negotiate waiver or refinancing as condition"
-
-  - description: "Competition approval unlikely to be obtained"
-    severity: "conditional"
-    remediation: "Consider deal structuring to avoid thresholds"
-
-# Conditions precedent patterns to identify
+- description: Mining right suspended, cancelled, or under forfeiture proceedings
+  severity: absolute
+  remediation: Cannot proceed - fundamental to transaction
+- description: Required shareholder approval not obtained per MOI
+  severity: absolute
+  remediation: Must obtain shareholder approval before signing
+- description: Material third-party consent cannot reasonably be obtained
+  severity: conditional
+  remediation: Condition precedent - evaluate likelihood and alternatives
+- description: Unwaivable covenant breach with acceleration risk
+  severity: conditional
+  remediation: Negotiate waiver or refinancing as condition
+- description: Competition approval unlikely to be obtained
+  severity: conditional
+  remediation: Consider deal structuring to avoid thresholds
 conditions_precedent_patterns:
-  - pattern: "consent required"
-    cp_type: "Third Party Consent"
-  - pattern: "approval required"
-    cp_type: "Approval"
-  - pattern: "must notify"
-    cp_type: "Notification"
-  - pattern: "subject to"
-    cp_type: "Condition"
-  - pattern: "prior written consent"
-    cp_type: "Third Party Consent"
-  - pattern: "ministerial approval"
-    cp_type: "Regulatory Approval"
-
-# Output requirements
+- pattern: consent required
+  cp_type: Third Party Consent
+- pattern: approval required
+  cp_type: Approval
+- pattern: must notify
+  cp_type: Notification
+- pattern: subject to
+  cp_type: Condition
+- pattern: prior written consent
+  cp_type: Third Party Consent
+- pattern: ministerial approval
+  cp_type: Regulatory Approval
+folder_questions:
+  01_Corporate_Governance:
+    display_name: Corporate & Governance
+    relevance: critical
+    questions:
+    - question: Does the MOI require shareholder approval for the transaction?
+      priority: critical
+      detail: Special resolution thresholds, disposal of assets provisions
+      cot_hint: Review MOI → identify approval thresholds → confirm compliance
+    - question: Are board resolutions in place authorizing the transaction?
+      priority: critical
+      detail: Board authority, quorum, conflict management
+      cot_hint: Check resolutions → verify authority → confirm proper authorization
+    - question: What change of control provisions exist in governance documents?
+      priority: high
+      detail: MOI and SHA change of control triggers
+      cot_hint: Review MOI/SHA → identify CoC provisions → assess impact
+    cross_doc_checks:
+    - check: Verify board authority matches MOI requirements
+      related_folders: []
+      description: Board resolution scope vs MOI reserved matters
+  02_Commercial:
+    display_name: Commercial Contracts
+    relevance: critical
+    questions:
+    - question: What offtake or supply agreements exist and do they contain CoC triggers?
+      priority: critical
+      detail: Revenue contracts, assignment restrictions, termination rights
+      cot_hint: List key contracts → find CoC clauses → assess revenue at risk
+    - question: What processing or toll treatment agreements are in place?
+      priority: high
+      detail: Smelting, refining, beneficiation arrangements
+      cot_hint: Identify processing agreements → check terms → assess dependencies
+    - question: Are there any take-or-pay or minimum volume commitments?
+      priority: high
+      detail: Contractual volume obligations
+      cot_hint: Find volume commitments → compare to capacity → assess exposure
+    - question: What royalty arrangements exist (private royalties beyond state)?
+      priority: high
+      detail: Third-party royalty agreements, historical BEE arrangements
+      cot_hint: List royalties → calculate cost → assess impact on economics
+    cross_doc_checks:
+    - check: Verify offtake volumes match production capacity
+      related_folders:
+      - 10_Technical
+      description: Contract commitments vs mine production plan
+  03_Financial:
+    display_name: Financial & Banking
+    relevance: critical
+    questions:
+    - question: What project finance or loan facilities are in place?
+      priority: critical
+      detail: Senior debt, mezzanine, shareholder loans
+      cot_hint: List facilities → check CoC provisions → calculate acceleration exposure
+    - question: What financial covenants apply and is there compliance headroom?
+      priority: critical
+      detail: DSCR, interest cover, leverage ratios
+      cot_hint: Extract covenants → calculate current compliance → assess headroom
+    - question: What security has been provided over mining assets?
+      priority: critical
+      detail: Notarial bonds, cessions, share pledges
+      cot_hint: List security → verify registrations → assess release requirements
+    - question: What is the rehabilitation liability provision and funding gap?
+      priority: critical
+      detail: Environmental provision vs financial guarantee/trust
+      cot_hint: Compare liability estimate → check guarantee → calculate gap
+    cross_doc_checks:
+    - check: Verify covenant calculations match financial statements
+      related_folders: []
+      description: Covenant compliance vs AFS figures
+    - check: Cross-reference security register with asset register
+      related_folders:
+      - 06_Property
+      description: Security descriptions vs actual assets
+  04_Regulatory:
+    display_name: Regulatory & Compliance
+    relevance: critical
+    questions:
+    - question: Is the mining right valid, in good standing, and not subject to forfeiture?
+      priority: critical
+      detail: MPRDA compliance, renewal status, DMRE notices
+      cot_hint: Check mining right → verify good standing → assess risk
+    - question: What DMRE Section 11 consent is required for the transaction?
+      priority: critical
+      detail: Ministerial consent for share transfer, timing implications
+      cot_hint: Confirm consent requirement → assess timeline → identify conditions
+    - question: Is the Social and Labour Plan compliant and up to date?
+      priority: critical
+      detail: SLP commitments, HRD, LED, housing obligations
+      cot_hint: Review SLP → check compliance → identify shortfalls
+    - question: Is the Mining Work Programme being followed?
+      priority: high
+      detail: Production targets, development commitments
+      cot_hint: Compare MWP targets → check actual performance → assess gap
+    - question: Is the Environmental Management Programme compliant?
+      priority: critical
+      detail: EMPr approval, compliance, annual reports
+      cot_hint: Check EMPr status → review compliance → identify issues
+    - question: Is the Water Use License current and compliant?
+      priority: critical
+      detail: WUL conditions, DWS compliance
+      cot_hint: Check WUL → verify compliance → assess risk
+    cross_doc_checks:
+    - check: Verify mining right area matches property titles
+      related_folders:
+      - 06_Property
+      description: Mining right coordinates vs surface lease
+  05_Employment:
+    display_name: Employment & Labour
+    relevance: high
+    questions:
+    - question: What executive CoC provisions exist (golden parachutes, acceleration)?
+      priority: critical
+      detail: Executive contracts, severance on CoC
+      cot_hint: Review exec contracts → identify CoC clauses → calculate exposure
+    - question: What union recognition and collective agreements are in place?
+      priority: high
+      detail: NUM, AMCU, other unions, wage agreements
+      cot_hint: List unions → check agreements → note expiry dates
+    - question: Are there pending Section 189 retrenchment processes?
+      priority: high
+      detail: LRA Section 189/189A consultations
+      cot_hint: Check for S189 notices → assess status → quantify liability
+    - question: What is the Mine Health and Safety Act compliance status?
+      priority: high
+      detail: MHSA Section 54/55 history, safety stoppages
+      cot_hint: Review safety record → check for notices → assess risk
+    cross_doc_checks:
+    - check: Verify employee numbers match SLP commitments
+      related_folders:
+      - 04_Regulatory
+      description: Headcount vs SLP employment targets
+  06_Property:
+    display_name: Property & Assets
+    relevance: high
+    questions:
+    - question: What surface rights and servitudes exist over the mining area?
+      priority: critical
+      detail: Surface leases, servitudes, access rights
+      cot_hint: Review surface rights → check coverage → identify gaps
+    - question: Do property leases contain CoC or assignment restrictions?
+      priority: high
+      detail: Landlord consent, assignment clauses
+      cot_hint: Check lease terms → identify restrictions → assess consent needs
+    - question: What is the status of community land claims or disputes?
+      priority: high
+      detail: Land claims, community relations, relocation
+      cot_hint: Identify claims → check status → assess resolution
+    cross_doc_checks:
+    - check: Verify leased land covers mining right extent
+      related_folders:
+      - 04_Regulatory
+      description: Surface rights vs mining right boundary
+  07_Insurance:
+    display_name: Insurance
+    relevance: medium
+    questions:
+    - question: Is there adequate business interruption and property insurance?
+      priority: high
+      detail: Mining all-risks, BI coverage, policy limits
+      cot_hint: Review policies → check limits → assess adequacy
+    - question: Is environmental liability insurance in place?
+      priority: high
+      detail: Pollution liability, gradual pollution cover
+      cot_hint: Check environmental cover → review exclusions → assess gaps
+    cross_doc_checks: []
+  08_Litigation:
+    display_name: Litigation & Disputes
+    relevance: high
+    questions:
+    - question: Are there any pending DMRE or environmental enforcement matters?
+      priority: critical
+      detail: Directives, compliance notices, administrative actions
+      cot_hint: List regulatory matters → assess status → evaluate exposure
+    - question: Are there any community or land claimant disputes?
+      priority: high
+      detail: Community litigation, relocation disputes
+      cot_hint: Identify disputes → assess claims → evaluate risk
+    - question: Are there any mining-related personal injury claims?
+      priority: high
+      detail: Silicosis, occupational disease, safety incidents
+      cot_hint: List claims → check insurance → quantify exposure
+    cross_doc_checks:
+    - check: Cross-reference disputes with insurance coverage
+      related_folders:
+      - 07_Insurance
+      description: Claims vs policy coverage
+  09_Tax:
+    display_name: Tax
+    relevance: medium
+    questions:
+    - question: What mining royalty obligations apply and are payments current?
+      priority: high
+      detail: MPRRA royalties, refined vs unrefined rates
+      cot_hint: Check royalty calculations → verify payments → assess compliance
+    - question: Are there any capital expenditure deductions available?
+      priority: medium
+      detail: Section 36 mining capex deductions
+      cot_hint: Review capex → check allowances → assess benefits
+    cross_doc_checks: []
+  10_Technical:
+    display_name: Technical & Operations
+    relevance: critical
+    questions:
+    - question: What is the resource and reserve statement (SAMREC compliant)?
+      priority: critical
+      detail: Mineral resources, ore reserves, Competent Person report
+      cot_hint: Review CPR → check SAMREC compliance → assess resource quality
+    - question: What is the remaining life of mine and production profile?
+      priority: critical
+      detail: LoM plan, production schedule, expansion plans
+      cot_hint: Extract LoM → review production plan → assess sustainability
+    - question: What is the operational condition and capex requirements?
+      priority: high
+      detail: Plant condition, replacement capex, sustaining capex
+      cot_hint: Assess condition → identify capex needs → quantify investment
+    - question: What processing and metallurgical factors apply?
+      priority: high
+      detail: Recovery rates, head grade, metallurgical characteristics
+      cot_hint: Review metallurgy → check recoveries → assess viability
+    cross_doc_checks:
+    - check: Verify production targets match offtake commitments
+      related_folders:
+      - 02_Commercial
+      description: Mine plan vs supply agreement volumes
+  11_Environmental:
+    display_name: Environmental
+    relevance: critical
+    questions:
+    - question: What is the total closure and rehabilitation liability?
+      priority: critical
+      detail: Closure cost estimate, NEMA financial provision
+      cot_hint: Review liability estimate → check provision → calculate gap
+    - question: Are there any contamination or pollution issues?
+      priority: critical
+      detail: Acid mine drainage, tailings, groundwater contamination
+      cot_hint: Identify contamination → assess remediation → quantify cost
+    - question: What is the status of tailings and waste management?
+      priority: high
+      detail: TSF stability, waste rock, hazardous waste
+      cot_hint: Review TSF → check stability → assess risk
+    cross_doc_checks:
+    - check: Verify rehabilitation provision matches NEMA requirement
+      related_folders:
+      - 03_Financial
+      description: Liability estimate vs financial provision
+  12_BEE:
+    display_name: B-BBEE & Mining Charter
+    relevance: critical
+    questions:
+    - question: What is the current HDP/HDSA ownership percentage?
+      priority: critical
+      detail: Mining Charter ownership, flow-through calculation
+      cot_hint: Calculate HDP ownership → check Charter threshold → assess compliance
+    - question: Will the transaction affect Mining Charter compliance?
+      priority: critical
+      detail: Impact on ownership levels, Charter thresholds
+      cot_hint: Model post-transaction → compare thresholds → identify issues
+    - question: Are there BEE lock-in or restriction provisions affecting the sale?
+      priority: high
+      detail: BEE shareholder consents, transfer restrictions
+      cot_hint: Find restrictions → check lock-in periods → assess flexibility
+    cross_doc_checks:
+    - check: Verify BEE ownership matches DMRE submissions
+      related_folders:
+      - 04_Regulatory
+      description: Ownership calculation vs regulatory filings
+  99_Needs_Review:
+    display_name: Needs Review
+    relevance: low
+    questions:
+    - question: What mining-related issues does this document raise?
+      priority: medium
+      detail: Documents requiring manual classification review
+      cot_hint: Identify mining content → flag for review
+    cross_doc_checks: []
+cot_questions:
+  ownership_regulatory:
+  - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
+  - How does this transaction change the ownership structure? What is the post-transaction ownership?
+  - What regulatory approvals or notifications are triggered by ownership changes (e.g., >15%, >25%, >49% thresholds)?
+  - Are there any ownership restrictions in constitutional documents, shareholder agreements, or regulatory conditions?
+  - What licenses, permits, or authorizations are dependent on the current ownership structure?
+  - What are the consequences of non-compliance with ownership-based regulatory requirements?
+  - What is the current HDSA/BEE ownership percentage and how is it verified?
+  - How does the acquisition affect Mining Charter III compliance (minimum 30% HDSA)?
+  - If acquirer is non-HDSA, what mechanisms exist to restore BEE compliance (trusts, partners)?
+  - What is the current Mining Charter scorecard status and how will it be affected?
+  - Are there any BEE shareholding lock-in periods that affect the transaction?
+  change_of_control:
+  - What is the exact CoC definition in this document? Does 100% share sale meet this definition?
+  - Is termination automatic or discretionary upon CoC?
+  - What is the commercial value of this contract - what % of revenue/operations depends on it?
+  - If this contract terminates, what is the operational impact? Is there a substitute available?
+  - Can consent realistically be obtained pre-closing? What leverage does the counterparty have?
+  - What are the liquidated damages/penalties? What is the indirect exposure (lost revenue)?
+  mining_rights:
+  - What is the exact status of the mining right (valid, suspended, under review)?
+  - What conditions are attached and are they being complied with?
+  - What is the SLP commitment status (% complete, arrears)? What is catch-up cost?
+  - Does share transfer require Section 11 consent? What is typical DMRE processing time?
+  - What happens if DMRE consent is refused or delayed? Are there pending directives?
+  - Is the mining work programme being followed? What are non-compliance penalties?
+  financial_banking:
+  - What is the exact CoC/event of default trigger language in the facility agreement?
+  - What covenants exist and what are current compliance levels (headroom)?
+  - Does the transaction trigger mandatory prepayment or acceleration?
+  - What is the acceleration amount (principal + accrued interest + fees)?
+  - Are there cross-default provisions that could cascade to other facilities?
+  - Is refinancing available if current facility accelerates? What are break costs?
+  environmental:
+  - What is the exact status of environmental authorizations (EMPr, EA, WUL)?
+  - What is the current rehabilitation liability estimate vs financial provision in place?
+  - What is the gap between provision and estimated liability (underfunding exposure)?
+  - Are there any pending environmental actions, notices, or directives?
+  - Are there contaminated land issues or legacy environmental liabilities?
+  - What are the annual environmental compliance costs and reporting obligations?
+  material_contracts:
+  - What is the exact assignment/CoC restriction language? Does indirect CoC trigger it?
+  - What is this contract worth (revenue/cost)? What % of revenue concentration?
+  - If terminated, is there an alternative counterparty? What would replacement terms look like?
+  - Is counterparty consent likely? What consideration might be required for consent?
+  - What is the take-or-pay or minimum volume exposure?
+  - What are liquidated damages for non-performance or supply shortfall?
+  employment:
+  - What are the CoC provisions in executive contracts? Is there accelerated vesting?
+  - What is total severance exposure on CoC (notice + bonus + benefits)?
+  - Are there key person dependencies? What retention arrangements exist?
+  - What are union/collective agreement obligations? Any pending disputes?
+  - What is the Section 54/55 (MHSA) history? Any pending safety issues?
+  property_leases:
+  - Does the lease cover the mining right area? Any gaps in surface rights?
+  - What is the remaining lease term vs remaining life of mine?
+  - Do leases contain assignment/CoC restrictions? Is landlord consent required?
+  - What are renewal rights and rent escalation provisions?
+  - Are there any servitude or access issues that could affect operations?
+  bee_transformation:
+  - What is the current HDSA ownership % and Mining Charter compliance status?
+  - Will the transaction affect BEE ownership levels? Is there a minimum threshold?
+  - Are there any BEE lock-in periods or restrictions on share transfers?
+  - What is the ownership flow-through analysis? Any related party issues?
+  - What are the consequences of falling below Mining Charter thresholds?
 output_requirements:
   must_include:
-    - "Deal blocker identification"
-    - "Financial exposure quantification"
-    - "Conditions precedent register"
-    - "Consent matrix"
-    - "Key risk summary"
-    - "Recommendations"
-
+  - Deal blocker identification with full reasoning
+  - Financial exposure quantification with calculations shown
+  - Conditions precedent register
+  - Consent matrix
+  - Key risk summary
+  - Recommendations
+  - CoT reasoning audit trail for critical findings
   format:
-    - "Executive summary (1-2 pages)"
-    - "Detailed findings by category"
-    - "Financial exposure schedule"
-    - "CP checklist"
+  - Executive summary (1-2 pages)
+  - Detailed findings by category with reasoning
+  - Financial exposure schedule
+  - CP checklist

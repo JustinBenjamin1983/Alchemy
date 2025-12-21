@@ -30,7 +30,6 @@ import {
 } from "@/components/ui/select";
 import RiskManager from "./RiskManager";
 import { RiskSummary } from "./RiskSummary";
-import DocumentChanges from "./DocumentChanges";
 import { useMutateDDStart } from "@/hooks/useMutateDDStart";
 import { DDProjectWizard } from "./Wizard/DDProjectWizard";
 import { DDProjectSetup } from "./Wizard/types";
@@ -38,10 +37,6 @@ import { useGetDDListing } from "@/hooks/useGetDDListing";
 import { AppSidebar } from "../OpinionWriter/AppSideBar";
 import { Loader2, Clock, Trash2, FileEdit } from "lucide-react";
 import { useMutateDDJoin } from "@/hooks/useMutateDDJoin";
-import { DocListing } from "./Files/DocListing";
-import Questions from "./Questions";
-import { Search } from "./Search";
-import { useGetDDDocsHistory } from "@/hooks/useGetDDDocsHistory";
 import { useGetDD } from "@/hooks/useGetDD";
 import { useGetUser } from "@/hooks/useGetUser";
 import { useIdle } from "@uidotdev/usehooks";
@@ -76,7 +71,6 @@ export function DDMain() {
   const [joinDDLens, setJoinDDLens] = useState<string>(null);
   const [joinDDRisks, setJoinDDRisks] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
-  console.log("dds?.due_diligences", dds?.due_diligences);
   const { instance } = useMsal();
   const idle = useIdle(10 * 60_000);
   const { data: user } = useGetUser();
@@ -126,16 +120,6 @@ export function DDMain() {
     error: ddError,
   } = useGetDD(selectedDDID, !!selectedDDID && !mutateDDDelete.isPending);
 
-  const { data: docsHistory, refetch: refetchDocsHistory } =
-    useGetDDDocsHistory(selectedDDID);
-
-  useEffect(() => {
-    if (!selectedDDID) return;
-
-    refetchDocsHistory();
-  }, [selectedDDID]);
-  console.log("useGetDDDocsHistory", docsHistory);
-
   useEffect(() => {
     if (selectedDDID) {
       const params = new URLSearchParams(location.search);
@@ -165,9 +149,9 @@ export function DDMain() {
     if (!id) return;
 
     setSelectedDDID(id);
-    // Only change to Documents if we're not already in a wizard state
+    // Only change to Processing (Console) if we're not already in a wizard state
     // This prevents the wizard from being kicked out when wizardDrafts updates
-    setScreenState((prev) => prev.startsWith("Wizard") ? prev : "Documents");
+    setScreenState((prev) => prev.startsWith("Wizard") ? prev : "Processing");
   }, [location.search, wizardDrafts]);
 
   const handleButtonClick = () => {
@@ -257,11 +241,12 @@ export function DDMain() {
       // 3️⃣ Create the DD with wizard data
       const briefing = `
 Transaction Type: ${setup.transactionType}
+Client Name: ${setup.clientName || "Not specified"}
+Target Entity: ${setup.targetEntityName || "Not specified"}
 Client Role: ${setup.clientRole}
 Deal Structure: ${setup.dealStructure}
-Target Company: ${setup.targetCompanyName}
 Estimated Value: ${setup.estimatedValue ? `R${setup.estimatedValue.toLocaleString()}` : "Not specified"}
-Target Closing: ${setup.targetClosingDate ? new Date(setup.targetClosingDate).toLocaleDateString() : "Not specified"}
+Target Closing: ${setup.targetClosingDate ? new Date(setup.targetClosingDate).toLocaleDateString("en-ZA", { timeZone: "Africa/Johannesburg" }) : "Not specified"}
 
 Deal Rationale: ${setup.dealRationale || "Not provided"}
 
@@ -269,11 +254,16 @@ Known Concerns: ${setup.knownConcerns.length > 0 ? setup.knownConcerns.join(", "
 
 Critical Priorities: ${setup.criticalPriorities.length > 0 ? setup.criticalPriorities.join(", ") : "None specified"}
 Known Deal Breakers: ${setup.knownDealBreakers.length > 0 ? setup.knownDealBreakers.join(", ") : "None specified"}
+Deprioritized Areas: ${setup.deprioritizedAreas?.length > 0 ? setup.deprioritizedAreas.join(", ") : "None specified"}
 
-Key Persons: ${setup.keyPersons.length > 0 ? setup.keyPersons.join(", ") : "None specified"}
-Counterparties: ${setup.counterparties.length > 0 ? setup.counterparties.join(", ") : "None specified"}
-Key Lenders: ${setup.keyLenders.length > 0 ? setup.keyLenders.join(", ") : "None specified"}
-Key Regulators: ${setup.keyRegulators.length > 0 ? setup.keyRegulators.join(", ") : "None specified"}
+Key Individuals: ${setup.keyIndividuals?.length > 0 ? setup.keyIndividuals.join(", ") : "None specified"}
+Key Suppliers: ${setup.keySuppliers?.length > 0 ? setup.keySuppliers.join(", ") : "None specified"}
+Key Customers: ${setup.keyCustomers?.length > 0 ? setup.keyCustomers.map(c => c.name + (c.description ? ` (${c.description})` : "") + (c.exposure ? ` - ${c.exposure}` : "")).join("; ") : "None specified"}
+Key Lenders: ${setup.keyLenders?.length > 0 ? setup.keyLenders.map(l => l.name + (l.description ? ` (${l.description})` : "") + (l.facilityAmount ? ` - ${l.facilityAmount}` : "")).join("; ") : "None specified"}
+Key Regulators: ${setup.keyRegulators?.length > 0 ? setup.keyRegulators.join(", ") : "None specified"}
+Other Stakeholders: ${setup.keyOther?.length > 0 ? setup.keyOther.map(o => o.name + (o.role ? ` (${o.role})` : "")).join("; ") : "None specified"}
+Shareholder Entity: ${setup.shareholderEntityName || "None specified"}
+Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => s.name).map(s => s.name + (s.percentage ? ` (${s.percentage}%)` : "")).join(", ") : "None specified"}
 `.trim();
 
       startDD.mutate({
@@ -285,9 +275,11 @@ Key Regulators: ${setup.keyRegulators.length > 0 ? setup.keyRegulators.join(", "
           projectSetup: setup, // Pass the full setup for future use
         },
       });
-    } catch (err) {
-      setUploadError("An error occurred during file upload or processing.");
-      console.error(err);
+    } catch (err: any) {
+      const errorMessage = err?.response?.data?.error || err?.message || "An error occurred during file upload or processing.";
+      setUploadError(errorMessage);
+      console.error("DD Creation Error:", err);
+      throw err; // Re-throw so the wizard knows it failed
     } finally {
       setIsUploading(false);
     }
@@ -296,7 +288,8 @@ Key Regulators: ${setup.keyRegulators.length > 0 ? setup.keyRegulators.join(", "
     if (!startDD.isSuccess) return;
 
     setSelectedDDID((startDD.data.data as any).dd_id);
-    setScreenState("Wizard-JoinProject");
+    // Go directly to DD Dashboard after creating a project
+    setScreenState("Processing");
   }, [startDD.isSuccess]);
 
   const handleFiles = async (files: any, fileWasDraggedIn: boolean) => {
@@ -389,19 +382,13 @@ Key Regulators: ${setup.keyRegulators.length > 0 ? setup.keyRegulators.join(", "
     if (!mutateDDJoin.isSuccess) return;
 
     setSelectedDDID(selectedDDToJoin);
-    setScreenState("Documents");
+    setScreenState("Processing");
   }, [mutateDDJoin.isSuccess]);
   const [screenState, setScreenState] = useState<
-    | "Documents"
     | "Wizard-Chooser"
     | "Wizard-NewProject"
     | "Wizard-JoinProject"
-    | "DocumentErrors"
-    | "Search"
-    | "Risks"
-    | "Questions"
-    | "DocumentChanges"
-    | "ShowReport"
+    | "Analysis"
     | "Processing"
   >("Wizard-Chooser");
 
@@ -442,7 +429,7 @@ Key Regulators: ${setup.keyRegulators.length > 0 ? setup.keyRegulators.join(", "
       <SidebarInset>
         <Dialog
           open={screenState.startsWith("Wizard")}
-          onOpenChange={(open) => (!open ? setScreenState("Documents") : null)}
+          onOpenChange={(open) => (!open ? setScreenState("Processing") : null)}
         >
           {/* <DialogContent className="w-[1200px]"> */}
           <DialogContent className="w-[95vw] max-w-[1200px] max-h-[85vh] overflow-y-auto overflow-x-hidden">
@@ -562,10 +549,11 @@ Key Regulators: ${setup.keyRegulators.length > 0 ? setup.keyRegulators.join(", "
                                 {draft.updatedAt && (
                                   <span>
                                     • Last saved:{" "}
-                                    {new Date(draft.updatedAt).toLocaleDateString()}{" "}
-                                    {new Date(draft.updatedAt).toLocaleTimeString([], {
+                                    {new Date(draft.updatedAt).toLocaleDateString("en-ZA", { timeZone: "Africa/Johannesburg" })}{" "}
+                                    {new Date(draft.updatedAt).toLocaleTimeString("en-ZA", {
                                       hour: "2-digit",
                                       minute: "2-digit",
+                                      timeZone: "Africa/Johannesburg",
                                     })}
                                   </span>
                                 )}
@@ -661,9 +649,9 @@ Key Regulators: ${setup.keyRegulators.length > 0 ? setup.keyRegulators.join(", "
         <DDTop
           ddId={selectedDDID}
           ddName={dd?.name}
+          transactionType={dd?.transaction_type}
           screenState={screenState}
           setScreenState={setScreenState}
-          docHistoryCount={dd?.docHistory?.length}
           onDelete={handleDeleteDD}
           isDeleting={mutateDDDelete.isPending}
           onGenerateReport={handleGenerateReport}
@@ -692,36 +680,21 @@ Key Regulators: ${setup.keyRegulators.length > 0 ? setup.keyRegulators.join(", "
         {dd && (
           <div className="text-xl flex flex-1 flex-col gap-4 p-4 pt-4">
             <div className="text-2xl font-bold">
-              {screenState === "Documents" && "Documents"}
-              {screenState === "DocumentErrors" && "Document Errors"}
-              {screenState === "DocumentChanges" && "Document Changes"}
-              {screenState === "Search" && "Search"}
-              {screenState === "Risks" && "Risks"}
-              {screenState === "Questions" && "Questions"}
-              {screenState === "ShowReport" && "Generate Report"}
-              {screenState === "Processing" && "Processing Dashboard"}
+              {screenState === "Analysis" && "Analysis"}
+              {screenState === "Processing" && "Console"}
             </div>
             <div className="">
-              {screenState === "Documents" && (
-                <DocListing folders={dd?.folders} dd_id={selectedDDID} />
-              )}
-              {screenState === "DocumentChanges" && (
-                <DocumentChanges dd_id={selectedDDID} />
-              )}
-              {screenState === "Search" && <Search />}
-              {screenState === "Risks" && (
+              {screenState === "Analysis" && (
                 <>
                   <RiskSummary />
                 </>
               )}
-              {screenState === "Questions" && (
-                <Questions dd_id={selectedDDID} />
-              )}
-              {screenState === "ShowReport" && (
-                <div>Report generation feature coming soon...</div>
-              )}
               {screenState === "Processing" && (
-                <DDProcessingDashboard ddId={selectedDDID} />
+                <DDProcessingDashboard
+                  ddId={selectedDDID}
+                  onBack={() => setScreenState("Processing")}
+                  onViewResults={() => setScreenState("Analysis")}
+                />
               )}
             </div>
           </div>

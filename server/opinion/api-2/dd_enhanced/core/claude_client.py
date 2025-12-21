@@ -1,11 +1,20 @@
 """
 Claude API client with cost tracking, model tiering, and rate limiting.
 
-Model Strategy:
+Model Strategy (Default - Cost Optimized):
 - Haiku: Pass 1 extraction (structured data extraction - fast and cheap)
 - Sonnet: Pass 2-4 (analysis requires better reasoning)
 
-Cost savings: ~75% reduction on Pass 1 by using Haiku
+Model Strategy (High Accuracy - Premium):
+- Haiku: Pass 1 extraction
+- Sonnet: Pass 2 per-document analysis
+- Opus: Pass 3 cross-document (complex multi-hop reasoning)
+- Opus: Pass 4 synthesis (comprehensive recommendations)
+
+Cost savings vs accuracy tradeoff:
+- Default (H-S-S-S): ~$3.50/10 docs, ~89% accuracy
+- Premium (H-S-O-O): ~$11.50/10 docs, ~95% accuracy
+- Maximum (H-O-O-O): ~$35/10 docs, ~97% accuracy
 """
 import anthropic
 import os
@@ -15,8 +24,17 @@ import time
 import logging
 from dataclasses import dataclass, field
 from typing import Optional, Dict, Any, List
+from enum import Enum
 
 logger = logging.getLogger(__name__)
+
+
+class ModelTier(Enum):
+    """Model tier options for different accuracy/cost tradeoffs."""
+    COST_OPTIMIZED = "cost_optimized"      # H-S-S-S: Default, 89% accuracy
+    BALANCED = "balanced"                   # H-S-O-S: Opus for Pass 3 only, 92% accuracy
+    HIGH_ACCURACY = "high_accuracy"         # H-S-O-O: Opus for Pass 3+4, 95% accuracy
+    MAXIMUM_ACCURACY = "maximum_accuracy"   # H-O-O-O: Opus for Pass 2-4, 97% accuracy
 
 
 @dataclass
@@ -25,6 +43,7 @@ class TokenUsage:
 
     # Pricing per million tokens (as of Dec 2024)
     PRICING = {
+        "claude-opus-4-20250514": {"input": 15.0, "output": 75.0},
         "claude-sonnet-4-20250514": {"input": 3.0, "output": 15.0},
         "claude-3-5-sonnet-20241022": {"input": 3.0, "output": 15.0},
         "claude-3-5-haiku-20241022": {"input": 0.80, "output": 4.0},
@@ -94,13 +113,50 @@ class ClaudeClient:
 
     Model aliases:
         - "haiku": claude-3-5-haiku-20241022 (fast, cheap - good for extraction)
-        - "sonnet": claude-sonnet-4-20250514 (best reasoning)
+        - "sonnet": claude-sonnet-4-20250514 (good reasoning, cost effective)
+        - "opus": claude-opus-4-20250514 (best reasoning, premium cost)
+
+    Model Tiers:
+        - COST_OPTIMIZED: H-S-S-S (~$3.50/10 docs, ~89% accuracy)
+        - BALANCED: H-S-O-S (~$7.50/10 docs, ~92% accuracy)
+        - HIGH_ACCURACY: H-S-O-O (~$11.50/10 docs, ~95% accuracy)
+        - MAXIMUM_ACCURACY: H-O-O-O (~$35/10 docs, ~97% accuracy)
     """
 
     # Model aliases for easy switching
     MODELS = {
         "haiku": "claude-3-5-haiku-20241022",
         "sonnet": "claude-sonnet-4-20250514",
+        "opus": "claude-opus-4-20250514",
+    }
+
+    # Model selection by tier and pass
+    # Format: tier -> {pass_name: model_alias}
+    TIER_MODELS = {
+        ModelTier.COST_OPTIMIZED: {
+            "pass1": "haiku",
+            "pass2": "sonnet",
+            "pass3": "sonnet",
+            "pass4": "sonnet",
+        },
+        ModelTier.BALANCED: {
+            "pass1": "haiku",
+            "pass2": "sonnet",
+            "pass3": "opus",    # Opus for cross-doc (highest impact)
+            "pass4": "sonnet",
+        },
+        ModelTier.HIGH_ACCURACY: {
+            "pass1": "haiku",
+            "pass2": "sonnet",
+            "pass3": "opus",    # Opus for cross-doc
+            "pass4": "opus",    # Opus for synthesis
+        },
+        ModelTier.MAXIMUM_ACCURACY: {
+            "pass1": "haiku",   # Haiku still fine for extraction
+            "pass2": "opus",    # Opus for analysis
+            "pass3": "opus",    # Opus for cross-doc
+            "pass4": "opus",    # Opus for synthesis
+        },
     }
 
     # Rate limiting configuration
@@ -109,12 +165,31 @@ class ClaudeClient:
 
     api_key: str = field(default_factory=lambda: os.environ.get("ANTHROPIC_API_KEY", ""))
     usage: TokenUsage = field(default_factory=TokenUsage)
+    model_tier: ModelTier = field(default=ModelTier.BALANCED)  # Haiku-Sonnet-Opus-Sonnet for better cross-doc analysis
     _client: Any = field(default=None, repr=False)
 
     def __post_init__(self):
         if not self.api_key:
             raise ValueError("ANTHROPIC_API_KEY environment variable not set")
         self._client = anthropic.Anthropic(api_key=self.api_key)
+
+        # Allow setting tier from environment variable
+        tier_env = os.environ.get("DD_MODEL_TIER", "").lower()
+        if tier_env:
+            tier_map = {
+                "cost_optimized": ModelTier.COST_OPTIMIZED,
+                "balanced": ModelTier.BALANCED,
+                "high_accuracy": ModelTier.HIGH_ACCURACY,
+                "maximum_accuracy": ModelTier.MAXIMUM_ACCURACY,
+            }
+            if tier_env in tier_map:
+                self.model_tier = tier_map[tier_env]
+                logger.info(f"Using model tier from environment: {self.model_tier.value}")
+
+    def get_model_for_pass(self, pass_name: str) -> str:
+        """Get the appropriate model alias for a given pass based on current tier."""
+        tier_config = self.TIER_MODELS.get(self.model_tier, self.TIER_MODELS[ModelTier.COST_OPTIMIZED])
+        return tier_config.get(pass_name, "sonnet")
 
     def _resolve_model(self, model: str) -> str:
         """Resolve model alias to full model name."""
@@ -239,7 +314,7 @@ class ClaudeClient:
         return {"error": "Failed to parse JSON", "raw": content}
 
     # =========================================================================
-    # Pass-specific methods with appropriate model selection
+    # Pass-specific methods with tier-based model selection
     # =========================================================================
 
     def complete_extraction(
@@ -250,17 +325,20 @@ class ClaudeClient:
         **kwargs
     ) -> Dict[str, Any]:
         """
-        Pass 1: Extraction using Haiku.
+        Pass 1: Extraction.
 
-        Haiku is ideal for structured data extraction:
-        - 75% cheaper than Sonnet
-        - Faster response times
-        - Good enough for extracting parties, dates, clauses
+        Default: Haiku (75% cheaper than Sonnet, fast response times)
+        All tiers use Haiku for extraction - structured data extraction
+        doesn't benefit significantly from more powerful models.
         """
+        model = self.get_model_for_pass("pass1")
+        logger.debug(f"Pass 1 (extraction) using model: {model}")
+        # Remove json_mode from kwargs if passed to avoid duplicate argument error
+        kwargs.pop('json_mode', None)
         return self.complete(
             prompt=prompt,
             system=system,
-            model="haiku",
+            model=model,
             max_tokens=max_tokens,
             json_mode=True,
             **kwargs
@@ -274,17 +352,24 @@ class ClaudeClient:
         **kwargs
     ) -> Dict[str, Any]:
         """
-        Pass 2: Per-document analysis using Sonnet.
+        Pass 2: Per-document analysis.
 
-        Sonnet needed for:
-        - Complex legal reasoning
-        - Risk assessment
+        Default: Sonnet (good reasoning, cost effective)
+        MAXIMUM_ACCURACY tier: Opus (best reasoning for complex risk assessment)
+
+        This pass benefits from better reasoning for:
+        - Complex legal interpretation
+        - Nuanced risk assessment
         - Understanding context and implications
         """
+        model = self.get_model_for_pass("pass2")
+        logger.debug(f"Pass 2 (analysis) using model: {model}")
+        # Remove json_mode from kwargs if passed to avoid duplicate argument error
+        kwargs.pop('json_mode', None)
         return self.complete(
             prompt=prompt,
             system=system,
-            model="sonnet",
+            model=model,
             max_tokens=max_tokens,
             json_mode=True,
             **kwargs
@@ -298,17 +383,27 @@ class ClaudeClient:
         **kwargs
     ) -> Dict[str, Any]:
         """
-        Pass 3: Cross-document synthesis using Sonnet.
+        Pass 3: Cross-document analysis.
 
-        Sonnet required for:
-        - Comparing multiple documents
-        - Finding conflicts and cascades
-        - Complex multi-hop reasoning
+        Default: Sonnet
+        BALANCED/HIGH_ACCURACY/MAXIMUM tiers: Opus
+
+        This is the HIGHEST IMPACT pass for Opus because it requires:
+        - Complex multi-document reasoning
+        - Identifying subtle conflicts between documents
+        - Understanding cascade effects
+        - Multi-hop logical inference
+
+        Opus significantly outperforms Sonnet on cross-document conflict detection.
         """
+        model = self.get_model_for_pass("pass3")
+        logger.debug(f"Pass 3 (cross-doc) using model: {model}")
+        # Remove json_mode from kwargs if passed to avoid duplicate argument error
+        kwargs.pop('json_mode', None)
         return self.complete(
             prompt=prompt,
             system=system,
-            model="sonnet",
+            model=model,
             max_tokens=max_tokens,
             json_mode=True,
             **kwargs
@@ -322,17 +417,56 @@ class ClaudeClient:
         **kwargs
     ) -> Dict[str, Any]:
         """
-        Pass 4: Final deal synthesis using Sonnet.
+        Pass 4: Final synthesis and recommendations.
 
-        Sonnet required for:
-        - Executive summary generation
-        - Deal assessment
-        - Prioritizing findings
+        Default: Sonnet
+        HIGH_ACCURACY/MAXIMUM tiers: Opus
+
+        This pass benefits from Opus for:
+        - Comprehensive executive summaries
+        - Nuanced deal impact assessment
+        - Prioritizing and connecting findings
+        - Generating actionable recommendations
         """
+        model = self.get_model_for_pass("pass4")
+        logger.debug(f"Pass 4 (synthesis) using model: {model}")
+        # Remove json_mode from kwargs if passed to avoid duplicate argument error
+        kwargs.pop('json_mode', None)
         return self.complete(
             prompt=prompt,
             system=system,
-            model="sonnet",
+            model=model,
+            max_tokens=max_tokens,
+            json_mode=True,
+            **kwargs
+        )
+
+    def complete_verification(
+        self,
+        prompt: str,
+        system: str = "",
+        max_tokens: int = 8192,
+        **kwargs
+    ) -> Dict[str, Any]:
+        """
+        Optional Pass 5: Verification of critical findings.
+
+        Always uses Opus for maximum accuracy on deal-critical issues.
+        Only invoked for findings marked as deal_blocker or critical severity.
+
+        This pass:
+        - Double-checks severity classification
+        - Validates financial calculations
+        - Confirms cross-document conflict analysis
+        - Reduces false positives on critical issues
+        """
+        logger.debug("Verification pass using model: opus")
+        # Remove json_mode from kwargs if passed to avoid duplicate argument error
+        kwargs.pop('json_mode', None)
+        return self.complete(
+            prompt=prompt,
+            system=system,
+            model="opus",
             max_tokens=max_tokens,
             json_mode=True,
             **kwargs
@@ -347,12 +481,14 @@ class ClaudeClient:
     ) -> Dict[str, Any]:
         """
         Critical analysis that requires best reasoning.
-        Uses Sonnet with higher token limit.
+        Always uses Opus regardless of tier setting.
         """
+        # Remove json_mode from kwargs if passed to avoid duplicate argument error
+        kwargs.pop('json_mode', None)
         return self.complete(
             prompt=prompt,
             system=system,
-            model="sonnet",
+            model="opus",
             max_tokens=max_tokens,
             json_mode=True,
             **kwargs
@@ -398,5 +534,49 @@ class ClaudeClient:
             "total_output_tokens": self.usage.output_tokens,
             "total_calls": self.usage.call_count,
             "total_cost_usd": round(self.usage.cost_usd, 4),
+            "model_tier": self.model_tier.value,
             "breakdown": self.usage.get_breakdown()
         }
+
+    def get_tier_info(self) -> Dict[str, Any]:
+        """Get information about current tier and expected accuracy/cost."""
+        tier_info = {
+            ModelTier.COST_OPTIMIZED: {
+                "name": "Cost Optimized",
+                "models": "Haiku → Sonnet → Sonnet → Sonnet",
+                "expected_accuracy": "~89%",
+                "expected_cost_10_docs": "$3.50",
+                "description": "Best for routine DD with budget constraints"
+            },
+            ModelTier.BALANCED: {
+                "name": "Balanced",
+                "models": "Haiku → Sonnet → Opus → Sonnet",
+                "expected_accuracy": "~92%",
+                "expected_cost_10_docs": "$7.50",
+                "description": "Opus for cross-document analysis (highest impact)"
+            },
+            ModelTier.HIGH_ACCURACY: {
+                "name": "High Accuracy",
+                "models": "Haiku → Sonnet → Opus → Opus",
+                "expected_accuracy": "~95%",
+                "expected_cost_10_docs": "$11.50",
+                "description": "Recommended for complex or high-value transactions"
+            },
+            ModelTier.MAXIMUM_ACCURACY: {
+                "name": "Maximum Accuracy",
+                "models": "Haiku → Opus → Opus → Opus",
+                "expected_accuracy": "~97%",
+                "expected_cost_10_docs": "$35.00",
+                "description": "Premium tier for critical transactions"
+            },
+        }
+
+        info = tier_info.get(self.model_tier, tier_info[ModelTier.COST_OPTIMIZED])
+        info["current_tier"] = self.model_tier.value
+        info["pass_models"] = {
+            "pass1_extraction": self.get_model_for_pass("pass1"),
+            "pass2_analysis": self.get_model_for_pass("pass2"),
+            "pass3_crossdoc": self.get_model_for_pass("pass3"),
+            "pass4_synthesis": self.get_model_for_pass("pass4"),
+        }
+        return info

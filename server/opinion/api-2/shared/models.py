@@ -12,7 +12,8 @@ import datetime
 Base = declarative_base()
 
 FindingTypeEnum = ENUM(
-    'positive', 'negative', 'neutral', 'gap', 'informational',
+    'positive', 'negative', 'neutral', 'gap', 'informational', 'conflict',
+    'cascade', 'cumulative', 'information',
     name='finding_type_enum',
     create_type=True
 )
@@ -79,7 +80,7 @@ class BaseModel(Base):
     
 class DueDiligence(BaseModel):
     __tablename__ = "due_diligence"
-    
+
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(Text, nullable=False)
     briefing = Column(Text)
@@ -87,6 +88,9 @@ class DueDiligence(BaseModel):
     original_file_name = Column(Text)
     original_file_doc_id = Column(UUID(as_uuid=True))
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    # Full wizard project setup data (JSON)
+    project_setup = Column(JSON, nullable=True)
 
     members = relationship("DueDiligenceMember", back_populates="dd", cascade="all, delete")
     folders = relationship("Folder", back_populates="dd", cascade="all, delete")
@@ -118,8 +122,16 @@ class Folder(BaseModel):
     hierarchy = Column(Text, nullable=False)
     description = Column(Text)
 
+    # Phase 2: Blueprint Folder Organisation fields
+    folder_category = Column(String(50), nullable=True)  # e.g., "01_Corporate", "02_Commercial"
+    is_blueprint_folder = Column(Boolean, default=False)  # TRUE for auto-created blueprint folders
+    expected_doc_types = Column(JSON, default=list)  # Expected document types for this folder
+    sort_order = Column(Integer, default=99)  # Numeric sort order (01, 02, 03...)
+    relevance = Column(String(20), nullable=True)  # critical, high, medium, low, n/a
+    document_count = Column(Integer, default=0)  # Cached count for display
+
     dd = relationship("DueDiligence", back_populates="folders")
-    documents = relationship("Document", back_populates="folder", cascade="all, delete")
+    documents = relationship("Document", back_populates="folder", cascade="all, delete", foreign_keys="[Document.folder_id]")
 
 
 class Document(BaseModel):
@@ -135,7 +147,28 @@ class Document(BaseModel):
     size_in_bytes = Column(BigInteger)
     description = Column(Text)
 
-    folder = relationship("Folder", back_populates="documents")
+    # Readability check status (for pre-processing validation)
+    readability_status = Column(Text, default="pending")  # pending, checking, ready, failed
+    readability_error = Column(Text, nullable=True)  # Error message if readability check failed
+
+    # AI Classification fields (Phase 1: Document Organisation)
+    ai_category = Column(String(50), nullable=True)  # e.g., "01_Corporate", "02_Commercial"
+    ai_subcategory = Column(String(100), nullable=True)  # e.g., "Constitutional", "Supply Agreements"
+    ai_document_type = Column(String(100), nullable=True)  # e.g., "Shareholders Agreement", "Mining Right"
+    ai_confidence = Column(Float, nullable=True)  # 0-100 confidence score
+    category_source = Column(String(20), default="pending")  # pending, ai, manual, zip_structure
+    ai_key_parties = Column(JSON, default=list)  # List of party names extracted from document
+    classification_status = Column(String(20), default="pending")  # pending, classifying, classified, failed
+    ai_classification_reasoning = Column(Text, nullable=True)  # AI's explanation for classification
+    classification_error = Column(Text, nullable=True)  # Error message if classification failed
+    classified_at = Column(DateTime, nullable=True)  # When classification completed
+
+    # Phase 2: Folder Organisation fields
+    original_folder_id = Column(UUID(as_uuid=True), ForeignKey("folder.id", ondelete="SET NULL"), nullable=True)
+    folder_assignment_source = Column(String(20), default="original_zip")  # original_zip, ai, manual
+
+    folder = relationship("Folder", back_populates="documents", foreign_keys="[Document.folder_id]")
+    original_folder = relationship("Folder", foreign_keys="[Document.original_folder_id]")
     history = relationship("DocumentHistory", back_populates="document", cascade="all, delete")
     
 
@@ -199,7 +232,7 @@ class PerspectiveRiskFinding(BaseModel):
     __tablename__ = "perspective_risk_finding"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     perspective_risk_id = Column(UUID(as_uuid=True), ForeignKey("perspective_risk.id", ondelete="CASCADE"), nullable=False)
-    document_id = Column(UUID(as_uuid=True), ForeignKey("document.id", ondelete="CASCADE"), nullable=False)
+    document_id = Column(UUID(as_uuid=True), ForeignKey("document.id", ondelete="CASCADE"), nullable=True)
     phrase = Column(Text, nullable=False)
     page_number = Column(Text, nullable=False)
     status = Column(PerspectiveRiskFindingStatusEnum, nullable=False)
@@ -225,9 +258,24 @@ class PerspectiveRiskFinding(BaseModel):
     cross_doc_source = Column(Text, nullable=True)  # For cross-doc findings: "MOI vs Board Resolution"
     analysis_pass = Column(Integer, default=2)  # Which pass generated this: 2=per-doc, 3=cross-doc
 
+    # Run tracking - links finding to specific analysis run
+    run_id = Column(UUID(as_uuid=True), ForeignKey("dd_analysis_run.id", ondelete="CASCADE"), nullable=True)
+
+    # Phase 3: Folder-aware processing fields
+    folder_category = Column(String(50), nullable=True)  # e.g., "01_Corporate", "02_Commercial"
+    question_id = Column(Text, nullable=True)  # Links to blueprint question that generated this finding
+    is_cross_document = Column(Boolean, default=False)  # True for cross-document findings
+    related_document_ids = Column(Text, nullable=True)  # JSON array of doc IDs for cross-doc findings
+    source_cluster = Column(String(50), nullable=True)  # Pass 3 cluster: "corporate_governance", "financial", etc.
+
+    # Chain of Thought reasoning - JSON object with reasoning steps
+    # Format: {"step_1_identification": "...", "step_2_context": "...", "step_3_transaction_impact": "...", ...}
+    reasoning = Column(Text, nullable=True)
+
     # Relationships
     perspective_risk = relationship("PerspectiveRisk", backref="findings")
     document = relationship("Document", backref="doc_findings")
+    run = relationship("DDAnalysisRun", back_populates="findings")
 
 class DDQuestion(BaseModel):
     __tablename__ = "dd_question"
@@ -317,7 +365,8 @@ class DDProcessingCheckpoint(BaseModel):
     __tablename__ = "dd_processing_checkpoint"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    dd_id = Column(UUID(as_uuid=True), ForeignKey("due_diligence.id", ondelete="CASCADE"), nullable=False, unique=True)
+    dd_id = Column(UUID(as_uuid=True), ForeignKey("due_diligence.id", ondelete="CASCADE"), nullable=False)
+    run_id = Column(UUID(as_uuid=True), ForeignKey("dd_analysis_run.id", ondelete="CASCADE"), nullable=True)
 
     # Current processing state
     current_pass = Column(Integer, default=1)  # 1-4 for the pipeline passes
@@ -326,6 +375,10 @@ class DDProcessingCheckpoint(BaseModel):
 
     # Pass 1 outputs (stored for reuse in later passes)
     pass1_extractions = Column(JSON)  # {doc_id: extraction_data}
+
+    # Pass 2 outputs (for resume capability)
+    pass2_findings = Column(JSON)  # List of findings from Pass 2
+    processed_doc_ids = Column(JSON)  # List of document IDs already processed
 
     # Progress tracking
     documents_processed = Column(Integer, default=0)
@@ -357,6 +410,10 @@ class DDProcessingCheckpoint(BaseModel):
     # Cluster info
     clusters_total = Column(Integer, default=0)
 
+    # Phase 5: Knowledge Graph stats
+    graph_vertices = Column(Integer, default=0)
+    graph_edges = Column(Integer, default=0)
+
     # Cost tracking (accumulated across all passes)
     total_input_tokens = Column(Integer, default=0)
     total_output_tokens = Column(Integer, default=0)
@@ -374,3 +431,104 @@ class DDProcessingCheckpoint(BaseModel):
 
     # Relationships
     dd = relationship("DueDiligence", backref="processing_checkpoints")
+
+
+# Analysis Run status enum (reuses ProcessingStatusEnum)
+class DDAnalysisRun(BaseModel):
+    """
+    Represents a single DD analysis run.
+    Each run processes a selected subset of documents and stores its findings separately.
+    """
+    __tablename__ = "dd_analysis_run"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    dd_id = Column(UUID(as_uuid=True), ForeignKey("due_diligence.id", ondelete="CASCADE"), nullable=False)
+
+    # Run identification
+    run_number = Column(Integer, nullable=False)  # Sequential per DD (1, 2, 3...)
+    name = Column(Text, nullable=False)  # Default: "Run {n} - {timestamp}", editable
+
+    # Status
+    status = Column(ProcessingStatusEnum, default="pending")
+
+    # Document selection (JSON array of document UUIDs)
+    selected_document_ids = Column(JSON, nullable=False, default=list)
+
+    # Progress tracking
+    documents_processed = Column(Integer, default=0)
+    total_documents = Column(Integer, default=0)
+
+    # Finding summary counts
+    findings_total = Column(Integer, default=0)
+    findings_critical = Column(Integer, default=0)
+    findings_high = Column(Integer, default=0)
+    findings_medium = Column(Integer, default=0)
+    findings_low = Column(Integer, default=0)
+
+    # Synthesis data (Pass 4 output)
+    # Contains: executive_summary, deal_assessment, financial_exposure_summary,
+    # deal_blockers, conditions_precedent, key_recommendations, next_steps
+    synthesis_data = Column(JSON, nullable=True, default=None)
+
+    # Cost tracking
+    estimated_cost_usd = Column(Float, default=0.0)
+
+    # Timestamps
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    started_at = Column(DateTime, nullable=True)
+    completed_at = Column(DateTime, nullable=True)
+
+    # Error handling
+    last_error = Column(Text, nullable=True)
+
+    # Relationships
+    dd = relationship("DueDiligence", backref="analysis_runs")
+    findings = relationship("PerspectiveRiskFinding", back_populates="run", cascade="all, delete-orphan")
+
+
+# Organisation status enum for Phase 1 document classification
+OrganisationStatusEnum = ENUM(
+    'pending', 'classifying', 'organising', 'completed', 'failed',
+    name='organisation_status_enum',
+    create_type=True
+)
+
+
+class DDOrganisationStatus(BaseModel):
+    """
+    Tracks the document organisation/classification progress for a DD project.
+    Created when ZIP is uploaded, updated as documents are classified.
+    """
+    __tablename__ = "dd_organisation_status"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    dd_id = Column(UUID(as_uuid=True), ForeignKey("due_diligence.id", ondelete="CASCADE"), nullable=False, unique=True)
+
+    # Status tracking
+    status = Column(String(20), default="pending")  # pending, classifying, organising, completed, failed
+
+    # Progress counters
+    total_documents = Column(Integer, default=0)
+    classified_count = Column(Integer, default=0)
+    low_confidence_count = Column(Integer, default=0)  # Count of docs with confidence < 70
+    failed_count = Column(Integer, default=0)
+
+    # Category distribution (JSON object with counts per category)
+    category_counts = Column(JSON, default=dict)  # {"01_Corporate": 5, "02_Commercial": 3, ...}
+
+    # Error handling
+    error_message = Column(Text, nullable=True)
+
+    # Phase 2: Organisation tracking
+    organised_count = Column(Integer, default=0)  # Documents moved to blueprint folders
+    needs_review_count = Column(Integer, default=0)  # Documents in 99_Needs_Review
+
+    # Timestamps
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    started_at = Column(DateTime, nullable=True)
+    organised_at = Column(DateTime, nullable=True)  # When organisation completed
+    completed_at = Column(DateTime, nullable=True)
+
+    # Relationships
+    dd = relationship("DueDiligence", backref="organisation_status")

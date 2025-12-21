@@ -1,0 +1,403 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://lexverse.ai/schemas/financial-extraction/v1",
+  "title": "LexVerse Financial Extraction Schema",
+  "description": "Schema for AI-extracted financial calculation data from legal documents",
+  "type": "object",
+  "required": [
+    "extraction_id",
+    "document_source",
+    "formula_classification",
+    "variables",
+    "currency"
+  ],
+  "properties": {
+    "extraction_id": {
+      "type": "string",
+      "description": "Unique identifier for this extraction (UUID format)",
+      "pattern": "^[a-zA-Z0-9-]+$"
+    },
+    "document_source": {
+      "type": "object",
+      "description": "Source document information for audit trail",
+      "required": ["document_id", "document_name", "section_reference", "extracted_text"],
+      "properties": {
+        "document_id": {
+          "type": "string",
+          "description": "Internal document identifier"
+        },
+        "document_name": {
+          "type": "string",
+          "description": "Original document filename"
+        },
+        "page_number": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Page number where extraction found"
+        },
+        "section_reference": {
+          "type": "string",
+          "description": "Clause/section reference (e.g., 'Clause 5.2', 'Article IV')"
+        },
+        "extracted_text": {
+          "type": "string",
+          "description": "Verbatim quote from document that triggered extraction"
+        }
+      }
+    },
+    "formula_classification": {
+      "type": "object",
+      "description": "Classification of calculation pattern",
+      "required": ["formula_id", "formula_category", "confidence"],
+      "properties": {
+        "formula_id": {
+          "type": "string",
+          "description": "Formula identifier from taxonomy (e.g., 'PEN_001')",
+          "pattern": "^[A-Z]{3}_[0-9]{3}$|^CUSTOM_[0-9]{3}$"
+        },
+        "formula_category": {
+          "type": "string",
+          "description": "Formula category",
+          "enum": ["penalty", "employment", "lease", "debt", "environmental", "regulatory", "transaction", "tiered", "time", "custom"]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Classification confidence score (0-1)"
+        },
+        "alternative_classifications": {
+          "type": "array",
+          "description": "Alternative formula classifications if primary uncertain",
+          "items": {
+            "type": "object",
+            "required": ["formula_id", "confidence"],
+            "properties": {
+              "formula_id": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "variables": {
+      "type": "object",
+      "description": "Extracted calculation variables",
+      "required": ["primary"],
+      "properties": {
+        "primary": {
+          "type": "array",
+          "description": "Variables extracted directly from document text",
+          "items": {
+            "$ref": "#/definitions/primaryVariable"
+          }
+        },
+        "derived": {
+          "type": "array",
+          "description": "Variables derived from primary values",
+          "items": {
+            "$ref": "#/definitions/derivedVariable"
+          }
+        }
+      }
+    },
+    "currency": {
+      "type": "object",
+      "description": "Currency information",
+      "required": ["primary"],
+      "properties": {
+        "primary": {
+          "type": "string",
+          "description": "Primary currency (ISO 4217 code)",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "conversion_required": {
+          "type": "boolean",
+          "description": "Whether currency conversion is needed"
+        },
+        "conversion_rates": {
+          "type": "array",
+          "description": "Exchange rates if conversion required",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from": {"type": "string"},
+              "to": {"type": "string"},
+              "rate": {"type": "number"},
+              "date": {"type": "string", "format": "date"}
+            }
+          }
+        }
+      }
+    },
+    "time_context": {
+      "type": "object",
+      "description": "Temporal context for calculation",
+      "properties": {
+        "reference_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Reference date for calculation"
+        },
+        "period_type": {
+          "type": "string",
+          "enum": ["days", "months", "years"],
+          "description": "Type of time period"
+        },
+        "period_value": {
+          "type": "number",
+          "description": "Numeric value of time period"
+        },
+        "start_date": {
+          "type": ["string", "null"],
+          "format": "date",
+          "description": "Start date if applicable"
+        },
+        "end_date": {
+          "type": ["string", "null"],
+          "format": "date",
+          "description": "End date if applicable"
+        }
+      }
+    },
+    "calculation_modifiers": {
+      "type": "object",
+      "description": "Modifiers that adjust the base calculation",
+      "properties": {
+        "cap": {
+          "$ref": "#/definitions/modifier"
+        },
+        "floor": {
+          "$ref": "#/definitions/modifier"
+        },
+        "escalation": {
+          "type": "object",
+          "properties": {
+            "exists": {"type": "boolean"},
+            "rate": {"type": ["number", "null"]},
+            "frequency": {"type": "string"}
+          }
+        },
+        "tiered_structure": {
+          "type": "object",
+          "properties": {
+            "exists": {"type": "boolean"},
+            "tiers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "threshold": {"type": "number"},
+                  "rate": {"type": "number"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "conditionality": {
+      "type": "object",
+      "description": "Conditions that affect whether calculation applies",
+      "properties": {
+        "is_conditional": {
+          "type": "boolean",
+          "description": "Whether exposure is conditional on specific events"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "condition_type": {
+                "type": "string",
+                "enum": ["if", "unless", "subject_to"]
+              },
+              "condition_text": {
+                "type": "string",
+                "description": "Description of the condition"
+              },
+              "condition_met": {
+                "type": ["boolean", "null"],
+                "description": "Whether condition is met (null if unknown)"
+              },
+              "notes": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "range_calculation": {
+      "type": "object",
+      "description": "For calculations with minimum/maximum range",
+      "properties": {
+        "is_range": {
+          "type": "boolean",
+          "description": "Whether this is a range calculation"
+        },
+        "minimum": {
+          "type": "object",
+          "description": "Minimum exposure calculation parameters"
+        },
+        "maximum": {
+          "type": "object",
+          "description": "Maximum exposure calculation parameters"
+        },
+        "most_likely": {
+          "type": "object",
+          "description": "Most likely exposure calculation parameters"
+        }
+      }
+    },
+    "cross_document_dependencies": {
+      "type": "array",
+      "description": "Variables that must be retrieved from other documents",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dependent_document": {
+            "type": "string",
+            "description": "Name/ID of document containing the value"
+          },
+          "variable_name": {
+            "type": "string",
+            "description": "Name of the variable needed"
+          },
+          "dependency_type": {
+            "type": "string",
+            "enum": ["value", "trigger", "modifier"],
+            "description": "Type of dependency"
+          }
+        }
+      }
+    },
+    "extraction_metadata": {
+      "type": "object",
+      "description": "Metadata about the extraction process",
+      "properties": {
+        "extractor_version": {
+          "type": "string",
+          "description": "Version of extraction model/prompt"
+        },
+        "extraction_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When extraction was performed"
+        },
+        "requires_manual_review": {
+          "type": "boolean",
+          "description": "Whether manual review is needed"
+        },
+        "review_reasons": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Reasons why manual review is needed"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "primaryVariable": {
+      "type": "object",
+      "required": ["name", "value", "unit", "source", "confidence"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Variable name (must match formula requirements)"
+        },
+        "value": {
+          "type": ["number", "null"],
+          "description": "Numeric value (null if not determinable)"
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unit of measurement (e.g., 'ZAR', 'tonnes', 'months', 'percent')"
+        },
+        "source": {
+          "type": "string",
+          "description": "Verbatim text from document containing the value"
+        },
+        "source_location": {
+          "type": "string",
+          "description": "Clause/section where value was found"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Extraction confidence for this variable"
+        },
+        "possible_values": {
+          "type": "array",
+          "description": "Alternative interpretations if ambiguous",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {"type": "number"},
+              "interpretation": {"type": "string"},
+              "confidence": {"type": "number"}
+            }
+          }
+        },
+        "ambiguity_type": {
+          "type": "string",
+          "description": "Type of ambiguity if value uncertain"
+        },
+        "requires_clarification": {
+          "type": "boolean"
+        }
+      }
+    },
+    "derivedVariable": {
+      "type": "object",
+      "required": ["name", "derivation_formula", "source_variables"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of derived variable"
+        },
+        "derivation_formula": {
+          "type": "string",
+          "description": "Formula used to derive this value"
+        },
+        "source_variables": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Names of variables used in derivation"
+        },
+        "derived_value": {
+          "type": "number",
+          "description": "The calculated derived value"
+        },
+        "unit": {
+          "type": "string"
+        }
+      }
+    },
+    "modifier": {
+      "type": "object",
+      "properties": {
+        "exists": {
+          "type": "boolean",
+          "description": "Whether this modifier applies"
+        },
+        "amount": {
+          "type": ["number", "null"],
+          "description": "Modifier amount if applicable"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source reference for modifier"
+        }
+      }
+    }
+  }
+}

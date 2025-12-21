@@ -1,179 +1,524 @@
-transaction_type: "IP & Technology"
-code: "ip_technology"
-description: |
-  Due diligence blueprint for technology transactions including software,
+transaction_type: IP & Technology
+code: ip_technology
+description: 'Due diligence blueprint for technology transactions including software,
+
   IP acquisitions, licensing, and tech company M&A.
 
-jurisdiction: "South Africa"
+  '
+jurisdiction: South Africa
 primary_legislation:
-  - "Patents Act 57 of 1978"
-  - "Trade Marks Act 194 of 1993"
-  - "Copyright Act 98 of 1978"
-  - "Designs Act 195 of 1993"
-  - "Electronic Communications and Transactions Act 25 of 2002"
-  - "Protection of Personal Information Act 4 of 2013 (POPIA)"
-
+- Patents Act 57 of 1978
+- Trade Marks Act 194 of 1993
+- Copyright Act 98 of 1978
+- Designs Act 195 of 1993
+- Electronic Communications and Transactions Act 25 of 2002
+- Protection of Personal Information Act 4 of 2013 (POPIA)
 risk_categories:
-  - name: "IP Ownership & Chain of Title"
-    weight: critical
-    standard_questions:
-      - question: "What registered IP rights does the target own?"
-        priority: critical
-      - question: "Is the chain of title for all IP complete and documented?"
-        priority: critical
-      - question: "Are all IP registrations current and maintained?"
-        priority: critical
-      - question: "Has all necessary IP been assigned from founders/developers?"
-        priority: critical
-      - question: "Do employee contracts include proper IP assignment?"
-        priority: critical
-      - question: "Are there any joint ownership or co-development arrangements?"
-        priority: high
-      - question: "Has any IP been developed using third-party funding?"
-        priority: high
-      - question: "Are there any open-source components with license implications?"
-        priority: critical
-      - question: "Is there any IP held personally by founders?"
-        priority: critical
-      - question: "What trade secrets exist and how are they protected?"
-        priority: high
-
-  - name: "IP Licensing (In-bound)"
-    weight: critical
-    standard_questions:
-      - question: "What IP licenses does the business rely on?"
-        priority: critical
-      - question: "Do licenses survive change of control?"
-        priority: critical
-      - question: "Are license fees current and properly accrued?"
-        priority: high
-      - question: "Are there any minimum royalty or usage commitments?"
-        priority: high
-      - question: "Do any licenses restrict the business model?"
-        priority: high
-      - question: "What open-source licenses are in use?"
-        priority: critical
-      - question: "Are there any copyleft/GPL obligations?"
-        priority: critical
-      - question: "Is third-party software properly licensed?"
-        priority: high
-      - question: "Are there any audit rights for licensors?"
-        priority: medium
-
-  - name: "IP Licensing (Out-bound)"
-    weight: high
-    standard_questions:
-      - question: "What IP has been licensed to third parties?"
-        priority: high
-      - question: "Are any licenses exclusive?"
-        priority: critical
-      - question: "What restrictions apply to licensed IP?"
-        priority: high
-      - question: "What royalty streams exist from out-licenses?"
-        priority: high
-      - question: "Do any licenses create obligations to licensees on sale?"
-        priority: high
-      - question: "Are there any most-favored-licensee provisions?"
-        priority: medium
-
-  - name: "IP Disputes & Infringement"
-    weight: critical
-    standard_questions:
-      - question: "Are there any pending IP infringement claims?"
-        priority: critical
-      - question: "Has the company received any cease and desist letters?"
-        priority: critical
-      - question: "Has the company sent any infringement notices?"
-        priority: high
-      - question: "Is there any ongoing IP litigation?"
-        priority: critical
-      - question: "Has freedom-to-operate analysis been conducted?"
-        priority: high
-      - question: "Are there any patent trolls targeting the industry?"
-        priority: medium
-      - question: "What is the IP insurance position?"
-        priority: medium
-
-  - name: "Technology & Software"
-    weight: critical
-    standard_questions:
-      - question: "What is the core technology stack?"
-        priority: high
-      - question: "Is source code held in escrow?"
-        priority: high
-      - question: "What development methodologies are used?"
-        priority: medium
-      - question: "What is the technical debt position?"
-        priority: high
-      - question: "Are there any dependencies on specific individuals?"
-        priority: high
-      - question: "What is the disaster recovery and business continuity position?"
-        priority: high
-      - question: "Is the technology stack current or legacy?"
-        priority: medium
-      - question: "What cloud or infrastructure dependencies exist?"
-        priority: high
-      - question: "Are there any significant scalability limitations?"
-        priority: medium
-
-  - name: "Data & Privacy"
-    weight: critical
-    standard_questions:
-      - question: "Is the company POPIA compliant?"
-        priority: critical
-      - question: "Has an Information Officer been registered?"
-        priority: high
-      - question: "What personal data is processed and on what basis?"
-        priority: critical
-      - question: "Are there adequate data processing agreements?"
-        priority: high
-      - question: "Have there been any data breaches?"
-        priority: critical
-      - question: "What data security measures are in place?"
-        priority: high
-      - question: "Are there any cross-border data transfers?"
-        priority: high
-      - question: "What consents have been obtained for data use?"
-        priority: high
-      - question: "How is data retention and deletion managed?"
-        priority: medium
-      - question: "Is there GDPR exposure for EU customers?"
-        priority: high
-
-  - name: "Cybersecurity"
-    weight: high
-    standard_questions:
-      - question: "Has a cybersecurity assessment been conducted?"
-        priority: high
-      - question: "What security certifications exist (ISO 27001, SOC2)?"
-        priority: high
-      - question: "What security incidents have occurred?"
-        priority: critical
-      - question: "Is there adequate cyber insurance?"
-        priority: high
-      - question: "What access controls and authentication exist?"
-        priority: medium
-      - question: "Is there regular security testing and patching?"
-        priority: medium
-
+- name: IP Ownership & Chain of Title
+  weight: critical
+  standard_questions:
+  - question: What registered IP rights does the target own?
+    priority: critical
+  - question: Is the chain of title for all IP complete and documented?
+    priority: critical
+  - question: Are all IP registrations current and maintained?
+    priority: critical
+  - question: Has all necessary IP been assigned from founders/developers?
+    priority: critical
+  - question: Do employee contracts include proper IP assignment?
+    priority: critical
+  - question: Are there any joint ownership or co-development arrangements?
+    priority: high
+  - question: Has any IP been developed using third-party funding?
+    priority: high
+  - question: Are there any open-source components with license implications?
+    priority: critical
+  - question: Is there any IP held personally by founders?
+    priority: critical
+  - question: What trade secrets exist and how are they protected?
+    priority: high
+- name: IP Licensing (In-bound)
+  weight: critical
+  standard_questions:
+  - question: What IP licenses does the business rely on?
+    priority: critical
+  - question: Do licenses survive change of control?
+    priority: critical
+  - question: Are license fees current and properly accrued?
+    priority: high
+  - question: Are there any minimum royalty or usage commitments?
+    priority: high
+  - question: Do any licenses restrict the business model?
+    priority: high
+  - question: What open-source licenses are in use?
+    priority: critical
+  - question: Are there any copyleft/GPL obligations?
+    priority: critical
+  - question: Is third-party software properly licensed?
+    priority: high
+  - question: Are there any audit rights for licensors?
+    priority: medium
+- name: IP Licensing (Out-bound)
+  weight: high
+  standard_questions:
+  - question: What IP has been licensed to third parties?
+    priority: high
+  - question: Are any licenses exclusive?
+    priority: critical
+  - question: What restrictions apply to licensed IP?
+    priority: high
+  - question: What royalty streams exist from out-licenses?
+    priority: high
+  - question: Do any licenses create obligations to licensees on sale?
+    priority: high
+  - question: Are there any most-favored-licensee provisions?
+    priority: medium
+- name: IP Disputes & Infringement
+  weight: critical
+  standard_questions:
+  - question: Are there any pending IP infringement claims?
+    priority: critical
+  - question: Has the company received any cease and desist letters?
+    priority: critical
+  - question: Has the company sent any infringement notices?
+    priority: high
+  - question: Is there any ongoing IP litigation?
+    priority: critical
+  - question: Has freedom-to-operate analysis been conducted?
+    priority: high
+  - question: Are there any patent trolls targeting the industry?
+    priority: medium
+  - question: What is the IP insurance position?
+    priority: medium
+- name: Technology & Software
+  weight: critical
+  standard_questions:
+  - question: What is the core technology stack?
+    priority: high
+  - question: Is source code held in escrow?
+    priority: high
+  - question: What development methodologies are used?
+    priority: medium
+  - question: What is the technical debt position?
+    priority: high
+  - question: Are there any dependencies on specific individuals?
+    priority: high
+  - question: What is the disaster recovery and business continuity position?
+    priority: high
+  - question: Is the technology stack current or legacy?
+    priority: medium
+  - question: What cloud or infrastructure dependencies exist?
+    priority: high
+  - question: Are there any significant scalability limitations?
+    priority: medium
+- name: Data & Privacy
+  weight: critical
+  standard_questions:
+  - question: Is the company POPIA compliant?
+    priority: critical
+  - question: Has an Information Officer been registered?
+    priority: high
+  - question: What personal data is processed and on what basis?
+    priority: critical
+  - question: Are there adequate data processing agreements?
+    priority: high
+  - question: Have there been any data breaches?
+    priority: critical
+  - question: What data security measures are in place?
+    priority: high
+  - question: Are there any cross-border data transfers?
+    priority: high
+  - question: What consents have been obtained for data use?
+    priority: high
+  - question: How is data retention and deletion managed?
+    priority: medium
+  - question: Is there GDPR exposure for EU customers?
+    priority: high
+- name: Cybersecurity
+  weight: high
+  standard_questions:
+  - question: Has a cybersecurity assessment been conducted?
+    priority: high
+  - question: What security certifications exist (ISO 27001, SOC2)?
+    priority: high
+  - question: What security incidents have occurred?
+    priority: critical
+  - question: Is there adequate cyber insurance?
+    priority: high
+  - question: What access controls and authentication exist?
+    priority: medium
+  - question: Is there regular security testing and patching?
+    priority: medium
 deal_blockers:
-  - description: "Core IP not owned by target"
-    severity: absolute
-  - description: "Infringing third-party patents that cannot be worked around"
-    severity: conditional
-  - description: "Critical license terminates on change of control"
-    severity: conditional
-  - description: "GPL-licensed code in proprietary product"
-    severity: conditional
-  - description: "Significant data breach with ongoing remediation"
-    severity: conditional
-
+- description: Core IP not owned by target
+  severity: absolute
+- description: Infringing third-party patents that cannot be worked around
+  severity: conditional
+- description: Critical license terminates on change of control
+  severity: conditional
+- description: GPL-licensed code in proprietary product
+  severity: conditional
+- description: Significant data breach with ongoing remediation
+  severity: conditional
 conditions_precedent_patterns:
-  - pattern: "IP assignment|IP transfer"
-    cp_type: "IP Assignment"
-  - pattern: "license consent|licensor consent"
-    cp_type: "License Consent"
-  - pattern: "source code|escrow"
-    cp_type: "Source Code Delivery"
-  - pattern: "POPIA|data protection"
-    cp_type: "Data Compliance"
+- pattern: IP assignment|IP transfer
+  cp_type: IP Assignment
+- pattern: license consent|licensor consent
+  cp_type: License Consent
+- pattern: source code|escrow
+  cp_type: Source Code Delivery
+- pattern: POPIA|data protection
+  cp_type: Data Compliance
+folder_questions:
+  01_Corporate_Governance:
+    display_name: Corporate & Governance
+    relevance: medium
+    questions:
+    - question: Do employment contracts include proper IP assignment clauses?
+      priority: critical
+      detail: Verify all employees assign IP to company by virtue of employment
+      cot_hint: Review employment contract template → check IP clause → verify coverage
+    - question: Is there an IP policy and are employees bound by it?
+      priority: high
+      detail: Company IP policy, invention disclosure process
+      cot_hint: Find IP policy → check binding mechanism → assess compliance
+    - question: Are founding documents clear on IP ownership?
+      priority: high
+      detail: MOI provisions relating to IP, shareholder agreements
+      cot_hint: Review MOI/SHA → identify IP provisions → check clarity
+    cross_doc_checks:
+    - check: Verify employment contracts match IP policy
+      related_folders:
+      - 05_Employment
+      description: Employment contract IP clause vs company IP policy
+  02_Commercial:
+    display_name: Commercial Contracts
+    relevance: critical
+    questions:
+    - question: What software and IP licenses does the business rely on?
+      priority: critical
+      detail: Third-party licenses, SaaS subscriptions, API access agreements
+      cot_hint: List licenses → check terms → identify CoC restrictions
+    - question: Do critical licenses survive change of control?
+      priority: critical
+      detail: License assignment, CoC consent requirements
+      cot_hint: Review license agreements → find CoC clause → assess impact
+    - question: What open-source licenses are in use and are there copyleft obligations?
+      priority: critical
+      detail: GPL, LGPL, AGPL create source code disclosure obligations
+      cot_hint: List open-source → identify copyleft → assess disclosure risk
+    - question: What IP has been licensed out to third parties?
+      priority: high
+      detail: Out-licenses, exclusivity grants, field of use restrictions
+      cot_hint: List out-licenses → check exclusivity → identify restrictions
+    - question: Are there any source code escrow arrangements?
+      priority: high
+      detail: Escrow agreements, release conditions, beneficiaries
+      cot_hint: Find escrow agreements → check release triggers → identify parties
+    - question: Are there development or co-development agreements?
+      priority: high
+      detail: Joint development, IP ownership in collaborations
+      cot_hint: Identify dev agreements → check IP ownership → assess risk
+    - question: What data processing agreements are in place with third parties?
+      priority: critical
+      detail: POPIA operator agreements, cloud provider DPAs
+      cot_hint: List data processors → check DPAs → verify POPIA compliance
+    cross_doc_checks:
+    - check: Verify license inventory matches financial records
+      related_folders:
+      - 03_Financial
+      description: License list vs license fee payments
+    - check: Cross-reference technology dependencies with licenses
+      related_folders: []
+      description: Tech stack audit vs license agreements
+  03_Financial:
+    display_name: Financial & Banking
+    relevance: medium
+    questions:
+    - question: What is the total annual software and IP licensing cost?
+      priority: high
+      detail: SaaS fees, license fees, royalties payable
+      cot_hint: Extract license costs → total annual spend → assess materiality
+    - question: What royalty income is earned from IP licensing?
+      priority: high
+      detail: Royalty streams, minimum guarantees, payment terms
+      cot_hint: Identify royalty income → check payment history → assess value
+    - question: Are R&D costs capitalized or expensed correctly?
+      priority: medium
+      detail: IAS 38 intangible asset treatment, R&D expensing
+      cot_hint: Review accounting policy → check consistency → verify treatment
+    - question: What is the carrying value of intangible assets?
+      priority: high
+      detail: IP valuation, impairment testing, useful life assessment
+      cot_hint: Check intangible assets → review valuation → assess impairment
+    cross_doc_checks:
+    - check: Verify license costs match commercial agreements
+      related_folders:
+      - 02_Commercial
+      description: Financial statements vs license agreements
+  04_Regulatory:
+    display_name: Regulatory & Compliance
+    relevance: critical
+    questions:
+    - question: Is the company POPIA compliant with registered Information Officer?
+      priority: critical
+      detail: Information Officer registration, POPIA compliance framework
+      cot_hint: Check registration → review framework → identify gaps
+    - question: Is there GDPR exposure for EU customers or data subjects?
+      priority: high
+      detail: EU data processing, Art 3 applicability, representative required
+      cot_hint: Assess EU nexus → check data flows → determine applicability
+    - question: What security certifications exist (ISO 27001, SOC 2)?
+      priority: high
+      detail: Security certifications, audit reports, scope coverage
+      cot_hint: List certifications → check scope → verify current status
+    - question: Are there any sector-specific data regulations applicable?
+      priority: medium
+      detail: Financial services, health data, telecoms regulations
+      cot_hint: Identify sector → check specific requirements → assess compliance
+    cross_doc_checks:
+    - check: Verify POPIA compliance documentation
+      related_folders:
+      - 02_Commercial
+      description: Data protection framework vs DPAs with processors
+  05_Employment:
+    display_name: Employment & Labour
+    relevance: high
+    questions:
+    - question: Do all employee contracts contain IP assignment provisions?
+      priority: critical
+      detail: IP assignment clause, work for hire provisions
+      cot_hint: Review contract template → check IP clause → assess coverage
+    - question: Have all founders assigned their IP to the company?
+      priority: critical
+      detail: Founder IP assignment agreements, background IP carve-outs
+      cot_hint: Find founder assignments → check completeness → identify gaps
+    - question: Do contractor agreements include IP assignment?
+      priority: critical
+      detail: Contractor IP ownership, work product assignment
+      cot_hint: Review contractor agreements → check IP terms → assess exposure
+    - question: Are key technical employees bound by restraint of trade?
+      priority: high
+      detail: Non-compete, non-solicit, confidentiality undertakings
+      cot_hint: Identify key tech staff → review restraints → assess enforceability
+    - question: Are there retention arrangements for critical developers?
+      priority: high
+      detail: Retention bonuses, equity incentives, notice periods
+      cot_hint: Identify key persons → check retention terms → assess risk
+    cross_doc_checks:
+    - check: Verify all developers covered by IP assignment
+      related_folders:
+      - 01_Corporate
+      description: Developer list vs IP assignment agreements
+    - check: Cross-reference IP register with inventor assignments
+      related_folders:
+      - 10_IP
+      description: Patent inventors vs assignment documentation
+  06_Property:
+    display_name: Property & Assets
+    relevance: low
+    questions:
+    - question: Are data centre locations and hosting arrangements documented?
+      priority: medium
+      detail: Colocation agreements, hosting SLAs, DR sites
+      cot_hint: List hosting arrangements → check agreements → verify DR
+    cross_doc_checks: []
+  07_Insurance:
+    display_name: Insurance
+    relevance: medium
+    questions:
+    - question: Is there adequate cyber insurance coverage?
+      priority: high
+      detail: Cyber policy limits, coverage scope, claims history
+      cot_hint: Review cyber policy → check limits → assess adequacy
+    - question: Is there IP infringement insurance (defense and indemnity)?
+      priority: high
+      detail: IP liability coverage, defense costs, exclusions
+      cot_hint: Check IP coverage → review exclusions → assess gaps
+    - question: Is there technology E&O coverage?
+      priority: medium
+      detail: Professional liability for tech services, software errors
+      cot_hint: Review E&O policy → check tech coverage → assess limits
+    cross_doc_checks:
+    - check: Verify insurance covers key technology risks
+      related_folders:
+      - 08_Litigation
+      description: Insurance coverage vs pending claims
+  08_Litigation:
+    display_name: Litigation & Disputes
+    relevance: critical
+    questions:
+    - question: Are there any pending IP infringement claims?
+      priority: critical
+      detail: Patent, trademark, copyright infringement claims against company
+      cot_hint: List IP claims → assess exposure → review defenses
+    - question: Has the company received any cease and desist letters?
+      priority: critical
+      detail: C&D letters, responses, unresolved demands
+      cot_hint: Find C&D letters → check status → assess risk
+    - question: Has freedom-to-operate analysis been conducted for key products?
+      priority: high
+      detail: FTO opinions, patent landscape analysis, clearance searches
+      cot_hint: Find FTO analysis → assess coverage → identify gaps
+    - question: Has the company initiated any IP enforcement actions?
+      priority: high
+      detail: Infringement claims by company, enforcement actions
+      cot_hint: List company claims → check status → assess prospects
+    - question: Have there been any data breach incidents?
+      priority: critical
+      detail: Data breaches, security incidents, regulatory notifications
+      cot_hint: Find incident reports → assess scope → check remediation
+    cross_doc_checks:
+    - check: Cross-reference IP disputes with insurance claims
+      related_folders:
+      - 07_Insurance
+      description: Litigation matters vs insurance notifications
+  09_Tax:
+    display_name: Tax
+    relevance: medium
+    questions:
+    - question: Are there R&D tax incentives being claimed correctly?
+      priority: medium
+      detail: Section 11D R&D deductions, pre-approval requirements
+      cot_hint: Check R&D claims → verify pre-approval → assess compliance
+    - question: Are IP royalty withholding taxes handled correctly?
+      priority: medium
+      detail: Withholding on royalties, treaty relief, Section 49 registrations
+      cot_hint: Review royalty flows → check withholding → verify treaties
+    cross_doc_checks:
+    - check: Verify R&D claims match development activities
+      related_folders:
+      - 03_Financial
+      description: R&D tax claims vs development costs
+  10_IP:
+    display_name: Intellectual Property
+    relevance: critical
+    questions:
+    - question: What patents does the company own and are registrations current?
+      priority: critical
+      detail: Patent portfolio, renewal fees, geographic coverage
+      cot_hint: List patents → check renewals → verify ownership chain
+    - question: What trademarks are registered and are they properly maintained?
+      priority: critical
+      detail: Trademark registrations, use requirements, renewals
+      cot_hint: List trademarks → check renewals → verify use
+    - question: Is the chain of title for all IP complete?
+      priority: critical
+      detail: Assignment chain, inventor assignments, gaps in title
+      cot_hint: Trace title chain → identify gaps → assess risk
+    - question: Are there any pending IP applications?
+      priority: high
+      detail: Patent applications, trademark applications, prosecution status
+      cot_hint: List pending applications → check status → assess prospects
+    - question: What trade secrets exist and how are they protected?
+      priority: high
+      detail: Trade secret inventory, protection measures, access controls
+      cot_hint: Identify trade secrets → check protection → assess adequacy
+    - question: Is there any IP held personally by founders that should be in the company?
+      priority: critical
+      detail: Founder IP, pre-incorporation IP, assignment gaps
+      cot_hint: Identify founder IP → check assignments → flag gaps
+    - question: Are domain names and social media handles properly registered?
+      priority: medium
+      detail: Domain registrations, social media accounts, ownership
+      cot_hint: List digital assets → check ownership → verify security
+    cross_doc_checks:
+    - check: Verify IP register matches commercial license grants
+      related_folders:
+      - 02_Commercial
+      description: IP ownership vs out-license agreements
+    - check: Cross-reference inventor assignments with patent records
+      related_folders:
+      - 05_Employment
+      description: Named inventors vs assignment documentation
+  11_Technical:
+    display_name: Technology & Systems
+    relevance: critical
+    questions:
+    - question: What is the core technology stack and architecture?
+      priority: high
+      detail: Programming languages, frameworks, databases, infrastructure
+      cot_hint: Document tech stack → identify dependencies → assess risks
+    - question: What is the technical debt position?
+      priority: high
+      detail: Code quality, legacy systems, refactoring needs
+      cot_hint: Assess technical debt → prioritize issues → estimate costs
+    - question: What cloud infrastructure dependencies exist?
+      priority: high
+      detail: AWS, Azure, GCP dependencies, lock-in risk
+      cot_hint: List cloud services → assess dependencies → check portability
+    - question: Are there disaster recovery and business continuity plans?
+      priority: high
+      detail: DR plans, backup procedures, RTO/RPO commitments
+      cot_hint: Review DR plans → check testing → assess adequacy
+    - question: What cybersecurity measures are in place?
+      priority: critical
+      detail: Security controls, penetration testing, vulnerability management
+      cot_hint: Review security measures → check testing → identify gaps
+    - question: Is there a software bill of materials (SBOM)?
+      priority: high
+      detail: Component inventory, version tracking, vulnerability scanning
+      cot_hint: Find SBOM → check completeness → assess vulnerability process
+    cross_doc_checks:
+    - check: Verify technology dependencies match license inventory
+      related_folders:
+      - 02_Commercial
+      description: Tech stack vs license agreements
+    - check: Cross-reference security certifications with infrastructure
+      related_folders:
+      - 04_Regulatory
+      description: Security measures vs certification requirements
+  99_Needs_Review:
+    display_name: Needs Review
+    relevance: low
+    questions:
+    - question: What IP or technology-related issues does this document raise?
+      priority: medium
+      detail: Documents requiring manual classification review
+      cot_hint: Identify IP/tech content → flag for review
+    cross_doc_checks: []
+cot_questions:
+  ownership_regulatory:
+  - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
+  - How does this transaction change the ownership structure? What is the post-transaction ownership?
+  - What regulatory approvals or notifications are triggered by ownership changes (e.g., >15%, >25%, >49% thresholds)?
+  - Are there any ownership restrictions in constitutional documents, shareholder agreements, or regulatory conditions?
+  - What licenses, permits, or authorizations are dependent on the current ownership structure?
+  - What are the consequences of non-compliance with ownership-based regulatory requirements?
+  ip_ownership:
+  - What registered IP rights does the target own (patents, trademarks, copyright)?
+  - Is the chain of title complete - have all assignments been done?
+  - Has all IP been assigned from founders, employees, and contractors?
+  - Is there any IP held personally by founders that should be in the company?
+  - Are there any joint ownership or co-development arrangements?
+  - What trade secrets exist and how are they protected?
+  ip_licensing_inbound:
+  - What IP licenses does the business rely on?
+  - Do licenses survive CoC or require consent?
+  - What open-source licenses are in use? Any GPL/copyleft obligations?
+  - Is third-party software properly licensed?
+  - Are there any minimum royalty or audit rights?
+  ip_licensing_outbound:
+  - What IP has been licensed to third parties?
+  - Are any licenses exclusive? What restrictions apply?
+  - Do any licenses create obligations on sale?
+  ip_disputes:
+  - Are there any pending IP infringement claims or cease and desist letters?
+  - Has freedom-to-operate analysis been conducted?
+  - What is the IP insurance position?
+  technology_software:
+  - What is the core technology stack and any legacy issues?
+  - What is the technical debt position?
+  - Is source code held in escrow?
+  - What cloud or infrastructure dependencies exist?
+  - Are there any scalability limitations?
+  data_privacy:
+  - Is the company POPIA compliant? Is Information Officer registered?
+  - What personal data is processed and on what legal basis?
+  - Have there been any data breaches?
+  - Are there adequate data processing agreements with third parties?
+  - Are there any cross-border data transfers or GDPR exposure?
+  cybersecurity:
+  - Has cybersecurity assessment been conducted? Any certifications (ISO 27001, SOC2)?
+  - What security incidents have occurred?
+  - Is there adequate cyber insurance?

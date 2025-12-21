@@ -16,6 +16,9 @@ export { TransactionSummary } from './TransactionSummary';
 export { DocumentChecklistPanel } from './DocumentChecklistPanel';
 export { ProcessLog, createLogEntry } from './ProcessLog';
 export { FileTree } from './FileTree';
+export { AccuracyTierSelector } from './AccuracyTierSelector';
+export type { ModelTier } from './AccuracyTierSelector';
+export { ControlBar } from './ControlBar';
 
 // Hooks
 export {

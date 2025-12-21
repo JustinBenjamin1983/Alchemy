@@ -238,47 +238,117 @@ def _deduplicate_findings(findings: List[Dict]) -> List[Dict]:
     """
     Deduplicate findings that cover the same issue.
 
-    Strategy:
-    1. Group findings by category + key terms in description
-    2. For each group, keep the most severe/detailed finding
-    3. Merge document references into the kept finding
+    Enhanced strategy:
+    1. Extract key entities (companies, clauses, amounts) from descriptions
+    2. Group findings by category + key entities + semantic similarity
+    3. For each group, keep the most severe/detailed finding
+    4. Merge document references into the kept finding
     """
     if not findings:
         return []
+
+    import re
 
     # Normalize text for comparison
     def normalize(text: str) -> str:
         if not text:
             return ""
-        # Remove punctuation, lowercase, extract key terms
-        import re
         text = text.lower()
         text = re.sub(r'[^\w\s]', ' ', text)
-        # Remove common words
         stop_words = {'the', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been',
                      'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will',
                      'would', 'could', 'should', 'may', 'might', 'must', 'shall',
                      'can', 'of', 'in', 'to', 'for', 'with', 'on', 'at', 'by',
                      'from', 'this', 'that', 'these', 'those', 'which', 'who',
-                     'whom', 'whose', 'and', 'or', 'but', 'if', 'then', 'than'}
+                     'whom', 'whose', 'and', 'or', 'but', 'if', 'then', 'than',
+                     'document', 'finding', 'issue', 'risk', 'concern', 'noted',
+                     'identified', 'found', 'contains', 'includes', 'requires'}
         words = [w for w in text.split() if w not in stop_words and len(w) > 2]
         return ' '.join(sorted(set(words)))
 
-    # Group by category + normalized description key terms
+    def extract_key_entities(text: str) -> set:
+        """Extract key entities like company names, clause refs, amounts."""
+        if not text:
+            return set()
+        entities = set()
+        # Clause references (e.g., "clause 12.3", "section 5.2")
+        clause_refs = re.findall(r'(?:clause|section|article)\s*[\d.]+', text.lower())
+        entities.update(clause_refs)
+        # Amounts (e.g., "R450M", "R2.4 billion")
+        amounts = re.findall(r'r[\d,.]+\s*(?:m|bn|billion|million)?', text.lower())
+        entities.update(amounts)
+        # Company names (capitalized words that might be names)
+        company_patterns = re.findall(r'[A-Z][a-z]+(?:\s+(?:Pty|Ltd|Inc|Holdings|Capital|Bank))?', text)
+        entities.update([c.lower() for c in company_patterns])
+        return entities
+
+    def similarity_score(desc1: str, desc2: str) -> float:
+        """Calculate Jaccard similarity between two descriptions."""
+        words1 = set(normalize(desc1).split())
+        words2 = set(normalize(desc2).split())
+        if not words1 or not words2:
+            return 0.0
+        intersection = words1 & words2
+        union = words1 | words2
+        return len(intersection) / len(union) if union else 0.0
+
+    # First pass: group by category + key entities
     groups: Dict[str, List[Dict]] = {}
 
     for finding in findings:
         category = finding.get("category", "other")
         desc = finding.get("description", "")
+        clause_ref = finding.get("clause_reference", "")
 
-        # Create a key from category + top terms
+        # Create a key from category + key entities
+        entities = extract_key_entities(desc + " " + clause_ref)
         desc_normalized = normalize(desc)
-        desc_words = desc_normalized.split()[:5]  # First 5 significant words
-        key = f"{category}:{' '.join(desc_words)}"
+        desc_words = desc_normalized.split()[:7]  # First 7 significant words
+
+        # Primary key: category + clause ref (if available)
+        if clause_ref:
+            key = f"{category}:{clause_ref.lower().replace(' ', '')}"
+        else:
+            key = f"{category}:{' '.join(desc_words)}"
 
         if key not in groups:
             groups[key] = []
         groups[key].append(finding)
+
+    # Second pass: merge groups with high similarity
+    merged_groups = {}
+    processed_keys = set()
+
+    for key1, group1 in groups.items():
+        if key1 in processed_keys:
+            continue
+
+        merged_group = list(group1)
+        processed_keys.add(key1)
+
+        # Check similarity with other groups
+        for key2, group2 in groups.items():
+            if key2 in processed_keys or key1 == key2:
+                continue
+
+            # Same category check
+            cat1 = key1.split(':')[0]
+            cat2 = key2.split(':')[0]
+            if cat1 != cat2:
+                continue
+
+            # Check description similarity
+            desc1 = group1[0].get("description", "")
+            desc2 = group2[0].get("description", "")
+            sim = similarity_score(desc1, desc2)
+
+            if sim > 0.5:  # High similarity threshold
+                merged_group.extend(group2)
+                processed_keys.add(key2)
+
+        merged_groups[key1] = merged_group
+
+    groups = merged_groups
 
     # For each group, keep the best finding
     severity_rank = {"critical": 0, "high": 1, "medium": 2, "low": 3, "info": 4}

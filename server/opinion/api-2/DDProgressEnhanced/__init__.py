@@ -603,6 +603,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             compression_stats = getattr(result, 'compression_stats', None)
             batch_stats = getattr(result, 'batch_stats', None)
 
+            # Get cost breakdown by model (shows which models are being used)
+            cost_by_model = getattr(result, 'cost_by_model', None)
+            if isinstance(cost_by_model, str):
+                try:
+                    cost_by_model = json.loads(cost_by_model)
+                except (json.JSONDecodeError, TypeError):
+                    cost_by_model = None
+
             # Phase 5: Get knowledge graph stats
             graph_stats = None
             current_stage = result.current_stage or ""
@@ -680,6 +688,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 "batches_completed": batches_completed,
                 "compression_stats": compression_stats,
                 "batch_stats": batch_stats,
+                # Model usage breakdown (verify tier config)
+                "cost_by_model": cost_by_model,
                 # Phase 5: Knowledge Graph
                 "graph_stats": graph_stats,
                 "is_graph_phase": is_graph_phase,

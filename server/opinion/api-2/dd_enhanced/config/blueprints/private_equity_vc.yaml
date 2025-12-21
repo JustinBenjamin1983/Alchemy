@@ -909,6 +909,62 @@ folder_questions:
       detail: Documents requiring manual classification review
       cot_hint: Identify relevant content → flag for review
     cross_doc_checks: []
+bee_analysis:
+  sector_threshold: 26%
+  sector_code: "Generic B-BBEE Codes of Good Practice (or applicable Sector Code)"
+  trigger_events:
+    - PE/VC acquisition of majority stake
+    - Management buyout with external funding
+    - Follow-on funding rounds diluting BEE
+    - Exit by PE/VC affecting BEE ownership
+    - Secondary sale of PE stake
+    - Recapitalisation affecting shareholding
+    - IPO exit diluting BEE shareholders
+  key_questions:
+    - question: "Is the PE/VC investor a BEE-compliant fund or non-BEE?"
+      why_critical: "PE fund structure affects whether investment counts as BEE or dilutes BEE"
+      red_flag_if: "Non-BEE fund acquiring majority without BEE co-investor"
+    - question: "Will the investment dilute existing BEE shareholders below threshold?"
+      why_critical: "Multiple funding rounds typically dilute BEE unless anti-dilution protection"
+      red_flag_if: "No anti-dilution protection for BEE in investment terms"
+    - question: "What is the BEE status of the management participation/MIP?"
+      why_critical: "Management shares may qualify as BEE if held by black managers"
+      red_flag_if: "No black managers in MIP or share scheme"
+    - question: "How will exit affect BEE ownership requirements?"
+      why_critical: "PE exit (IPO, trade sale, secondary) will change BEE dynamics"
+      red_flag_if: "Exit mechanism does not preserve minimum BEE"
+    - question: "Are there sector-specific BEE requirements for the target?"
+      why_critical: "Target may operate in sector with specific BEE code (mining, financial services, ICT)"
+      red_flag_if: "Sector code requirements higher than generic and investment will breach"
+  dilution_scenarios:
+    - scenario: "Series A/B funding by non-BEE VC"
+      calculation: "Post-round BEE % = (Pre-round BEE shares) / (Pre-round total + New investor shares)"
+      threshold_breach_risk: "High - typical rounds issue 20-40% new equity"
+    - scenario: "Management buyout with PE funding"
+      calculation: "Post-MBO BEE % = (Black management shares) / (Total post-MBO shares)"
+      threshold_breach_risk: "Medium - depends on black management participation"
+    - scenario: "Secondary sale of PE stake to non-BEE buyer"
+      calculation: "BEE % unchanged as no new shares issued"
+      threshold_breach_risk: "Low for BEE, but may affect other investors"
+    - scenario: "IPO exit with primary issue"
+      calculation: "Post-IPO BEE % = (Pre-IPO BEE shares) / (Pre-IPO total + IPO shares)"
+      threshold_breach_risk: "High - similar to any primary issue"
+  contract_clauses_to_check:
+    - "Anti-dilution provisions for BEE shareholders on new rounds"
+    - "Pre-emptive rights allowing BEE to follow-on"
+    - "Tag-along rights for BEE on PE exit"
+    - "BEE representations and warranties"
+    - "Good/bad leaver provisions for black management"
+    - "MIP allocation to designated groups"
+    - "Exit provisions and BEE maintenance"
+  automatic_calculation_triggers:
+    - trigger: "private equity|venture capital|buyout|growth equity"
+      calculation: "REG_001 - BEE Dilution Calculator"
+      required_inputs:
+        - "Current BEE shareholding percentage"
+        - "Investment amount and equity percentage"
+        - "BEE status of investor (BEE fund or not)"
+        - "Management participation by designated groups"
 cot_questions:
   ownership_regulatory:
   - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
@@ -917,6 +973,15 @@ cot_questions:
   - Are there any ownership restrictions in constitutional documents, shareholder agreements, or regulatory conditions?
   - What licenses, permits, or authorizations are dependent on the current ownership structure?
   - What are the consequences of non-compliance with ownership-based regulatory requirements?
+  bee_compliance:
+  - What is the current BEE ownership percentage and will the investment dilute it?
+  - Is the PE/VC investor a BEE-compliant fund or non-BEE?
+  - What anti-dilution protections exist for BEE shareholders?
+  - What is the BEE status of the management incentive plan participants?
+  - How will exit (IPO, trade sale, secondary) affect BEE ownership?
+  - Are there sector-specific BEE requirements for the target's industry?
+  - What BEE representations and warranties are given in the investment agreement?
+  - Are there pre-emptive rights allowing BEE to participate in future rounds?
   investment_structure:
   - Is the investment structure appropriate and tax efficient?
   - What instruments are being used (ordinary, preference, convertible)?

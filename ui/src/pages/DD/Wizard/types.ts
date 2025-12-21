@@ -1,5 +1,6 @@
 export type TransactionTypeCode =
   | "mining_resources"
+  | "mining_acquisition"
   | "ma_corporate"
   | "banking_finance"
   | "real_estate"
@@ -121,6 +122,11 @@ export const TRANSACTION_TYPE_INFO: Record<
     icon: "⛏️",
     description: "Mining rights, mineral resources, environmental compliance",
   },
+  mining_acquisition: {
+    name: "Mining Acquisition",
+    icon: "⛏️",
+    description: "Acquisition of mining rights, shares, or assets",
+  },
   ma_corporate: {
     name: "M&A / Corporate",
     icon: "🏢",
@@ -190,6 +196,7 @@ export const TRANSACTION_TYPE_INFO: Record<
 
 export const REGULATOR_SUGGESTIONS: Record<TransactionTypeCode, string[]> = {
   mining_resources: ["DMRE", "Competition Commission", "DEA/DFFE", "DWS"],
+  mining_acquisition: ["DMRE", "Competition Commission", "DEA/DFFE", "DWS", "B-BBEE Commission"],
   ma_corporate: ["Competition Commission", "CIPC", "TRP"],
   banking_finance: ["SARB", "FSCA", "NCR"],
   real_estate: ["Municipality", "Deeds Office", "NHBRC"],
@@ -207,6 +214,7 @@ export const REGULATOR_SUGGESTIONS: Record<TransactionTypeCode, string[]> = {
 
 export const TARGET_ENTITY_LABELS: Record<TransactionTypeCode, { label: string; placeholder: string }> = {
   mining_resources: { label: "Target Entity", placeholder: "e.g., ABC Resources (Pty) Ltd" },
+  mining_acquisition: { label: "Target Mining Entity", placeholder: "e.g., Mining Rights Holder (Pty) Ltd" },
   ma_corporate: { label: "Target Company", placeholder: "e.g., Target Holdings (Pty) Ltd" },
   banking_finance: { label: "Borrower / Lender / Counterparty", placeholder: "e.g., Borrower Corp Ltd" },
   real_estate: { label: "Seller / Property Owner", placeholder: "e.g., Property Owner Trust" },
@@ -227,6 +235,13 @@ export const CLIENT_ROLE_OPTIONS: Record<TransactionTypeCode, ClientRoleOption[]
     { value: "acquirer", label: "Acquirer / Purchaser" },
     { value: "seller", label: "Seller / Vendor" },
     { value: "target", label: "Target Company" },
+    { value: "joint_venture_partner", label: "Joint Venture Partner" },
+    { value: "advisor", label: "Independent Advisor" },
+  ],
+  mining_acquisition: [
+    { value: "acquirer", label: "Acquirer / Purchaser" },
+    { value: "seller", label: "Seller / Vendor" },
+    { value: "target", label: "Target Mining Company" },
     { value: "joint_venture_partner", label: "Joint Venture Partner" },
     { value: "advisor", label: "Independent Advisor" },
   ],
@@ -327,6 +342,13 @@ export const DEAL_STRUCTURE_OPTIONS: Record<TransactionTypeCode, DealStructureOp
     { value: "joint_venture", label: "Joint Venture" },
     { value: "farm_in", label: "Farm-In Agreement" },
   ],
+  mining_acquisition: [
+    { value: "share_purchase", label: "Share Purchase" },
+    { value: "asset_purchase", label: "Asset Purchase" },
+    { value: "mining_right_transfer", label: "Mining Right Transfer" },
+    { value: "section_11", label: "Section 11 Transfer" },
+    { value: "joint_venture", label: "Joint Venture" },
+  ],
   ma_corporate: [
     { value: "share_purchase", label: "Share Purchase" },
     { value: "asset_purchase", label: "Asset Purchase" },
@@ -426,6 +448,11 @@ export const VALUE_DATE_LABELS: Record<TransactionTypeCode, {
     valuePlaceholder: "e.g., R500,000,000",
     dateLabel: "Target Completion Date",
   },
+  mining_acquisition: {
+    valueLabel: "Acquisition Value (ZAR)",
+    valuePlaceholder: "e.g., R500,000,000",
+    dateLabel: "Target Closing Date",
+  },
   ma_corporate: {
     valueLabel: "Estimated Purchase Price (ZAR)",
     valuePlaceholder: "e.g., R500,000,000",
@@ -507,6 +534,1052 @@ export interface StakeholderConfig {
   other: StakeholderFieldConfig;
 }
 
+// =============================================================================
+// NEW: Flexible Step 4 Field Configuration System
+// =============================================================================
+
+/**
+ * Field input types determine which component renders the field
+ */
+export type Step4FieldType =
+  | "tags"           // Simple tag input (press Enter to add)
+  | "counterparty"   // Name + Description + Exposure amount
+  | "lender"         // Name + Description + Facility amount
+  | "party_role"     // Name + Role/Description (no amount)
+  | "bee_partner"    // Name + BEE Ownership % + BEE Level
+  | "shareholder";   // Name + Percentage (used in shareholder section)
+
+/**
+ * Configuration for a single field in Step 4
+ */
+export interface Step4FieldDefinition {
+  id: string;                    // Unique field identifier
+  type: Step4FieldType;          // Determines input component
+  label: string;                 // Display label
+  placeholder: string;           // Input placeholder
+  description?: string;          // Optional helper text
+  suggestions?: string[];        // Optional quick-add suggestions
+  required?: boolean;            // Whether field is required
+  amountLabel?: string;          // Custom label for amount field (lender/counterparty)
+  amountPlaceholder?: string;    // Custom placeholder for amount
+}
+
+/**
+ * Configuration for the shareholder section
+ */
+export interface ShareholderSectionConfig {
+  visible: boolean;
+  title: string;
+  description: string;
+  entityLabel: string;
+  entityPlaceholder: string;
+  showBEECalculation?: boolean;  // Show BEE ownership % calculation
+  showPrePost?: boolean;         // Show pre/post transaction columns
+}
+
+/**
+ * Complete Step 4 configuration for a transaction type
+ */
+export interface Step4Config {
+  title: string;                         // Section title (e.g., "Key Stakeholders")
+  subtitle: string;                      // Section subtitle/description
+  fields: Step4FieldDefinition[];        // Fields to display
+  shareholderSection: ShareholderSectionConfig;
+}
+
+/**
+ * Step 4 configurations for all transaction types
+ */
+export const STEP4_CONFIG: Record<TransactionTypeCode, Step4Config> = {
+  // ===== BEE TRANSFORMATION =====
+  bee_transformation: {
+    title: "Transaction Parties",
+    subtitle: "Identify the key parties to the BEE ownership transaction.",
+    fields: [
+      {
+        id: "beePartners",
+        type: "bee_partner",
+        label: "BEE Partner(s) / Investor(s)",
+        placeholder: "e.g., Empowerment Consortium (Pty) Ltd",
+        description: "Black-owned entities acquiring ownership",
+      },
+      {
+        id: "sellers",
+        type: "party_role",
+        label: "Seller(s) / Existing Shareholders",
+        placeholder: "e.g., Founding Shareholder Trust",
+        description: "Parties disposing of shares to BEE partners",
+      },
+      {
+        id: "beeTrustSPV",
+        type: "party_role",
+        label: "BEE Trust / SPV (if applicable)",
+        placeholder: "e.g., ABC Employee Share Trust",
+        description: "Trust or SPV holding BEE shares",
+      },
+      {
+        id: "funders",
+        type: "lender",
+        label: "Transaction Funders",
+        placeholder: "e.g., Standard Bank, Vendor Finance",
+        description: "Parties providing funding for the transaction",
+        amountLabel: "Funding Amount",
+        amountPlaceholder: "e.g., R50m",
+      },
+      {
+        id: "verificationAgency",
+        type: "tags",
+        label: "Verification Agency",
+        placeholder: "e.g., Empowerdex, AQRate",
+        description: "Agency that will verify BEE credentials",
+      },
+      {
+        id: "regulators",
+        type: "tags",
+        label: "Key Regulators",
+        placeholder: "e.g., B-BBEE Commission",
+        suggestions: ["B-BBEE Commission", "DTI/dtic", "DMRE", "Competition Commission"],
+      },
+      {
+        id: "other",
+        type: "party_role",
+        label: "Other Parties",
+        placeholder: "e.g., ESOP Trustees",
+      },
+    ],
+    shareholderSection: {
+      visible: true,
+      title: "Ownership Structure",
+      description: "Detail the pre and post-transaction ownership to calculate BEE ownership percentage.",
+      entityLabel: "Target Entity",
+      entityPlaceholder: "e.g., Target Company (Pty) Ltd",
+      showBEECalculation: true,
+      showPrePost: true,
+    },
+  },
+
+  // ===== MINING & RESOURCES =====
+  mining_resources: {
+    title: "Key Stakeholders",
+    subtitle: "Identify key parties involved in the mining transaction.",
+    fields: [
+      {
+        id: "keyIndividuals",
+        type: "tags",
+        label: "Key Individuals",
+        placeholder: "e.g., Mine Manager, CEO, Technical Director",
+      },
+      {
+        id: "contractors",
+        type: "counterparty",
+        label: "Key Contractors",
+        placeholder: "e.g., Mining contractor, equipment supplier",
+        description: "Major contractors and service providers",
+        amountLabel: "Contract Value",
+        amountPlaceholder: "e.g., R100m",
+      },
+      {
+        id: "offtakers",
+        type: "counterparty",
+        label: "Offtakers / Customers",
+        placeholder: "e.g., Commodity traders, smelters",
+        description: "Parties with offtake or sales agreements",
+        amountLabel: "Annual Value",
+        amountPlaceholder: "e.g., R500m",
+      },
+      {
+        id: "financiers",
+        type: "lender",
+        label: "Project Financiers",
+        placeholder: "e.g., DFI, commercial banks",
+        amountLabel: "Facility Amount",
+        amountPlaceholder: "e.g., R1bn",
+      },
+      {
+        id: "regulators",
+        type: "tags",
+        label: "Key Regulators",
+        placeholder: "e.g., DMRE, DEA",
+        suggestions: ["DMRE", "Competition Commission", "DEA/DFFE", "DWS", "B-BBEE Commission"],
+      },
+      {
+        id: "communities",
+        type: "party_role",
+        label: "Communities / Trusts",
+        placeholder: "e.g., Local Community Trust",
+        description: "Affected communities and their representatives",
+      },
+      {
+        id: "other",
+        type: "party_role",
+        label: "Other Parties",
+        placeholder: "e.g., JV partners, technical consultants",
+      },
+    ],
+    shareholderSection: {
+      visible: true,
+      title: "Shareholders",
+      description: "Add details of the shareholding structure for the target entity.",
+      entityLabel: "Target Entity",
+      entityPlaceholder: "e.g., Mining Co (Pty) Ltd",
+      showBEECalculation: true,
+      showPrePost: false,
+    },
+  },
+
+  // ===== M&A CORPORATE =====
+  ma_corporate: {
+    title: "Key Stakeholders",
+    subtitle: "Identify key parties to flag related findings and contracts.",
+    fields: [
+      {
+        id: "keyIndividuals",
+        type: "tags",
+        label: "Key Individuals",
+        placeholder: "e.g., CEO, CFO, Key executives",
+      },
+      {
+        id: "suppliers",
+        type: "counterparty",
+        label: "Key Suppliers",
+        placeholder: "e.g., Critical suppliers",
+        description: "Suppliers with material contracts",
+        amountLabel: "Annual Spend",
+        amountPlaceholder: "e.g., R50m",
+      },
+      {
+        id: "customers",
+        type: "counterparty",
+        label: "Key Customers",
+        placeholder: "e.g., Major customers, key accounts",
+        description: "Customers representing significant revenue",
+        amountLabel: "Annual Revenue",
+        amountPlaceholder: "e.g., R100m",
+      },
+      {
+        id: "lenders",
+        type: "lender",
+        label: "Key Lenders",
+        placeholder: "e.g., Banks, bondholders",
+        amountLabel: "Facility Amount",
+        amountPlaceholder: "e.g., R500m",
+      },
+      {
+        id: "regulators",
+        type: "tags",
+        label: "Key Regulators",
+        placeholder: "e.g., Competition Commission",
+        suggestions: ["Competition Commission", "CIPC", "TRP", "Sector Regulator"],
+      },
+      {
+        id: "other",
+        type: "party_role",
+        label: "Other Parties",
+        placeholder: "e.g., JV partners, licensors",
+      },
+    ],
+    shareholderSection: {
+      visible: true,
+      title: "Shareholders",
+      description: "Add details of the shareholding structure for the target entity.",
+      entityLabel: "Target Company",
+      entityPlaceholder: "e.g., Target Holdings (Pty) Ltd",
+      showBEECalculation: false,
+      showPrePost: false,
+    },
+  },
+
+  // ===== BANKING & FINANCE =====
+  banking_finance: {
+    title: "Transaction Parties",
+    subtitle: "Identify key parties to the financing transaction.",
+    fields: [
+      {
+        id: "keyExecutives",
+        type: "tags",
+        label: "Key Executives / Signatories",
+        placeholder: "e.g., CFO, Treasury Head, Authorized signatories",
+      },
+      {
+        id: "borrowerGroup",
+        type: "party_role",
+        label: "Borrower Group Members",
+        placeholder: "e.g., Subsidiary Co (Pty) Ltd",
+        description: "Borrower and related obligors",
+      },
+      {
+        id: "guarantors",
+        type: "lender",
+        label: "Guarantors / Security Providers",
+        placeholder: "e.g., Holding Company Ltd",
+        description: "Parties providing guarantees or security",
+        amountLabel: "Guarantee Amount",
+        amountPlaceholder: "e.g., R500m",
+      },
+      {
+        id: "existingLenders",
+        type: "lender",
+        label: "Existing Lenders / Syndicate",
+        placeholder: "e.g., Standard Bank, RMB, Nedbank",
+        description: "Current or proposed lenders",
+        amountLabel: "Commitment",
+        amountPlaceholder: "e.g., R250m",
+      },
+      {
+        id: "advisors",
+        type: "tags",
+        label: "Advisors / Agents",
+        placeholder: "e.g., Facility Agent, Security Agent",
+      },
+      {
+        id: "regulators",
+        type: "tags",
+        label: "Key Regulators",
+        placeholder: "e.g., SARB, FSCA",
+        suggestions: ["SARB", "FSCA", "NCR", "Prudential Authority"],
+      },
+      {
+        id: "other",
+        type: "party_role",
+        label: "Other Parties",
+        placeholder: "e.g., Account bank, process agent",
+      },
+    ],
+    shareholderSection: {
+      visible: false,
+      title: "Shareholders",
+      description: "",
+      entityLabel: "",
+      entityPlaceholder: "",
+    },
+  },
+
+  // ===== REAL ESTATE =====
+  real_estate: {
+    title: "Transaction Parties",
+    subtitle: "Identify key parties to the property transaction.",
+    fields: [
+      {
+        id: "keyIndividuals",
+        type: "tags",
+        label: "Key Individuals",
+        placeholder: "e.g., Property manager, directors",
+      },
+      {
+        id: "tenants",
+        type: "counterparty",
+        label: "Key Tenants",
+        placeholder: "e.g., Anchor tenants, major lessees",
+        description: "Significant tenants by rental value",
+        amountLabel: "Monthly Rental",
+        amountPlaceholder: "e.g., R500k",
+      },
+      {
+        id: "serviceProviders",
+        type: "party_role",
+        label: "Service Providers",
+        placeholder: "e.g., Managing agents, maintenance contractors",
+      },
+      {
+        id: "financiers",
+        type: "lender",
+        label: "Financiers",
+        placeholder: "e.g., Mortgage provider, development funder",
+        amountLabel: "Facility Amount",
+        amountPlaceholder: "e.g., R100m",
+      },
+      {
+        id: "regulators",
+        type: "tags",
+        label: "Key Authorities",
+        placeholder: "e.g., Municipality, Deeds Office",
+        suggestions: ["Municipality", "Deeds Office", "NHBRC", "Body Corporate"],
+      },
+      {
+        id: "other",
+        type: "party_role",
+        label: "Other Parties",
+        placeholder: "e.g., Body corporate, neighbors",
+      },
+    ],
+    shareholderSection: {
+      visible: false,
+      title: "Shareholders",
+      description: "",
+      entityLabel: "",
+      entityPlaceholder: "",
+    },
+  },
+
+  // ===== COMPETITION & REGULATORY =====
+  competition_regulatory: {
+    title: "Transaction Parties",
+    subtitle: "Identify the merging parties and key stakeholders.",
+    fields: [
+      {
+        id: "keyExecutives",
+        type: "tags",
+        label: "Key Executives",
+        placeholder: "e.g., CEOs of merging parties",
+      },
+      {
+        id: "mergingParties",
+        type: "party_role",
+        label: "Merging Parties",
+        placeholder: "e.g., Acquiring Firm (Pty) Ltd",
+        description: "Parties to the merger/acquisition",
+      },
+      {
+        id: "competitors",
+        type: "tags",
+        label: "Key Competitors",
+        placeholder: "e.g., Main competitors in the market",
+      },
+      {
+        id: "suppliers",
+        type: "tags",
+        label: "Common Suppliers",
+        placeholder: "e.g., Suppliers to both parties",
+      },
+      {
+        id: "customers",
+        type: "tags",
+        label: "Common Customers",
+        placeholder: "e.g., Overlapping customer base",
+      },
+      {
+        id: "regulators",
+        type: "tags",
+        label: "Regulatory Bodies",
+        placeholder: "e.g., Competition Commission",
+        suggestions: ["Competition Commission", "Competition Tribunal", "CAC", "Sector Regulator"],
+      },
+      {
+        id: "other",
+        type: "party_role",
+        label: "Other Parties",
+        placeholder: "e.g., Industry associations",
+      },
+    ],
+    shareholderSection: {
+      visible: false,
+      title: "Shareholders",
+      description: "",
+      entityLabel: "",
+      entityPlaceholder: "",
+    },
+  },
+
+  // ===== EMPLOYMENT & LABOR =====
+  employment_labor: {
+    title: "Key Parties",
+    subtitle: "Identify key parties affected by the employment matter.",
+    fields: [
+      {
+        id: "keyPersonnel",
+        type: "tags",
+        label: "Key Personnel",
+        placeholder: "e.g., HR Director, affected executives",
+      },
+      {
+        id: "unions",
+        type: "party_role",
+        label: "Trade Unions / Worker Representatives",
+        placeholder: "e.g., NUM, NUMSA",
+        description: "Recognized unions and workplace forums",
+      },
+      {
+        id: "affectedEmployees",
+        type: "party_role",
+        label: "Employee Groups Affected",
+        placeholder: "e.g., Production staff, Head office",
+        description: "Categories of employees affected",
+      },
+      {
+        id: "serviceProviders",
+        type: "tags",
+        label: "Service Providers",
+        placeholder: "e.g., Payroll providers, benefits administrators",
+      },
+      {
+        id: "regulators",
+        type: "tags",
+        label: "Labor Authorities",
+        placeholder: "e.g., CCMA, Department of Labour",
+        suggestions: ["CCMA", "Department of Labour", "Bargaining Council"],
+      },
+      {
+        id: "other",
+        type: "party_role",
+        label: "Other Parties",
+        placeholder: "e.g., Pension fund trustees",
+      },
+    ],
+    shareholderSection: {
+      visible: false,
+      title: "Shareholders",
+      description: "",
+      entityLabel: "",
+      entityPlaceholder: "",
+    },
+  },
+
+  // ===== IP & TECHNOLOGY =====
+  ip_technology: {
+    title: "Key Stakeholders",
+    subtitle: "Identify parties relevant to the IP/technology transaction.",
+    fields: [
+      {
+        id: "keyPersonnel",
+        type: "tags",
+        label: "Key Personnel",
+        placeholder: "e.g., CTO, key inventors, developers",
+      },
+      {
+        id: "ipOwners",
+        type: "party_role",
+        label: "IP Owners / Licensors",
+        placeholder: "e.g., Patent holder, software owner",
+        description: "Current owners of the IP",
+      },
+      {
+        id: "licensees",
+        type: "counterparty",
+        label: "Existing Licensees",
+        placeholder: "e.g., Licensee Co Ltd",
+        description: "Parties with existing license rights",
+        amountLabel: "License Fee",
+        amountPlaceholder: "e.g., R5m p.a.",
+      },
+      {
+        id: "technologyProviders",
+        type: "tags",
+        label: "Technology Providers / Vendors",
+        placeholder: "e.g., Software vendors, cloud providers",
+      },
+      {
+        id: "regulators",
+        type: "tags",
+        label: "Key Authorities",
+        placeholder: "e.g., CIPC, Information Regulator",
+        suggestions: ["CIPC", "Information Regulator", "ICASA"],
+      },
+      {
+        id: "other",
+        type: "party_role",
+        label: "Other Parties",
+        placeholder: "e.g., R&D partners, universities",
+      },
+    ],
+    shareholderSection: {
+      visible: true,
+      title: "Shareholders",
+      description: "Add details of the shareholding structure for the target entity.",
+      entityLabel: "Target Entity",
+      entityPlaceholder: "e.g., Tech Innovations (Pty) Ltd",
+      showBEECalculation: false,
+      showPrePost: false,
+    },
+  },
+
+  // ===== ENERGY & POWER =====
+  energy_power: {
+    title: "Project Parties",
+    subtitle: "Identify key parties to the energy/power project.",
+    fields: [
+      {
+        id: "keyPersonnel",
+        type: "tags",
+        label: "Key Personnel",
+        placeholder: "e.g., Project director, plant manager",
+      },
+      {
+        id: "offtakers",
+        type: "counterparty",
+        label: "Offtakers / PPA Counterparties",
+        placeholder: "e.g., Eskom, private offtaker",
+        description: "Parties purchasing power output",
+        amountLabel: "PPA Value",
+        amountPlaceholder: "e.g., R2bn over term",
+      },
+      {
+        id: "epcContractor",
+        type: "counterparty",
+        label: "EPC Contractor",
+        placeholder: "e.g., Construction JV",
+        description: "Engineering, procurement, construction contractor",
+        amountLabel: "EPC Price",
+        amountPlaceholder: "e.g., R1.5bn",
+      },
+      {
+        id: "omProvider",
+        type: "counterparty",
+        label: "O&M Provider",
+        placeholder: "e.g., Operations company",
+        description: "Operations and maintenance provider",
+        amountLabel: "O&M Fee p.a.",
+        amountPlaceholder: "e.g., R50m",
+      },
+      {
+        id: "lenders",
+        type: "lender",
+        label: "Project Lenders",
+        placeholder: "e.g., DFIs, commercial banks, ECAs",
+        amountLabel: "Facility Amount",
+        amountPlaceholder: "e.g., R1bn",
+      },
+      {
+        id: "regulators",
+        type: "tags",
+        label: "Energy Regulators",
+        placeholder: "e.g., NERSA, DMRE",
+        suggestions: ["NERSA", "Eskom", "DMRE", "IPP Office", "Municipality"],
+      },
+      {
+        id: "landowners",
+        type: "party_role",
+        label: "Landowners / Communities",
+        placeholder: "e.g., Farm owner, local community",
+      },
+      {
+        id: "other",
+        type: "party_role",
+        label: "Other Parties",
+        placeholder: "e.g., Grid operator, equipment suppliers",
+      },
+    ],
+    shareholderSection: {
+      visible: true,
+      title: "Project Company Shareholders",
+      description: "Add details of the SPV shareholding structure.",
+      entityLabel: "Project Company / SPV",
+      entityPlaceholder: "e.g., Solar Power SPV (Pty) Ltd",
+      showBEECalculation: true,
+      showPrePost: false,
+    },
+  },
+
+  // ===== INFRASTRUCTURE & PPP =====
+  infrastructure_ppp: {
+    title: "Project Parties",
+    subtitle: "Identify key parties to the infrastructure/PPP project.",
+    fields: [
+      {
+        id: "keyPersonnel",
+        type: "tags",
+        label: "Key Personnel",
+        placeholder: "e.g., Project director, concession manager",
+      },
+      {
+        id: "governmentAuthority",
+        type: "party_role",
+        label: "Government Authority / Contracting Party",
+        placeholder: "e.g., National Department of X",
+        description: "Public sector party to the PPP",
+      },
+      {
+        id: "constructionContractor",
+        type: "counterparty",
+        label: "Construction Contractor",
+        placeholder: "e.g., Construction JV",
+        amountLabel: "Contract Value",
+        amountPlaceholder: "e.g., R5bn",
+      },
+      {
+        id: "facilitiesManager",
+        type: "counterparty",
+        label: "Facilities Manager / Operator",
+        placeholder: "e.g., FM Company Ltd",
+        amountLabel: "O&M Fee p.a.",
+        amountPlaceholder: "e.g., R100m",
+      },
+      {
+        id: "lenders",
+        type: "lender",
+        label: "Project Financiers",
+        placeholder: "e.g., DFIs, infrastructure funds",
+        amountLabel: "Facility Amount",
+        amountPlaceholder: "e.g., R3bn",
+      },
+      {
+        id: "regulators",
+        type: "tags",
+        label: "Government Bodies",
+        placeholder: "e.g., National Treasury",
+        suggestions: ["National Treasury", "PPP Unit", "GTAC", "Sector Department"],
+      },
+      {
+        id: "other",
+        type: "party_role",
+        label: "Other Parties",
+        placeholder: "e.g., Subcontractors, affected communities",
+      },
+    ],
+    shareholderSection: {
+      visible: true,
+      title: "SPV / Concessionaire Shareholders",
+      description: "Add details of the project company shareholding.",
+      entityLabel: "SPV / Concessionaire",
+      entityPlaceholder: "e.g., Infrastructure SPV Ltd",
+      showBEECalculation: true,
+      showPrePost: false,
+    },
+  },
+
+  // ===== CAPITAL MARKETS =====
+  capital_markets: {
+    title: "Transaction Parties",
+    subtitle: "Identify key parties to the capital markets transaction.",
+    fields: [
+      {
+        id: "keyExecutives",
+        type: "tags",
+        label: "Key Executives",
+        placeholder: "e.g., CEO, CFO, Company Secretary",
+      },
+      {
+        id: "existingShareholders",
+        type: "counterparty",
+        label: "Existing / Selling Shareholders",
+        placeholder: "e.g., Founding shareholder, PE fund",
+        description: "Major shareholders or those selling",
+        amountLabel: "Shareholding %",
+        amountPlaceholder: "e.g., 25%",
+      },
+      {
+        id: "cornerstoneInvestors",
+        type: "counterparty",
+        label: "Cornerstone / Anchor Investors",
+        placeholder: "e.g., PIC, Allan Gray",
+        description: "Committed investors",
+        amountLabel: "Commitment",
+        amountPlaceholder: "e.g., R500m",
+      },
+      {
+        id: "underwriters",
+        type: "lender",
+        label: "Underwriters / Sponsors",
+        placeholder: "e.g., RMB, Standard Bank",
+        description: "Banks underwriting the issue",
+        amountLabel: "Underwriting",
+        amountPlaceholder: "e.g., R1bn",
+      },
+      {
+        id: "advisors",
+        type: "tags",
+        label: "Transaction Advisors",
+        placeholder: "e.g., Legal advisors, reporting accountants",
+      },
+      {
+        id: "regulators",
+        type: "tags",
+        label: "Market Regulators",
+        placeholder: "e.g., JSE, FSCA",
+        suggestions: ["JSE", "FSCA", "CIPC", "TRP"],
+      },
+      {
+        id: "other",
+        type: "party_role",
+        label: "Other Parties",
+        placeholder: "e.g., Transfer secretaries, trustees",
+      },
+    ],
+    shareholderSection: {
+      visible: true,
+      title: "Shareholding (Pre/Post Transaction)",
+      description: "Add details of the shareholding structure pre and post transaction.",
+      entityLabel: "Issuer",
+      entityPlaceholder: "e.g., Listed Company Ltd",
+      showBEECalculation: false,
+      showPrePost: true,
+    },
+  },
+
+  // ===== RESTRUCTURING & INSOLVENCY =====
+  restructuring_insolvency: {
+    title: "Key Parties",
+    subtitle: "Identify key parties to the restructuring/insolvency matter.",
+    fields: [
+      {
+        id: "keyPersonnel",
+        type: "tags",
+        label: "Key Personnel",
+        placeholder: "e.g., BRP, liquidator, management",
+      },
+      {
+        id: "securedCreditors",
+        type: "lender",
+        label: "Secured Creditors",
+        placeholder: "e.g., Senior lenders, bondholders",
+        description: "Creditors with security",
+        amountLabel: "Claim Amount",
+        amountPlaceholder: "e.g., R500m",
+      },
+      {
+        id: "unsecuredCreditors",
+        type: "lender",
+        label: "Unsecured / Concurrent Creditors",
+        placeholder: "e.g., Trade creditors, SARS",
+        description: "Creditors without security",
+        amountLabel: "Claim Amount",
+        amountPlaceholder: "e.g., R100m",
+      },
+      {
+        id: "potentialInvestors",
+        type: "party_role",
+        label: "Potential Investors / Acquirers",
+        placeholder: "e.g., Distressed investor",
+        description: "Parties interested in acquiring assets",
+      },
+      {
+        id: "criticalSuppliers",
+        type: "tags",
+        label: "Critical Suppliers",
+        placeholder: "e.g., Essential service providers",
+      },
+      {
+        id: "regulators",
+        type: "tags",
+        label: "Key Authorities",
+        placeholder: "e.g., Master, CIPC",
+        suggestions: ["CIPC", "Master of the High Court", "Competition Commission", "SARS"],
+      },
+      {
+        id: "other",
+        type: "party_role",
+        label: "Other Parties",
+        placeholder: "e.g., Employees, creditor committees",
+      },
+    ],
+    shareholderSection: {
+      visible: false,
+      title: "Shareholders",
+      description: "",
+      entityLabel: "",
+      entityPlaceholder: "",
+    },
+  },
+
+  // ===== PRIVATE EQUITY & VC =====
+  private_equity_vc: {
+    title: "Transaction Parties",
+    subtitle: "Identify key parties to the PE/VC investment.",
+    fields: [
+      {
+        id: "management",
+        type: "tags",
+        label: "Key Management",
+        placeholder: "e.g., Founders, CEO, management team",
+      },
+      {
+        id: "existingShareholders",
+        type: "counterparty",
+        label: "Existing Shareholders / Sellers",
+        placeholder: "e.g., Founder, early investor",
+        description: "Current shareholders",
+        amountLabel: "Shareholding",
+        amountPlaceholder: "e.g., 40%",
+      },
+      {
+        id: "coInvestors",
+        type: "counterparty",
+        label: "Co-Investors",
+        placeholder: "e.g., Co-investing fund",
+        description: "Other investors in the round",
+        amountLabel: "Investment",
+        amountPlaceholder: "e.g., R50m",
+      },
+      {
+        id: "lenders",
+        type: "lender",
+        label: "Debt Providers",
+        placeholder: "e.g., Mezzanine provider, bank",
+        description: "Providers of debt financing",
+        amountLabel: "Facility",
+        amountPlaceholder: "e.g., R100m",
+      },
+      {
+        id: "suppliers",
+        type: "tags",
+        label: "Key Vendors / Suppliers",
+        placeholder: "e.g., Critical service providers",
+      },
+      {
+        id: "customers",
+        type: "counterparty",
+        label: "Key Customers",
+        placeholder: "e.g., Enterprise clients, key accounts",
+        amountLabel: "Revenue",
+        amountPlaceholder: "e.g., R20m p.a.",
+      },
+      {
+        id: "regulators",
+        type: "tags",
+        label: "Key Regulators",
+        placeholder: "e.g., Competition Commission",
+        suggestions: ["Competition Commission", "SARB", "FSCA", "Sector Regulator"],
+      },
+      {
+        id: "other",
+        type: "party_role",
+        label: "Other Parties",
+        placeholder: "e.g., Advisors, Board members",
+      },
+    ],
+    shareholderSection: {
+      visible: true,
+      title: "Cap Table",
+      description: "Add details of the pre and post-investment capitalization.",
+      entityLabel: "Target Company",
+      entityPlaceholder: "e.g., Growth Co (Pty) Ltd",
+      showBEECalculation: false,
+      showPrePost: true,
+    },
+  },
+
+  // ===== FINANCIAL SERVICES =====
+  financial_services: {
+    title: "Transaction Parties",
+    subtitle: "Identify key parties to the financial services transaction.",
+    fields: [
+      {
+        id: "keyExecutives",
+        type: "tags",
+        label: "Key Executives",
+        placeholder: "e.g., CEO, CFO, Chief Risk Officer",
+      },
+      {
+        id: "targetInstitution",
+        type: "party_role",
+        label: "Target Institution / Counterparty",
+        placeholder: "e.g., Insurance Company Ltd",
+        description: "The financial institution involved",
+      },
+      {
+        id: "keyClients",
+        type: "counterparty",
+        label: "Key Clients / Policyholders",
+        placeholder: "e.g., Major depositors, corporate clients",
+        description: "Significant clients by AUM or premium",
+        amountLabel: "AUM / Premium",
+        amountPlaceholder: "e.g., R1bn",
+      },
+      {
+        id: "fundingProviders",
+        type: "lender",
+        label: "Funding Sources / Capital Providers",
+        placeholder: "e.g., Interbank lenders, shareholders",
+        amountLabel: "Facility",
+        amountPlaceholder: "e.g., R500m",
+      },
+      {
+        id: "serviceProviders",
+        type: "tags",
+        label: "Key Service Providers",
+        placeholder: "e.g., IT providers, outsourced services",
+      },
+      {
+        id: "regulators",
+        type: "tags",
+        label: "Financial Regulators",
+        placeholder: "e.g., SARB, PA, FSCA",
+        suggestions: ["SARB", "FSCA", "Prudential Authority", "NCR", "Information Regulator"],
+      },
+      {
+        id: "other",
+        type: "party_role",
+        label: "Other Parties",
+        placeholder: "e.g., Rating agencies, industry bodies",
+      },
+    ],
+    shareholderSection: {
+      visible: true,
+      title: "Shareholders",
+      description: "Add details of the shareholding structure.",
+      entityLabel: "Target Entity",
+      entityPlaceholder: "e.g., Financial Services Provider Ltd",
+      showBEECalculation: false,
+      showPrePost: false,
+    },
+  },
+
+  // ===== MINING ACQUISITION (SPECIFIC) =====
+  mining_acquisition: {
+    title: "Transaction Parties",
+    subtitle: "Identify key parties to the mining acquisition.",
+    fields: [
+      {
+        id: "keyIndividuals",
+        type: "tags",
+        label: "Key Individuals",
+        placeholder: "e.g., Mine Manager, CEO, Technical experts",
+      },
+      {
+        id: "seller",
+        type: "party_role",
+        label: "Seller / Vendor",
+        placeholder: "e.g., Mining Holding Co Ltd",
+        description: "Current owner of mining rights/assets",
+      },
+      {
+        id: "contractors",
+        type: "counterparty",
+        label: "Key Contractors",
+        placeholder: "e.g., Mining contractor",
+        description: "Major contractors with assignable contracts",
+        amountLabel: "Contract Value",
+        amountPlaceholder: "e.g., R200m",
+      },
+      {
+        id: "offtakers",
+        type: "counterparty",
+        label: "Offtakers",
+        placeholder: "e.g., Commodity traders",
+        description: "Existing offtake agreements",
+        amountLabel: "Offtake Value",
+        amountPlaceholder: "e.g., R1bn",
+      },
+      {
+        id: "financiers",
+        type: "lender",
+        label: "Transaction / Project Financiers",
+        placeholder: "e.g., Acquisition lenders, DFIs",
+        amountLabel: "Facility",
+        amountPlaceholder: "e.g., R500m",
+      },
+      {
+        id: "regulators",
+        type: "tags",
+        label: "Key Regulators",
+        placeholder: "e.g., DMRE, Competition Commission",
+        suggestions: ["DMRE", "Competition Commission", "DEA/DFFE", "DWS", "B-BBEE Commission"],
+      },
+      {
+        id: "communities",
+        type: "party_role",
+        label: "Communities / SLPs",
+        placeholder: "e.g., Host community trust",
+        description: "Communities with SLP commitments",
+      },
+      {
+        id: "other",
+        type: "party_role",
+        label: "Other Parties",
+        placeholder: "e.g., JV partners, technical consultants",
+      },
+    ],
+    shareholderSection: {
+      visible: true,
+      title: "Shareholders",
+      description: "Add details of the target entity shareholding.",
+      entityLabel: "Target Entity",
+      entityPlaceholder: "e.g., Mining Rights Holder (Pty) Ltd",
+      showBEECalculation: true,
+      showPrePost: false,
+    },
+  },
+};
+
 export const KEY_STAKEHOLDER_CONFIG: Record<TransactionTypeCode, StakeholderConfig> = {
   mining_resources: {
     individuals: { label: "Key Individuals", placeholder: "e.g., Mine Manager, CEO..." },
@@ -515,6 +1588,14 @@ export const KEY_STAKEHOLDER_CONFIG: Record<TransactionTypeCode, StakeholderConf
     lenders: { label: "Key Financiers", placeholder: "e.g., Project finance lenders, DFIs..." },
     regulators: { label: "Key Regulators", placeholder: "e.g., DMRE, DEA..." },
     other: { label: "Other", placeholder: "e.g., Community trusts, JV partners..." },
+  },
+  mining_acquisition: {
+    individuals: { label: "Key Individuals", placeholder: "e.g., Mine Manager, CEO, Technical experts..." },
+    suppliers: { label: "Key Contractors", placeholder: "e.g., Mining contractors..." },
+    customers: { label: "Offtakers", placeholder: "e.g., Commodity traders, smelters..." },
+    lenders: { label: "Transaction Financiers", placeholder: "e.g., Acquisition lenders, DFIs..." },
+    regulators: { label: "Key Regulators", placeholder: "e.g., DMRE, Competition Commission..." },
+    other: { label: "Other", placeholder: "e.g., Communities, JV partners..." },
   },
   ma_corporate: {
     individuals: { label: "Key Individuals", placeholder: "e.g., CEO, CFO, Key executives..." },

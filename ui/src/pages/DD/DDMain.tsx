@@ -222,10 +222,11 @@ export function DDMain() {
         formData.append("file", setup.uploadedFile);
         formData.append("localPath", sasResponse.localPath);
 
-        await axios.post("/api/dd-file-upload-dev", formData, {
+        await axios.post("/dd-file-upload-dev", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          timeout: 120000, // 2 minute timeout for large file uploads
         });
         blobUrl = sasResponse.blobUrl;
       } else {
@@ -315,16 +316,24 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
   };
 
   const handleDeleteDD = (ddId: string) => {
+    console.log("[DDMain] handleDeleteDD called with ddId:", ddId);
+    if (!ddId) {
+      alert("Cannot delete: No project selected");
+      return;
+    }
+    console.log("[DDMain] Calling mutateDDDelete.mutate");
     mutateDDDelete.mutate(
       { dd_id: ddId },
       {
         onSuccess: () => {
+          console.log("[DDMain] Delete successful, redirecting");
           // Simply refresh the page to reset all state and queries
           window.location.href = window.location.pathname;
         },
-        onError: (error) => {
-          console.error("Failed to delete due diligence:", error);
-          // You might want to show a toast or error message here
+        onError: (error: any) => {
+          console.error("[DDMain] Failed to delete due diligence:", error);
+          const errorMessage = error?.response?.data?.error || error?.message || "Unknown error occurred";
+          alert(`Failed to delete project: ${errorMessage}`);
         },
       }
     );

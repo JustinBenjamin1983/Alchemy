@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { reactQueryDefaults } from "./reactQuerySetup";
 import { useAxiosWithAuth } from "./useAxiosWithAuth";
 
-export function useGetOpinions() {
+export function useGetOpinions(enabled: boolean = true) {
   const axios = useAxiosWithAuth();
 
   const getOpinions = async () => {
@@ -18,6 +18,7 @@ export function useGetOpinions() {
   return useQuery({
     queryKey: ["get-opinions"],
     queryFn: getOpinions,
+    enabled,
     ...reactQueryDefaults,
   });
 }

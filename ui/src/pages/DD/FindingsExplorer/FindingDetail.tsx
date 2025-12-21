@@ -114,7 +114,7 @@ export const FindingDetail: React.FC<ExtendedFindingDetailProps> = ({
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex-shrink-0 p-4 border-b border-gray-300 dark:border-gray-600 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-gray-800 dark:to-gray-800">
         <div className="flex items-start gap-3">
           <span className={`px-2 py-1 text-xs font-medium rounded ${config.bgColor} ${config.color}`}>
             {config.label}
@@ -381,7 +381,7 @@ export const FindingDetail: React.FC<ExtendedFindingDetailProps> = ({
 
       {/* AI Chat Input */}
       {onAskQuestion && (
-        <div className="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/30">
+        <div className="flex-shrink-0 p-4 border-t border-gray-300 dark:border-gray-600 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-gray-800 dark:to-gray-800">
           <div className="flex items-center gap-2">
             <input
               type="text"

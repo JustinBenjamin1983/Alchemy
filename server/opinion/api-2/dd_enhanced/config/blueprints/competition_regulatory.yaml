@@ -407,6 +407,61 @@ folder_questions:
       detail: Documents requiring manual classification review
       cot_hint: Identify competition content → flag for review
     cross_doc_checks: []
+bee_analysis:
+  sector_threshold: 26%
+  sector_code: "Generic B-BBEE Codes of Good Practice"
+  trigger_events:
+    - Merger affecting HDSA-owned target
+    - Acquisition reducing BEE ownership in market
+    - Competition Commission public interest consideration
+    - Merger conditions relating to BEE
+    - Small business and HDSA supplier impact
+    - Post-merger integration affecting BEE
+    - Prior merger BEE conditions still in effect
+  key_questions:
+    - question: "Is the target HDSA-owned or controlled and how does this affect public interest?"
+      why_critical: "Competition Commission considers impact on HDSA ownership as public interest factor"
+      red_flag_if: "Transaction reduces HDSA ownership/control without mitigation"
+    - question: "What is the impact on small business and BEE suppliers in the market?"
+      why_critical: "Section 12A(3)(c) requires consideration of impact on small business/HDSA competitive ability"
+      red_flag_if: "Transaction will harm small business or HDSA supplier access"
+    - question: "Are there BEE-related conditions from prior merger approvals still in effect?"
+      why_critical: "Breach of prior conditions affects current merger assessment"
+      red_flag_if: "Existing BEE conditions that may be breached by new transaction"
+    - question: "What BEE commitments or conditions might the Commission impose?"
+      why_critical: "Commission increasingly imposes BEE ownership and supplier conditions"
+      red_flag_if: "No plan for BEE conditions that may be required for approval"
+    - question: "Does the merger affect any designated sectors with enhanced BEE scrutiny?"
+      why_critical: "Certain sectors receive heightened public interest scrutiny"
+      red_flag_if: "Merger in designated sector without BEE mitigation plan"
+  dilution_scenarios:
+    - scenario: "Non-HDSA acquires HDSA-controlled target"
+      calculation: "Post-acquisition HDSA % = 0% at target level"
+      threshold_breach_risk: "High public interest concern - likely conditions"
+    - scenario: "Merger reduces BEE supplier access"
+      calculation: "Post-merger supplier concentration affecting BEE access"
+      threshold_breach_risk: "Medium - may require supplier development conditions"
+    - scenario: "Joint venture between non-HDSA parties in concentrated market"
+      calculation: "JV structure assessment for HDSA participation"
+      threshold_breach_risk: "Low unless market impact on HDSA competitors"
+    - scenario: "Merger integration reduces BEE procurement spend"
+      calculation: "Combined entity procurement from BEE suppliers"
+      threshold_breach_risk: "Medium - may require procurement conditions"
+  contract_clauses_to_check:
+    - "Prior merger conditions relating to BEE"
+    - "Undertakings given to Competition Commission"
+    - "HDSA ownership representations in SPA"
+    - "Small business and BEE supplier commitments"
+    - "Employment equity and local content undertakings"
+    - "Monitoring and reporting obligations"
+  automatic_calculation_triggers:
+    - trigger: "competition|merger|public interest|HDSA"
+      calculation: "Public Interest BEE Impact Assessment"
+      required_inputs:
+        - "Target HDSA ownership status"
+        - "Impact on HDSA competitors"
+        - "BEE supplier access impact"
+        - "Prior BEE condition compliance"
 cot_questions:
   ownership_regulatory:
   - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
@@ -419,6 +474,15 @@ cot_questions:
   - Are there any sector-specific regulatory approvals required?
   - What public interest considerations apply to this transaction?
   - Are there any conditions or undertakings from prior transactions that apply?
+  bee_compliance:
+  - Is the target HDSA-owned or controlled (public interest factor)?
+  - What is the impact on small business and BEE suppliers in the market?
+  - Are there BEE-related conditions from prior mergers still in effect?
+  - What BEE commitments might the Commission impose as conditions?
+  - Does the merger affect designated sectors with enhanced BEE scrutiny?
+  - What BEE mitigation or remedies should be proposed?
+  - What is the impact on HDSA competitor access to market?
+  - Are there employment equity or local content considerations?
   merger_control:
   - Does the transaction meet merger notification thresholds?
   - What is the appropriate filing (small, intermediate, large)?

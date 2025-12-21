@@ -4,7 +4,7 @@
  * Displays the transaction context configured in the wizard.
  * Shows how this context influences the DD analysis.
  */
-import React from "react";
+import React, { useState } from "react";
 import {
   Building2,
   Users,
@@ -192,7 +192,7 @@ function projectSetupToParsed(setup: ProjectSetup): ParsedBriefing {
   };
 }
 
-// Helper to render a list of items as badges
+// Helper to render a list of items as badges (for short items)
 function renderBadgeList(items: string, emptyText: string = "None", delimiter: string = ",") {
   if (!items || items === "None specified" || items === "Not specified") {
     return <span className="text-xs text-gray-400 italic">{emptyText}</span>;
@@ -208,6 +208,61 @@ function renderBadgeList(items: string, emptyText: string = "None", delimiter: s
           {item}
         </Badge>
       ))}
+    </div>
+  );
+}
+
+// Helper to render stakeholders with detailed info (name, description, amount) as a clean list
+function renderStakeholderList(items: string, delimiter: string = ";") {
+  if (!items || items === "None specified" || items === "Not specified") {
+    return <span className="text-xs text-gray-400 italic">None</span>;
+  }
+  const itemList = items.split(delimiter).map((s) => s.trim()).filter(Boolean);
+  if (itemList.length === 0) {
+    return <span className="text-xs text-gray-400 italic">None</span>;
+  }
+  return (
+    <div className="space-y-1.5">
+      {itemList.map((item, idx) => {
+        // Parse item: "Name (Description) - Amount" format
+        const amountMatch = item.match(/^(.+?)\s*-\s*([R$][\d,\s]+(?:\d{3})*)$/);
+        const descMatch = item.match(/^([^(]+)\s*\(([^)]+)\)/);
+
+        let name = item;
+        let description = "";
+        let amount = "";
+
+        if (amountMatch) {
+          const beforeAmount = amountMatch[1].trim();
+          amount = amountMatch[2].trim();
+          // Check if there's a description in the name part
+          const innerDescMatch = beforeAmount.match(/^([^(]+)\s*\(([^)]+)\)/);
+          if (innerDescMatch) {
+            name = innerDescMatch[1].trim();
+            description = innerDescMatch[2].trim();
+          } else {
+            name = beforeAmount;
+          }
+        } else if (descMatch) {
+          name = descMatch[1].trim();
+          description = descMatch[2].trim();
+        }
+
+        return (
+          <div
+            key={idx}
+            className="bg-gray-50 dark:bg-gray-700/50 rounded-md px-2.5 py-1.5 text-xs"
+          >
+            <div className="font-medium text-gray-800 dark:text-gray-200">{name}</div>
+            {description && (
+              <div className="text-gray-500 dark:text-gray-400 text-[11px]">{description}</div>
+            )}
+            {amount && (
+              <div className="text-blue-600 dark:text-blue-400 font-medium mt-0.5">{amount}</div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -235,8 +290,27 @@ export const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   transactionTypeCode,
   projectSetup,
 }) => {
+  // State to control expanded/collapsed details sections
+  const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
+
   // Use projectSetup if available (more reliable), otherwise fall back to parsing briefing
   const parsed = projectSetup ? projectSetupToParsed(projectSetup) : parseBriefing(briefing);
+
+  // Check if there are any details to show in the expandable section
+  const hasExpandableDetails =
+    parsed.dealRationale !== "Not provided" ||
+    parsed.criticalPriorities !== "None specified" ||
+    parsed.knownDealBreakers !== "None specified" ||
+    parsed.knownConcerns !== "None specified" ||
+    parsed.deprioritizedAreas !== "None specified" ||
+    parsed.keyIndividuals !== "None specified" ||
+    parsed.keySuppliers !== "None specified" ||
+    parsed.keyCustomers !== "None specified" ||
+    parsed.keyLenders !== "None specified" ||
+    parsed.keyRegulators !== "None specified" ||
+    parsed.keyOther !== "None specified" ||
+    parsed.shareholderEntity !== "None specified" ||
+    parsed.shareholders !== "None specified";
 
   // Get transaction type info from the code (if provided) or fall back to parsed briefing
   const typeCode = transactionTypeCode as TransactionTypeCode | undefined;
@@ -384,7 +458,7 @@ export const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   return (
     <div
       className={cn(
-        "bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden transition-shadow hover:shadow-xl",
+        "bg-white dark:bg-gray-800 rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg overflow-hidden transition-shadow hover:shadow-xl",
         className
       )}
     >
@@ -524,17 +598,40 @@ export const TransactionSummary: React.FC<TransactionSummaryProps> = ({
             </div>
           </div>
 
-          {/* Deal Rationale (if provided) */}
-          {parsed.dealRationale !== "Not provided" && (
-            <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                Deal Rationale
-              </div>
-              <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
-                {parsed.dealRationale}
-              </p>
-            </div>
+          {/* Expand/Collapse Toggle for Details */}
+          {hasExpandableDetails && (
+            <button
+              onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
+              className="w-full mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-center gap-2 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+            >
+              {isDetailsExpanded ? (
+                <>
+                  <ChevronDown className="w-4 h-4 rotate-180 transition-transform" />
+                  Hide Details
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-4 h-4 transition-transform" />
+                  Show Deal Rationale, Stakeholders & More
+                </>
+              )}
+            </button>
           )}
+
+          {/* Expandable Details Section */}
+          {isDetailsExpanded && (
+            <>
+              {/* Deal Rationale (if provided) */}
+              {parsed.dealRationale !== "Not provided" && (
+                <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                    Deal Rationale
+                  </div>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                    {parsed.dealRationale}
+                  </p>
+                </div>
+              )}
 
           {/* Focus Areas Section */}
           {(parsed.criticalPriorities !== "None specified" ||
@@ -592,50 +689,50 @@ export const TransactionSummary: React.FC<TransactionSummaryProps> = ({
             parsed.keyOther !== "None specified" ||
             parsed.shareholders !== "None specified") && (
             <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-              <div className="text-xs font-medium text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-1.5">
+              <div className="text-xs font-medium text-gray-600 dark:text-gray-300 mb-3 flex items-center gap-1.5">
                 <Users className="w-3 h-3" />
                 Key Stakeholders
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {parsed.keyCustomers !== "None specified" && (
+                  <div className="space-y-2">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 font-medium">
+                      <ShoppingCart className="w-3 h-3" />
+                      Security Providers / Guarantors
+                    </div>
+                    {renderStakeholderList(parsed.keyCustomers, ";")}
+                  </div>
+                )}
+                {parsed.keyLenders !== "None specified" && (
+                  <div className="space-y-2">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 font-medium">
+                      <Landmark className="w-3 h-3" />
+                      Lenders
+                    </div>
+                    {renderStakeholderList(parsed.keyLenders, ";")}
+                  </div>
+                )}
                 {parsed.keyIndividuals !== "None specified" && (
-                  <div className="space-y-1">
-                    <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                  <div className="space-y-2">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 font-medium">
                       <UserCheck className="w-3 h-3" />
-                      Individuals
+                      Key Individuals
                     </div>
                     {renderBadgeList(parsed.keyIndividuals)}
                   </div>
                 )}
                 {parsed.keySuppliers !== "None specified" && (
-                  <div className="space-y-1">
-                    <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                  <div className="space-y-2">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 font-medium">
                       <Truck className="w-3 h-3" />
-                      Suppliers
+                      Advisors / Service Providers
                     </div>
                     {renderBadgeList(parsed.keySuppliers)}
                   </div>
                 )}
-                {parsed.keyCustomers !== "None specified" && (
-                  <div className="space-y-1">
-                    <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                      <ShoppingCart className="w-3 h-3" />
-                      Customers
-                    </div>
-                    {renderBadgeList(parsed.keyCustomers, "None", ";")}
-                  </div>
-                )}
-                {parsed.keyLenders !== "None specified" && (
-                  <div className="space-y-1">
-                    <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                      <Landmark className="w-3 h-3" />
-                      Lenders
-                    </div>
-                    {renderBadgeList(parsed.keyLenders, "None", ";")}
-                  </div>
-                )}
                 {parsed.keyRegulators !== "None specified" && (
-                  <div className="space-y-1">
-                    <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                  <div className="space-y-2">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 font-medium">
                       <Scale className="w-3 h-3" />
                       Regulators
                     </div>
@@ -643,37 +740,39 @@ export const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                   </div>
                 )}
                 {parsed.keyOther !== "None specified" && (
-                  <div className="space-y-1">
-                    <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                  <div className="space-y-2">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 font-medium">
                       <MoreHorizontal className="w-3 h-3" />
                       Other
                     </div>
-                    {renderBadgeList(parsed.keyOther, "None", ";")}
+                    {renderStakeholderList(parsed.keyOther, ";")}
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          {/* Shareholders Section */}
-          {(parsed.shareholderEntity !== "None specified" ||
-            parsed.shareholders !== "None specified") && (
-            <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-              <div className="text-xs font-medium text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-1.5">
-                <PieChart className="w-3 h-3" />
-                Shareholders
-                {parsed.shareholderEntity !== "None specified" && (
-                  <span className="font-normal text-gray-500">
-                    ({parsed.shareholderEntity})
-                  </span>
-                )}
-              </div>
-              {parsed.shareholders !== "None specified" && (
-                <div className="space-y-1">
-                  {renderBadgeList(parsed.shareholders)}
+              {/* Shareholders Section */}
+              {(parsed.shareholderEntity !== "None specified" ||
+                parsed.shareholders !== "None specified") && (
+                <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                  <div className="text-xs font-medium text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-1.5">
+                    <PieChart className="w-3 h-3" />
+                    Shareholders
+                    {parsed.shareholderEntity !== "None specified" && (
+                      <span className="font-normal text-gray-500">
+                        ({parsed.shareholderEntity})
+                      </span>
+                    )}
+                  </div>
+                  {parsed.shareholders !== "None specified" && (
+                    <div className="space-y-1">
+                      {renderBadgeList(parsed.shareholders)}
+                    </div>
+                  )}
                 </div>
               )}
-            </div>
+            </>
           )}
         </div>
       )}

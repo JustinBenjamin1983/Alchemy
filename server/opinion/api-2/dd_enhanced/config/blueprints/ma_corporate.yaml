@@ -598,6 +598,62 @@ folder_questions:
       related_folders:
       - 03_Financial
       description: Verify consistency between filings and accounts
+bee_analysis:
+  sector_threshold: 26%
+  sector_code: "Generic B-BBEE Codes of Good Practice (or applicable Sector Code)"
+  trigger_events:
+    - Share acquisition by non-BEE buyer
+    - Asset acquisition of going concern
+    - Merger or amalgamation
+    - Scheme of arrangement affecting ownership
+    - Post-acquisition equity restructuring
+    - Exit by existing BEE shareholders
+    - Acquisition financing by non-BEE lender
+  key_questions:
+    - question: "What is the current BEE ownership percentage and how will it change?"
+      why_critical: "Transaction likely to affect BEE status - impacts contracts, licences, tender eligibility"
+      red_flag_if: "Post-acquisition BEE falls below 26% without remediation plan"
+    - question: "Does the target have government/parastatal contracts requiring BEE levels?"
+      why_critical: "Many government contracts require minimum BEE level to be maintained"
+      red_flag_if: "Material government revenue dependent on BEE status that will be lost"
+    - question: "Are there any sector-specific BEE codes with higher thresholds?"
+      why_critical: "Mining (30%), Financial Services (25%), ICT (30%) have different requirements"
+      red_flag_if: "Target operates in regulated sector with higher threshold buyer will breach"
+    - question: "What BEE warranties and indemnities should be included in the SPA?"
+      why_critical: "BEE status should be warranted and indemnified like any other material matter"
+      red_flag_if: "No BEE warranties or indemnities in transaction documents"
+    - question: "Will existing BEE partners be required to exit and at what terms?"
+      why_critical: "BEE exit creates potential disputes and payment obligations"
+      red_flag_if: "No clear mechanism for BEE partner exit or valuation"
+  dilution_scenarios:
+    - scenario: "100% acquisition by non-BEE buyer"
+      calculation: "Post-acquisition BEE % = 0% unless co-investor or rollover"
+      threshold_breach_risk: "Critical - complete loss of BEE status"
+    - scenario: "Majority acquisition with BEE partner rollover"
+      calculation: "Post-acquisition BEE % = Rollover BEE shares / New total shares"
+      threshold_breach_risk: "Medium - depends on rollover percentage"
+    - scenario: "Asset acquisition (going concern)"
+      calculation: "BEE % of buyer entity applies, not target"
+      threshold_breach_risk: "Variable - depends on buyer's BEE status"
+    - scenario: "Merger with non-BEE entity"
+      calculation: "Combined entity BEE % = (Target BEE + Acquirer BEE) / Combined shares"
+      threshold_breach_risk: "Medium - may dilute both parties' BEE"
+  contract_clauses_to_check:
+    - "BEE representations and warranties in SPA"
+    - "BEE indemnities for loss of contracts/licences"
+    - "Tag-along rights for BEE shareholders"
+    - "BEE maintenance covenants"
+    - "Government contract BEE requirements"
+    - "Licence conditions regarding BEE ownership"
+    - "Anti-dilution provisions for remaining BEE"
+  automatic_calculation_triggers:
+    - trigger: "acquisition|merger|share purchase"
+      calculation: "REG_001 - BEE Dilution Calculator"
+      required_inputs:
+        - "Current target BEE shareholding percentage"
+        - "Acquisition percentage"
+        - "BEE status of acquirer"
+        - "Any BEE co-investor or rollover"
 cot_questions:
   ownership_regulatory:
   - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
@@ -606,6 +662,15 @@ cot_questions:
   - Are there any ownership restrictions in constitutional documents, shareholder agreements, or regulatory conditions?
   - What licenses, permits, or authorizations are dependent on the current ownership structure?
   - What are the consequences of non-compliance with ownership-based regulatory requirements?
+  bee_compliance:
+  - What is the current BEE ownership percentage and how will the transaction affect it?
+  - Are there government or parastatal contracts requiring minimum BEE levels?
+  - What sector-specific BEE codes apply to the target's business?
+  - What BEE warranties and indemnities should be included in the SPA?
+  - Will existing BEE partners exit and at what terms?
+  - Are there licences or permits dependent on BEE ownership levels?
+  - What is the post-transaction BEE ownership calculation?
+  - Are there anti-dilution protections for remaining BEE shareholders?
   corporate_governance:
   - Is the company validly incorporated and are shares validly issued?
   - What shareholder approvals are required per MOI and have they been obtained?

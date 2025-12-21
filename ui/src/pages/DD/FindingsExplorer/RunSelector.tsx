@@ -76,7 +76,7 @@ export const RunSelector: React.FC<ExtendedRunSelectorProps> = ({
       {/* Selected Run Display / Trigger - Compact */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between px-2.5 py-1.5 text-left bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md hover:border-gray-300 dark:hover:border-gray-500 transition-colors"
+        className="h-8 flex items-center justify-between px-2.5 text-left bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
       >
         {selectedRun ? (
           <div className="flex items-center gap-2 flex-nowrap">
@@ -119,7 +119,7 @@ export const RunSelector: React.FC<ExtendedRunSelectorProps> = ({
 
       {/* Dropdown Menu - Compact */}
       {isOpen && (
-        <div className="absolute z-50 mt-1 min-w-max bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg overflow-hidden">
+        <div className="absolute z-50 mt-1 min-w-max bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg overflow-hidden">
           <div className="max-h-64 overflow-y-auto">
             {runs.length === 0 ? (
               <div className="px-3 py-2 text-center text-gray-500 dark:text-gray-400 text-xs">

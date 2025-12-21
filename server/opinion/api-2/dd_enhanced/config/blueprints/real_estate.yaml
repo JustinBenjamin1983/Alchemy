@@ -470,6 +470,61 @@ folder_questions:
       related_folders:
       - 03_Financial
       description: Check for transfer duty calculation basis
+bee_analysis:
+  sector_threshold: 26%
+  sector_code: "Property Sector Code"
+  trigger_events:
+    - Acquisition of property holding company shares
+    - Sale of investment property portfolio
+    - Property development joint venture formation
+    - REIT or property fund restructuring
+    - Acquisition of property management business
+    - Government/SOE tenant requirement changes
+    - Property fund listing or delisting
+  key_questions:
+    - question: "Does the target have government or SOE tenants requiring BEE compliance?"
+      why_critical: "Government property leases often require landlord BEE compliance"
+      red_flag_if: "Material rental income from government tenants dependent on BEE"
+    - question: "Is the property holding company subject to Property Sector Code?"
+      why_critical: "Property Sector Code has specific requirements for property companies"
+      red_flag_if: "Company required to comply with Property Sector Code and will breach"
+    - question: "Are there any preferential procurement requirements affecting the transaction?"
+      why_critical: "Property management and maintenance contracts may have BEE procurement targets"
+      red_flag_if: "Property management arrangements don't meet BEE procurement targets"
+    - question: "Is the property a REIT with specific BEE listing requirements?"
+      why_critical: "Listed REITs have ongoing BEE disclosure and compliance requirements"
+      red_flag_if: "REIT will breach JSE BEE requirements post-transaction"
+    - question: "Are there any development obligations with BEE components?"
+      why_critical: "Development agreements may require BEE contractors or ownership"
+      red_flag_if: "Development obligations with BEE requirements that cannot be met"
+  dilution_scenarios:
+    - scenario: "Non-BEE acquisition of property holding company"
+      calculation: "Post-acquisition BEE % = 0% unless structure preserves BEE"
+      threshold_breach_risk: "High if government tenants dependent on BEE"
+    - scenario: "Property fund capital raising"
+      calculation: "Post-raise BEE % = (Current BEE units) / (Current + New units)"
+      threshold_breach_risk: "Medium - depends on BEE participation in raise"
+    - scenario: "REIT merger or internalisation"
+      calculation: "Combined entity BEE % based on merged ownership"
+      threshold_breach_risk: "Variable - depends on structure"
+    - scenario: "Property JV with non-BEE partner"
+      calculation: "JV level BEE % = BEE party contribution / Total"
+      threshold_breach_risk: "Low - JV level vs parent level"
+  contract_clauses_to_check:
+    - "Government tenant lease BEE requirements"
+    - "Property management BEE procurement obligations"
+    - "Development agreement BEE contractor requirements"
+    - "REIT BEE compliance covenants"
+    - "Preferential procurement undertakings"
+    - "Enterprise development commitments"
+  automatic_calculation_triggers:
+    - trigger: "property|REIT|real estate"
+      calculation: "REG_001 - BEE Dilution Calculator (Property Sector Code)"
+      required_inputs:
+        - "Current BEE shareholding percentage"
+        - "Government tenant rental as % of total"
+        - "Transaction structure"
+        - "Any BEE co-investor"
 cot_questions:
   ownership_regulatory:
   - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
@@ -482,6 +537,15 @@ cot_questions:
   - Do any property-related licenses require ownership change approval?
   - Are there any sectoral BEE requirements for property holding companies?
   - What landlord consents are required for change of ownership?
+  bee_compliance:
+  - What is the current BEE ownership percentage of the property holding company?
+  - Are there government or SOE tenants requiring landlord BEE compliance?
+  - Does the Property Sector Code apply to this company?
+  - What preferential procurement requirements exist in property management?
+  - Is this a REIT with JSE BEE listing requirements?
+  - What development obligations have BEE components?
+  - How will the transaction affect BEE status and tenant contracts?
+  - Are there any BEE warranties required in the transaction documents?
   title_ownership:
   - Is the seller the registered owner per the title deed?
   - Are there any mortgage bonds, servitudes, or conditions registered?

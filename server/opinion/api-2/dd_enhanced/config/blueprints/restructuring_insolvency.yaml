@@ -986,6 +986,61 @@ folder_questions:
       detail: Documents requiring manual classification review
       cot_hint: Identify restructuring content → flag for review
     cross_doc_checks: []
+bee_analysis:
+  sector_threshold: 26%
+  sector_code: "Generic B-BBEE Codes of Good Practice (or applicable Sector Code)"
+  trigger_events:
+    - Business rescue of BEE-compliant company
+    - BEE shareholder exit in distressed sale
+    - Debt-to-equity conversion affecting BEE
+    - Asset sale to non-BEE buyer
+    - Post-commencement funding diluting BEE
+    - Scheme of arrangement affecting ownership
+    - Liquidation distribution affecting BEE value
+  key_questions:
+    - question: "How does the distress affect BEE shareholder value and participation?"
+      why_critical: "BEE structures often have vendor financing that may be subordinated"
+      red_flag_if: "BEE shareholders receive nothing while other shareholders receive value"
+    - question: "Are there government contracts or licenses dependent on BEE status?"
+      why_critical: "Restructuring may need to preserve BEE to maintain key contracts"
+      red_flag_if: "Rescue plan does not preserve BEE required for material contracts"
+    - question: "Will the rescue plan or sale process affect BEE compliance?"
+      why_critical: "New investor or PCF provider may dilute or eliminate BEE ownership"
+      red_flag_if: "Post-rescue BEE below required threshold without plan to address"
+    - question: "What BEE warranties or covenants are being breached due to distress?"
+      why_critical: "BEE-related breaches may trigger additional defaults or remedies"
+      red_flag_if: "BEE covenant breach accelerating debt or terminating contracts"
+    - question: "Is the BEE structure itself contributing to financial distress?"
+      why_critical: "Vendor financing arrangements can create cash flow pressure"
+      red_flag_if: "BEE dividend obligations competing with operational cash needs"
+  dilution_scenarios:
+    - scenario: "Debt-to-equity conversion by non-BEE lender"
+      calculation: "Post-conversion BEE % = (Current BEE shares) / (Current + Conversion shares)"
+      threshold_breach_risk: "High - lenders rarely are BEE-compliant"
+    - scenario: "Post-commencement funding with equity kicker"
+      calculation: "Post-PCF BEE % adjusted for funder equity"
+      threshold_breach_risk: "Medium - depends on PCF structure"
+    - scenario: "Asset sale to non-BEE buyer in business rescue"
+      calculation: "BEE status of acquiring entity applies"
+      threshold_breach_risk: "Variable - depends on what is being sold"
+    - scenario: "Scheme of arrangement cramming down BEE shareholders"
+      calculation: "Post-scheme BEE % based on new capital structure"
+      threshold_breach_risk: "High if BEE shares significantly diluted or cancelled"
+  contract_clauses_to_check:
+    - "BEE maintenance covenants in loan facilities"
+    - "Government contract BEE requirements"
+    - "License conditions regarding BEE ownership"
+    - "BEE vendor financing and subordination"
+    - "Anti-dilution provisions in BEE SHA"
+    - "BEE shareholder consent for rescue plan"
+  automatic_calculation_triggers:
+    - trigger: "business rescue|restructuring|insolvency|distressed"
+      calculation: "BEE Impact Assessment for Restructuring"
+      required_inputs:
+        - "Current BEE shareholding percentage"
+        - "BEE-dependent contracts and licenses"
+        - "Proposed restructuring structure"
+        - "Post-restructuring ownership"
 cot_questions:
   ownership_regulatory:
   - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
@@ -994,6 +1049,15 @@ cot_questions:
   - Are there any ownership restrictions in constitutional documents, shareholder agreements, or regulatory conditions?
   - What licenses, permits, or authorizations are dependent on the current ownership structure?
   - What are the consequences of non-compliance with ownership-based regulatory requirements?
+  bee_compliance:
+  - How does the distress affect BEE shareholder value and participation?
+  - Are there government contracts or licenses dependent on BEE status?
+  - Will the rescue plan or sale process affect BEE compliance?
+  - What BEE warranties or covenants are being breached due to distress?
+  - Is the BEE structure itself contributing to financial distress?
+  - What BEE considerations apply to post-commencement funding?
+  - How will creditors with BEE relationships be treated?
+  - What is the impact on EE and skills development during restructuring?
   financial_distress:
   - What is the current liquidity position and cash runway?
   - Is the company commercially or factually insolvent?

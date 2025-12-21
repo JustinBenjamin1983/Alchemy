@@ -428,3 +428,94 @@ Include consents required for:
 4. Material contracts
 5. Regulatory approvals (if any)
 6. Employment contracts (if they require notification)"""
+
+
+def build_missing_document_prompt(
+    all_documents_text: str,
+    document_names: List[str],
+    blueprint: Optional[Dict] = None
+) -> str:
+    """
+    Prompt to identify documents referenced but not provided in the data room.
+
+    This is a critical gap analysis - documents that SHOULD exist based on
+    references in other documents but are NOT in the provided document set.
+    """
+    # Build expected documents from blueprint
+    expected_docs_section = ""
+    if blueprint and blueprint.get("reference_documents"):
+        ref_docs = blueprint.get("reference_documents", {})
+        critical = ref_docs.get("critical_documents", [])
+        if critical:
+            critical_list = [f"- {d.get('type', '')}: {d.get('description', '')} {'[REQUIRED]' if d.get('required') else ''}"
+                           for d in critical]
+            expected_docs_section = f"""
+EXPECTED DOCUMENTS FOR THIS TRANSACTION TYPE:
+{chr(10).join(critical_list)}
+"""
+
+    doc_list = "\n".join([f"- {name}" for name in document_names])
+
+    return f"""Analyze the documents below and identify documents that are REFERENCED but NOT PROVIDED.
+
+DOCUMENTS WE HAVE (provided in data room):
+{doc_list}
+{expected_docs_section}
+
+DOCUMENTS TEXT:
+{all_documents_text}
+
+---
+
+TASK: Identify MISSING DOCUMENTS by:
+1. Looking for references to other documents that we don't have
+   - "as per the Subordination Agreement..."
+   - "subject to the terms of the Escrow Agreement..."
+   - "in accordance with the SARB approval dated..."
+2. Looking for documents that SHOULD exist for this transaction type but aren't provided
+3. Checking if required schedules/annexures mentioned are actually attached
+
+Return JSON:
+{{
+    "missing_documents": [
+        {{
+            "doc_id": "MISS001",
+            "referenced_as": "How document is referenced (e.g., 'the Subordination Agreement')",
+            "referenced_in": "Which provided document references it",
+            "clause_reference": "Clause/section where referenced",
+            "document_type": "contract|certificate|regulatory|schedule|annexure",
+            "criticality": "critical|high|medium|low",
+            "why_needed": "Why this document is important",
+            "impact_if_missing": "What issues arise without it",
+            "is_deal_blocker": true/false
+        }}
+    ],
+    "incomplete_documents": [
+        {{
+            "document_name": "Document that references missing attachment",
+            "missing_attachment": "Schedule A / Annexure 1 / etc.",
+            "description": "What the attachment should contain"
+        }}
+    ],
+    "summary": {{
+        "total_missing": number,
+        "critical_missing": number,
+        "deal_blocking_gaps": ["List of gaps that could block the deal"],
+        "recommended_requests": ["List of documents to request from seller"]
+    }}
+}}
+
+COMMON MISSING DOCUMENTS TO CHECK FOR:
+- Subordination agreements (often referenced but not provided)
+- Escrow agreements
+- Side letters to main agreements
+- Board/shareholder resolutions authorizing specific actions
+- SARB approval letters (for exchange control matters)
+- Competition Commission clearance certificates
+- Environmental authorizations
+- Mining rights certificates (for mining transactions)
+- Water use licenses
+- Tax clearance certificates (current/valid)
+- BEE verification certificates (current/valid)
+- Insurance policies mentioned in contracts
+- Guarantee documents referenced in facility agreements"""

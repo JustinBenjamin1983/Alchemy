@@ -1,22 +1,23 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus } from "lucide-react";
+import { X, Plus, Info } from "lucide-react";
 import { useState, KeyboardEvent } from "react";
-import { DDProjectSetup, REGULATOR_SUGGESTIONS, KEY_STAKEHOLDER_CONFIG, OtherStakeholder, Shareholder, LenderStakeholder, CounterpartyStakeholder } from "./types";
+import {
+  DDProjectSetup,
+  STEP4_CONFIG,
+  Step4FieldDefinition,
+  Step4FieldType,
+  Shareholder,
+} from "./types";
 
 // Format number string as South African Rand currency
 function formatCurrency(value: string): string {
   if (!value) return "";
-  // Remove all non-numeric characters except decimal point
   const cleaned = value.replace(/[^\d.]/g, "");
   if (!cleaned) return "";
-
-  // Parse as number and format
   const num = parseFloat(cleaned);
   if (isNaN(num)) return value;
-
-  // Format with R prefix and thousand separators
   return `R${Math.round(num).toLocaleString("en-ZA")}`;
 }
 
@@ -25,23 +26,105 @@ interface Step4Props {
   onChange: (updates: Partial<DDProjectSetup>) => void;
 }
 
-interface TagInputProps {
-  label: string;
-  description?: string;
-  placeholder: string;
-  tags: string[];
-  onChange: (tags: string[]) => void;
-  suggestions?: string[];
+// =============================================================================
+// FIELD STORAGE: Maps field IDs to data storage keys
+// =============================================================================
+
+interface FieldData {
+  tags?: string[];
+  parties?: Array<{ name: string; role: string }>;
+  lenders?: Array<{ name: string; description: string; facilityAmount: string }>;
+  counterparties?: Array<{ name: string; description: string; exposure: string }>;
+  beePartners?: Array<{ name: string; beeOwnership: number | null; beeLevel: string }>;
 }
 
-function TagInput({
-  label,
-  description,
-  placeholder,
-  tags,
-  onChange,
-  suggestions = [],
-}: TagInputProps) {
+// Get the current value for a field from the data object
+function getFieldValue(data: DDProjectSetup, fieldId: string): FieldData {
+  // Map field IDs to data properties - some fields share storage, others are unique
+  switch (fieldId) {
+    // Tag fields
+    case "keyIndividuals":
+    case "keyExecutives":
+    case "keyPersonnel":
+    case "management":
+      return { tags: data.keyIndividuals };
+    case "regulators":
+      return { tags: data.keyRegulators };
+    case "verificationAgency":
+    case "advisors":
+    case "technologyProviders":
+    case "serviceProviders":
+    case "criticalSuppliers":
+    case "competitors":
+    case "suppliers":
+    case "customers":
+      return { tags: data.keySuppliers };
+
+    // Party role fields (name + role)
+    case "other":
+    case "sellers":
+    case "beeTrustSPV":
+    case "communities":
+    case "landowners":
+    case "unions":
+    case "affectedEmployees":
+    case "ipOwners":
+    case "mergingParties":
+    case "governmentAuthority":
+    case "targetInstitution":
+    case "potentialInvestors":
+    case "borrowerGroup":
+    case "seller":
+      return { parties: data.keyOther };
+
+    // Lender fields (name + description + amount)
+    case "lenders":
+    case "financiers":
+    case "funders":
+    case "existingLenders":
+    case "guarantors":
+    case "securedCreditors":
+    case "unsecuredCreditors":
+    case "underwriters":
+    case "fundingProviders":
+      return { lenders: data.keyLenders };
+
+    // Counterparty fields (name + description + exposure)
+    case "contractors":
+    case "offtakers":
+    case "tenants":
+    case "epcContractor":
+    case "omProvider":
+    case "constructionContractor":
+    case "facilitiesManager":
+    case "existingShareholders":
+    case "cornerstoneInvestors":
+    case "coInvestors":
+    case "licensees":
+    case "keyClients":
+      return { counterparties: data.keyCustomers };
+
+    // BEE partner field
+    case "beePartners":
+      // For now, store as parties with role containing BEE info
+      return { parties: data.keyOther };
+
+    default:
+      return { tags: [] };
+  }
+}
+
+// =============================================================================
+// TAG INPUT COMPONENT (Simple list of strings)
+// =============================================================================
+
+interface TagInputProps {
+  field: Step4FieldDefinition;
+  tags: string[];
+  onChange: (tags: string[]) => void;
+}
+
+function TagInput({ field, tags, onChange }: TagInputProps) {
   const [inputValue, setInputValue] = useState("");
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -66,13 +149,13 @@ function TagInput({
 
   return (
     <div className="space-y-1">
-      <Label className="text-xs">{label}</Label>
-      {description && (
-        <p className="text-xs text-muted-foreground">{description}</p>
+      <Label className="text-xs font-medium">{field.label}</Label>
+      {field.description && (
+        <p className="text-xs text-muted-foreground">{field.description}</p>
       )}
       <Input
         className="h-8 text-sm"
-        placeholder={placeholder}
+        placeholder={field.placeholder}
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         onKeyDown={handleKeyDown}
@@ -94,10 +177,10 @@ function TagInput({
           ))}
         </div>
       )}
-      {suggestions.length > 0 && (
+      {field.suggestions && field.suggestions.length > 0 && (
         <div className="flex flex-wrap gap-1 pt-1">
           <span className="text-xs text-muted-foreground">Suggestions:</span>
-          {suggestions
+          {field.suggestions
             .filter((s) => !tags.includes(s))
             .map((suggestion) => (
               <Badge
@@ -115,42 +198,50 @@ function TagInput({
   );
 }
 
-interface OtherStakeholderInputProps {
-  stakeholders: OtherStakeholder[];
-  onChange: (stakeholders: OtherStakeholder[]) => void;
-  namePlaceholder: string;
+// =============================================================================
+// PARTY ROLE INPUT COMPONENT (Name + Role)
+// =============================================================================
+
+interface PartyRoleEntry {
+  name: string;
+  role: string;
 }
 
-function OtherStakeholderInput({
-  stakeholders,
-  onChange,
-  namePlaceholder,
-}: OtherStakeholderInputProps) {
+interface PartyRoleInputProps {
+  field: Step4FieldDefinition;
+  parties: PartyRoleEntry[];
+  onChange: (parties: PartyRoleEntry[]) => void;
+}
+
+function PartyRoleInput({ field, parties, onChange }: PartyRoleInputProps) {
   const [nameInput, setNameInput] = useState("");
   const [roleInput, setRoleInput] = useState("");
 
-  const canAdd = nameInput.trim() && roleInput.trim();
+  const canAdd = nameInput.trim().length > 0;
 
   const handleAdd = () => {
     if (canAdd) {
-      onChange([...stakeholders, { name: nameInput.trim(), role: roleInput.trim() }]);
+      onChange([...parties, { name: nameInput.trim(), role: roleInput.trim() }]);
       setNameInput("");
       setRoleInput("");
     }
   };
 
-  const removeStakeholder = (index: number) => {
-    onChange(stakeholders.filter((_, i) => i !== index));
+  const removeParty = (index: number) => {
+    onChange(parties.filter((_, i) => i !== index));
   };
 
   return (
-    <div className="col-span-full space-y-2">
-      <Label className="text-xs">Other</Label>
+    <div className="space-y-2">
+      <Label className="text-xs font-medium">{field.label}</Label>
+      {field.description && (
+        <p className="text-xs text-muted-foreground">{field.description}</p>
+      )}
       <div className="flex gap-2 items-center">
         <div className="flex-1">
           <Input
             className="h-8 text-sm"
-            placeholder="Party Name"
+            placeholder={field.placeholder}
             value={nameInput}
             onChange={(e) => setNameInput(e.target.value)}
           />
@@ -167,7 +258,7 @@ function OtherStakeholderInput({
           type="button"
           onClick={handleAdd}
           disabled={!canAdd}
-          className={`h-8 w-8 flex items-center justify-center rounded border ${
+          className={`h-8 w-8 flex items-center justify-center rounded border flex-shrink-0 ${
             canAdd
               ? "bg-alchemyPrimaryOrange text-white border-alchemyPrimaryOrange hover:bg-orange-600"
               : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
@@ -176,19 +267,21 @@ function OtherStakeholderInput({
           <Plus className="h-4 w-4" />
         </button>
       </div>
-      {stakeholders.length > 0 && (
+      {parties.length > 0 && (
         <div className="flex flex-wrap gap-1.5 pt-1">
-          {stakeholders.map((stakeholder, index) => (
+          {parties.map((party, index) => (
             <Badge
               key={index}
               variant="secondary"
               className="flex items-center gap-1 text-xs py-0.5"
             >
-              <span className="font-medium">{stakeholder.name}</span>
-              <span className="text-muted-foreground">({stakeholder.role})</span>
+              <span className="font-medium">{party.name}</span>
+              {party.role && (
+                <span className="text-muted-foreground">({party.role})</span>
+              )}
               <X
                 className="h-3 w-3 cursor-pointer hover:text-destructive ml-1"
-                onClick={() => removeStakeholder(index)}
+                onClick={() => removeParty(index)}
               />
             </Badge>
           ))}
@@ -198,19 +291,23 @@ function OtherStakeholderInput({
   );
 }
 
-interface LenderInputProps {
-  label: string;
-  placeholder: string;
-  lenders: LenderStakeholder[];
-  onChange: (lenders: LenderStakeholder[]) => void;
+// =============================================================================
+// LENDER INPUT COMPONENT (Name + Description + Amount)
+// =============================================================================
+
+interface LenderEntry {
+  name: string;
+  description: string;
+  facilityAmount: string;
 }
 
-function LenderInput({
-  label,
-  placeholder,
-  lenders,
-  onChange,
-}: LenderInputProps) {
+interface LenderInputProps {
+  field: Step4FieldDefinition;
+  lenders: LenderEntry[];
+  onChange: (lenders: LenderEntry[]) => void;
+}
+
+function LenderInput({ field, lenders, onChange }: LenderInputProps) {
   const [nameInput, setNameInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState("");
   const [amountInput, setAmountInput] = useState("");
@@ -219,11 +316,14 @@ function LenderInput({
 
   const handleAdd = () => {
     if (canAdd) {
-      onChange([...lenders, {
-        name: nameInput.trim(),
-        description: descriptionInput.trim(),
-        facilityAmount: formatCurrency(amountInput)
-      }]);
+      onChange([
+        ...lenders,
+        {
+          name: nameInput.trim(),
+          description: descriptionInput.trim(),
+          facilityAmount: formatCurrency(amountInput),
+        },
+      ]);
       setNameInput("");
       setDescriptionInput("");
       setAmountInput("");
@@ -239,13 +339,16 @@ function LenderInput({
   };
 
   return (
-    <div className="col-span-full space-y-2">
-      <Label className="text-xs">{label}</Label>
+    <div className="space-y-2">
+      <Label className="text-xs font-medium">{field.label}</Label>
+      {field.description && (
+        <p className="text-xs text-muted-foreground">{field.description}</p>
+      )}
       <div className="flex gap-2 items-center">
         <div className="flex-[2]">
           <Input
             className="h-8 text-sm"
-            placeholder={placeholder}
+            placeholder={field.placeholder}
             value={nameInput}
             onChange={(e) => setNameInput(e.target.value)}
           />
@@ -261,7 +364,7 @@ function LenderInput({
         <div className="w-32">
           <Input
             className="h-8 text-sm"
-            placeholder="e.g. R500m"
+            placeholder={field.amountPlaceholder || "e.g. R500m"}
             value={amountInput}
             onChange={(e) => setAmountInput(e.target.value)}
             onBlur={handleAmountBlur}
@@ -307,19 +410,23 @@ function LenderInput({
   );
 }
 
-interface CounterpartyInputProps {
-  label: string;
-  placeholder: string;
-  counterparties: CounterpartyStakeholder[];
-  onChange: (counterparties: CounterpartyStakeholder[]) => void;
+// =============================================================================
+// COUNTERPARTY INPUT COMPONENT (Name + Description + Exposure)
+// =============================================================================
+
+interface CounterpartyEntry {
+  name: string;
+  description: string;
+  exposure: string;
 }
 
-function CounterpartyInput({
-  label,
-  placeholder,
-  counterparties,
-  onChange,
-}: CounterpartyInputProps) {
+interface CounterpartyInputProps {
+  field: Step4FieldDefinition;
+  counterparties: CounterpartyEntry[];
+  onChange: (counterparties: CounterpartyEntry[]) => void;
+}
+
+function CounterpartyInput({ field, counterparties, onChange }: CounterpartyInputProps) {
   const [nameInput, setNameInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState("");
   const [exposureInput, setExposureInput] = useState("");
@@ -328,11 +435,14 @@ function CounterpartyInput({
 
   const handleAdd = () => {
     if (canAdd) {
-      onChange([...counterparties, {
-        name: nameInput.trim(),
-        description: descriptionInput.trim(),
-        exposure: formatCurrency(exposureInput)
-      }]);
+      onChange([
+        ...counterparties,
+        {
+          name: nameInput.trim(),
+          description: descriptionInput.trim(),
+          exposure: formatCurrency(exposureInput),
+        },
+      ]);
       setNameInput("");
       setDescriptionInput("");
       setExposureInput("");
@@ -348,13 +458,16 @@ function CounterpartyInput({
   };
 
   return (
-    <div className="col-span-full space-y-2">
-      <Label className="text-xs">{label}</Label>
+    <div className="space-y-2">
+      <Label className="text-xs font-medium">{field.label}</Label>
+      {field.description && (
+        <p className="text-xs text-muted-foreground">{field.description}</p>
+      )}
       <div className="flex gap-2 items-center">
         <div className="flex-[2]">
           <Input
             className="h-8 text-sm"
-            placeholder={placeholder}
+            placeholder={field.placeholder}
             value={nameInput}
             onChange={(e) => setNameInput(e.target.value)}
           />
@@ -362,7 +475,7 @@ function CounterpartyInput({
         <div className="flex-[2]">
           <Input
             className="h-8 text-sm"
-            placeholder="Description / Security Type"
+            placeholder="Description / Type"
             value={descriptionInput}
             onChange={(e) => setDescriptionInput(e.target.value)}
           />
@@ -370,7 +483,7 @@ function CounterpartyInput({
         <div className="w-32">
           <Input
             className="h-8 text-sm"
-            placeholder="e.g. R100m"
+            placeholder={field.amountPlaceholder || "e.g. R100m"}
             value={exposureInput}
             onChange={(e) => setExposureInput(e.target.value)}
             onBlur={handleExposureBlur}
@@ -416,11 +529,145 @@ function CounterpartyInput({
   );
 }
 
+// =============================================================================
+// BEE PARTNER INPUT COMPONENT (Name + BEE Ownership % + BEE Level)
+// =============================================================================
+
+interface BEEPartnerEntry {
+  name: string;
+  beeOwnership: number | null;
+  beeLevel: string;
+}
+
+interface BEEPartnerInputProps {
+  field: Step4FieldDefinition;
+  partners: BEEPartnerEntry[];
+  onChange: (partners: BEEPartnerEntry[]) => void;
+}
+
+function BEEPartnerInput({ field, partners, onChange }: BEEPartnerInputProps) {
+  const [nameInput, setNameInput] = useState("");
+  const [ownershipInput, setOwnershipInput] = useState("");
+  const [levelInput, setLevelInput] = useState("");
+
+  const canAdd = nameInput.trim().length > 0;
+
+  const handleAdd = () => {
+    if (canAdd) {
+      const ownership = ownershipInput.trim()
+        ? parseFloat(ownershipInput.replace(/[^0-9.]/g, ""))
+        : null;
+      onChange([
+        ...partners,
+        {
+          name: nameInput.trim(),
+          beeOwnership: isNaN(ownership as number) ? null : ownership,
+          beeLevel: levelInput.trim(),
+        },
+      ]);
+      setNameInput("");
+      setOwnershipInput("");
+      setLevelInput("");
+    }
+  };
+
+  const removePartner = (index: number) => {
+    onChange(partners.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div className="space-y-2">
+      <Label className="text-xs font-medium">{field.label}</Label>
+      {field.description && (
+        <p className="text-xs text-muted-foreground">{field.description}</p>
+      )}
+      <div className="flex gap-2 items-center">
+        <div className="flex-[3]">
+          <Input
+            className="h-8 text-sm"
+            placeholder={field.placeholder}
+            value={nameInput}
+            onChange={(e) => setNameInput(e.target.value)}
+          />
+        </div>
+        <div className="w-24">
+          <div className="relative">
+            <Input
+              className="h-8 text-sm pr-6"
+              placeholder="Black %"
+              value={ownershipInput}
+              onChange={(e) => setOwnershipInput(e.target.value)}
+            />
+            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
+              %
+            </span>
+          </div>
+        </div>
+        <div className="w-28">
+          <Input
+            className="h-8 text-sm"
+            placeholder="BEE Level"
+            value={levelInput}
+            onChange={(e) => setLevelInput(e.target.value)}
+          />
+        </div>
+        <button
+          type="button"
+          onClick={handleAdd}
+          disabled={!canAdd}
+          className={`h-8 w-8 flex items-center justify-center rounded border flex-shrink-0 ${
+            canAdd
+              ? "bg-alchemyPrimaryOrange text-white border-alchemyPrimaryOrange hover:bg-orange-600"
+              : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+          }`}
+        >
+          <Plus className="h-4 w-4" />
+        </button>
+      </div>
+      {partners.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 pt-1">
+          {partners.map((partner, index) => (
+            <Badge
+              key={index}
+              variant="secondary"
+              className="flex items-center gap-1 text-xs py-0.5"
+            >
+              <span className="font-medium">{partner.name}</span>
+              {partner.beeOwnership !== null && (
+                <span className="text-green-600">{partner.beeOwnership}% black</span>
+              )}
+              {partner.beeLevel && (
+                <span className="text-muted-foreground">(Level {partner.beeLevel})</span>
+              )}
+              <X
+                className="h-3 w-3 cursor-pointer hover:text-destructive ml-1"
+                onClick={() => removePartner(index)}
+              />
+            </Badge>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// =============================================================================
+// SHAREHOLDER SECTION COMPONENT
+// =============================================================================
+
 interface ShareholderInputProps {
   entityName: string;
   shareholders: Shareholder[];
   onEntityNameChange: (name: string) => void;
   onShareholdersChange: (shareholders: Shareholder[]) => void;
+  config: {
+    title: string;
+    description: string;
+    entityLabel: string;
+    entityPlaceholder: string;
+    showBEECalculation?: boolean;
+    showPrePost?: boolean;
+  };
 }
 
 function ShareholderInput({
@@ -428,22 +675,26 @@ function ShareholderInput({
   shareholders,
   onEntityNameChange,
   onShareholdersChange,
+  config,
 }: ShareholderInputProps) {
   // Ensure we always have at least 3 slots
-  const displayShareholders = shareholders.length < 3
-    ? [...shareholders, ...Array(3 - shareholders.length).fill({ name: "", percentage: null })]
-    : shareholders;
+  const displayShareholders =
+    shareholders.length < 3
+      ? [...shareholders, ...Array(3 - shareholders.length).fill({ name: "", percentage: null })]
+      : shareholders;
 
-  const updateShareholder = (index: number, field: 'name' | 'percentage', value: string) => {
+  const updateShareholder = (index: number, field: "name" | "percentage", value: string) => {
     const updated = [...displayShareholders];
-    if (field === 'name') {
+    if (field === "name") {
       updated[index] = { ...updated[index], name: value };
     } else {
-      const numValue = value.trim() ? parseFloat(value.replace(/[^0-9.]/g, '')) : null;
-      updated[index] = { ...updated[index], percentage: isNaN(numValue as number) ? null : numValue };
+      const numValue = value.trim() ? parseFloat(value.replace(/[^0-9.]/g, "")) : null;
+      updated[index] = {
+        ...updated[index],
+        percentage: isNaN(numValue as number) ? null : numValue,
+      };
     }
-    // Filter out empty entries for storage, but keep structure
-    onShareholdersChange(updated.filter(s => s.name.trim() || s.percentage !== null));
+    onShareholdersChange(updated.filter((s) => s.name.trim() || s.percentage !== null));
   };
 
   const addShareholder = () => {
@@ -452,11 +703,20 @@ function ShareholderInput({
 
   const removeShareholder = (index: number) => {
     const updated = displayShareholders.filter((_, i) => i !== index);
-    onShareholdersChange(updated.filter(s => s.name.trim() || s.percentage !== null));
+    onShareholdersChange(updated.filter((s) => s.name.trim() || s.percentage !== null));
   };
 
-  const filledShareholders = displayShareholders.filter(s => s.name.trim() || s.percentage !== null);
+  const filledShareholders = displayShareholders.filter(
+    (s) => s.name.trim() || s.percentage !== null
+  );
   const totalPercentage = filledShareholders.reduce((sum, s) => sum + (s.percentage || 0), 0);
+
+  // Calculate BEE ownership if enabled (simplified - would need more data in real implementation)
+  const beeOwnership = config.showBEECalculation
+    ? filledShareholders
+        .filter((s) => s.name.toLowerCase().includes("bee") || s.name.toLowerCase().includes("black"))
+        .reduce((sum, s) => sum + (s.percentage || 0), 0)
+    : null;
 
   // Group shareholders into rows of 3
   const rows: Shareholder[][] = [];
@@ -468,31 +728,37 @@ function ShareholderInput({
     <div className="space-y-3 pt-4 border-t border-gray-200">
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="text-sm font-medium mb-1">Shareholders</h3>
-          <p className="text-xs text-muted-foreground">
-            Add details of the shareholding structure for the relevant entity.
-          </p>
+          <h3 className="text-sm font-medium mb-1">{config.title}</h3>
+          <p className="text-xs text-muted-foreground">{config.description}</p>
         </div>
-        {filledShareholders.length > 0 && totalPercentage > 0 && (
-          <div className="text-xs text-muted-foreground">
-            Total: <span className={`font-medium ${totalPercentage > 100 ? 'text-red-500' : 'text-green-600'}`}>
-              {totalPercentage.toFixed(1)}%
-            </span>
-          </div>
-        )}
+        <div className="text-right text-xs">
+          {filledShareholders.length > 0 && totalPercentage > 0 && (
+            <div className="text-muted-foreground">
+              Total:{" "}
+              <span className={`font-medium ${totalPercentage > 100 ? "text-red-500" : "text-green-600"}`}>
+                {totalPercentage.toFixed(1)}%
+              </span>
+            </div>
+          )}
+          {config.showBEECalculation && beeOwnership !== null && beeOwnership > 0 && (
+            <div className="text-green-600">
+              BEE Ownership: <span className="font-medium">{beeOwnership.toFixed(1)}%</span>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <Label className="text-xs">Entity Name</Label>
+          <Label className="text-xs">{config.entityLabel}</Label>
           <div className="flex gap-1.5 mt-1">
             <Input
               className="h-8 text-sm flex-[2]"
-              placeholder="e.g., Target Company (Pty) Ltd"
+              placeholder={config.entityPlaceholder}
               value={entityName}
               onChange={(e) => onEntityNameChange(e.target.value)}
             />
-            <div className="w-16" /> {/* Spacer to match percentage column */}
+            <div className="w-16" />
           </div>
         </div>
       </div>
@@ -510,16 +776,18 @@ function ShareholderInput({
                       className="h-8 text-sm flex-[2]"
                       placeholder="Shareholder name"
                       value={shareholder.name}
-                      onChange={(e) => updateShareholder(globalIndex, 'name', e.target.value)}
+                      onChange={(e) => updateShareholder(globalIndex, "name", e.target.value)}
                     />
                     <div className="relative w-16">
                       <Input
                         className="h-8 text-sm w-full pr-6 text-right"
                         placeholder="0"
                         value={shareholder.percentage !== null ? shareholder.percentage.toString() : ""}
-                        onChange={(e) => updateShareholder(globalIndex, 'percentage', e.target.value)}
+                        onChange={(e) => updateShareholder(globalIndex, "percentage", e.target.value)}
                       />
-                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">%</span>
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
+                        %
+                      </span>
                     </div>
                     {hasContent && displayShareholders.length > 3 && (
                       <button
@@ -549,85 +817,177 @@ function ShareholderInput({
   );
 }
 
-export function Step4KeyParties({ data, onChange }: Step4Props) {
-  const regulatorSuggestions = data.transactionType
-    ? REGULATOR_SUGGESTIONS[data.transactionType] || []
-    : [];
+// =============================================================================
+// DYNAMIC FIELD RENDERER
+// =============================================================================
 
-  // Get dynamic stakeholder labels based on transaction type
-  const stakeholderConfig = data.transactionType
-    ? KEY_STAKEHOLDER_CONFIG[data.transactionType]
-    : {
-        individuals: { label: "Key Individuals", placeholder: "e.g., Key executives..." },
-        suppliers: { label: "Key Suppliers", placeholder: "e.g., Key suppliers..." },
-        customers: { label: "Key Customers/Clients", placeholder: "e.g., Key customers..." },
-        lenders: { label: "Key Lenders/Financiers", placeholder: "e.g., Key lenders..." },
-        regulators: { label: "Key Regulators", placeholder: "e.g., Key regulators..." },
-        other: { label: "Other", placeholder: "e.g., Other stakeholders..." },
-      };
+interface DynamicFieldProps {
+  field: Step4FieldDefinition;
+  data: DDProjectSetup;
+  onChange: (updates: Partial<DDProjectSetup>) => void;
+}
+
+function DynamicField({ field, data, onChange }: DynamicFieldProps) {
+  // Determine the correct onChange handler based on field type and ID
+  const handleTagsChange = (tags: string[]) => {
+    switch (field.id) {
+      case "keyIndividuals":
+      case "keyExecutives":
+      case "keyPersonnel":
+      case "management":
+        onChange({ keyIndividuals: tags });
+        break;
+      case "regulators":
+        onChange({ keyRegulators: tags });
+        break;
+      default:
+        onChange({ keySuppliers: tags });
+    }
+  };
+
+  const handlePartiesChange = (parties: Array<{ name: string; role: string }>) => {
+    onChange({ keyOther: parties });
+  };
+
+  const handleLendersChange = (lenders: Array<{ name: string; description: string; facilityAmount: string }>) => {
+    onChange({ keyLenders: lenders });
+  };
+
+  const handleCounterpartiesChange = (
+    counterparties: Array<{ name: string; description: string; exposure: string }>
+  ) => {
+    onChange({ keyCustomers: counterparties });
+  };
+
+  const handleBEEPartnersChange = (partners: BEEPartnerEntry[]) => {
+    // Convert BEE partners to party_role format for storage
+    const converted = partners.map((p) => ({
+      name: p.name,
+      role: `${p.beeOwnership !== null ? `${p.beeOwnership}% black` : ""} ${p.beeLevel ? `Level ${p.beeLevel}` : ""}`.trim(),
+    }));
+    onChange({ keyOther: converted });
+  };
+
+  switch (field.type) {
+    case "tags":
+      return (
+        <TagInput
+          field={field}
+          tags={
+            field.id === "regulators"
+              ? data.keyRegulators
+              : ["keyIndividuals", "keyExecutives", "keyPersonnel", "management"].includes(field.id)
+              ? data.keyIndividuals
+              : data.keySuppliers
+          }
+          onChange={handleTagsChange}
+        />
+      );
+
+    case "party_role":
+      return (
+        <PartyRoleInput
+          field={field}
+          parties={data.keyOther}
+          onChange={handlePartiesChange}
+        />
+      );
+
+    case "lender":
+      return (
+        <LenderInput
+          field={field}
+          lenders={data.keyLenders}
+          onChange={handleLendersChange}
+        />
+      );
+
+    case "counterparty":
+      return (
+        <CounterpartyInput
+          field={field}
+          counterparties={data.keyCustomers}
+          onChange={handleCounterpartiesChange}
+        />
+      );
+
+    case "bee_partner":
+      // Convert stored parties back to BEE partner format for display
+      const beePartners: BEEPartnerEntry[] = data.keyOther.map((p) => {
+        const ownershipMatch = p.role.match(/(\d+(?:\.\d+)?)%\s*black/i);
+        const levelMatch = p.role.match(/Level\s*(\d+)/i);
+        return {
+          name: p.name,
+          beeOwnership: ownershipMatch ? parseFloat(ownershipMatch[1]) : null,
+          beeLevel: levelMatch ? levelMatch[1] : "",
+        };
+      });
+      return (
+        <BEEPartnerInput
+          field={field}
+          partners={beePartners}
+          onChange={handleBEEPartnersChange}
+        />
+      );
+
+    default:
+      return null;
+  }
+}
+
+// =============================================================================
+// MAIN COMPONENT
+// =============================================================================
+
+export function Step4KeyParties({ data, onChange }: Step4Props) {
+  // Get the configuration for the selected transaction type
+  const config = data.transactionType ? STEP4_CONFIG[data.transactionType] : null;
+
+  if (!config) {
+    return (
+      <div className="flex items-center justify-center h-48 text-muted-foreground">
+        <div className="text-center">
+          <Info className="h-8 w-8 mx-auto mb-2 opacity-50" />
+          <p>Please select a transaction type first</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-semibold mb-1">Key Stakeholders</h2>
-        <p className="text-sm text-muted-foreground">
-          Identifying key stakeholders helps flag related findings and contracts.
-        </p>
+        <h2 className="text-xl font-semibold mb-1">{config.title}</h2>
+        <p className="text-sm text-muted-foreground">{config.subtitle}</p>
         <p className="text-xs text-gray-400 mt-1">
           Type a name and press Enter to add. Click × to remove.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        <TagInput
-          label={stakeholderConfig.individuals.label}
-          placeholder={stakeholderConfig.individuals.placeholder}
-          tags={data.keyIndividuals}
-          onChange={(individuals) => onChange({ keyIndividuals: individuals })}
-        />
-
-        <TagInput
-          label={stakeholderConfig.suppliers.label}
-          placeholder={stakeholderConfig.suppliers.placeholder}
-          tags={data.keySuppliers}
-          onChange={(suppliers) => onChange({ keySuppliers: suppliers })}
-        />
-
-        <TagInput
-          label={stakeholderConfig.regulators.label}
-          placeholder={stakeholderConfig.regulators.placeholder}
-          tags={data.keyRegulators}
-          onChange={(regulators) => onChange({ keyRegulators: regulators })}
-          suggestions={regulatorSuggestions}
-        />
-
-        <CounterpartyInput
-          label={stakeholderConfig.customers.label}
-          placeholder={stakeholderConfig.customers.placeholder}
-          counterparties={data.keyCustomers}
-          onChange={(customers) => onChange({ keyCustomers: customers })}
-        />
-
-        <LenderInput
-          label={stakeholderConfig.lenders.label}
-          placeholder={stakeholderConfig.lenders.placeholder}
-          lenders={data.keyLenders}
-          onChange={(lenders) => onChange({ keyLenders: lenders })}
-        />
-
-        <OtherStakeholderInput
-          stakeholders={data.keyOther}
-          onChange={(other) => onChange({ keyOther: other })}
-          namePlaceholder={stakeholderConfig.other.placeholder}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {config.fields.map((field) => (
+          <div
+            key={field.id}
+            className={
+              field.type === "lender" || field.type === "counterparty"
+                ? "md:col-span-2"
+                : ""
+            }
+          >
+            <DynamicField field={field} data={data} onChange={onChange} />
+          </div>
+        ))}
       </div>
 
-      <ShareholderInput
-        entityName={data.shareholderEntityName}
-        shareholders={data.shareholders}
-        onEntityNameChange={(name) => onChange({ shareholderEntityName: name })}
-        onShareholdersChange={(shareholders) => onChange({ shareholders })}
-      />
+      {config.shareholderSection.visible && (
+        <ShareholderInput
+          entityName={data.shareholderEntityName}
+          shareholders={data.shareholders}
+          onEntityNameChange={(name) => onChange({ shareholderEntityName: name })}
+          onShareholdersChange={(shareholders) => onChange({ shareholders })}
+          config={config.shareholderSection}
+        />
+      )}
     </div>
   );
 }

@@ -411,6 +411,62 @@ folder_questions:
       detail: Accelerated depreciation benefit for renewable projects
       cot_hint: 12B election → allowance calculation → remaining benefit
     cross_doc_checks: []
+bee_analysis:
+  sector_threshold: 26%
+  sector_code: "Generic B-BBEE Codes (REIPPPP has additional ED requirements)"
+  trigger_events:
+    - Change of control in IPP project company
+    - Acquisition of REIPPPP project
+    - PPA assignment requiring Eskom consent
+    - Community trust or ED entity restructuring
+    - Exit by BEE project partner
+    - Post-COD refinancing affecting ownership
+    - Secondary market sale of IPP stake
+  key_questions:
+    - question: "Does the project meet REIPPPP economic development (ED) requirements?"
+      why_critical: "REIPPPP projects have binding ED commitments - breach leads to PPA penalties"
+      red_flag_if: "ED scorecard shows non-compliance or transaction will breach commitments"
+    - question: "What community ownership or local ownership requirements exist?"
+      why_critical: "REIPPPP typically requires local community ownership component"
+      red_flag_if: "Community ownership below committed levels or structure invalid"
+    - question: "Will the transaction affect the project's BEE ownership compliance?"
+      why_critical: "BEE ownership is part of REIPPPP ED commitments"
+      red_flag_if: "Post-transaction BEE ownership falls below bid commitment"
+    - question: "What local content and job creation commitments apply?"
+      why_critical: "Local content is scored and non-compliance triggers penalties"
+      red_flag_if: "Local content below committed threshold"
+    - question: "Are there any ED penalty deductions currently being applied?"
+      why_critical: "ED penalties reduce tariff - affects project value"
+      red_flag_if: "Material ED penalties being applied to tariff"
+  dilution_scenarios:
+    - scenario: "Sale of majority stake to non-BEE buyer"
+      calculation: "Post-sale BEE % = Remaining BEE shareholding / Total"
+      threshold_breach_risk: "Critical if REIPPPP BEE commitment breached"
+    - scenario: "Refinancing with lender taking equity stake"
+      calculation: "Post-refinancing BEE % adjusted for lender equity"
+      threshold_breach_risk: "Medium - may need BEE lender or co-investor"
+    - scenario: "Exit by community trust"
+      calculation: "BEE % drops by community ownership percentage"
+      threshold_breach_risk: "Critical - REIPPPP community ownership is locked"
+    - scenario: "Secondary market sale of IPP portfolio"
+      calculation: "New buyer inherits ED obligations - may need BEE co-investor"
+      threshold_breach_risk: "High - REIPPPP ED obligations transfer with project"
+  contract_clauses_to_check:
+    - "REIPPPP ED scorecard commitments vs actual performance"
+    - "Community ownership structure and lock-in provisions"
+    - "Local content undertakings and verification"
+    - "Job creation targets and compliance status"
+    - "Skills development and enterprise development spend"
+    - "PPA ED penalty regime and deduction history"
+    - "DOE/DMRE consent for ownership changes"
+  automatic_calculation_triggers:
+    - trigger: "REIPPPP|IPP|renewable energy|power project"
+      calculation: "REG_001 - BEE Dilution Calculator + ED Compliance Check"
+      required_inputs:
+        - "Current BEE shareholding percentage"
+        - "REIPPPP bid window ED commitments"
+        - "Current ED scorecard performance"
+        - "Community ownership percentage"
 cot_questions:
   ownership_regulatory:
   - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
@@ -423,6 +479,15 @@ cot_questions:
   - Are there any IPP or generation license conditions tied to ownership?
   - What BEE requirements apply to energy sector ownership?
   - Do any power purchase agreements require consent for ownership changes?
+  bee_compliance:
+  - What are the REIPPPP ED ownership commitments and current compliance status?
+  - What community ownership or local ownership requirements exist?
+  - How will the transaction affect BEE ownership compliance?
+  - What local content and job creation commitments apply?
+  - Are there any ED penalty deductions currently being applied?
+  - What skills development and enterprise development obligations exist?
+  - What DOE/DMRE consents are required for the ownership change?
+  - Are there BEE lock-in provisions in the project shareholders agreement?
   generation_license:
   - Is there a valid NERSA generation license and what are its conditions?
   - What is the licensed capacity and when does it expire?

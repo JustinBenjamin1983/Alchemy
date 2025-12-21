@@ -504,3 +504,75 @@ cot_questions:
   - What representations and warranties apply?
   - Are there any repeating representations?
   - What disclosure obligations exist?
+  bee_compliance:
+  - Are any BEE shares pledged as security for existing facilities?
+  - Do loan covenants require maintenance of minimum BEE ownership levels?
+  - Does the facility include debt-to-equity conversion rights that could dilute BEE?
+  - Are there material contracts with BEE clauses that could be terminated on covenant breach?
+  - What is the voting structure during any standstill or enforcement period?
+  - What percentage of revenue comes from BEE-contingent contracts?
+  - Is there a BEE covenant threshold and what is the buffer to current ownership?
+  - Would full debt-to-equity conversion reduce BEE ownership below 26%?
+
+# BEE Analysis Section
+bee_analysis:
+  sector_threshold: 26%
+  sector_code: "Generic B-BBEE Codes of Good Practice (2013, amended 2019)"
+  notes: "Financial Services Charter requires 25% for banks/insurers - see FS-specific category"
+
+  trigger_events:
+    - Security package requires pledge of BEE shareholder shares
+    - Loan covenants include BEE status maintenance requirements
+    - Default triggers tied to loss of BEE status/contracts
+    - Lender enforcement could transfer BEE shares to non-BEE parties
+    - Debt-to-equity conversion diluting BEE shareholders
+    - Change of control provisions triggered by BEE ownership shifts
+
+  key_questions:
+    - question: "Are any BEE shares pledged as security for existing facilities?"
+      why_critical: "Enforcement could inadvertently transfer ownership to non-BEE lenders"
+      red_flag_if: "BEE shares form part of security package without anti-dilution protections"
+
+    - question: "Do loan covenants require maintenance of minimum BEE ownership levels?"
+      why_critical: "Breach could trigger cross-defaults across multiple facilities"
+      red_flag_if: "BEE covenant threshold exceeds current ownership by less than 5% buffer"
+
+    - question: "Does the facility include debt-to-equity conversion rights?"
+      why_critical: "Conversion could dilute BEE shareholders below threshold"
+      red_flag_if: "Full conversion would reduce BEE ownership below 26%"
+
+    - question: "Are there material contracts with BEE clauses that could be terminated on covenant breach?"
+      why_critical: "Loss of key contracts may cascade beyond the financing itself"
+      red_flag_if: "Revenue from BEE-contingent contracts exceeds 30% of turnover"
+
+    - question: "What is the voting structure during any standstill or enforcement period?"
+      why_critical: "Lender control may affect exercisable voting rights calculation under Codes"
+      red_flag_if: "Lender step-in rights include board appointment or voting direction"
+
+  dilution_scenarios:
+    - scenario: "Debt-to-equity conversion by non-BEE lender"
+      calculation: "Post-conversion BEE % = (Current BEE shares) / (Current shares + Conversion shares)"
+      threshold_breach_risk: "High"
+
+    - scenario: "Enforcement on pledged BEE shares"
+      calculation: "Post-enforcement BEE % = (Remaining unpledged BEE shares) / (Total shares)"
+      threshold_breach_risk: "High"
+
+    - scenario: "New equity raise to cure covenant breach"
+      calculation: "If BEE shareholders dont follow: diluted % = (BEE shares) / (Total + New shares)"
+      threshold_breach_risk: "Medium"
+
+  contract_clauses_to_check:
+    - "BEE warranty and undertaking clauses in facility agreements"
+    - "Events of default tied to BEE status changes"
+    - "Change of control definitions (whether BEE ownership shift triggers)"
+    - "Security documents - restrictions on transfer of pledged BEE shares"
+    - "Intercreditor agreements - priority of BEE share enforcement"
+    - "Subordination agreements affecting BEE shareholder loans"
+
+  automatic_calculation_triggers:
+    - "Any debt-to-equity conversion clause detected"
+    - "BEE shares identified in security schedule"
+    - "Covenant requiring minimum BEE ownership percentage"
+    - "Facility amount exceeds 50% of company equity value"
+    - "Mezzanine or convertible instrument structure identified"

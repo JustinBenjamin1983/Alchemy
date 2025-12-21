@@ -930,6 +930,258 @@ class DBT002AccruedInterest(BaseFormula):
 
 
 # =============================================================================
+# REGULATORY FORMULAS (REG_*)
+# =============================================================================
+
+class REG001BEEDilution(BaseFormula):
+    """
+    BEE Shareholding Dilution Calculator.
+
+    Calculates how new equity injection affects BEE ownership percentage.
+    Critical for South African transactions where BEE thresholds (typically 26%)
+    must be maintained for regulatory compliance and contract eligibility.
+
+    Formula: New BEE % = (Current BEE Shares) / (Total Shares + New Shares)
+    Where: New Shares = Equity Injection / Share Price (or implied price)
+    """
+
+    formula_id = "REG_001"
+    category = FormulaCategory.REGULATORY
+    description = "BEE Shareholding Dilution Impact"
+    required_variables = ["current_bee_percentage", "equity_injection", "current_company_value"]
+
+    # Standard BEE thresholds in South Africa
+    BEE_THRESHOLDS = {
+        "generic": Decimal("26"),      # Generic Codes requirement
+        "mining": Decimal("30"),        # Mining Charter requirement
+        "financial": Decimal("25"),     # Financial sector
+        "ict": Decimal("30"),           # ICT sector
+    }
+
+    def calculate(self, variables: Dict) -> Tuple[List[CalculationStep], Decimal]:
+        steps = []
+
+        current_bee_pct = self.get_variable(variables, "current_bee_percentage")
+        equity_injection = self.get_variable(variables, "equity_injection")
+        current_value = self.get_variable(variables, "current_company_value")
+
+        # Optional: sector-specific threshold
+        sector = "generic"
+        primary_vars = {v["name"]: v for v in variables.get("primary", [])}
+        if "sector" in primary_vars and primary_vars["sector"].get("value"):
+            sector = str(primary_vars["sector"]["value"]).lower()
+
+        threshold = self.BEE_THRESHOLDS.get(sector, Decimal("26"))
+
+        steps.append(CalculationStep(
+            step_number=1,
+            operation="Identify current shareholding",
+            calculation=f"Current BEE ownership: {current_bee_pct}%, Company value: R{current_value:,.0f}",
+            notes=f"BEE threshold for {sector} sector: {threshold}%"
+        ))
+
+        # Calculate implied BEE shareholding value
+        bee_value = current_value * (current_bee_pct / Decimal("100"))
+        steps.append(CalculationStep(
+            step_number=2,
+            operation="Calculate BEE shareholding value",
+            calculation=f"R{current_value:,.0f} × {current_bee_pct}% = R{bee_value:,.0f}",
+            result=bee_value
+        ))
+
+        # Calculate post-injection company value
+        post_injection_value = current_value + equity_injection
+        steps.append(CalculationStep(
+            step_number=3,
+            operation="Calculate post-injection company value",
+            calculation=f"R{current_value:,.0f} + R{equity_injection:,.0f} = R{post_injection_value:,.0f}",
+            result=post_injection_value
+        ))
+
+        # Calculate new BEE percentage (assuming BEE doesn't participate in new equity)
+        new_bee_pct = (bee_value / post_injection_value) * Decimal("100")
+        steps.append(CalculationStep(
+            step_number=4,
+            operation="Calculate diluted BEE percentage",
+            calculation=f"R{bee_value:,.0f} ÷ R{post_injection_value:,.0f} × 100 = {new_bee_pct:.2f}%",
+            result=new_bee_pct,
+            notes="Assumes BEE shareholders do not participate pro-rata in new equity"
+        ))
+
+        # Calculate dilution impact
+        dilution = current_bee_pct - new_bee_pct
+        steps.append(CalculationStep(
+            step_number=5,
+            operation="Calculate dilution impact",
+            calculation=f"{current_bee_pct}% - {new_bee_pct:.2f}% = {dilution:.2f}% dilution",
+            result=dilution
+        ))
+
+        # Check if falls below threshold
+        breach_amount = threshold - new_bee_pct if new_bee_pct < threshold else Decimal("0")
+        if breach_amount > 0:
+            steps.append(CalculationStep(
+                step_number=6,
+                operation="⚠️ THRESHOLD BREACH",
+                calculation=f"New BEE % ({new_bee_pct:.2f}%) is {breach_amount:.2f}% below {threshold}% threshold",
+                result=breach_amount,
+                notes="CRITICAL: Transaction would breach BEE compliance threshold"
+            ))
+        else:
+            steps.append(CalculationStep(
+                step_number=6,
+                operation="Threshold check",
+                calculation=f"New BEE % ({new_bee_pct:.2f}%) remains above {threshold}% threshold",
+                result=Decimal("0"),
+                notes="BEE compliance maintained post-transaction"
+            ))
+
+        return steps, new_bee_pct.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+
+class REG002CovenantCompliance(BaseFormula):
+    """
+    Financial Covenant Compliance Calculator.
+
+    Calculates whether financial ratios meet covenant requirements.
+    Common ratios: Interest Cover, Debt/EBITDA, Current Ratio, etc.
+    """
+
+    formula_id = "REG_002"
+    category = FormulaCategory.REGULATORY
+    description = "Financial Covenant Compliance Check"
+    required_variables = ["actual_ratio", "covenant_threshold", "covenant_type"]
+
+    def calculate(self, variables: Dict) -> Tuple[List[CalculationStep], Decimal]:
+        steps = []
+
+        actual = self.get_variable(variables, "actual_ratio")
+        threshold = self.get_variable(variables, "covenant_threshold")
+
+        # Get covenant type (min or max)
+        primary_vars = {v["name"]: v for v in variables.get("primary", [])}
+        covenant_type = "minimum"  # default
+        if "covenant_type" in primary_vars:
+            covenant_type = str(primary_vars["covenant_type"].get("value", "minimum")).lower()
+
+        steps.append(CalculationStep(
+            step_number=1,
+            operation="Identify covenant parameters",
+            calculation=f"Actual ratio: {actual:.2f}x, Covenant: {covenant_type} {threshold:.2f}x"
+        ))
+
+        # Calculate headroom/breach
+        if covenant_type == "minimum":
+            headroom = actual - threshold
+            breach = headroom < 0
+        else:  # maximum
+            headroom = threshold - actual
+            breach = headroom < 0
+
+        steps.append(CalculationStep(
+            step_number=2,
+            operation="Calculate covenant headroom",
+            calculation=f"Headroom: {abs(headroom):.2f}x {'BREACH' if breach else 'cushion'}",
+            result=headroom
+        ))
+
+        # Calculate percentage headroom
+        pct_headroom = (headroom / threshold) * Decimal("100") if threshold != 0 else Decimal("0")
+        steps.append(CalculationStep(
+            step_number=3,
+            operation="Calculate percentage headroom",
+            calculation=f"{headroom:.2f} ÷ {threshold:.2f} × 100 = {pct_headroom:.1f}%",
+            result=pct_headroom,
+            notes="BREACH" if breach else ("WARNING: <10% headroom" if abs(pct_headroom) < 10 else "Compliant")
+        ))
+
+        return steps, headroom.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+
+class REG003DocumentExpiry(BaseFormula):
+    """
+    Document/Certificate Expiry Calculator.
+
+    Calculates days until expiry and flags expired or expiring documents.
+    Critical for: Tax clearances, BEE certificates, licenses, permits.
+    """
+
+    formula_id = "REG_003"
+    category = FormulaCategory.REGULATORY
+    description = "Document Expiry Check"
+    required_variables = ["expiry_date", "warning_days"]
+
+    def calculate(self, variables: Dict) -> Tuple[List[CalculationStep], Decimal]:
+        steps = []
+
+        # Get expiry date
+        primary_vars = {v["name"]: v for v in variables.get("primary", [])}
+        expiry_str = primary_vars.get("expiry_date", {}).get("value", "")
+        warning_days = self.get_variable(variables, "warning_days")
+
+        today = date.today()
+
+        # Parse expiry date
+        try:
+            if isinstance(expiry_str, str):
+                # Try common formats
+                for fmt in ["%Y-%m-%d", "%d/%m/%Y", "%Y/%m/%d", "%d-%m-%Y"]:
+                    try:
+                        expiry_date = datetime.strptime(expiry_str, fmt).date()
+                        break
+                    except ValueError:
+                        continue
+                else:
+                    raise ValueError(f"Could not parse date: {expiry_str}")
+            else:
+                expiry_date = expiry_str
+        except Exception as e:
+            steps.append(CalculationStep(
+                step_number=1,
+                operation="Date parsing error",
+                calculation=f"Could not parse expiry date: {expiry_str}",
+                notes=str(e)
+            ))
+            return steps, Decimal("-999")  # Error indicator
+
+        steps.append(CalculationStep(
+            step_number=1,
+            operation="Identify dates",
+            calculation=f"Today: {today}, Expiry: {expiry_date}"
+        ))
+
+        # Calculate days until expiry
+        days_until = (expiry_date - today).days
+        steps.append(CalculationStep(
+            step_number=2,
+            operation="Calculate days until expiry",
+            calculation=f"{expiry_date} - {today} = {days_until} days",
+            result=Decimal(str(days_until))
+        ))
+
+        # Determine status
+        if days_until < 0:
+            status = f"⚠️ EXPIRED {abs(days_until)} days ago"
+            severity = "CRITICAL"
+        elif days_until <= int(warning_days):
+            status = f"⚠️ EXPIRING in {days_until} days"
+            severity = "WARNING"
+        else:
+            status = f"Valid for {days_until} days"
+            severity = "OK"
+
+        steps.append(CalculationStep(
+            step_number=3,
+            operation="Expiry status",
+            calculation=status,
+            result=Decimal(str(days_until)),
+            notes=severity
+        ))
+
+        return steps, Decimal(str(days_until))
+
+
+# =============================================================================
 # MAIN CALCULATION ENGINE
 # =============================================================================
 
@@ -968,8 +1220,12 @@ class CalculationEngine:
             # Debt formulas
             DBT001PrepaymentPenalty(),
             DBT002AccruedInterest(),
+            # Regulatory formulas
+            REG001BEEDilution(),
+            REG002CovenantCompliance(),
+            REG003DocumentExpiry(),
         ]
-        
+
         return {f.formula_id: f for f in formulas}
     
     def calculate(self, extraction: Dict) -> CalculationResult:

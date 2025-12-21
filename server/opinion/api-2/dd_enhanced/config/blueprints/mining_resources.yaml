@@ -543,6 +543,66 @@ conditions_precedent_patterns:
   cp_type: Notification
 - pattern: subject to|conditional upon|provided that
   cp_type: Condition
+bee_analysis:
+  sector_threshold: 30%
+  sector_code: "Mining Charter III (2018)"
+  trigger_events:
+    - Acquisition of mining right holder shares
+    - Section 11 transfer application to DMRE
+    - Change in beneficial ownership of right holder
+    - Exit by HDSA shareholder
+    - Conversion of BEE funding structures
+    - New prospecting/mining right application
+    - SLP-related ownership changes
+  key_questions:
+    - question: "What is the current HDSA ownership percentage under Mining Charter methodology?"
+      why_critical: "Mining Charter III requires 30% HDSA for compliance - Section 11 consent depends on this"
+      red_flag_if: "Current HDSA below 30% or transaction reduces HDSA below threshold"
+    - question: "Will the transaction result in HDSA ownership falling below Mining Charter minimum?"
+      why_critical: "DMRE may refuse Section 11 consent if post-transaction HDSA is non-compliant"
+      red_flag_if: "Post-transaction HDSA < 30% without DMRE-approved remediation plan"
+    - question: "Is there 'meaningful economic participation' by HDSA shareholders?"
+      why_critical: "Mining Charter requires genuine economic benefit, not just paper ownership"
+      red_flag_if: "All dividends service debt, HDSA has no governance rights"
+    - question: "What is the status of the Social and Labour Plan (SLP) commitments?"
+      why_critical: "SLP non-compliance can result in mining right suspension"
+      red_flag_if: "Material SLP arrears or pending DMRE enforcement"
+    - question: "Are there any DMRE queries about BEE compliance or fronting?"
+      why_critical: "Pending DMRE investigations could delay Section 11 consent"
+      red_flag_if: "Active DMRE investigation into ownership structure"
+    - question: "What is the 'Once Empowered Always Empowered' position?"
+      why_critical: "OEAE may allow recognition of historical BEE that has since exited"
+      red_flag_if: "Relying on OEAE but documentation incomplete or criteria not met"
+  dilution_scenarios:
+    - scenario: "Non-HDSA acquires 100% of mining company"
+      calculation: "Post-acquisition HDSA % = 0% unless co-investor or vendor-funded BEE"
+      threshold_breach_risk: "Critical - automatic regulatory blocker"
+    - scenario: "Non-HDSA investor takes majority stake"
+      calculation: "Post-investment HDSA % = (Current HDSA shares) / (Total + New shares)"
+      threshold_breach_risk: "High - likely to breach 30% threshold"
+    - scenario: "Employee trust fails to retain shares on employee departures"
+      calculation: "HDSA % reduces by forfeited percentage"
+      threshold_breach_risk: "Low - usually structured to retain shares in trust"
+    - scenario: "BEE partner exercises put option"
+      calculation: "HDSA % drops to 0% for that stake unless replaced"
+      threshold_breach_risk: "Critical if not replaced before Section 11"
+  contract_clauses_to_check:
+    - "HDSA minimum shareholding undertakings"
+    - "Anti-dilution provisions for HDSA shareholders"
+    - "Tag-along rights on disposal"
+    - "Mining Charter compliance warranties"
+    - "SLP commitment guarantees"
+    - "DMRE Section 11 consent conditions"
+    - "Lock-in periods for HDSA shareholders"
+    - "Put/call options affecting HDSA ownership"
+  automatic_calculation_triggers:
+    - trigger: "mining|HDSA|Mining Charter|Section 11"
+      calculation: "REG_001 - HDSA Dilution Calculator (30% threshold)"
+      required_inputs:
+        - "Current HDSA shareholding percentage"
+        - "Target ownership percentage for acquirer"
+        - "Any co-investment by HDSA party"
+        - "Mining Charter compliance status"
 cot_questions:
   ownership_regulatory:
   - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
@@ -558,6 +618,15 @@ cot_questions:
   - If acquirer is non-HDSA, what mechanisms exist to restore BEE compliance (co-investment by BEE partner, vendor-funded BEE, employee trust)?
   - What is the current Mining Charter scorecard status across all elements (ownership, procurement, HR development)?
   - Are there any BEE shareholding lock-in periods or anti-dilution provisions that affect the transaction?
+  bee_compliance:
+  - What is the current HDSA ownership percentage under Mining Charter III methodology?
+  - How will the transaction affect HDSA ownership (calculate post-transaction percentage)?
+  - Is there 'meaningful economic participation' by HDSA shareholders?
+  - What is the status of SLP commitments (% complete, arrears)?
+  - Does the 'Once Empowered Always Empowered' rule apply?
+  - What DMRE queries or investigations are pending regarding BEE?
+  - What mechanisms exist to restore BEE compliance if threshold is breached?
+  - Are there anti-dilution or lock-in provisions for HDSA shareholders?
   mining_rights:
   - Is the mining right valid and in good standing?
   - What conditions are attached and are they being complied with?

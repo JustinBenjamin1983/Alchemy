@@ -156,11 +156,11 @@ const SeverityGroup: React.FC<SeverityGroupProps> = ({
   if (findings.length === 0) return null;
 
   return (
-    <div className="border-b border-gray-100 dark:border-gray-800 last:border-b-0">
+    <div className="border-b border-gray-200 dark:border-gray-700 last:border-b-0">
       {/* Group Header */}
       <button
         onClick={onToggle}
-        className={`w-full px-3 py-2 flex items-center justify-between ${config.bgColor} hover:opacity-90 transition-opacity`}
+        className={`w-full px-4 py-2.5 flex items-center justify-between ${config.bgColor} hover:brightness-95 transition-all shadow-sm`}
       >
         <div className="flex items-center gap-2">
           <span className={`text-sm ${config.color}`}>{config.icon}</span>
@@ -187,12 +187,12 @@ const SeverityGroup: React.FC<SeverityGroupProps> = ({
           {findings.map((finding) => (
             <div
               key={finding.id}
-              className={`group flex items-start gap-2 px-3 py-2 border-l-2 transition-colors cursor-pointer ${
+              className={`group flex items-start gap-2 px-4 py-2.5 border-l-3 transition-all cursor-pointer ${
                 selectedFindingId === finding.id
-                  ? `${config.borderColor} bg-gray-50 dark:bg-gray-800/50`
+                  ? `${config.borderColor} bg-white dark:bg-gray-800 shadow-sm`
                   : focusedFindingId === finding.id
-                  ? 'border-blue-300 bg-blue-50/50 dark:bg-blue-900/20'
-                  : 'border-transparent hover:bg-gray-50 dark:hover:bg-gray-800/30'
+                  ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/30'
+                  : 'border-transparent hover:bg-gray-100 dark:hover:bg-gray-800/50 hover:border-gray-300'
               }`}
               onClick={() => onFindingSelect(finding.id)}
               data-finding-id={finding.id}
@@ -422,9 +422,9 @@ export const FindingsList: React.FC<ExtendedFindingsListProps> = ({
   return (
     <div className="flex flex-col h-full" ref={listRef} tabIndex={0}>
       {/* Header */}
-      <div className="flex-shrink-0 px-3 py-2 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex-shrink-0 px-4 py-3 border-b border-gray-300 dark:border-gray-600 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-gray-800 dark:to-gray-800">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+          <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
             Findings
           </h3>
           <span className="text-xs text-gray-400 dark:text-gray-500">

@@ -885,6 +885,61 @@ folder_questions:
       detail: Documents requiring manual classification review
       cot_hint: Identify CM content → flag for review
     cross_doc_checks: []
+bee_analysis:
+  sector_threshold: 26%
+  sector_code: "Generic B-BBEE Codes of Good Practice"
+  trigger_events:
+    - IPO/listing where BEE shareholder sells down
+    - Rights issue diluting BEE shareholders
+    - Specific issue of shares for cash to non-BEE
+    - Share buyback affecting BEE shareholding ratio
+    - Secondary offering by BEE shareholders
+    - Delisting affecting BEE liquidity
+    - Scheme of arrangement restructuring ownership
+  key_questions:
+    - question: "Will the IPO/listing dilute BEE ownership below required thresholds?"
+      why_critical: "JSE listed companies face public scrutiny on BEE credentials"
+      red_flag_if: "Post-IPO BEE falls below 26% with no plan to address"
+    - question: "Are BEE shareholders participating in the offering or being diluted?"
+      why_critical: "Prospectus must disclose BEE status and impact of transaction"
+      red_flag_if: "BEE shareholders not offered pro-rata participation"
+    - question: "What BEE disclosures are required in the prospectus?"
+      why_critical: "Companies Act requires disclosure of BEE status for certain transactions"
+      red_flag_if: "Inadequate or misleading BEE disclosure"
+    - question: "Are there lock-up agreements affecting BEE shareholders?"
+      why_critical: "BEE shareholders may need liquidity but lock-ups restrict selling"
+      red_flag_if: "Onerous lock-up periods without BEE liquidity mechanism"
+    - question: "How does listing affect BEE partner governance rights?"
+      why_critical: "Special rights in SHA may conflict with JSE requirements for listed entities"
+      red_flag_if: "BEE reserved matters conflict with equal treatment principle"
+  dilution_scenarios:
+    - scenario: "IPO with new primary shares issued"
+      calculation: "Post-IPO BEE % = (Pre-IPO BEE shares) / (Pre-IPO total + New IPO shares)"
+      threshold_breach_risk: "High - typical IPOs issue 20-40% new shares"
+    - scenario: "Rights issue not fully followed by BEE"
+      calculation: "Post-rights BEE % = (BEE shares + BEE take-up) / (Total + Rights shares)"
+      threshold_breach_risk: "Medium - depends on BEE ability/willingness to follow"
+    - scenario: "Specific issue of shares for acquisition"
+      calculation: "Post-issue BEE % = (Current BEE shares) / (Current + Consideration shares)"
+      threshold_breach_risk: "Medium - category depends on size"
+    - scenario: "BEE secondary sell-down in listing"
+      calculation: "Post-listing BEE % = (Pre-listing BEE - Sold shares) / Total shares"
+      threshold_breach_risk: "Critical if majority of BEE sells"
+  contract_clauses_to_check:
+    - "Lock-up agreements and BEE-specific carve-outs"
+    - "Anti-dilution provisions in existing SHA"
+    - "Pre-emptive rights and their interaction with JSE requirements"
+    - "BEE representation on board post-listing"
+    - "Prospectus BEE disclosure warranties"
+    - "Underwriting agreement BEE representations"
+  automatic_calculation_triggers:
+    - trigger: "IPO|listing|primary issue"
+      calculation: "REG_001 - BEE Dilution Calculator"
+      required_inputs:
+        - "Current BEE shareholding percentage"
+        - "Total shares pre-transaction"
+        - "New shares to be issued"
+        - "BEE participation in new issue"
 cot_questions:
   ownership_regulatory:
   - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
@@ -897,6 +952,15 @@ cot_questions:
   - Are there any mandatory offer thresholds triggered by the transaction?
   - What shareholder disclosure requirements apply post-transaction?
   - Does the transaction trigger any takeover regulation requirements?
+  bee_compliance:
+  - What is the current verified B-BBEE ownership percentage?
+  - How will the listing/offering affect the BEE ownership percentage?
+  - What BEE disclosures are required in the prospectus?
+  - Are BEE shareholders participating pro-rata in the offering?
+  - What lock-up agreements apply to BEE shareholders?
+  - Do any BEE-specific provisions in existing SHA conflict with JSE requirements?
+  - What is the post-transaction BEE ownership calculation?
+  - Are there anti-dilution mechanisms for BEE shareholders?
   listing_requirements:
   - What stock exchange listing requirements apply?
   - Is the transaction a Category 1, 2, or 3 transaction?

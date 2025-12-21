@@ -99,7 +99,7 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
             AI-generated summary of the due diligence analysis
           </p>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 p-6">
           <div className="prose dark:prose-invert max-w-none">
             {synthesisData.executive_summary ? (
               <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
@@ -149,7 +149,7 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
 
         {/* Blocking Issues */}
         {assessment.blocking_issues && assessment.blocking_issues.length > 0 && (
-          <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
               <AlertTriangleIcon />
               Blocking Issues
@@ -169,7 +169,7 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
 
         {/* Key Risks */}
         {assessment.key_risks && assessment.key_risks.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
               Key Risks
             </h3>
@@ -214,9 +214,9 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
 
         {/* Exposure Items */}
         {exposures.items && exposures.items.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-700/50">
+              <thead className="bg-gray-100 dark:bg-gray-700/50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Source</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Type</th>
@@ -345,14 +345,14 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
         </div>
 
         {cps.length === 0 ? (
-          <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 text-center">
+          <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 text-center">
             <ClipboardListIcon />
             <p className="mt-2 text-gray-600 dark:text-gray-400">No conditions precedent identified</p>
           </div>
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-700/50">
+              <thead className="bg-gray-100 dark:bg-gray-700/50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-12">#</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
@@ -411,14 +411,14 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
         </div>
 
         {recommendations.length === 0 ? (
-          <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 text-center">
+          <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 text-center">
             <LightBulbIcon />
             <p className="mt-2 text-gray-600 dark:text-gray-400">No recommendations available</p>
           </div>
         ) : (
           <div className="space-y-4">
             {recommendations.map((rec, index) => (
-              <div key={index} className="flex items-start gap-4 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div key={index} className="flex items-start gap-4 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
                 <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-full font-semibold">
                   {index + 1}
                 </div>

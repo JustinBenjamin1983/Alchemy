@@ -30,7 +30,7 @@ export function AppSidebar({
   onResumeWizardDraft?: (draftId: string) => void;
 } & React.ComponentProps<typeof Sidebar>) {
   const { data: user } = useGetUser();
-  const { data: opinions } = useGetOpinions();
+  const { data: opinions } = useGetOpinions(isOpinion); // Only fetch when in Opinion mode
   const { data: dds } = useGetDDListing("involves_me");
   const { data: wizardDrafts } = useGetWizardDrafts();
   const navigate = useNavigate();

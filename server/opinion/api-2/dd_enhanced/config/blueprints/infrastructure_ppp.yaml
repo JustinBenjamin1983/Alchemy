@@ -360,6 +360,62 @@ folder_questions:
       detail: Documents requiring manual classification review
       cot_hint: Identify PPP content → flag for review
     cross_doc_checks: []
+bee_analysis:
+  sector_threshold: 26%
+  sector_code: "Generic B-BBEE Codes (plus PPPFA requirements)"
+  trigger_events:
+    - Change of control in PPP concessionaire
+    - Assignment of concession rights
+    - Exit by BEE consortium member
+    - Refinancing affecting equity structure
+    - Secondary market sale of infrastructure stake
+    - Subcontractor change affecting local content
+    - Treasury consent for ownership change
+  key_questions:
+    - question: "What BEE ownership requirements are specified in the concession agreement?"
+      why_critical: "PPP concessions typically specify minimum BEE ownership levels"
+      red_flag_if: "Concession requires specific BEE % that transaction will breach"
+    - question: "Does Treasury consent depend on maintaining BEE compliance?"
+      why_critical: "Treasury may require BEE maintenance as condition of CoC consent"
+      red_flag_if: "Treasury consent conditional on BEE and transaction breaches this"
+    - question: "What PPPFA preferential procurement obligations apply?"
+      why_critical: "Infrastructure projects have significant procurement obligations"
+      red_flag_if: "PPPFA compliance at risk from transaction structure"
+    - question: "Are there local content and job creation undertakings in the concession?"
+      why_critical: "Many PPPs have binding local content and employment commitments"
+      red_flag_if: "Local content/job commitments at risk from ownership change"
+    - question: "What happens to BEE subcontractor arrangements on change of control?"
+      why_critical: "PPP BEE often flows through subcontracting, not just ownership"
+      red_flag_if: "BEE subcontract arrangements may not survive CoC"
+  dilution_scenarios:
+    - scenario: "Sale of majority stake in concessionaire to non-BEE buyer"
+      calculation: "Post-sale BEE % = Remaining BEE shareholding / Total"
+      threshold_breach_risk: "Critical - concession likely has BEE maintenance requirement"
+    - scenario: "Refinancing with equity conversion by non-BEE lender"
+      calculation: "Post-refinancing BEE % adjusted for lender equity"
+      threshold_breach_risk: "High - may need Treasury consent and BEE co-investor"
+    - scenario: "Exit by BEE consortium member"
+      calculation: "BEE % drops by exiting member's percentage"
+      threshold_breach_risk: "Critical - concession BEE lock-in likely applies"
+    - scenario: "Secondary infrastructure fund investment"
+      calculation: "Fund structure determines BEE % attribution"
+      threshold_breach_risk: "Medium - depends on fund BEE status"
+  contract_clauses_to_check:
+    - "Concession agreement BEE ownership requirements"
+    - "Treasury approval conditions regarding BEE"
+    - "PPPFA preferential procurement undertakings"
+    - "Local content and job creation commitments"
+    - "BEE subcontractor arrangements and lock-in"
+    - "BEE lock-in periods in SHA"
+    - "Step-in rights triggered by BEE non-compliance"
+  automatic_calculation_triggers:
+    - trigger: "PPP|concession|infrastructure|PFMA"
+      calculation: "REG_001 - BEE Dilution Calculator + Concession Compliance Check"
+      required_inputs:
+        - "Current BEE shareholding percentage"
+        - "Concession BEE requirement"
+        - "Treasury consent conditions"
+        - "PPPFA compliance status"
 cot_questions:
   ownership_regulatory:
   - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
@@ -372,6 +428,15 @@ cot_questions:
   - Are there any empowerment requirements in the concession agreement?
   - Does the change of control affect the PPP security package?
   - What step-in rights do government parties have on ownership change?
+  bee_compliance:
+  - What BEE ownership requirements are specified in the concession agreement?
+  - Does Treasury consent depend on maintaining BEE compliance?
+  - What PPPFA preferential procurement obligations apply?
+  - Are there local content and job creation undertakings in the concession?
+  - What BEE subcontractor arrangements exist and will they survive CoC?
+  - Are there BEE lock-in periods that prevent the transaction?
+  - What is the post-transaction BEE ownership calculation?
+  - What BEE warranties should be included in transaction documents?
   concession_agreement:
   - What is the concession term and remaining duration?
   - Does the concession contain CoC provisions? Is authority consent required?

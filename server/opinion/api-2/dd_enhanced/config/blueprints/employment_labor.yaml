@@ -372,6 +372,61 @@ folder_questions:
       detail: Documents requiring manual classification review
       cot_hint: Identify employment content → flag for review
     cross_doc_checks: []
+bee_analysis:
+  sector_threshold: 26%
+  sector_code: "Generic B-BBEE Codes of Good Practice"
+  trigger_events:
+    - Change of control affecting EE plan status
+    - Workforce transfer under Section 197
+    - Mass retrenchments affecting designated groups
+    - Management changes affecting management control element
+    - Skills development program changes
+    - Employee ownership scheme restructuring
+    - Post-acquisition integration affecting EE targets
+  key_questions:
+    - question: "How will the transaction affect the target's Employment Equity plan compliance?"
+      why_critical: "EE plan targets must be maintained - non-compliance affects BEE scorecard"
+      red_flag_if: "Transaction will cause EE plan non-compliance without remediation plan"
+    - question: "What is the impact on skills development spending and targets?"
+      why_critical: "Skills development is a BEE scorecard element"
+      red_flag_if: "Skills development levy non-compliance or program at risk"
+    - question: "Will retrenchments disproportionately affect designated groups?"
+      why_critical: "Retrenchments affecting designated groups can impact EE and BEE"
+      red_flag_if: "Retrenchment selection criteria adverse to EE targets"
+    - question: "Does the target have an employee ownership scheme counting for BEE?"
+      why_critical: "Employee trusts may count as BEE ownership - transaction may affect this"
+      red_flag_if: "Employee BEE ownership at risk from transaction structure"
+    - question: "What is the impact on management control element of BEE scorecard?"
+      why_critical: "Senior management composition affects BEE score"
+      red_flag_if: "Post-transaction management less representative than current"
+  dilution_scenarios:
+    - scenario: "Employee trust shares diluted in funding round"
+      calculation: "Post-round employee BEE % = (Employee trust shares) / (Total + New shares)"
+      threshold_breach_risk: "Medium - depends on employee share percentage"
+    - scenario: "Retrenchments affecting EE demographics"
+      calculation: "Post-retrenchment EE % by category"
+      threshold_breach_risk: "High if disproportionate impact on designated groups"
+    - scenario: "Management buyout excluding black managers"
+      calculation: "MBO team composition for management control"
+      threshold_breach_risk: "High if black management not included in MBO"
+    - scenario: "Section 197 transfer with different EE profile"
+      calculation: "Combined workforce EE demographics"
+      threshold_breach_risk: "Variable - depends on transferring business profile"
+  contract_clauses_to_check:
+    - "Employee ownership scheme deed and BEE counting"
+    - "EE plan targets and compliance status"
+    - "Skills development agreements and levy compliance"
+    - "Management contracts for designated group executives"
+    - "Retrenchment selection criteria"
+    - "Section 197 transfer provisions"
+  automatic_calculation_triggers:
+    - trigger: "employment equity|EE plan|skills development|designated groups"
+      calculation: "EE and BEE Scorecard Impact Calculator"
+      required_inputs:
+        - "Current EE demographics by level"
+        - "EE plan targets"
+        - "Post-transaction workforce composition"
+        - "Skills development spend as % of payroll"
 cot_questions:
   ownership_regulatory:
   - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
@@ -380,6 +435,15 @@ cot_questions:
   - Are there any ownership restrictions in constitutional documents, shareholder agreements, or regulatory conditions?
   - What licenses, permits, or authorizations are dependent on the current ownership structure?
   - What are the consequences of non-compliance with ownership-based regulatory requirements?
+  bee_compliance:
+  - How will the transaction affect Employment Equity plan compliance?
+  - What is the impact on skills development spending and targets?
+  - Will retrenchments disproportionately affect designated groups?
+  - Does the target have an employee ownership scheme counting for BEE?
+  - What is the impact on management control element of BEE scorecard?
+  - What EE plan amendments will be required post-transaction?
+  - Are there any EE certificates or compliance notices to consider?
+  - What skills development levy compliance status exists?
   employment_contracts:
   - What are the key terms of executive employment contracts?
   - What CoC provisions exist (acceleration, golden parachute)?

@@ -155,11 +155,11 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
   const suggestions = selectedFinding ? SUGGESTED_QUESTIONS.finding : SUGGESTED_QUESTIONS.general;
 
   return (
-    <div className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+    <div className="bg-gradient-to-r from-slate-50 to-gray-50 dark:from-gray-900 dark:to-gray-900 border-t-2 border-gray-300 dark:border-gray-600 shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.1)]">
       {/* Header - Always visible, clickable to expand/collapse */}
       <button
         onClick={onToggleExpand}
-        className="w-full h-12 px-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+        className="w-full h-12 px-4 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
       >
         <div className="flex items-center gap-2">
           <BrainIcon />
@@ -195,7 +195,7 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
                     <button
                       key={i}
                       onClick={() => handleSuggestedQuestion(q)}
-                      className="px-3 py-1.5 text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      className="px-3 py-1.5 text-xs bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700 shadow-sm"
                     >
                       {q}
                     </button>

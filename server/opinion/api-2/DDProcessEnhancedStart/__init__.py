@@ -86,8 +86,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
         include_tier3 = options.get('include_tier3', False)
         use_clustered_pass3 = options.get('use_clustered_pass3', True)
+        model_tier = options.get('model_tier', 'balanced')  # cost_optimized, balanced, high_accuracy, maximum_accuracy
 
-        logging.info(f"[DDProcessEnhancedStart] Starting async processing for Run: {run_id}")
+        # Validate model_tier
+        valid_tiers = ['cost_optimized', 'balanced', 'high_accuracy', 'maximum_accuracy']
+        if model_tier not in valid_tiers:
+            model_tier = 'balanced'
+
+        logging.info(f"[DDProcessEnhancedStart] Starting async processing for Run: {run_id}, Tier: {model_tier}")
 
         # Check if already processing this run
         if run_id in _running_processes:
@@ -180,9 +186,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             )
             session.add(checkpoint)
 
-            # Update run status
+            # Update run status and model tier
             run.status = 'processing'
             run.started_at = datetime.datetime.utcnow()
+            run.model_tier = model_tier
 
             session.commit()
 
@@ -191,7 +198,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         # Spawn background thread (pass string versions for JSON/logging operations)
         thread = threading.Thread(
             target=_run_processing_in_background,
-            args=(dd_id_str, run_id, checkpoint_id, selected_doc_ids, include_tier3, use_clustered_pass3),
+            args=(dd_id_str, run_id, checkpoint_id, selected_doc_ids, include_tier3, use_clustered_pass3, model_tier),
             daemon=True
         )
         thread.start()
@@ -248,7 +255,8 @@ def _run_processing_in_background(
     checkpoint_id: str,
     selected_doc_ids: list,
     include_tier3: bool,
-    use_clustered_pass3: bool
+    use_clustered_pass3: bool,
+    model_tier: str = "balanced"
 ):
     """
     Background worker that processes DD with granular checkpoint updates.
@@ -258,13 +266,19 @@ def _run_processing_in_background(
     - Each document in Pass 2
     - Each cluster in Pass 3
     - Pass 4 completion
+
+    Model Tiers:
+    - cost_optimized: Haiku → Sonnet → Sonnet → Sonnet (~R350/200 docs)
+    - balanced: Haiku → Sonnet → Opus → Sonnet (~R500/200 docs)
+    - high_accuracy: Haiku → Sonnet → Opus → Opus (~R650/200 docs)
+    - maximum_accuracy: Haiku → Opus → Opus → Opus (~R900/200 docs)
     """
     import sys
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'dd_enhanced'))
 
     from shared.dev_adapters.dev_config import get_dev_config
     from config.blueprints.loader import load_blueprint
-    from dd_enhanced.core.claude_client import ClaudeClient
+    from dd_enhanced.core.claude_client import ClaudeClient, ModelTier
     from dd_enhanced.core.document_clusters import group_documents_by_cluster
     from dd_enhanced.core.question_prioritizer import prioritize_questions
 
@@ -304,8 +318,18 @@ def _run_processing_in_background(
             'total_documents': total_docs
         })
 
-        # Initialize Claude client
-        client = ClaudeClient()
+        # Map model_tier string to ModelTier enum
+        tier_map = {
+            'cost_optimized': ModelTier.COST_OPTIMIZED,
+            'balanced': ModelTier.BALANCED,
+            'high_accuracy': ModelTier.HIGH_ACCURACY,
+            'maximum_accuracy': ModelTier.MAXIMUM_ACCURACY,
+        }
+        selected_tier = tier_map.get(model_tier, ModelTier.BALANCED)
+
+        # Initialize Claude client with selected tier
+        client = ClaudeClient(model_tier=selected_tier)
+        logging.info(f"[BackgroundProcessor] Using model tier: {selected_tier.value}")
 
         # ===== PASS 1: Extract (with per-document updates) =====
         print(f"[BackgroundProcessor] Pass 1: Extracting from {total_docs} documents", flush=True)

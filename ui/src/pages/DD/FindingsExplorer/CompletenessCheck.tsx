@@ -143,7 +143,7 @@ const MissingDocumentItem: React.FC<{
   const statusConfig = STATUS_CONFIG[doc.status];
 
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+    <div className="border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full px-3 py-2 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
@@ -241,7 +241,7 @@ const UnansweredQuestionItem: React.FC<{
   const statusConfig = STATUS_CONFIG[question.status];
 
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+    <div className="border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full px-3 py-2 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
@@ -373,9 +373,9 @@ export const CompletenessCheck: React.FC<CompletenessCheckProps> = ({
   const outstandingQuestionsCount = data.unanswered_questions.filter(q => q.status === 'outstanding').length;
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div className="flex flex-col h-full bg-white dark:bg-gray-900 rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
       {/* Header with Completeness Score */}
-      <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+      <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800/50">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -526,7 +526,7 @@ export const CompletenessCheck: React.FC<CompletenessCheckProps> = ({
       </div>
 
       {/* Footer Stats */}
-      <div className="flex-shrink-0 px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+      <div className="flex-shrink-0 px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800/50">
         <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
           <div className="flex items-center gap-4">
             <span>{data.documents_received}/{data.documents_expected} documents</span>

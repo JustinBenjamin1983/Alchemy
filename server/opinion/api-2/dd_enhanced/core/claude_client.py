@@ -165,7 +165,7 @@ class ClaudeClient:
 
     api_key: str = field(default_factory=lambda: os.environ.get("ANTHROPIC_API_KEY", ""))
     usage: TokenUsage = field(default_factory=TokenUsage)
-    model_tier: ModelTier = field(default=ModelTier.BALANCED)  # Haiku-Sonnet-Opus-Sonnet for better cross-doc analysis
+    model_tier: ModelTier = field(default=ModelTier.HIGH_ACCURACY)  # Haiku-Sonnet-Opus-Opus for accuracy testing
     _client: Any = field(default=None, repr=False)
 
     def __post_init__(self):

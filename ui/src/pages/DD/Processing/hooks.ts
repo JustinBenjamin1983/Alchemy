@@ -511,8 +511,14 @@ export function useAnimatedCurrency(
  * Hook to start async DD processing
  * Returns 202 immediately, frontend polls for progress
  */
+export type ModelTier = "cost_optimized" | "balanced" | "high_accuracy" | "maximum_accuracy";
+
 export function useStartProcessing(): {
-  startProcessing: (runId: string, options?: { includeTier3?: boolean; useClusteredPass3?: boolean }) => Promise<{
+  startProcessing: (runId: string, options?: {
+    includeTier3?: boolean;
+    useClusteredPass3?: boolean;
+    modelTier?: ModelTier;
+  }) => Promise<{
     status: string;
     runId: string;
     checkpointId: string;
@@ -526,7 +532,7 @@ export function useStartProcessing(): {
 
   const startProcessing = useCallback(async (
     runId: string,
-    options: { includeTier3?: boolean; useClusteredPass3?: boolean } = {}
+    options: { includeTier3?: boolean; useClusteredPass3?: boolean; modelTier?: ModelTier } = {}
   ) => {
     setIsStarting(true);
     setError(null);
@@ -541,7 +547,8 @@ export function useStartProcessing(): {
           },
           body: JSON.stringify({
             include_tier3: options.includeTier3 ?? false,
-            use_clustered_pass3: options.useClusteredPass3 ?? true
+            use_clustered_pass3: options.useClusteredPass3 ?? true,
+            model_tier: options.modelTier ?? 'balanced'
           })
         }
       );

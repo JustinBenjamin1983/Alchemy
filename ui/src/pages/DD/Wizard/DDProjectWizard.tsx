@@ -125,9 +125,10 @@ export function DDProjectWizard({ onComplete, onCancel, initialDraft }: DDProjec
   const updateDraft = useUpdateWizardDraft();
   const deleteDraft = useDeleteWizardDraft();
 
-  // Track if there are unsaved changes
+  // Track if there are unsaved changes and if a save is in progress
   const hasChangesRef = useRef(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isSavingRef = useRef(false);
 
   const updateSetup = (updates: Partial<DDProjectSetup>) => {
     setProjectSetup((prev) => ({ ...prev, ...updates }));
@@ -137,6 +138,9 @@ export function DDProjectWizard({ onComplete, onCancel, initialDraft }: DDProjec
 
   // Auto-save function with debounce
   const saveDraft = useCallback(async () => {
+    // Prevent concurrent saves
+    if (isSavingRef.current) return;
+
     if (!hasChangesRef.current) return;
 
     // Don't save if we're on step 1 and haven't entered anything meaningful
@@ -144,6 +148,7 @@ export function DDProjectWizard({ onComplete, onCancel, initialDraft }: DDProjec
       return;
     }
 
+    isSavingRef.current = true;
     setSaveStatus("saving");
 
     try {
@@ -167,10 +172,15 @@ export function DDProjectWizard({ onComplete, onCancel, initialDraft }: DDProjec
     } catch (error) {
       console.error("Failed to save draft:", error);
       setSaveStatus("error");
+    } finally {
+      isSavingRef.current = false;
     }
   }, [projectSetup, currentStep, draftId, createDraft, updateDraft]);
 
   // Debounced auto-save when data changes
+  // Note: We intentionally exclude saveDraft from deps to prevent infinite loops
+  // saveDraft is recreated when projectSetup changes, which would cause this effect
+  // to re-run and reset the timeout continuously
   useEffect(() => {
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
@@ -186,11 +196,13 @@ export function DDProjectWizard({ onComplete, onCancel, initialDraft }: DDProjec
         clearTimeout(saveTimeoutRef.current);
       }
     };
-  }, [projectSetup, currentStep, saveDraft]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectSetup, currentStep]);
 
   // Save when navigating between steps
   useEffect(() => {
     saveDraft();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
   // Save before unloading the page

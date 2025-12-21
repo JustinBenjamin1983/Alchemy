@@ -119,14 +119,20 @@ export function DDMainEnhanced() {
   }, [location.search]);
 
   const handleDeleteDD = (ddId: string) => {
+    if (!ddId) {
+      alert("Cannot delete: No project selected");
+      return;
+    }
     mutateDDDelete.mutate(
       { dd_id: ddId },
       {
         onSuccess: () => {
           window.location.href = window.location.pathname;
         },
-        onError: (error) => {
+        onError: (error: any) => {
           console.error("Failed to delete due diligence:", error);
+          const errorMessage = error?.response?.data?.error || error?.message || "Unknown error occurred";
+          alert(`Failed to delete project: ${errorMessage}`);
         },
       }
     );

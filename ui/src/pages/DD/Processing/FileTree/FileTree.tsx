@@ -125,6 +125,9 @@ interface FileTreeProps {
   // Classification action props
   onClassifyDocuments?: (reset: boolean) => void;
   isClassifying?: boolean;
+
+  // Hide header action buttons (when using external ControlBar)
+  hideHeaderActions?: boolean;
 }
 
 // ============================================================================
@@ -156,6 +159,8 @@ export function FileTree({
   // Classification action props
   onClassifyDocuments,
   isClassifying = false,
+  // Hide header actions
+  hideHeaderActions = false,
 }: FileTreeProps) {
   // Get transaction type info for display
   const typeCode = transactionType as TransactionTypeCode | undefined;
@@ -467,7 +472,7 @@ export function FileTree({
     return (
       <div
         className={cn(
-          "bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden flex flex-col",
+          "bg-white dark:bg-gray-800 rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg overflow-hidden flex flex-col",
           className
         )}
       >
@@ -556,111 +561,113 @@ export function FileTree({
             )}
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-3 text-xs">
-            {/* Classify Docs Button - always visible */}
-            {onClassifyDocuments && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-7 px-2 text-xs border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/30"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onClassifyDocuments(true); // Reset and reclassify all
-                        }}
-                        disabled={isClassifying}
-                      >
-                        {isClassifying ? (
-                          <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
-                        ) : (
-                          <RefreshCw className="w-3.5 h-3.5 mr-1" />
-                        )}
-                        {isClassifying ? "Classifying..." : "Classify Docs"}
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="max-w-xs bg-alchemyPrimaryNavyBlue text-white border-alchemyPrimaryNavyBlue">
-                    <p className="text-xs font-medium">AI Document Classification</p>
-                    <p className="text-xs text-gray-300 mt-1">
-                      Automatically classify all documents into appropriate folders based on their content using AI analysis.
-                    </p>
-                    <p className="text-xs text-purple-300 mt-1">
-                      Click to reclassify all documents.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
-            {onUploadFiles && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-7 px-2 text-xs"
-                onClick={() => {
-                  // Reset and show dialog
-                  setUploadTargetFolder(categoryDistribution[0]?.category || "");
-                  setShowUploadDialog(true);
-                }}
-              >
-                <Upload className="w-3.5 h-3.5 mr-1" />
-                Upload
-              </Button>
-            )}
-            {onAddCategory && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-7 px-2 text-xs"
-                onClick={() => setShowAddFolderDialog(true)}
-              >
-                <Plus className="w-3.5 h-3.5 mr-1" />
-                Add Folder
-              </Button>
-            )}
-            {onRecheckReadability && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span>
-                      <Button
-                        size="sm"
-                        className="h-7 px-3 text-xs rounded-full bg-green-600 hover:bg-green-700 text-white"
-                        onClick={() => {
-                          const selectedArray = Array.from(classificationSelectedDocs.keys());
-                          onRecheckReadability(selectedArray.length > 0 ? selectedArray : undefined);
-                        }}
-                        disabled={isCheckingReadability}
-                      >
-                        <RefreshCw
-                          className={cn(
-                            "w-3.5 h-3.5 mr-1 text-white",
-                            isCheckingReadability && "animate-spin"
+          {/* Actions - hidden when using external ControlBar */}
+          {!hideHeaderActions && (
+            <div className="flex items-center gap-3 text-xs">
+              {/* Classify Docs Button - always visible */}
+              {onClassifyDocuments && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-7 px-2 text-xs border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/30"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onClassifyDocuments(true); // Reset and reclassify all
+                          }}
+                          disabled={isClassifying}
+                        >
+                          {isClassifying ? (
+                            <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
+                          ) : (
+                            <RefreshCw className="w-3.5 h-3.5 mr-1" />
                           )}
-                        />
-                        {isCheckingReadability ? "Checking..." : "Run Doc Readability Check"}
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="max-w-xs bg-alchemyPrimaryNavyBlue text-white border-alchemyPrimaryNavyBlue">
-                    <p className="text-xs font-medium">Verify Document Readability</p>
-                    <p className="text-xs text-gray-300 mt-1">
-                      Checks that all documents can be read and processed by the AI.
-                      This is a required step before running Due Diligence analysis.
-                    </p>
-                    <p className="text-xs text-blue-300 mt-1">
-                      {classificationSelectedDocs.size > 0
-                        ? `Will check ${classificationSelectedDocs.size} selected document(s)`
-                        : "Will check all documents"}
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
-          </div>
+                          {isClassifying ? "Classifying..." : "Classify Docs"}
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-xs bg-alchemyPrimaryNavyBlue text-white border-alchemyPrimaryNavyBlue">
+                      <p className="text-xs font-medium">AI Document Classification</p>
+                      <p className="text-xs text-gray-300 mt-1">
+                        Automatically classify all documents into appropriate folders based on their content using AI analysis.
+                      </p>
+                      <p className="text-xs text-purple-300 mt-1">
+                        Click to reclassify all documents.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+              {onUploadFiles && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  onClick={() => {
+                    // Reset and show dialog
+                    setUploadTargetFolder(categoryDistribution[0]?.category || "");
+                    setShowUploadDialog(true);
+                  }}
+                >
+                  <Upload className="w-3.5 h-3.5 mr-1" />
+                  Upload
+                </Button>
+              )}
+              {onAddCategory && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  onClick={() => setShowAddFolderDialog(true)}
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1" />
+                  Add Folder
+                </Button>
+              )}
+              {onRecheckReadability && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>
+                        <Button
+                          size="sm"
+                          className="h-7 px-3 text-xs rounded-full bg-green-600 hover:bg-green-700 text-white"
+                          onClick={() => {
+                            const selectedArray = Array.from(classificationSelectedDocs.keys());
+                            onRecheckReadability(selectedArray.length > 0 ? selectedArray : undefined);
+                          }}
+                          disabled={isCheckingReadability}
+                        >
+                          <RefreshCw
+                            className={cn(
+                              "w-3.5 h-3.5 mr-1 text-white",
+                              isCheckingReadability && "animate-spin"
+                            )}
+                          />
+                          {isCheckingReadability ? "Checking..." : "Run Doc Readability Check"}
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-xs bg-alchemyPrimaryNavyBlue text-white border-alchemyPrimaryNavyBlue">
+                      <p className="text-xs font-medium">Verify Document Readability</p>
+                      <p className="text-xs text-gray-300 mt-1">
+                        Checks that all documents can be read and processed by the AI.
+                        This is a required step before running Due Diligence analysis.
+                      </p>
+                      <p className="text-xs text-blue-300 mt-1">
+                        {classificationSelectedDocs.size > 0
+                          ? `Will check ${classificationSelectedDocs.size} selected document(s)`
+                          : "Will check all documents"}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Collapsible Content */}
@@ -692,8 +699,8 @@ export function FileTree({
                     <div
                       className={cn(
                         "flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors group/row",
-                        "bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700",
-                        "border border-gray-200 dark:border-gray-600 rounded-lg"
+                        "bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-700",
+                        "border border-gray-300 dark:border-gray-600 rounded-lg"
                       )}
                       onClick={() => toggleCategory(cat.category)}
                     >
@@ -1376,7 +1383,7 @@ export function FileTree({
   return (
     <div
       className={cn(
-        "bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden transition-shadow hover:shadow-xl",
+        "bg-white dark:bg-gray-800 rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg overflow-hidden transition-shadow hover:shadow-xl",
         className
       )}
       onDragOver={handleDragOver}
@@ -1424,68 +1431,73 @@ export function FileTree({
             )}
           </div>
 
-          {/* Classify Docs Button - always visible */}
-          {onClassifyDocuments && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7 px-2 text-xs border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/30"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onClassifyDocuments(true); // Reset and reclassify all
-                      }}
-                      disabled={isClassifying}
-                    >
-                      {isClassifying ? (
-                        <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
-                      ) : (
-                        <RefreshCw className="w-3.5 h-3.5 mr-1" />
-                      )}
-                      {isClassifying ? "Classifying..." : "Classify Docs"}
-                    </Button>
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="max-w-xs bg-alchemyPrimaryNavyBlue text-white border-alchemyPrimaryNavyBlue">
-                  <p className="text-xs font-medium">AI Document Classification</p>
-                  <p className="text-xs text-gray-300 mt-1">
-                    Automatically classify all documents into appropriate folders based on their content using AI analysis.
-                  </p>
-                  <p className="text-xs text-purple-300 mt-1">
-                    Click to reclassify all documents.
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
+          {/* Header action buttons - hidden when using external ControlBar */}
+          {!hideHeaderActions && (
+            <>
+              {/* Classify Docs Button - always visible */}
+              {onClassifyDocuments && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-7 px-2 text-xs border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/30"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onClassifyDocuments(true); // Reset and reclassify all
+                          }}
+                          disabled={isClassifying}
+                        >
+                          {isClassifying ? (
+                            <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
+                          ) : (
+                            <RefreshCw className="w-3.5 h-3.5 mr-1" />
+                          )}
+                          {isClassifying ? "Classifying..." : "Classify Docs"}
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-xs bg-alchemyPrimaryNavyBlue text-white border-alchemyPrimaryNavyBlue">
+                      <p className="text-xs font-medium">AI Document Classification</p>
+                      <p className="text-xs text-gray-300 mt-1">
+                        Automatically classify all documents into appropriate folders based on their content using AI analysis.
+                      </p>
+                      <p className="text-xs text-purple-300 mt-1">
+                        Click to reclassify all documents.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
 
-          {/* Readability Check Button */}
-          {onRecheckReadability && (
-            <Button
-              size="sm"
-              className="h-7 px-3 text-xs rounded-full bg-green-600 hover:bg-green-700 text-white"
-              onClick={(e) => {
-                e.stopPropagation();
-                const selectedArray = Array.from(selectedDocIds);
-                onRecheckReadability(
-                  selectedArray.length > 0 ? selectedArray : undefined
-                );
-              }}
-              disabled={isCheckingReadability}
-            >
-              <RefreshCw
-                className={cn(
-                  "w-3.5 h-3.5 mr-1 text-white",
-                  isCheckingReadability && "animate-spin"
-                )}
-              />
-              {isCheckingReadability
-                ? "Checking..."
-                : "Run Doc Readability Check"}
-            </Button>
+              {/* Readability Check Button */}
+              {onRecheckReadability && (
+                <Button
+                  size="sm"
+                  className="h-7 px-3 text-xs rounded-full bg-green-600 hover:bg-green-700 text-white"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const selectedArray = Array.from(selectedDocIds);
+                    onRecheckReadability(
+                      selectedArray.length > 0 ? selectedArray : undefined
+                    );
+                  }}
+                  disabled={isCheckingReadability}
+                >
+                  <RefreshCw
+                    className={cn(
+                      "w-3.5 h-3.5 mr-1 text-white",
+                      isCheckingReadability && "animate-spin"
+                    )}
+                  />
+                  {isCheckingReadability
+                    ? "Checking..."
+                    : "Run Doc Readability Check"}
+                </Button>
+              )}
+            </>
           )}
         </div>
       </div>

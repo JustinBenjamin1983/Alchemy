@@ -118,10 +118,10 @@ const DocumentItem: React.FC<{
     >
       <button
         onClick={onSelect}
-        className={`w-full px-3 py-2 text-left transition-colors ${
+        className={`w-full px-3 py-2.5 text-left transition-all ${
           isSelected
-            ? 'bg-blue-50 dark:bg-blue-900/20 border-l-2 border-blue-500'
-            : 'hover:bg-gray-50 dark:hover:bg-gray-800/50 border-l-2 border-transparent'
+            ? 'bg-white dark:bg-gray-800 border-l-3 border-blue-500 shadow-sm'
+            : 'hover:bg-gray-100 dark:hover:bg-gray-800/50 border-l-3 border-transparent hover:border-gray-300'
         }`}
       >
         <div className="flex items-start gap-2">
@@ -210,8 +210,8 @@ export const DocumentNavigator: React.FC<DocumentNavigatorProps> = ({
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex-shrink-0 px-3 py-2 border-b border-gray-200 dark:border-gray-700">
-        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+      <div className="flex-shrink-0 px-3 py-2.5 border-b border-gray-300 dark:border-gray-600 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-gray-800 dark:to-gray-800">
+        <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
           Documents
         </h3>
       </div>
@@ -219,10 +219,10 @@ export const DocumentNavigator: React.FC<DocumentNavigatorProps> = ({
       {/* All Documents option */}
       <button
         onClick={() => onDocumentSelect(null)}
-        className={`w-full px-3 py-2 text-left border-b border-gray-100 dark:border-gray-800 transition-colors ${
+        className={`w-full px-3 py-2.5 text-left border-b border-gray-200 dark:border-gray-700 transition-all ${
           selectedDocId === null
-            ? 'bg-blue-50 dark:bg-blue-900/20 border-l-2 border-blue-500'
-            : 'hover:bg-gray-50 dark:hover:bg-gray-800/50 border-l-2 border-transparent'
+            ? 'bg-white dark:bg-gray-800 border-l-3 border-blue-500 shadow-sm'
+            : 'hover:bg-gray-100 dark:hover:bg-gray-800/50 border-l-3 border-transparent hover:border-gray-300'
         }`}
       >
         <div className="flex items-center justify-between">

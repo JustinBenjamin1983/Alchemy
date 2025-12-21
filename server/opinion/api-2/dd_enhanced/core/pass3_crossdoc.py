@@ -28,6 +28,7 @@ from prompts.crossdoc import (
     build_cascade_mapping_prompt,
     build_authorization_check_prompt,
     build_consent_matrix_prompt,
+    build_missing_document_prompt,
 )
 
 
@@ -66,6 +67,7 @@ def run_pass3_crossdoc_synthesis(
         "cascade_analysis": {},
         "authorization_issues": [],
         "consent_matrix": [],
+        "missing_documents": [],
         "cross_doc_findings": [],
     }
 
@@ -108,6 +110,15 @@ def run_pass3_crossdoc_synthesis(
     results["consent_matrix"] = _build_consent_matrix_result(doc_context, client, blueprint, system_prompt)
     if verbose:
         print(f"       Identified {len(results['consent_matrix'])} consent requirements")
+
+    # 3.5 Missing Document Detection
+    if verbose:
+        print("  [3.5] Detecting missing documents...")
+    document_names = [doc.get('filename', doc.get('original_file_name', 'Unknown')) for doc in documents]
+    results["missing_documents"] = _detect_missing_documents(doc_context, document_names, client, blueprint, system_prompt)
+    if verbose:
+        missing_count = len(results["missing_documents"].get("missing_documents", []))
+        print(f"       Found {missing_count} missing/referenced documents")
 
     # Convert to cross-doc findings
     results["cross_doc_findings"] = _convert_to_findings(results)
@@ -257,6 +268,31 @@ def _build_consent_matrix_result(
     return response.get("consent_matrix", [])
 
 
+def _detect_missing_documents(
+    doc_context: str,
+    document_names: List[str],
+    client: ClaudeClient,
+    blueprint: Optional[Dict],
+    system_prompt: str
+) -> Dict:
+    """Detect documents referenced but not provided in the data room."""
+
+    prompt = build_missing_document_prompt(doc_context, document_names, blueprint)
+
+    response = client.complete_critical(
+        prompt=prompt,
+        system=system_prompt,
+        json_mode=True,
+        max_tokens=4096
+    )
+
+    if "error" in response:
+        print(f"    Warning: Missing document detection failed: {response.get('error')}")
+        return {"missing_documents": [], "incomplete_documents": [], "summary": {}}
+
+    return response
+
+
 def _convert_to_findings(results: Dict[str, Any]) -> List[Dict]:
     """Convert Pass 3 results to finding format for consistency."""
 
@@ -314,6 +350,40 @@ def _convert_to_findings(results: Dict[str, Any]) -> List[Dict]:
                 "pass": 3,
             })
             finding_id += 1
+
+    # Missing documents become findings
+    missing_docs = results.get("missing_documents", {})
+    for missing in missing_docs.get("missing_documents", []):
+        severity_map = {"critical": "critical", "high": "high", "medium": "medium", "low": "low"}
+        findings.append({
+            "finding_id": f"MISSING-{finding_id:03d}",
+            "finding_type": "missing_document",
+            "category": "document_gap",
+            "description": f"Missing document: {missing.get('referenced_as', 'Unknown document')}. {missing.get('why_needed', '')}",
+            "source_document": missing.get("referenced_in", "Multiple documents"),
+            "clause_reference": missing.get("clause_reference"),
+            "severity": severity_map.get(missing.get("criticality", "medium"), "medium"),
+            "deal_impact": "deal_blocker" if missing.get("is_deal_blocker") else "condition_precedent",
+            "action_required": f"Request {missing.get('referenced_as')} from seller",
+            "evidence_quote": f"Referenced in {missing.get('referenced_in')} as '{missing.get('referenced_as')}'",
+            "pass": 3,
+        })
+        finding_id += 1
+
+    # Incomplete documents (missing annexures/schedules)
+    for incomplete in missing_docs.get("incomplete_documents", []):
+        findings.append({
+            "finding_id": f"INCOMPLETE-{finding_id:03d}",
+            "finding_type": "incomplete_document",
+            "category": "document_gap",
+            "description": f"Incomplete document: {incomplete.get('document_name')} - missing {incomplete.get('missing_attachment')}",
+            "source_document": incomplete.get("document_name", "Unknown"),
+            "severity": "medium",
+            "deal_impact": "requires_resolution",
+            "action_required": f"Obtain {incomplete.get('missing_attachment')} for {incomplete.get('document_name')}",
+            "pass": 3,
+        })
+        finding_id += 1
 
     return findings
 

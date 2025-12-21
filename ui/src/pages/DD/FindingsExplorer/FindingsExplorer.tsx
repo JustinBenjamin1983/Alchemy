@@ -500,7 +500,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
   // Empty state when no run selected
   if (!selectedRunId || !selectedRun) {
     return (
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-8 h-full flex items-center justify-center">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-300 dark:border-gray-600 shadow-xl p-8 h-full flex items-center justify-center">
         <div className="text-center">
           <DocumentIcon />
           <h3 className="text-lg font-medium text-gray-600 dark:text-gray-400 mt-4 mb-2">
@@ -517,7 +517,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
   // Loading state
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-8 h-full flex items-center justify-center">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-300 dark:border-gray-600 shadow-xl p-8 h-full flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin h-8 w-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
           <p className="text-gray-400 dark:text-gray-500 text-sm">Loading findings...</p>
@@ -529,11 +529,11 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
   return (
     <div
       ref={containerRef}
-      className="flex flex-col bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 relative mb-24"
+      className="flex flex-col bg-white dark:bg-gray-900 rounded-xl border border-gray-300 dark:border-gray-600 shadow-xl relative mb-24 overflow-hidden"
       style={{ minHeight: containerHeight }}
     >
       {/* Top Bar - Compact with Run Selector, Filters, and Actions */}
-      <div className="flex-shrink-0 px-3 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+      <div className="flex-shrink-0 px-4 py-3 border-b border-gray-300 dark:border-gray-600 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-gray-800 dark:to-gray-800">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {/* Run Selector */}
@@ -547,7 +547,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
             <select
               value={activeTab}
               onChange={(e) => setActiveTab(e.target.value as ActiveTab)}
-              className="px-2.5 py-1.5 text-xs font-medium bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="h-8 px-2.5 text-xs font-medium bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               <optgroup label="Analysis">
                 <option value="findings">Findings</option>
@@ -570,7 +570,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
               <select
                 value={filterCategory || ''}
                 onChange={(e) => setFilterCategory((e.target.value as DDCategory) || null)}
-                className="px-2.5 py-1.5 text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="h-8 px-2.5 text-xs bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="">All Categories</option>
                 {DD_CATEGORY_ORDER.map(cat => (
@@ -586,7 +586,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
               <select
                 value={filterSeverity || ''}
                 onChange={(e) => setFilterSeverity(e.target.value as FindingSeverity || null)}
-                className="px-2.5 py-1.5 text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="h-8 px-2.5 text-xs bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="">All Severities</option>
                 {availableSeverities.map(sev => (
@@ -604,11 +604,11 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
             <button
               onClick={handleCopyContent}
               className={`
-                flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md
+                h-8 flex items-center gap-1.5 px-2.5 text-xs font-medium rounded-md
                 transition-all duration-200
                 ${copySuccess
                   ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-700'
-                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200'
+                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200'
                 }
               `}
               title="Copy content to clipboard"
@@ -653,12 +653,12 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
 
             {/* Report Download Buttons */}
             {onDownloadReport && (
-              <div className="flex items-center gap-2 pl-3 border-l border-gray-200 dark:border-gray-600">
+              <div className="flex items-center gap-2 pl-3 border-l border-gray-300 dark:border-gray-600">
                 <button
                   onClick={() => onDownloadReport('preliminary')}
                   disabled={reportTypeLoading !== null}
                   className={`
-                    flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg
+                    h-8 flex items-center gap-1.5 px-3 text-xs font-medium rounded-md
                     transition-all duration-200 ease-in-out
                     border border-gray-300 dark:border-gray-600
                     ${reportTypeLoading === 'preliminary'
@@ -677,7 +677,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                   onClick={() => onDownloadReport('final')}
                   disabled={reportTypeLoading !== null}
                   className={`
-                    flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg
+                    h-8 flex items-center gap-1.5 px-3 text-xs font-medium rounded-md
                     transition-all duration-200 ease-in-out
                     ${reportTypeLoading === 'final'
                       ? 'bg-green-500 text-white cursor-wait'
@@ -704,14 +704,14 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
           <div className="flex-1 flex min-h-0">
             {/* Left Panel - Document Navigator */}
             <div
-              className="flex-shrink-0 border-r border-gray-200 dark:border-gray-700 relative"
+              className="flex-shrink-0 border-r border-gray-300 dark:border-gray-600 bg-slate-50 dark:bg-gray-850 relative shadow-[2px_0_8px_-2px_rgba(0,0,0,0.1)]"
               style={{ width: leftPanelCollapsed ? 40 : leftPanelWidth }}
             >
               <div className="h-full flex flex-col">
                 {/* Collapse button */}
                 <button
                   onClick={() => setLeftPanelCollapsed(!leftPanelCollapsed)}
-                  className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
                   title={leftPanelCollapsed ? 'Expand documents panel' : 'Collapse documents panel'}
                 >
                   {leftPanelCollapsed ? <ExpandLeftIcon /> : <CollapseLeftIcon />}
@@ -756,7 +756,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
 
             {/* Right Panel - Finding Detail */}
             <div
-              className="flex-shrink-0 border-l border-gray-200 dark:border-gray-700 relative"
+              className="flex-shrink-0 border-l border-gray-300 dark:border-gray-600 bg-slate-50 dark:bg-gray-850 relative shadow-[-2px_0_8px_-2px_rgba(0,0,0,0.1)]"
               style={{ width: rightPanelCollapsed ? 40 : rightPanelWidth }}
             >
               {/* Right panel resize handle */}
@@ -771,7 +771,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                 {/* Collapse button */}
                 <button
                   onClick={() => setRightPanelCollapsed(!rightPanelCollapsed)}
-                  className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
                   title={rightPanelCollapsed ? 'Expand details panel' : 'Collapse details panel'}
                 >
                   {rightPanelCollapsed ? <ExpandRightIcon /> : <CollapseRightIcon />}
@@ -868,7 +868,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
       </div>
 
       {/* Bottom Stats Bar with Severity Legend */}
-      <div className="flex-shrink-0 px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+      <div className="flex-shrink-0 px-4 py-2.5 border-t border-gray-300 dark:border-gray-600 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-gray-800 dark:to-gray-800 shadow-[0_-2px_8px_-2px_rgba(0,0,0,0.05)]">
         <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
           <div className="flex items-center gap-4">
             <span>{stats.total} findings</span>

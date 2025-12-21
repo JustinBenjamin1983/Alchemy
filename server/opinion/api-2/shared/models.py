@@ -473,6 +473,9 @@ class DDAnalysisRun(BaseModel):
     # Cost tracking
     estimated_cost_usd = Column(Float, default=0.0)
 
+    # Model tier configuration (cost_optimized, balanced, high_accuracy, maximum_accuracy)
+    model_tier = Column(Text, default="balanced")
+
     # Timestamps
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     started_at = Column(DateTime, nullable=True)

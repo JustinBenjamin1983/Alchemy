@@ -69,6 +69,21 @@ FORMULA_PATTERN_MAP = {
     "termination_fee": "TXN_001",
     "escrow": "TXN_005",
     "holdback": "TXN_005",
+
+    # Regulatory patterns (NEW)
+    "bee_dilution": "REG_001",
+    "bee_shareholding": "REG_001",
+    "bee_compliance": "REG_001",
+    "equity_dilution": "REG_001",
+    "shareholding_dilution": "REG_001",
+    "covenant_compliance": "REG_002",
+    "financial_covenant": "REG_002",
+    "interest_cover": "REG_002",
+    "debt_ebitda": "REG_002",
+    "document_expiry": "REG_003",
+    "certificate_expiry": "REG_003",
+    "tax_clearance": "REG_003",
+    "license_expiry": "REG_003",
 }
 
 

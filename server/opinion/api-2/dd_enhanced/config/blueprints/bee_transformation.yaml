@@ -433,6 +433,70 @@ folder_questions:
       detail: Documents requiring manual classification review
       cot_hint: Identify BEE content → flag for review
     cross_doc_checks: []
+bee_analysis:
+  sector_threshold: 26%
+  sector_code: "Generic B-BBEE Codes of Good Practice (or applicable Sector Code)"
+  trigger_events:
+    - BEE partner acquisition of shares (initial empowerment transaction)
+    - Establishment of ESOP/employee trust
+    - Community trust formation and funding
+    - Vendor financing arrangement setup or modification
+    - Put/call option exercise by BEE partners
+    - Dividend flows to BEE structures
+    - Exit by BEE partner through tag-along or separate sale
+  key_questions:
+    - question: "Is this a genuine broad-based empowerment structure or fronting risk?"
+      why_critical: "B-BBEE Commission actively investigates fronting - criminal offence"
+      red_flag_if: "BEE partner has no genuine control, no economic benefit, or relationship with seller"
+    - question: "How is the BEE transaction being funded and what is the net value impact?"
+      why_critical: "Net value determines actual ownership credit - heavy debt = minimal BEE credit"
+      red_flag_if: "Vendor financing at market rates with minimal equity, no dividend flow"
+    - question: "What flow-through benefits reach individual black participants?"
+      why_critical: "Codes require genuine economic participation, not just paper ownership"
+      red_flag_if: "All dividends servicing debt, no distributions to underlying beneficiaries"
+    - question: "Are there exit mechanisms that could reduce BEE ownership below thresholds?"
+      why_critical: "Put options or buyback rights could unwind BEE structure"
+      red_flag_if: "Put option exercisable at will, no replacement BEE requirement"
+    - question: "Does the structure comply with 'Once Empowered Always Empowered' rules?"
+      why_critical: "OEAE allows recognition of historical BEE but has specific requirements"
+      red_flag_if: "Claiming OEAE but original BEE partner did not meet criteria"
+  dilution_scenarios:
+    - scenario: "Equity raise with non-BEE investor"
+      calculation: "Post-raise BEE % = (Current BEE shares) / (Current + New shares)"
+      threshold_breach_risk: "High if raise is material"
+    - scenario: "Conversion of BEE vendor financing to equity"
+      calculation: "Depends on conversion terms - may increase or decrease effective BEE"
+      threshold_breach_risk: "Medium - requires careful structuring"
+    - scenario: "Exercise of put option by BEE partner"
+      calculation: "BEE % drops to 0% for that holding unless replacement found"
+      threshold_breach_risk: "Critical if not replaced"
+    - scenario: "Employee trust participant exits on resignation"
+      calculation: "Individual forfeiture, trust retains shares"
+      threshold_breach_risk: "Low - trust structure absorbs departures"
+  contract_clauses_to_check:
+    - "Anti-dilution protection for BEE shareholders"
+    - "Dividend policy and preference share terms"
+    - "Lock-in periods and permitted transfer exceptions"
+    - "Tag-along and drag-along mechanics"
+    - "Put and call option terms and exercise conditions"
+    - "Pre-emptive rights on new share issues"
+    - "Board representation and reserved matters"
+    - "Anti-fronting warranties and covenants"
+  automatic_calculation_triggers:
+    - trigger: "vendor financing|notional vendor|BEE loan"
+      calculation: "REG_001 - BEE Net Value Calculator"
+      required_inputs:
+        - "Gross equity value attributable to BEE"
+        - "Outstanding vendor loan balance"
+        - "Preference share balance"
+        - "Any other BEE-related debt"
+    - trigger: "enterprise development|ED spend|supplier development"
+      calculation: "ED/SD Compliance Calculator"
+      required_inputs:
+        - "Annual ED spend"
+        - "Annual SD spend"
+        - "Net profit after tax"
+        - "Sector code requirements"
 cot_questions:
   ownership_regulatory:
   - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
@@ -446,6 +510,17 @@ cot_questions:
   - How do the various B-BBEE scorecard elements score currently?
   - What ownership element requirements apply to this sector?
   - Are there any empowerment financing arrangements that survive the transaction?
+  bee_compliance:
+  - What is the current verified B-BBEE ownership percentage and how is it calculated (flow-through)?
+  - Is ownership held directly or through trusts/SPVs, and what is the beneficial ownership chain?
+  - What net value calculation applies (gross value less vendor financing)?
+  - Are there any fronting indicators under the B-BBEE Act?
+  - What flow-through economic benefits reach individual black participants?
+  - What governance rights do BEE partners have (board seats, reserved matters)?
+  - What are the anti-dilution protections for BEE shareholders?
+  - What exit mechanisms exist and do they preserve BEE compliance?
+  - Does the 'Once Empowered Always Empowered' rule apply?
+  - What is the status of Enterprise and Supplier Development spend?
   ownership_structure:
   - What is the current HDSA ownership percentage?
   - How is ownership calculated (flow-through, modified flow-through)?

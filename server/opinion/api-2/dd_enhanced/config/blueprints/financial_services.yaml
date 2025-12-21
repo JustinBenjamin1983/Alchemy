@@ -917,6 +917,62 @@ folder_questions:
       detail: Documents requiring manual classification review
       cot_hint: Identify FS content → flag for review
     cross_doc_checks: []
+bee_analysis:
+  sector_threshold: 25%
+  sector_code: "Financial Sector Code (FSC)"
+  trigger_events:
+    - Acquisition of controlling interest in FSP
+    - Merger of financial services entities
+    - Change in beneficial ownership exceeding PA thresholds
+    - Significant shareholder change requiring FSCA notification
+    - Acquisition financing by non-BEE lender
+    - Share pledge enforcement affecting BEE ownership
+    - Capital injection by non-BEE investor
+  key_questions:
+    - question: "Does the target meet FSC ownership requirements (25% black ownership)?"
+      why_critical: "Financial Sector Code requires 25% black ownership for compliance"
+      red_flag_if: "Current BEE below 25% or transaction reduces BEE below threshold"
+    - question: "How will the transaction affect the target's FSC BEE rating?"
+      why_critical: "BEE rating affects government and parastatal business eligibility"
+      red_flag_if: "Transaction causes BEE level to drop affecting key contracts"
+    - question: "Are there PA-approved shareholders being replaced by non-approved parties?"
+      why_critical: "PA approval required for significant shareholders - could delay transaction"
+      red_flag_if: "Non-approved BEE partner seeking to acquire significant stake"
+    - question: "What empowerment financing exists and how is it secured?"
+      why_critical: "Security over BEE shares could trigger BEE loss on enforcement"
+      red_flag_if: "BEE shares pledged as security without anti-dilution protection"
+    - question: "Is there BEE-focused fund or asset management business at risk?"
+      why_critical: "Some mandates require minimum BEE ownership in fund manager"
+      red_flag_if: "Client mandates with BEE requirements that would be breached"
+  dilution_scenarios:
+    - scenario: "Capital injection for regulatory capital"
+      calculation: "Post-injection BEE % = (Current BEE shares) / (Current + New capital shares)"
+      threshold_breach_risk: "High - banks often need capital raises"
+    - scenario: "Insurance recapitalisation"
+      calculation: "Post-recap BEE % adjusted for new share issuance"
+      threshold_breach_risk: "Medium - solvency driven"
+    - scenario: "PE investment in fintech subsidiary"
+      calculation: "Subsidiary level BEE % vs consolidated group BEE %"
+      threshold_breach_risk: "Medium - may affect subsidiary but not group"
+    - scenario: "Non-BEE acquisition of FSP"
+      calculation: "Post-acquisition BEE % = 0% unless structure preserves BEE"
+      threshold_breach_risk: "Critical - FSC requires 25%"
+  contract_clauses_to_check:
+    - "FSP licence conditions regarding ownership changes"
+    - "PA-approved shareholder provisions"
+    - "BEE warranties in acquisition agreements"
+    - "Government/parastatal contracts with BEE requirements"
+    - "Anti-dilution provisions for BEE shareholders"
+    - "Asset management mandates with BEE ownership conditions"
+    - "Security arrangements over BEE shares"
+  automatic_calculation_triggers:
+    - trigger: "financial services|FSP|bank|insurer"
+      calculation: "REG_001 - BEE Dilution Calculator (FSC 25% threshold)"
+      required_inputs:
+        - "Current BEE shareholding percentage"
+        - "Target ownership percentage for acquirer"
+        - "Any co-investment by BEE party"
+        - "Current FSC BEE level"
 cot_questions:
   ownership_regulatory:
   - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
@@ -929,6 +985,15 @@ cot_questions:
   - Does the transaction trigger Prudential Authority approval (>15%/25%/49% thresholds)?
   - Are there any fit and proper requirements for new significant shareholders?
   - What FAIS Section 20 notification requirements apply to this transaction?
+  bee_compliance:
+  - What is the current FSC BEE ownership percentage (25% threshold)?
+  - How will the transaction affect the target's FSC BEE rating?
+  - Are there any government or parastatal contracts dependent on BEE level?
+  - What BEE warranties and representations are given in the transaction?
+  - Is there security over BEE shares that could be enforced?
+  - Are there asset management mandates with BEE ownership conditions?
+  - What is the post-transaction BEE ownership calculation?
+  - What empowerment financing arrangements exist?
   regulatory_licensing:
   - What FSCA/PA licenses does the target hold and are they in good standing?
   - What regulatory approvals are required for CoC and what is the timeline?

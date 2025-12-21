@@ -48,12 +48,16 @@ export function DDTop({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleDeleteClick = () => {
+    console.log("[DDTop] Delete button clicked, opening dialog");
     setShowDeleteDialog(true);
   };
 
   const handleConfirmDelete = () => {
+    console.log("[DDTop] Confirm delete clicked, ddId:", ddId);
     if (onDelete) {
       onDelete(ddId);
+    } else {
+      console.error("[DDTop] onDelete prop is not defined!");
     }
     setShowDeleteDialog(false);
   };

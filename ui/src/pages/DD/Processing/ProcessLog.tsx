@@ -200,7 +200,7 @@ export const ProcessLog: React.FC<ProcessLogProps> = ({
     <div
       ref={containerRef}
       className={cn(
-        "bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden transition-shadow hover:shadow-xl",
+        "bg-white dark:bg-gray-800 rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg overflow-hidden transition-shadow hover:shadow-xl",
         className
       )}
     >

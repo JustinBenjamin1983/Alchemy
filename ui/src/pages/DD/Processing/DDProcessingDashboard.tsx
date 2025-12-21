@@ -61,6 +61,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { celebrationVariants, SPRING_GENTLE } from "./animations";
+import { AccuracyTierSelector, ModelTier } from "./AccuracyTierSelector";
+import { ControlBar } from "./ControlBar";
 
 interface DDProcessingDashboardProps {
   ddId?: string;
@@ -103,6 +105,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   const [customCategories, setCustomCategories] = useState<string[]>([]);
   const [deletedCategories, setDeletedCategories] = useState<Set<string>>(new Set());
   const [logEntriesLoaded, setLogEntriesLoaded] = useState(false);
+  const [selectedModelTier, setSelectedModelTier] = useState<ModelTier>("balanced");
 
   // Track dismissed completion popups per run in localStorage
   const getCompletionDismissedKey = (runId: string) => `dd-completion-dismissed-${runId}`;
@@ -172,10 +175,23 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   // Hooks
   const { data: ddData, refetch: refetchDD } = useGetDD(ddId, !!ddId);
   const { data: runsData } = useAnalysisRunsList(ddId || undefined);
-  const { progress, isLoading, error, refetch } = useProcessingProgress(ddId, pollInterval, currentRunId);
+  const { progress: rawProgress, isLoading, error, refetch } = useProcessingProgress(ddId, pollInterval, currentRunId);
   const checkReadability = useCheckReadability();
   const { startProcessing, isStarting, error: startError } = useStartProcessing();
   const createRun = useCreateAnalysisRun();
+
+  // Sanitized progress - returns undefined during new run creation to reset UI
+  // This ensures pipeline rings, progress bars, and elapsed time reset when starting a new run
+  const progress = useMemo(() => {
+    const isNewRunPending = createRun.isPending || isStarting;
+    const isProgressStale = rawProgress?.runId && currentRunId && rawProgress.runId !== currentRunId;
+
+    if (isNewRunPending || isProgressStale) {
+      return undefined;
+    }
+    return rawProgress;
+  }, [rawProgress, createRun.isPending, isStarting, currentRunId]);
+
   const elapsedTime = useElapsedTime(progress?.startedAt || null, progress?.status);
 
   // Adjust polling speed based on processing status
@@ -311,6 +327,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   }, [documents]);
 
   // Risk summary from progress
+  // Note: progress is already sanitized to be undefined during new run transitions
   const riskSummary: RiskSummary = useMemo(
     () => ({
       critical: progress?.findingCounts?.critical ?? 0,
@@ -883,9 +900,12 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
       addLogEntry("info", `Run "${runResult.name}" created, starting analysis...`);
       setCurrentRunId(runResult.run_id);
 
-      // Step 2: Start processing for this run
-      const result = await startProcessing(runResult.run_id);
-      addLogEntry("success", "Due Diligence processing initiated", `Processing ${result.totalDocuments} documents`);
+      // Step 2: Start processing for this run with selected model tier
+      const result = await startProcessing(runResult.run_id, { modelTier: selectedModelTier });
+      const tierLabel = selectedModelTier === "cost_optimized" ? "Economy" :
+                       selectedModelTier === "balanced" ? "Balanced" :
+                       selectedModelTier === "high_accuracy" ? "High Accuracy" : "Maximum";
+      addLogEntry("success", "Due Diligence processing initiated", `Processing ${result.totalDocuments} documents with ${tierLabel} accuracy`);
 
       // Trigger a refetch to start showing progress
       refetch();
@@ -1277,7 +1297,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   }, [canStartDD, selectedDocIds.size, docsToProcessCount, isProcessingInProgress, isClassificationInProgress, isOrganisationInProgress, isReadabilityInProgress, readabilityChecked, hasCompletedRun, areDocsReadyForDD]);
 
   return (
-    <div className="min-h-[600px] bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 p-6 space-y-6">
+    <div className="min-h-[600px] bg-gray-200 dark:from-gray-900 dark:to-gray-950 p-6 space-y-6">
       {/* Transaction Summary */}
       {ddData && (
         <TransactionSummary
@@ -1290,162 +1310,133 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         />
       )}
 
-      {/* Main content - Two column layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-6 gap-6">
-        {/* Left column (2/6) - Pipeline visualization */}
-        <div className="lg:col-span-2 space-y-6">
+      {/* Unified Control Bar */}
+      <ControlBar
+        // Organize actions
+        onClassifyDocs={() => {
+          if (ddId) {
+            addLogEntry("info", "Reclassifying all documents...");
+            classifyDocuments.mutate({ ddId, reset: true }, {
+              onSuccess: () => {
+                addLogEntry("success", "Document classification started");
+                refetchOrganisation();
+              },
+              onError: (err) => {
+                addLogEntry("error", `Classification failed: ${err.message}`);
+              }
+            });
+          }
+        }}
+        isClassifying={classifyDocuments.isPending || organisationProgress?.status === "classifying"}
+        onAddFolder={() => {
+          // Trigger add folder dialog in FileTree - we'll handle this via state
+          const event = new CustomEvent('dd-add-folder');
+          window.dispatchEvent(event);
+        }}
+        // Validate actions
+        onRunReadability={() => {
+          const selectedArray = Array.from(selectedDocIds);
+          runReadabilityCheck(selectedArray.length > 0 ? selectedArray : undefined);
+        }}
+        isCheckingReadability={checkReadability.isPending}
+        readabilityComplete={readabilityChecked}
+        readyCount={readabilitySummary.ready}
+        failedCount={readabilitySummary.failed}
+        // Configure
+        selectedTier={selectedModelTier}
+        onTierChange={setSelectedModelTier}
+        // Run DD
+        onRunDD={handleRunDDClick}
+        canRunDD={canStartDD}
+        runDDTooltip={runDDTooltip}
+        docsToProcessCount={docsToProcessCount}
+        // Processing state
+        isProcessing={isProcessingInProgress}
+        isPaused={isPaused}
+        onPauseResume={handlePauseResume}
+        onCancel={handleCancel}
+        isCancelling={isCancelling}
+        // Restart
+        showRestart={isRunStuck || isUnexpectedFailure}
+        onRestart={handleRestart}
+        isRestarting={isRestarting}
+        // Disabled during operations
+        disabled={isClassificationInProgress || isOrganisationInProgress}
+      />
+
+      {/* Main content - Two column layout (Documents 60% | Pipeline 40%) */}
+      <div className="grid grid-cols-1 lg:grid-cols-10 gap-6">
+        {/* LEFT COLUMN (6/10 = 60%) - Documents (primary action area) */}
+        <div className="lg:col-span-6 order-2 lg:order-1">
+          {/* File Tree - Unified document panel */}
+          <FileTree
+            ddId={ddId}
+            selectedDocIds={selectedDocIds}
+            onSelectionChange={handleSelectionChange}
+            onRecheckReadability={runReadabilityCheck}
+            isCheckingReadability={checkReadability.isPending}
+            isCollapsed={isDocPanelCollapsed}
+            onToggleCollapse={() => setIsDocPanelCollapsed(!isDocPanelCollapsed)}
+            isClassificationMode={currentPhase === "classified" || currentPhase === "organised" || currentPhase === "readability" || currentPhase === "ready" || currentPhase === "processing" || currentPhase === "completed"}
+            transactionType={ddData?.transaction_type}
+            categoryDistribution={categoryDistribution}
+            documentsByCategory={documentsByCategory}
+            classifiedCount={organisationProgress?.classifiedCount || 0}
+            totalDocuments={organisationProgress?.totalDocuments || documents.length}
+            isMovingDocument={documentReassign.isPending}
+            onMoveDocument={handleMoveDocument}
+            onAddCategory={handleAddCategory}
+            onDeleteCategory={handleDeleteCategory}
+            onClassifyDocuments={(reset) => {
+              if (ddId) {
+                addLogEntry("info", reset ? "Reclassifying all documents..." : "Classifying documents...");
+                classifyDocuments.mutate({ ddId, reset }, {
+                  onSuccess: () => {
+                    addLogEntry("success", "Document classification started");
+                    refetchOrganisation();
+                  },
+                  onError: (err) => {
+                    addLogEntry("error", `Classification failed: ${err.message}`);
+                  }
+                });
+              }
+            }}
+            isClassifying={classifyDocuments.isPending || organisationProgress?.status === "classifying"}
+            hideHeaderActions
+          />
+
+          {/* Process Log - below documents */}
+          <div className="mt-4">
+          <ProcessLog
+            entries={logEntries}
+            isCollapsed={isLogCollapsed}
+            onToggleCollapse={() => setIsLogCollapsed(!isLogCollapsed)}
+            summary={
+              readabilitySummary.ready > 0
+                ? `${readabilitySummary.ready} ready, ${readabilitySummary.failed} failed`
+                : undefined
+            }
+            currentlyProcessing={
+              progress?.status === "processing" && progress?.currentDocumentName
+                ? {
+                    documentName: progress.currentDocumentName,
+                    passLabel: PASS_CONFIG[progress.currentPass]?.label || progress.currentPass,
+                    itemsProcessed: progress.passProgress?.[progress.currentPass]?.itemsProcessed,
+                    totalItems: progress.passProgress?.[progress.currentPass]?.totalItems,
+                  }
+                : null
+            }
+          />
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN (4/10 = 40%) - Pipeline status area */}
+        <div className="lg:col-span-4 order-1 lg:order-2 space-y-4">
           {/* Processing Pipeline Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg p-6 transition-shadow hover:shadow-xl">
-            {/* Run DD Button / Pause & Cancel Buttons */}
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Processing Pipeline
-              </h2>
-              {isProcessingInProgress ? (
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handlePauseResume}
-                    className="text-amber-600 border-amber-600 hover:bg-amber-50"
-                  >
-                    {isPaused ? (
-                      <>
-                        <Play className="mr-1 h-3.5 w-3.5" />
-                        Resume
-                      </>
-                    ) : (
-                      <>
-                        <Pause className="mr-1 h-3.5 w-3.5" />
-                        Pause
-                      </>
-                    )}
-                  </Button>
-                  {isRunStuck && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleRestart}
-                      disabled={isRestarting}
-                      className="text-blue-600 border-blue-600 hover:bg-blue-50"
-                      title="Processing appears stuck. Click to restart from checkpoint."
-                    >
-                      {isRestarting ? (
-                        <>
-                          <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
-                          Restarting...
-                        </>
-                      ) : (
-                        <>
-                          <RotateCcw className="mr-1 h-3.5 w-3.5" />
-                          Restart
-                        </>
-                      )}
-                    </Button>
-                  )}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCancel}
-                    disabled={isCancelling}
-                    className="text-red-600 border-red-600 hover:bg-red-50"
-                  >
-                    {isCancelling ? (
-                      <>
-                        <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
-                        Cancelling...
-                      </>
-                    ) : (
-                      <>
-                        <Square className="mr-1 h-3.5 w-3.5" />
-                        Cancel
-                      </>
-                    )}
-                  </Button>
-                </div>
-              ) : isUnexpectedFailure ? (
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleRestart}
-                    disabled={isRestarting}
-                    className="text-blue-600 border-blue-600 hover:bg-blue-50"
-                  >
-                    {isRestarting ? (
-                      <>
-                        <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
-                        Restarting...
-                      </>
-                    ) : (
-                      <>
-                        <RotateCcw className="mr-1 h-3.5 w-3.5" />
-                        Restart from Checkpoint
-                      </>
-                    )}
-                  </Button>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span>
-                          <Button
-                            className="bg-green-600 hover:bg-green-700 text-white"
-                            size="sm"
-                            onClick={handleRunDDClick}
-                            disabled={!canStartDD}
-                          >
-                            <Play className="mr-1 h-3.5 w-3.5" />
-                            New Run
-                          </Button>
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" className="max-w-xs bg-alchemyPrimaryNavyBlue text-white border-alchemyPrimaryNavyBlue">
-                        <p className="text-xs">{runDDTooltip}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              ) : (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span>
-                        <Button
-                          className="bg-green-600 hover:bg-green-700 text-white"
-                          onClick={handleRunDDClick}
-                          disabled={!canStartDD}
-                        >
-                          {isClassificationInProgress ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Classifying...
-                            </>
-                          ) : isOrganisationInProgress ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Organising...
-                            </>
-                          ) : isReadabilityInProgress ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Checking...
-                            </>
-                          ) : (
-                            <>
-                              <Play className="mr-2 h-4 w-4" />
-                              Run Due Diligence
-                            </>
-                          )}
-                        </Button>
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" className="max-w-xs bg-alchemyPrimaryNavyBlue text-white border-alchemyPrimaryNavyBlue">
-                      <p className="text-xs">{runDDTooltip}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-            </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm p-4">
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">
+              Processing Pipeline
+            </h2>
 
             {/* Classification progress (during classifying phase) */}
             {currentPhase === "classifying" && organisationProgress && (
@@ -1540,12 +1531,12 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
             )}
 
             {/* Pipeline rings */}
-            <div className="flex justify-center mb-6">
-              <PipelineRings progress={progress} size={300} />
+            <div className="flex justify-center mt-20 mb-8">
+              <PipelineRings progress={progress} size={200} />
             </div>
 
-            {/* Pass progress bars */}
-            <div className="space-y-2">
+            {/* Pass progress bars - compact for narrow column */}
+            <div className="space-y-2 mt-24">
               {(["extract", "analyze", "calculate", "crossdoc", "aggregate", "synthesize", "verify"] as const).map((pass) => {
                 const config = PASS_CONFIG[pass];
                 const passProgress = progress?.passProgress?.[pass];
@@ -1553,7 +1544,6 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
                 const isFailed = passProgress?.status === "failed";
                 const isActive = progress?.currentPass === pass && progress?.status === "processing";
 
-                // Use per-pass ring color for active/completed, red for failed, grey for pending
                 const ringColor = RING_COLORS[pass as ProcessingPass];
                 const barColor = isFailed
                   ? STATUS_COLORS.failed
@@ -1562,14 +1552,13 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
                     : STATUS_COLORS.default;
 
                 return (
-                  <div key={pass} className="flex items-center gap-3">
-                    <div className="w-24 text-sm text-gray-600 dark:text-gray-400">
+                  <div key={pass} className="flex items-center gap-2">
+                    <div className="w-20 text-xs text-gray-600 dark:text-gray-400">
                       {config.shortLabel}
                     </div>
-                    {/* Bar container - shifted left to align center with rings */}
-                    <div className="flex-1 mr-[10%]">
+                    <div className="flex-1 min-w-0">
                       <div
-                        className="h-2 rounded-full overflow-hidden"
+                        className="h-1.5 rounded-full overflow-hidden"
                         style={{
                           backgroundColor: 'transparent',
                           border: `1px solid ${barColor}`,
@@ -1585,7 +1574,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
                       </div>
                     </div>
                     <div
-                      className="w-12 text-right text-sm font-mono"
+                      className="w-10 text-right text-[10px] font-mono"
                       style={{ color: barColor }}
                     >
                       {passProgress?.progress ?? 0}%
@@ -1596,91 +1585,26 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
             </div>
 
             {/* Time tracking */}
-            <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-500">
-              <span>Elapsed DD Run Time: {elapsedTime}</span>
+            <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700 text-center text-xs text-gray-500">
+              <span>Elapsed: {elapsedTime}</span>
             </div>
           </div>
 
           {/* Risk Summary */}
           {(currentPhase === "processing" || currentPhase === "completed") && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg p-6 transition-shadow hover:shadow-xl">
-              <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">
-                DD Run Risk Summary
+            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm p-4">
+              <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                Risk Summary
               </h2>
               <RiskSummaryCounters summary={riskSummary} />
             </div>
           )}
         </div>
-
-        {/* Right column (4/6) - Documents, Organisation Review, and Log */}
-        <div className="lg:col-span-4 space-y-6">
-          {/* File Tree - Unified document panel */}
-          {/* In classification mode: shows AI categories with move/approve functionality */}
-          {/* In other modes: shows folder tree with selection/readability */}
-          <FileTree
-            ddId={ddId}
-            selectedDocIds={selectedDocIds}
-            onSelectionChange={handleSelectionChange}
-            onRecheckReadability={runReadabilityCheck}
-            isCheckingReadability={checkReadability.isPending}
-            isCollapsed={isDocPanelCollapsed}
-            onToggleCollapse={() => setIsDocPanelCollapsed(!isDocPanelCollapsed)}
-            // Classification mode props - show when classified OR organised (unified panel)
-            isClassificationMode={currentPhase === "classified" || currentPhase === "organised" || currentPhase === "readability" || currentPhase === "ready" || currentPhase === "processing" || currentPhase === "completed"}
-            transactionType={ddData?.transaction_type}
-            categoryDistribution={categoryDistribution}
-            documentsByCategory={documentsByCategory}
-            classifiedCount={organisationProgress?.classifiedCount || 0}
-            totalDocuments={organisationProgress?.totalDocuments || documents.length}
-            isMovingDocument={documentReassign.isPending}
-            onMoveDocument={handleMoveDocument}
-            onAddCategory={handleAddCategory}
-            onDeleteCategory={handleDeleteCategory}
-            // Classification action props - always visible button
-            onClassifyDocuments={(reset) => {
-              if (ddId) {
-                addLogEntry("info", reset ? "Reclassifying all documents..." : "Classifying documents...");
-                classifyDocuments.mutate({ ddId, reset }, {
-                  onSuccess: () => {
-                    addLogEntry("success", "Document classification started");
-                    refetchOrganisation();
-                  },
-                  onError: (err) => {
-                    addLogEntry("error", `Classification failed: ${err.message}`);
-                  }
-                });
-              }
-            }}
-            isClassifying={classifyDocuments.isPending || organisationProgress?.status === "classifying"}
-          />
-
-          {/* Process Log */}
-          <ProcessLog
-            entries={logEntries}
-            isCollapsed={isLogCollapsed}
-            onToggleCollapse={() => setIsLogCollapsed(!isLogCollapsed)}
-            summary={
-              readabilitySummary.ready > 0
-                ? `${readabilitySummary.ready} ready, ${readabilitySummary.failed} failed`
-                : undefined
-            }
-            currentlyProcessing={
-              progress?.status === "processing" && progress?.currentDocumentName
-                ? {
-                    documentName: progress.currentDocumentName,
-                    passLabel: PASS_CONFIG[progress.currentPass]?.label || progress.currentPass,
-                    itemsProcessed: progress.passProgress?.[progress.currentPass]?.itemsProcessed,
-                    totalItems: progress.passProgress?.[progress.currentPass]?.totalItems,
-                  }
-                : null
-            }
-          />
-        </div>
       </div>
 
       {/* Confirmation Dialog - All docs ready */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="text-base">Start Due Diligence Analysis?</DialogTitle>
             <DialogDescription className="text-sm">
@@ -1688,6 +1612,12 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
               {selectedDocIds.size === 0 && " (All readable documents)"}
             </DialogDescription>
           </DialogHeader>
+          <div className="py-2">
+            <AccuracyTierSelector
+              value={selectedModelTier}
+              onChange={setSelectedModelTier}
+            />
+          </div>
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" size="sm" onClick={() => setShowConfirmDialog(false)}>
               Cancel
@@ -1712,6 +1642,12 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
               {docsToProcessCount} document(s) will be analysed.
             </DialogDescription>
           </DialogHeader>
+          <div className="py-2">
+            <AccuracyTierSelector
+              value={selectedModelTier}
+              onChange={setSelectedModelTier}
+            />
+          </div>
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" size="sm" onClick={() => setShowWarningDialog(false)}>
               Go Back

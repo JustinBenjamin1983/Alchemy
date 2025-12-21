@@ -58,6 +58,15 @@ When calculating financial exposures, SHOW YOUR WORKING (e.g., "24 months × R3.
 def _build_cot_methodology_section(blueprint: Optional[Dict] = None) -> str:
     """Build the Chain-of-Thought reasoning methodology section."""
 
+    # Determine jurisdiction and transaction type for conditional steps
+    jurisdiction = blueprint.get("jurisdiction", "South Africa") if blueprint else "South Africa"
+    transaction_type = blueprint.get("transaction_type", "").lower() if blueprint else ""
+
+    # Determine which conditional steps to include
+    is_south_africa = "south africa" in jurisdiction.lower() or jurisdiction.lower() == "za"
+    is_acquisition = any(kw in transaction_type for kw in ["acquisition", "merger", "m&a", "takeover", "buyout", "equity", "investment"])
+    is_financing = any(kw in transaction_type for kw in ["finance", "financing", "loan", "facility", "debt", "capital"])
+
     base_cot = """CHAIN-OF-THOUGHT REASONING METHODOLOGY:
 
 For EACH potential finding, you MUST reason through these steps IN ORDER before classifying:
@@ -81,14 +90,67 @@ For EACH potential finding, you MUST reason through these steps IN ORDER before 
 - Identify going concern indicators: negative working capital, audit qualifications, cash burn rate
 - Flag any declining trend >10% or margin compression >5 percentage points
 
-**Step 8 - BEE/OWNERSHIP ANALYSIS (for South African mining transactions - CRITICAL):**
-- Pre-transaction HDSA ownership: Calculate current % held by Historically Disadvantaged South Africans
-- Post-transaction HDSA ownership: If buyer is non-HDSA acquiring 100%, what is the new HDSA %?
-- Mining Charter III requirement: 30% HDSA minimum (26% under transitional provisions)
-- [CRITICAL FLAG] if post-transaction HDSA < 26% = REGULATORY DEAL BLOCKER
-- Example calculation format: "Current: [X]% HDSA ([Shareholder A] [Y]% + [Shareholder B] [Z]%). Post-transaction if [Acquirer] is non-HDSA: HDSA = 0%. Mining Charter requires 26% minimum. GAP: [calculated]%"
+**Step 8 - DATE/EXPIRY AWARENESS (CRITICAL for regulatory documents):**
+- Extract ALL dates from certificates, clearances, licenses, permits
+- Calculate days until expiry from TODAY's date
+- Flag as CRITICAL if:
+  * ALREADY EXPIRED (negative days) - [EXPIRED: X days ago]
+  * Expiring within 90 days - [EXPIRING SOON: X days]
+  * Expiring before expected transaction close - [DEAL RISK: expires before close]
+- Key documents to check expiry:
+  * Tax clearance certificates (typically valid 12 months)
+  * BEE verification certificates (typically valid 12 months)
+  * Business licenses and permits
+  * Professional registrations
+  * Insurance policies
+  * Regulatory approvals (if time-limited)
+- For EACH dated document: "Issue date: [DATE], Expiry date: [DATE], Days remaining: [X]"
 
 IMPORTANT: Only assign severity and deal_impact AFTER completing your reasoning. Your reasoning must justify your classification."""
+
+    # Add conditional steps based on jurisdiction and transaction type
+    step_num = 9
+    conditional_steps = []
+
+    # BEE Analysis - South Africa only
+    if is_south_africa:
+        conditional_steps.append(f"""
+**Step {step_num} - BEE/OWNERSHIP DILUTION ANALYSIS (CRITICAL for South African transactions):**
+- Current BEE ownership: Calculate current % held by BEE/HDSA shareholders
+- Post-transaction BEE ownership: Calculate dilution from equity injection or share issuance
+- BEE DILUTION CALCULATION (MANDATORY when equity is being injected):
+  * Formula: New BEE % = (Current BEE Shareholding Value) / (Current Company Value + Equity Injection) × 100
+  * Example: "Current BEE: 35% of R1.28B = R448M value. Post R450M injection: R448M / R1.73B = 25.9%. DILUTION: 9.1pp below 26% threshold."
+  * [CRITICAL FLAG] if post-transaction BEE < 26% = REGULATORY COMPLIANCE BREACH
+- Impact assessment: Loss of BEE status affects government contracts, preferential procurement, industry licenses
+- Sector thresholds: Generic Codes (26%), Mining Charter (30%), Financial Services (25%), ICT (30%)
+- ALWAYS show the calculation working when shareholding percentages and equity amounts are available""")
+        step_num += 1
+
+    # Consolidation Analysis - Acquisitions with financing only
+    if is_acquisition or is_financing:
+        conditional_steps.append(f"""
+**Step {step_num} - CONSOLIDATION ANALYSIS (for acquisition financing):**
+When analyzing acquisition transactions where target financials are available:
+- PRO FORMA CONSOLIDATION: Calculate combined financial position post-acquisition
+  * Combined Debt: Acquirer debt + Target debt + New acquisition financing
+  * Combined EBITDA: Acquirer EBITDA + Target EBITDA (less synergy costs in Year 1)
+  * Leverage Ratio: Combined Debt / Combined EBITDA
+- COVENANT STRESS TEST: Will combined entity meet ALL covenant requirements?
+  * Interest Cover: Combined EBITDA / Combined Interest Expense
+  * Debt/EBITDA: Compare to covenant thresholds (typically max 3.5x-4.5x)
+  * Current Ratio: Combined Current Assets / Combined Current Liabilities
+- HIDDEN EXPOSURES: Identify items that become visible only on consolidation
+  * Intercompany eliminations
+  * Off-balance sheet items that consolidate
+  * Contingent liabilities that crystallize
+  * Related party transactions that must be eliminated
+- Example format: "PRO FORMA: Acquirer R800M debt + Target R180M debt + R2.4B new facility = R3.38B total. EBITDA R450M. Leverage: 7.5x [EXCEEDS 4.5x covenant]\"""")
+        step_num += 1
+
+    # Append conditional steps to base
+    if conditional_steps:
+        base_cot = base_cot.rstrip('"') + "\n" + "\n".join(conditional_steps) + '"'
 
     # Add transaction-type specific CoT questions if available
     if blueprint and blueprint.get("cot_questions"):

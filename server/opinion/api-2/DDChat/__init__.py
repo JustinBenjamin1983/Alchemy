@@ -5,37 +5,45 @@ import json
 import textwrap
 import azure.functions as func
 from shared.utils import auth_get_email
-from shared.rag import create_chunks_and_embeddings_from_text, get_llm_summary, get_llm_summaryChat, assess_legal_risks, combine_multiple_responses
-from shared.ddsearch import search_similar_dd_documents, format_search_results_for_prompt
 from shared.session import transactional_session
 from shared.models import Folder, DueDiligence, DueDiligenceMember, Perspective, Document, DDQuestion, DDQuestionReferencedDoc
 
+DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
+COGNITIVE_SEARCH_AVAILABLE = bool(os.environ.get("COGNITIVE_SEARCH_ENDPOINT", "").strip())
+
+# Only import search dependencies if Cognitive Search is available
+if COGNITIVE_SEARCH_AVAILABLE:
+    from shared.rag import create_chunks_and_embeddings_from_text, get_llm_summary, get_llm_summaryChat, assess_legal_risks, combine_multiple_responses
+    from shared.ddsearch import search_similar_dd_documents, format_search_results_for_prompt
+
+
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    
-    if req.headers.get('function-key') != os.environ["FUNCTION_KEY"]:
+
+    # Skip function-key check in dev mode
+    if not DEV_MODE and req.headers.get('function-key') != os.environ.get("FUNCTION_KEY"):
         logging.info("no matching value in header")
         return func.HttpResponse("", status_code=401)
-    
+
     try:
         email, err = auth_get_email(req)
         if err:
             return err
-        
+
         data = req.get_json()
         question = data["question"]
         dd_id = data["dd_id"]
         document_ids = data.get("document_ids", [])  # Now accepts multiple
         folder_ids = data.get("folder_ids", [])      # Now accepts multiple
-        
+
         # Handle legacy single references
         if data.get("document_id"):
             document_ids = [data["document_id"]]
         if data.get("folder_id"):
             folder_ids = [data["folder_id"]]
-        
+
         due_diligence_briefing = None
         perspective_lens = None
-        
+
         with transactional_session() as session:
             # Get DD briefing and perspective
             result = (
@@ -51,32 +59,39 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             
             due_diligence_briefing = result.briefing
             perspective_lens = result.lens or "(no perspective set)"
-            
-            # Determine search scope
-            has_specific_references = bool(document_ids or folder_ids)
-            
-            if not has_specific_references:
-                # Case 1: No specific references - search whole DD
-                logging.info("No specific references - searching entire DD")
-                response = search_entire_dd(
+
+            # Check if Cognitive Search is available
+            if not COGNITIVE_SEARCH_AVAILABLE:
+                logging.info("Cognitive Search not available - using direct Claude fallback")
+                response = direct_claude_chat(
                     question, dd_id, due_diligence_briefing, perspective_lens, session
                 )
-            
-            elif len(document_ids) + len(folder_ids) == 1:
-                # Case 2: Single reference - current behavior
-                logging.info("Single reference - using current search method")
-                response = search_single_reference(
-                    question, dd_id, document_ids, folder_ids, 
-                    due_diligence_briefing, perspective_lens, session
-                )
-            
             else:
-                # Case 3: Multiple references - separate searches and combine
-                logging.info(f"Multiple references - {len(document_ids)} docs, {len(folder_ids)} folders")
-                response = search_multiple_references(
-                    question, dd_id, document_ids, folder_ids,
-                    due_diligence_briefing, perspective_lens, session
-                )
+                # Determine search scope
+                has_specific_references = bool(document_ids or folder_ids)
+
+                if not has_specific_references:
+                    # Case 1: No specific references - search whole DD
+                    logging.info("No specific references - searching entire DD")
+                    response = search_entire_dd(
+                        question, dd_id, due_diligence_briefing, perspective_lens, session
+                    )
+
+                elif len(document_ids) + len(folder_ids) == 1:
+                    # Case 2: Single reference - current behavior
+                    logging.info("Single reference - using current search method")
+                    response = search_single_reference(
+                        question, dd_id, document_ids, folder_ids,
+                        due_diligence_briefing, perspective_lens, session
+                    )
+
+                else:
+                    # Case 3: Multiple references - separate searches and combine
+                    logging.info(f"Multiple references - {len(document_ids)} docs, {len(folder_ids)} folders")
+                    response = search_multiple_references(
+                        question, dd_id, document_ids, folder_ids,
+                        due_diligence_briefing, perspective_lens, session
+                    )
             
             # Save question to database
             save_question_to_db(
@@ -93,6 +108,67 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     except Exception as e:
         logging.error(f"Error in DDChat: {str(e)}")
         return func.HttpResponse(f"Error: {str(e)}", status_code=500)
+
+
+def direct_claude_chat(question, dd_id, briefing, lens, session):
+    """
+    Fallback when Cognitive Search is not available.
+    Uses Claude directly to answer questions based on DD context.
+    """
+    import anthropic
+
+    # Get list of documents in this DD for context
+    documents = (
+        session.query(Document.id, Document.original_file_name, Folder.path)
+        .outerjoin(Folder, Folder.id == Document.folder_id)
+        .filter(Document.dd_id == dd_id)
+        .limit(50)
+        .all()
+    )
+
+    doc_list = "\n".join([
+        f"- {doc.original_file_name} (in {doc.path or 'root'})"
+        for doc in documents
+    ]) if documents else "No documents uploaded yet."
+
+    prompt = textwrap.dedent(f"""
+        You are a South African corporate transactional partner in a prestigious South African law firm with over 30 years of experience.
+
+        You are assisting with a due diligence exercise. The client's overall objective is:
+        {briefing or "Not specified"}
+
+        Your perspective on this due diligence is:
+        {lens}
+
+        Documents available in this due diligence:
+        {doc_list}
+
+        NOTE: In this mode, you cannot search the actual document contents. You can only provide general guidance based on the DD context and your legal expertise.
+
+        User's question: {question}
+
+        Please provide a helpful response. If the question requires searching specific document content, explain that document search is currently unavailable and suggest what the user should look for manually.
+    """)
+
+    try:
+        client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+        message = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=1024,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        answer = message.content[0].text
+    except Exception as e:
+        logging.error(f"Claude API error: {str(e)}")
+        answer = f"I apologize, but I encountered an error processing your question. Please try again later. (Error: {str(e)})"
+
+    return {
+        "answer": answer,
+        "documents_referenced": [],
+        "risks": [],
+        "search_scope": "direct_chat_fallback",
+        "note": "Document search unavailable - response based on DD context only"
+    }
 
 
 def search_entire_dd(question, dd_id, briefing, lens, session):

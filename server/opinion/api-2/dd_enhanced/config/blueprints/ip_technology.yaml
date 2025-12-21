@@ -477,6 +477,61 @@ folder_questions:
       detail: Documents requiring manual classification review
       cot_hint: Identify IP/tech content → flag for review
     cross_doc_checks: []
+bee_analysis:
+  sector_threshold: 30%
+  sector_code: "ICT Sector Code"
+  trigger_events:
+    - Acquisition of ICT or technology company
+    - Software licensing deal with government
+    - IT services contract with parastatal
+    - Tech startup funding by non-BEE investor
+    - Acquisition of fintech or healthtech company
+    - Sale of government IT contractor
+    - Cross-border tech acquisition
+  key_questions:
+    - question: "Does the ICT Sector Code apply (30% BEE threshold)?"
+      why_critical: "ICT companies have higher ownership threshold than generic codes"
+      red_flag_if: "ICT Sector Code applies and transaction breaches 30% threshold"
+    - question: "Are there government or SOE contracts dependent on BEE status?"
+      why_critical: "Government IT contracts typically require minimum BEE level"
+      red_flag_if: "Material government revenue dependent on BEE that will be lost"
+    - question: "What is the Enterprise and Supplier Development contribution status?"
+      why_critical: "ICT Sector Code has significant ED/SD requirements"
+      red_flag_if: "ED/SD non-compliant affecting BEE scorecard level"
+    - question: "Does the target qualify as an Exempted Micro Enterprise (EME) or Qualifying Small Enterprise (QSE)?"
+      why_critical: "EME/QSE have reduced BEE compliance requirements"
+      red_flag_if: "Target about to exceed QSE threshold without BEE structure"
+    - question: "Are there any black-owned tech enterprise development beneficiaries?"
+      why_critical: "ED beneficiaries may have contractual expectations"
+      red_flag_if: "ED commitments that won't survive the transaction"
+  dilution_scenarios:
+    - scenario: "Series A/B funding by offshore tech investor"
+      calculation: "Post-round BEE % = (Pre-round BEE shares) / (Pre-round total + New investor shares)"
+      threshold_breach_risk: "High - typical VC rounds dilute BEE significantly"
+    - scenario: "Trade sale to multinational tech company"
+      calculation: "Post-acquisition BEE % = 0% unless structure preserves BEE"
+      threshold_breach_risk: "Critical - likely total loss of BEE status"
+    - scenario: "Management buyout of IT services company"
+      calculation: "Post-MBO BEE % = Black management shares / Total MBO shares"
+      threshold_breach_risk: "Medium - depends on black management participation"
+    - scenario: "Spinoff of tech division"
+      calculation: "Newco BEE % determined by shareholders of spinoff entity"
+      threshold_breach_risk: "Variable - depends on spinoff structure"
+  contract_clauses_to_check:
+    - "Government and SOE IT contract BEE requirements"
+    - "SITA and other public sector procurement requirements"
+    - "Enterprise development beneficiary agreements"
+    - "Software licensing BEE representations"
+    - "Skills development commitments"
+    - "Preferential procurement undertakings"
+  automatic_calculation_triggers:
+    - trigger: "ICT|technology|software|IT services"
+      calculation: "REG_001 - BEE Dilution Calculator (ICT 30% threshold)"
+      required_inputs:
+        - "Current BEE shareholding percentage"
+        - "EME/QSE status"
+        - "Government contract revenue percentage"
+        - "ICT Sector Code applicability"
 cot_questions:
   ownership_regulatory:
   - What is the current ownership structure of the target, including all shareholders and their percentage holdings?
@@ -485,6 +540,15 @@ cot_questions:
   - Are there any ownership restrictions in constitutional documents, shareholder agreements, or regulatory conditions?
   - What licenses, permits, or authorizations are dependent on the current ownership structure?
   - What are the consequences of non-compliance with ownership-based regulatory requirements?
+  bee_compliance:
+  - Does the ICT Sector Code apply (30% BEE ownership threshold)?
+  - Are there government or SOE contracts dependent on BEE status?
+  - What is the Enterprise and Supplier Development contribution status?
+  - Does the target qualify as EME or QSE with reduced requirements?
+  - What government IT contracts have BEE requirements?
+  - How will the transaction affect the target's BEE level?
+  - Are there ED beneficiary commitments that must continue?
+  - What skills development obligations exist?
   ip_ownership:
   - What registered IP rights does the target own (patents, trademarks, copyright)?
   - Is the chain of title complete - have all assignments been done?

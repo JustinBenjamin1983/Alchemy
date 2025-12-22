@@ -13,8 +13,8 @@ import {
   Square,
   Loader2,
   RotateCcw,
-  Sparkles,
-  FileSearch,
+  FolderCog,
+  ScanText,
   Zap,
   Scale,
   Target,
@@ -106,7 +106,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
               variant="outline"
               size="sm"
               onClick={onPauseResume}
-              className="h-8 px-3 text-xs border-gray-300 bg-white hover:bg-gray-50"
+              className="h-8 px-3 text-xs border-gray-300 bg-white hover:bg-gray-50 transition-all duration-200 hover:scale-105 hover:shadow-md"
             >
               {isPaused ? (
                 <><Play className="mr-1.5 h-3.5 w-3.5" />Resume</>
@@ -120,7 +120,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                 size="sm"
                 onClick={onRestart}
                 disabled={isRestarting}
-                className="h-8 px-3 text-xs border-gray-300 bg-white hover:bg-gray-50"
+                className="h-8 px-3 text-xs border-gray-300 bg-white hover:bg-gray-50 transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 <RotateCcw className={cn("mr-1.5 h-3.5 w-3.5", isRestarting && "animate-spin")} />
                 Restart
@@ -131,7 +131,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
               size="sm"
               onClick={onCancel}
               disabled={isCancelling}
-              className="h-8 px-3 text-xs text-red-600 border-red-300 bg-white hover:bg-red-50"
+              className="h-8 px-3 text-xs text-red-600 border-red-300 bg-white hover:bg-red-50 transition-all duration-200 hover:scale-105 hover:shadow-md"
             >
               <Square className={cn("mr-1.5 h-3.5 w-3.5", isCancelling && "animate-pulse")} />
               Cancel
@@ -157,18 +157,18 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                   size="sm"
                   onClick={onClassifyDocs}
                   disabled={disabled || isClassifying}
-                  className="h-9 w-32 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2"
+                  className="h-9 w-32 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md"
                 >
                   {isClassifying ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <Sparkles className="h-4 w-4 text-purple-500" />
+                    <FolderCog className="h-4 w-4 text-purple-500" />
                   )}
                   Classify
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p className="text-xs">AI-classify documents into folders</p>
+              <TooltipContent side="bottom" className="bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2">
+                <p className="text-sm text-white">AI document folder auto-classification</p>
               </TooltipContent>
             </Tooltip>
 
@@ -180,7 +180,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                   onClick={onRunReadability}
                   disabled={disabled || isCheckingReadability}
                   className={cn(
-                    "h-9 w-32 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2",
+                    "h-9 w-32 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md",
                     readabilityComplete && failedCount === 0 && "border-green-400 bg-green-50 text-green-700 hover:bg-green-100"
                   )}
                 >
@@ -189,7 +189,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                   ) : readabilityComplete && failedCount === 0 ? (
                     <Check className="h-4 w-4" />
                   ) : (
-                    <FileSearch className="h-4 w-4 text-blue-500" />
+                    <ScanText className="h-4 w-4 text-blue-500" />
                   )}
                   Readability
                   {readabilityComplete && (
@@ -202,8 +202,8 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                   )}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p className="text-xs">Check documents are readable</p>
+              <TooltipContent side="bottom" className="bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2">
+                <p className="text-sm text-white">Click to check document readability before performing a DD run</p>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -214,7 +214,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
           {/* GROUP 2: Accuracy Mode Selector (Segmented Control) */}
           <div className="flex items-center gap-3">
             <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Accuracy:</span>
-            <div className="inline-flex rounded-md border border-gray-300 dark:border-gray-600 overflow-hidden shadow-sm">
+            <div className="inline-flex rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden shadow-sm">
               {TIER_OPTIONS.map((tier, index) => {
                 const isSelected = selectedTier === tier.id;
                 const isFirst = index === 0;
@@ -226,11 +226,11 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                         onClick={() => onTierChange(tier.id)}
                         disabled={disabled}
                         className={cn(
-                          "flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors",
+                          "flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-all duration-200",
                           !isFirst && "border-l border-gray-300 dark:border-gray-600",
                           isSelected
-                            ? "bg-[#ff6b00] text-white"
-                            : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700",
+                            ? "bg-[#ff6b00] text-white hover:bg-[#e55f00]"
+                            : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105",
                           disabled && "opacity-50 cursor-not-allowed"
                         )}
                       >
@@ -238,7 +238,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                         {tier.label}
                       </button>
                     </TooltipTrigger>
-                    <TooltipContent side="bottom" className="bg-[#1e3a5f] border-[#1e3a5f] px-3 py-2">
+                    <TooltipContent side="bottom" className="bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2">
                       <p className="text-sm font-semibold text-white">{tier.fullName}</p>
                       <p className="text-sm text-blue-200">{tier.desc}</p>
                     </TooltipContent>
@@ -259,7 +259,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                 size="sm"
                 onClick={onRestart}
                 disabled={isRestarting}
-                className="h-9 px-3 text-sm font-medium text-amber-600 border-amber-300 bg-white hover:bg-amber-50"
+                className="h-9 px-3 text-sm font-medium text-amber-600 border-amber-300 bg-white hover:bg-amber-50 transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 <RotateCcw className={cn("mr-1.5 h-4 w-4", isRestarting && "animate-spin")} />
                 Restart
@@ -272,9 +272,9 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                     onClick={onRunDD}
                     disabled={!canRunDD}
                     className={cn(
-                      "h-10 px-5 text-sm font-semibold shadow-sm transition-colors w-full lg:w-auto gap-2",
+                      "h-10 px-5 text-sm font-semibold shadow-sm w-full lg:w-auto gap-2 transition-all duration-200",
                       canRunDD
-                        ? "bg-[#ff6b00] hover:bg-[#e55f00] text-white"
+                        ? "bg-[#ff6b00] hover:bg-[#e55f00] text-white hover:scale-105 hover:shadow-lg"
                         : "bg-gray-200 text-gray-400 cursor-not-allowed"
                     )}
                   >
@@ -283,8 +283,8 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                   </Button>
                 </span>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-xs">
-                <p className="text-xs">{runDDTooltip}</p>
+              <TooltipContent side="bottom" className="max-w-xs bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2">
+                <p className="text-sm text-white">{runDDTooltip}</p>
               </TooltipContent>
             </Tooltip>
           </div>

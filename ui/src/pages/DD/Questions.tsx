@@ -551,7 +551,7 @@ const Questions: React.FC<QuestionsProps> = ({ dd_id }) => {
                     className="flex-1 overflow-hidden"
                   >
                     {selectedQuestion.referenced_documents.length > 0 ? (
-                      <div className="max-h-[500px] overflow-auto border rounded-md">
+                      <div className="max-h-[500px] overflow-auto border rounded-lg">
                         <Table>
                           <TableHeader className="sticky top-0 bg-white z-10">
                             <TableRow>

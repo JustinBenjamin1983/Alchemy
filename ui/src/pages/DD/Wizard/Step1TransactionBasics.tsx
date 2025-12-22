@@ -78,9 +78,10 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
     : { valueLabel: "Estimated Value (ZAR)", valuePlaceholder: "e.g., R500,000,000", dateLabel: "Target Closing Date" };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="text-sm font-medium text-muted-foreground mb-2">Transaction Type</h3>
+    <div className="space-y-5">
+      {/* Transaction Type Section */}
+      <div className="bg-slate-50 rounded-lg border border-gray-200 shadow-sm p-4">
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">Transaction Type</h3>
         <TransactionTypeSelector
           selected={data.transactionType}
           onSelect={(type: TransactionTypeCode) =>
@@ -88,13 +89,16 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
           }
         />
         {data.transactionType && (
-          <div className="mt-2">
+          <div className="mt-3">
             <BlueprintSummary transactionType={data.transactionType} />
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-3">
+      {/* Project Details Section */}
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">Project Details</h3>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-3">
         <div className="col-span-2">
           <Label htmlFor="projectName" className="text-xs text-muted-foreground mb-1 block">
             Project Name

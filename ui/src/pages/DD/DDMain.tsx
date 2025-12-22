@@ -441,13 +441,14 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
           onOpenChange={(open) => (!open ? setScreenState("Processing") : null)}
         >
           {/* <DialogContent className="w-[1200px]"> */}
-          <DialogContent className="w-[95vw] max-w-[1200px] max-h-[85vh] overflow-y-auto overflow-x-hidden">
-            <DialogHeader>
-              <DialogTitle>Due Diligence Configuration</DialogTitle>
-              <DialogDescription>
+          <DialogContent className="w-[95vw] max-w-[1200px] max-h-[85vh] overflow-y-auto overflow-x-hidden p-0">
+            <DialogHeader className="px-6 py-4 bg-alchemyPrimaryNavyBlue rounded-t-lg">
+              <DialogTitle className="text-white">Due Diligence Configuration</DialogTitle>
+              <DialogDescription className="text-white/70">
                 {/* Set up a new due diligence project */}
               </DialogDescription>
             </DialogHeader>
+            <div className="p-6">
             {screenState == "Wizard-NewProject" && (
               <DDProjectWizard
                 onComplete={(setup) => {
@@ -637,6 +638,7 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
                 </div>
               </div>
             )}
+            </div>
             <DialogFooter>
               {/* Wizard-NewProject footer buttons handled by DDProjectWizard component */}
               {screenState === "Wizard-JoinProject" && (

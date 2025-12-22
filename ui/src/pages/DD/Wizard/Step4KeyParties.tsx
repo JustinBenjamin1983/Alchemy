@@ -725,10 +725,10 @@ function ShareholderInput({
   }
 
   return (
-    <div className="space-y-3 pt-4 border-t border-gray-200">
+    <div className="space-y-3">
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="text-sm font-medium mb-1">{config.title}</h3>
+          <h3 className="text-sm font-semibold text-gray-700 mb-1">{config.title}</h3>
           <p className="text-xs text-muted-foreground">{config.description}</p>
         </div>
         <div className="text-right text-xs">
@@ -945,7 +945,7 @@ export function Step4KeyParties({ data, onChange }: Step4Props) {
 
   if (!config) {
     return (
-      <div className="flex items-center justify-center h-48 text-muted-foreground">
+      <div className="flex items-center justify-center h-48 text-muted-foreground bg-slate-50 rounded-lg border border-gray-200">
         <div className="text-center">
           <Info className="h-8 w-8 mx-auto mb-2 opacity-50" />
           <p>Please select a transaction type first</p>
@@ -955,38 +955,42 @@ export function Step4KeyParties({ data, onChange }: Step4Props) {
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h2 className="text-xl font-semibold mb-1">{config.title}</h2>
-        <p className="text-sm text-muted-foreground">{config.subtitle}</p>
-        <p className="text-xs text-gray-400 mt-1">
+    <div className="space-y-5">
+      {/* Key Parties Section */}
+      <div className="bg-slate-50 rounded-lg border border-gray-200 shadow-sm p-4">
+        <h3 className="text-sm font-semibold text-gray-700 mb-1">{config.title}</h3>
+        <p className="text-xs text-muted-foreground">{config.subtitle}</p>
+        <p className="text-xs text-gray-400 mt-1 mb-4">
           Type a name and press Enter to add. Click × to remove.
         </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {config.fields.map((field) => (
+            <div
+              key={field.id}
+              className={`bg-white rounded-lg border border-gray-100 p-3 ${
+                field.type === "lender" || field.type === "counterparty"
+                  ? "md:col-span-2"
+                  : ""
+              }`}
+            >
+              <DynamicField field={field} data={data} onChange={onChange} />
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {config.fields.map((field) => (
-          <div
-            key={field.id}
-            className={
-              field.type === "lender" || field.type === "counterparty"
-                ? "md:col-span-2"
-                : ""
-            }
-          >
-            <DynamicField field={field} data={data} onChange={onChange} />
-          </div>
-        ))}
-      </div>
-
+      {/* Shareholder Section */}
       {config.shareholderSection.visible && (
-        <ShareholderInput
-          entityName={data.shareholderEntityName}
-          shareholders={data.shareholders}
-          onEntityNameChange={(name) => onChange({ shareholderEntityName: name })}
-          onShareholdersChange={(shareholders) => onChange({ shareholders })}
-          config={config.shareholderSection}
-        />
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+          <ShareholderInput
+            entityName={data.shareholderEntityName}
+            shareholders={data.shareholders}
+            onEntityNameChange={(name) => onChange({ shareholderEntityName: name })}
+            onShareholdersChange={(shareholders) => onChange({ shareholders })}
+            config={config.shareholderSection}
+          />
+        </div>
       )}
     </div>
   );

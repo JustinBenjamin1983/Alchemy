@@ -1270,31 +1270,11 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     if (canStartDD) {
       return selectedDocIds.size > 0
         ? `Analyse ${selectedDocIds.size} selected document(s)`
-        : `Analyse all ${docsToProcessCount} readable document(s)`;
+        : `Analyse all ${docsToProcessCount} document(s)`;
     }
-    if (isProcessingInProgress) {
-      return "Analysis is currently in progress";
-    }
-    if (isClassificationInProgress) {
-      return "Please wait for document classification to complete";
-    }
-    if (isOrganisationInProgress) {
-      return "Please wait for folder organisation to complete";
-    }
-    if (isReadabilityInProgress) {
-      return "Please wait for readability check to complete";
-    }
-    if (!readabilityChecked && !hasCompletedRun) {
-      return "Run the readability check first to verify documents can be processed";
-    }
-    if (!areDocsReadyForDD) {
-      if (selectedDocIds.size > 0) {
-        return "Some selected documents failed readability check. Deselect failed documents or select only readable ones.";
-      }
-      return "Some documents failed readability check. Select only readable documents or remove failed ones.";
-    }
-    return "Unable to start analysis";
-  }, [canStartDD, selectedDocIds.size, docsToProcessCount, isProcessingInProgress, isClassificationInProgress, isOrganisationInProgress, isReadabilityInProgress, readabilityChecked, hasCompletedRun, areDocsReadyForDD]);
+    // All disabled states show the same message
+    return "Complete Doc Readability before performing Due Diligence analysis";
+  }, [canStartDD, selectedDocIds.size, docsToProcessCount]);
 
   return (
     <div className="min-h-[600px] bg-gray-200 dark:from-gray-900 dark:to-gray-950 p-6 space-y-6">
@@ -1433,10 +1413,15 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         {/* RIGHT COLUMN (4/10 = 40%) - Pipeline status area */}
         <div className="lg:col-span-4 order-1 lg:order-2 space-y-4">
           {/* Processing Pipeline Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm p-4">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">
-              Processing Pipeline
-            </h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 bg-alchemyPrimaryNavyBlue border-b border-gray-700">
+              <h2 className="font-medium text-white">
+                Processing Pipeline
+              </h2>
+            </div>
+            {/* Content */}
+            <div className="p-4">
 
             {/* Classification progress (during classifying phase) */}
             {currentPhase === "classifying" && organisationProgress && (
@@ -1466,7 +1451,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
                         }
                       }}
                       disabled={cancelOrganisation.isPending}
-                      className="text-xs h-7 px-2 text-red-600 border-red-300 hover:bg-red-50 dark:text-red-400 dark:border-red-700 dark:hover:bg-red-900/20"
+                      className="text-xs h-7 px-2 text-red-600 border-red-300 hover:bg-red-50 dark:text-red-400 dark:border-red-700 dark:hover:bg-red-900/20 transition-all duration-200 hover:scale-105"
                     >
                       {cancelOrganisation.isPending ? "Cancelling..." : "Cancel"}
                     </Button>
@@ -1511,7 +1496,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
                         }
                       }}
                       disabled={classifyDocuments.isPending}
-                      className="text-xs"
+                      className="text-xs transition-all duration-200 hover:scale-105 hover:shadow-md"
                     >
                       Restart Classification
                     </Button>
@@ -1521,7 +1506,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
                         // Skip organisation and go to ready state
                         addLogEntry("info", "Proceeding without folder organisation");
                       }}
-                      className="text-xs"
+                      className="text-xs transition-all duration-200 hover:scale-105 hover:shadow-md"
                     >
                       Skip & Continue
                     </Button>
@@ -1588,15 +1573,22 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
             <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700 text-center text-xs text-gray-500">
               <span>Elapsed: {elapsedTime}</span>
             </div>
+            </div>
           </div>
 
           {/* Risk Summary */}
           {(currentPhase === "processing" || currentPhase === "completed") && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm p-4">
-              <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                Risk Summary
-              </h2>
-              <RiskSummaryCounters summary={riskSummary} />
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between px-4 py-3 bg-alchemyPrimaryNavyBlue border-b border-gray-700">
+                <h2 className="font-medium text-white">
+                  Risk Summary
+                </h2>
+              </div>
+              {/* Content */}
+              <div className="p-4">
+                <RiskSummaryCounters summary={riskSummary} />
+              </div>
             </div>
           )}
         </div>
@@ -1619,10 +1611,10 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
             />
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" size="sm" onClick={() => setShowConfirmDialog(false)}>
+            <Button variant="outline" size="sm" onClick={() => setShowConfirmDialog(false)} className="transition-all duration-200 hover:scale-105 hover:shadow-md">
               Cancel
             </Button>
-            <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={handleStartDD}>
+            <Button size="sm" className="bg-green-600 hover:bg-green-700 transition-all duration-200 hover:scale-105 hover:shadow-md" onClick={handleStartDD}>
               Start Analysis
             </Button>
           </DialogFooter>
@@ -1649,10 +1641,10 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
             />
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" size="sm" onClick={() => setShowWarningDialog(false)}>
+            <Button variant="outline" size="sm" onClick={() => setShowWarningDialog(false)} className="transition-all duration-200 hover:scale-105 hover:shadow-md">
               Go Back
             </Button>
-            <Button size="sm" className="bg-amber-600 hover:bg-amber-700" onClick={handleStartDD}>
+            <Button size="sm" className="bg-amber-600 hover:bg-amber-700 transition-all duration-200 hover:scale-105 hover:shadow-md" onClick={handleStartDD}>
               Proceed Anyway
             </Button>
           </DialogFooter>
@@ -1683,10 +1675,10 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" size="sm" onClick={() => setShowRerunWarningDialog(false)}>
+            <Button variant="outline" size="sm" onClick={() => setShowRerunWarningDialog(false)} className="transition-all duration-200 hover:scale-105 hover:shadow-md">
               Cancel
             </Button>
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700" onClick={handleStartDD}>
+            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-200 hover:scale-105 hover:shadow-md" onClick={handleStartDD}>
               Run Again
             </Button>
           </DialogFooter>
@@ -1713,7 +1705,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
               {/* Close button */}
               <button
                 onClick={() => setCompletionDismissed(currentRunId)}
-                className="absolute top-3 right-3 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="absolute top-3 right-3 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-110"
                 aria-label="Close"
               >
                 <X className="w-5 h-5 text-gray-500" />
@@ -1738,10 +1730,10 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
               </p>
 
               <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setCompletionDismissed(currentRunId)} className="flex-1">
+                <Button variant="outline" onClick={() => setCompletionDismissed(currentRunId)} className="flex-1 transition-all duration-200 hover:scale-105 hover:shadow-md">
                   Back to DD
                 </Button>
-                <Button onClick={handleViewResults} className="flex-1">
+                <Button onClick={handleViewResults} className="flex-1 transition-all duration-200 hover:scale-105 hover:shadow-md">
                   View Results
                 </Button>
               </div>

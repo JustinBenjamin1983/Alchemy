@@ -36,7 +36,7 @@ export function TransactionTypeSelector({
         <div
           key={type.code}
           className={cn(
-            "cursor-pointer transition-all rounded-md border px-2 py-1.5 flex items-center gap-1.5",
+            "cursor-pointer transition-all rounded-lg border px-2 py-1.5 flex items-center gap-1.5",
             selected === type.code
               ? "border-alchemyPrimaryOrange bg-orange-50 shadow-sm"
               : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"

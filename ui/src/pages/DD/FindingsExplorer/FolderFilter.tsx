@@ -133,7 +133,7 @@ export const FolderFilter: React.FC<FolderFilterProps> = ({
           {/* All folders option */}
           <button
             className={cn(
-              "w-full flex items-center justify-between px-2 py-1.5 rounded-md text-sm transition-colors",
+              "w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-sm transition-colors",
               !selectedFolder
                 ? "bg-accent text-accent-foreground"
                 : "hover:bg-accent/50"
@@ -164,7 +164,7 @@ export const FolderFilter: React.FC<FolderFilterProps> = ({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={cn(
-                    "w-full flex items-center justify-between px-2 py-1.5 rounded-md text-sm transition-colors",
+                    "w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-sm transition-colors",
                     isSelected
                       ? `${config.bgColor} ${config.borderColor} border`
                       : "hover:bg-accent/50"

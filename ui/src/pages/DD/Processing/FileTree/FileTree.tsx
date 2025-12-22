@@ -20,6 +20,8 @@ import {
   Folder,
   FileText,
   MoreHorizontal,
+  ExternalLink,
+  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -478,15 +480,15 @@ export function FileTree({
       >
         {/* Header */}
         <div
-          className="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-700 dark:to-gray-700 cursor-pointer"
+          className="flex items-center justify-between px-4 py-3 border-b bg-alchemyPrimaryNavyBlue border-gray-700 cursor-pointer"
           onClick={onToggleCollapse}
         >
           <div className="flex items-center gap-3">
             {/* Collapse Chevron */}
             {isCollapsed ? (
-              <ChevronRight className="w-4 h-4 text-gray-500 flex-shrink-0" />
+              <ChevronRight className="w-4 h-4 text-white/70 flex-shrink-0" />
             ) : (
-              <ChevronDown className="w-4 h-4 text-gray-500 flex-shrink-0" />
+              <ChevronDown className="w-4 h-4 text-white/70 flex-shrink-0" />
             )}
 
             {/* Select All Checkbox */}
@@ -522,7 +524,7 @@ export function FileTree({
                             setClassificationSelectedDocs(new Map());
                           }
                         }}
-                        className="h-4 w-4"
+                        className="h-4 w-4 border-white/50"
                       />
                     </div>
                   </TooltipTrigger>
@@ -535,7 +537,7 @@ export function FileTree({
               </TooltipProvider>
             )}
 
-            <h3 className="font-medium text-gray-900 dark:text-gray-100">
+            <h3 className="font-medium text-white">
               Documents ({totalDocuments})
             </h3>
             {typeInfo && (
@@ -545,7 +547,7 @@ export function FileTree({
                     <span>
                       <Badge
                         variant="outline"
-                        className="text-xs py-0 px-1.5 bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-700 cursor-help"
+                        className="text-xs py-0 px-1.5 bg-white/20 border-white/30 text-white cursor-help"
                       >
                         {typeInfo.name}
                       </Badge>
@@ -573,7 +575,7 @@ export function FileTree({
                         <Button
                           variant="outline"
                           size="sm"
-                          className="h-7 px-2 text-xs border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/30"
+                          className="h-7 px-2 text-xs border-white/30 bg-white/10 text-white hover:bg-white/20 transition-all duration-200 hover:scale-105 hover:shadow-md"
                           onClick={(e) => {
                             e.stopPropagation();
                             onClassifyDocuments(true); // Reset and reclassify all
@@ -605,7 +607,7 @@ export function FileTree({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-7 px-2 text-xs"
+                  className="h-7 px-2 text-xs transition-all duration-200 hover:scale-105 hover:shadow-md"
                   onClick={() => {
                     // Reset and show dialog
                     setUploadTargetFolder(categoryDistribution[0]?.category || "");
@@ -620,7 +622,7 @@ export function FileTree({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-7 px-2 text-xs"
+                  className="h-7 px-2 text-xs transition-all duration-200 hover:scale-105 hover:shadow-md"
                   onClick={() => setShowAddFolderDialog(true)}
                 >
                   <Plus className="w-3.5 h-3.5 mr-1" />
@@ -634,7 +636,7 @@ export function FileTree({
                       <span>
                         <Button
                           size="sm"
-                          className="h-7 px-3 text-xs rounded-full bg-green-600 hover:bg-green-700 text-white"
+                          className="h-7 px-3 text-xs rounded-full bg-green-600 hover:bg-green-700 text-white transition-all duration-200 hover:scale-105 hover:shadow-md"
                           onClick={() => {
                             const selectedArray = Array.from(classificationSelectedDocs.keys());
                             onRecheckReadability(selectedArray.length > 0 ? selectedArray : undefined);
@@ -781,7 +783,7 @@ export function FileTree({
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <button
-                            className="p-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm"
+                            className="p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <MoreHorizontal className="w-4 h-4 text-gray-600 dark:text-gray-400" />
@@ -926,13 +928,27 @@ export function FileTree({
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
                                     <button
-                                      className="p-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm"
+                                      className="p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm"
                                       onClick={(e) => e.stopPropagation()}
                                     >
                                       <MoreHorizontal className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                                     </button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end" className="w-56">
+                                    {/* View and Download options */}
+                                    <DropdownMenuItem
+                                      onClick={() => actions.previewFile(doc.id)}
+                                    >
+                                      <ExternalLink className="w-4 h-4 mr-2" />
+                                      View in new tab
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={() => actions.downloadFile(doc.id)}
+                                    >
+                                      <Download className="w-4 h-4 mr-2" />
+                                      Download
+                                    </DropdownMenuItem>
+                                    {onMoveDocument && <DropdownMenuSeparator />}
                                     {onMoveDocument && (
                                       <DropdownMenuSub>
                                         <DropdownMenuSubTrigger>
@@ -1008,7 +1024,7 @@ export function FileTree({
                 <div className="flex items-center gap-2">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button size="sm" className="h-7 text-xs bg-blue-600 hover:bg-blue-700">
+                      <Button size="sm" className="h-7 text-xs bg-blue-600 hover:bg-blue-700 transition-all duration-200 hover:scale-105 hover:shadow-md">
                         <ArrowRight className="w-3.5 h-3.5 mr-1" />
                         Move to folder
                       </Button>
@@ -1029,7 +1045,7 @@ export function FileTree({
                   <Button
                     size="sm"
                     variant="destructive"
-                    className="h-7 text-xs"
+                    className="h-7 text-xs transition-all duration-200 hover:scale-105 hover:shadow-md"
                     onClick={() => setShowBulkDeleteConfirm(true)}
                   >
                     <Trash2 className="w-3.5 h-3.5 mr-1" />
@@ -1038,7 +1054,7 @@ export function FileTree({
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="h-7 text-xs text-gray-500 hover:text-gray-700"
+                    className="h-7 text-xs text-gray-500 hover:text-gray-700 transition-all duration-200 hover:scale-105"
                     onClick={() => setClassificationSelectedDocs(new Map())}
                   >
                     Clear
@@ -1086,6 +1102,7 @@ export function FileTree({
                   setShowAddFolderDialog(false);
                   setNewFolderName("");
                 }}
+                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 Cancel
               </Button>
@@ -1093,6 +1110,7 @@ export function FileTree({
                 size="sm"
                 onClick={handleAddFolder}
                 disabled={!newFolderName.trim()}
+                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 <FolderPlus className="w-4 h-4 mr-1" />
                 Add Folder
@@ -1122,6 +1140,7 @@ export function FileTree({
                 variant="outline"
                 size="sm"
                 onClick={() => setFolderToDelete(null)}
+                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 Cancel
               </Button>
@@ -1129,6 +1148,7 @@ export function FileTree({
                 variant="destructive"
                 size="sm"
                 onClick={handleDeleteFolder}
+                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 <Trash2 className="w-4 h-4 mr-1" />
                 Delete Folder
@@ -1171,6 +1191,7 @@ export function FileTree({
                   setFolderToRename(null);
                   setRenameValue("");
                 }}
+                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 Cancel
               </Button>
@@ -1178,6 +1199,7 @@ export function FileTree({
                 size="sm"
                 onClick={handleRenameFolder}
                 disabled={!renameValue.trim() || renameValue.trim() === folderToRename?.displayName}
+                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 <Pencil className="w-4 h-4 mr-1" />
                 Rename
@@ -1200,6 +1222,7 @@ export function FileTree({
                 variant="outline"
                 size="sm"
                 onClick={() => setFileToDelete(null)}
+                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 Cancel
               </Button>
@@ -1207,6 +1230,7 @@ export function FileTree({
                 variant="destructive"
                 size="sm"
                 onClick={handleDeleteFile}
+                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 <Trash2 className="w-4 h-4 mr-1" />
                 Delete
@@ -1229,6 +1253,7 @@ export function FileTree({
                 variant="outline"
                 size="sm"
                 onClick={() => setShowBulkDeleteConfirm(false)}
+                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 Cancel
               </Button>
@@ -1236,6 +1261,7 @@ export function FileTree({
                 variant="destructive"
                 size="sm"
                 onClick={handleBulkDelete}
+                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 <Trash2 className="w-4 h-4 mr-1" />
                 Delete {classificationSelectedDocs.size} Document{classificationSelectedDocs.size > 1 ? "s" : ""}
@@ -1267,7 +1293,7 @@ export function FileTree({
                   id="targetFolder"
                   value={uploadTargetFolder}
                   onChange={(e) => setUploadTargetFolder(e.target.value)}
-                  className="mt-1.5 w-full h-9 px-3 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-1.5 w-full h-9 px-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   {categoryDistribution.map((cat) => (
                     <option key={cat.category} value={cat.category}>
@@ -1322,7 +1348,7 @@ export function FileTree({
                   </p>
                 </div>
                 {pendingUploadFiles.length > 0 && (
-                  <div className="mt-3 border border-gray-200 dark:border-gray-700 rounded-md divide-y divide-gray-100 dark:divide-gray-800 max-h-[150px] overflow-y-auto">
+                  <div className="mt-3 border border-gray-200 dark:border-gray-700 rounded-lg divide-y divide-gray-100 dark:divide-gray-800 max-h-[150px] overflow-y-auto">
                     {pendingUploadFiles.map((file, i) => (
                       <div key={i} className="flex items-center justify-between px-3 py-2 text-xs hover:bg-gray-50 dark:hover:bg-gray-800/50">
                         <div className="flex items-center gap-2 min-w-0">
@@ -1353,6 +1379,7 @@ export function FileTree({
                   setShowUploadDialog(false);
                   setPendingUploadFiles([]);
                 }}
+                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 Cancel
               </Button>
@@ -1366,6 +1393,7 @@ export function FileTree({
                   setShowUploadDialog(false);
                   setPendingUploadFiles([]);
                 }}
+                className="transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 <Upload className="w-4 h-4 mr-1" />
                 Upload {pendingUploadFiles.length > 0 ? `${pendingUploadFiles.length} File(s)` : ""}
@@ -1392,16 +1420,16 @@ export function FileTree({
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-700 dark:to-gray-700 border-b border-gray-200 dark:border-gray-600 cursor-pointer"
+        className="flex items-center justify-between px-4 py-3 bg-alchemyPrimaryNavyBlue border-b border-gray-700 cursor-pointer"
         onClick={onToggleCollapse}
       >
         <div className="flex items-center gap-2">
           {isCollapsed ? (
-            <ChevronRight className="w-4 h-4 text-gray-500" />
+            <ChevronRight className="w-4 h-4 text-white/70" />
           ) : (
-            <ChevronDown className="w-4 h-4 text-gray-500" />
+            <ChevronDown className="w-4 h-4 text-white/70" />
           )}
-          <h3 className="font-medium text-gray-900 dark:text-gray-100">
+          <h3 className="font-medium text-white">
             Documents ({totalFiles})
           </h3>
         </div>
@@ -1410,19 +1438,19 @@ export function FileTree({
           {/* Status Summary */}
           <div className="flex items-center gap-2">
             {statusCounts.ready > 0 && (
-              <span className="flex items-center gap-1 text-green-600">
+              <span className="flex items-center gap-1 text-green-400">
                 <Check className="w-3 h-3" />
                 {statusCounts.ready}
               </span>
             )}
             {statusCounts.failed > 0 && (
-              <span className="flex items-center gap-1 text-red-600">
+              <span className="flex items-center gap-1 text-red-400">
                 <X className="w-3 h-3" />
                 {statusCounts.failed}
               </span>
             )}
             {(statusCounts.checking > 0 || isCheckingReadability) && (
-              <span className="flex items-center gap-1 text-blue-500">
+              <span className="flex items-center gap-1 text-blue-300">
                 <Loader2 className="w-3 h-3 animate-spin" />
                 {statusCounts.checking > 0
                   ? statusCounts.checking
@@ -1443,7 +1471,7 @@ export function FileTree({
                         <Button
                           variant="outline"
                           size="sm"
-                          className="h-7 px-2 text-xs border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/30"
+                          className="h-7 px-2 text-xs border-white/30 bg-white/10 text-white hover:bg-white/20 transition-all duration-200 hover:scale-105 hover:shadow-md"
                           onClick={(e) => {
                             e.stopPropagation();
                             onClassifyDocuments(true); // Reset and reclassify all

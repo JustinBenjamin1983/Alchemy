@@ -258,7 +258,7 @@ const CategoryBar: React.FC<CategoryBarProps> = ({
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button
-                              className="p-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm"
+                              className="p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <MoreHorizontal className="w-4 h-4 text-gray-600 dark:text-gray-400" />

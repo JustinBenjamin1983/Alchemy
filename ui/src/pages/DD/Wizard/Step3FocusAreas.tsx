@@ -171,16 +171,9 @@ export function Step3FocusAreas({ data, onChange }: Step3Props) {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold mb-2">Focus Areas</h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          Prioritize what matters most for this specific deal.
-        </p>
-      </div>
-
+    <div className="space-y-5">
       {/* Discussion Notice */}
-      <Alert className="bg-amber-50 border-amber-200">
+      <Alert className="bg-amber-50 border-amber-200 shadow-sm">
         <AlertCircle className="h-4 w-4 text-amber-600" />
         <AlertDescription className="text-amber-800">
           <strong>For Discussion:</strong> These focus area options are presented for discussion purposes only and are not yet functional.
@@ -189,16 +182,17 @@ export function Step3FocusAreas({ data, onChange }: Step3Props) {
       </Alert>
 
       {/* Greyed out content */}
-      <div className="opacity-50 pointer-events-none select-none">
+      <div className="opacity-50 pointer-events-none select-none space-y-5">
+        {/* Risk Categories Section */}
         {riskCategories.length > 0 && (
-          <div>
-            <Label className="mb-3 block">
+          <div className="bg-slate-50 rounded-lg border border-gray-200 shadow-sm p-4">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">
               Risk Categories for{" "}
               {data.transactionType
                 ? TRANSACTION_TYPE_INFO[data.transactionType]?.name
                 : ""}
-            </Label>
-            <p className="text-sm text-muted-foreground mb-3">
+            </h3>
+            <p className="text-xs text-muted-foreground mb-3">
               Check categories that are critical priorities. Areas marked as critical
               will receive deeper analysis.
             </p>
@@ -210,7 +204,7 @@ export function Step3FocusAreas({ data, onChange }: Step3Props) {
                 return (
                   <div
                     key={category}
-                    className={`p-3 border rounded-lg transition-all ${
+                    className={`p-3 border rounded-lg transition-all bg-white ${
                       isCritical
                         ? "bg-orange-50 border-alchemyPrimaryOrange"
                         : isDeprioritized
@@ -250,27 +244,31 @@ export function Step3FocusAreas({ data, onChange }: Step3Props) {
           </div>
         )}
 
-        <div className="mt-6">
-          <Label htmlFor="dealBreakers">Known Deal Breakers</Label>
-          <p className="text-sm text-muted-foreground mb-2">
+        {/* Deal Breakers Section */}
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">Deal Breakers</h3>
+          <Label htmlFor="dealBreakers" className="text-xs text-muted-foreground mb-1 block">
             Issues that would cause the deal to fall through
-          </p>
+          </Label>
           <Textarea
             id="dealBreakers"
             placeholder="e.g., If mining right cannot be transferred, deal cannot proceed. If Eskom terminates CSA, walk away..."
             disabled
             rows={3}
+            className="bg-white"
           />
         </div>
 
-        <div className="mt-6">
-          <Label>Areas to Deprioritize (Custom)</Label>
-          <p className="text-sm text-muted-foreground mb-2">
+        {/* Deprioritize Section */}
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">Areas to Deprioritize</h3>
+          <Label className="text-xs text-muted-foreground mb-1 block">
             Other areas that are not material for this deal
-          </p>
+          </Label>
           <Input
             placeholder="e.g., IP (not material for this deal)..."
             disabled
+            className="bg-white"
           />
         </div>
       </div>

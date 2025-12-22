@@ -18,8 +18,8 @@ const SendIcon = () => (
   </svg>
 );
 
-const BrainIcon = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const BrainIcon = ({ className }: { className?: string }) => (
+  <svg className={`w-5 h-5 ${className || ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
   </svg>
 );
@@ -30,8 +30,8 @@ const UserIcon = () => (
   </svg>
 );
 
-const ChevronDownIcon = ({ isOpen }: { isOpen: boolean }) => (
-  <svg className={`w-5 h-5 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const ChevronDownIcon = ({ isOpen, className }: { isOpen: boolean; className?: string }) => (
+  <svg className={`w-5 h-5 transition-transform ${isOpen ? 'rotate-180' : ''} ${className || ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
   </svg>
 );
@@ -155,27 +155,27 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
   const suggestions = selectedFinding ? SUGGESTED_QUESTIONS.finding : SUGGESTED_QUESTIONS.general;
 
   return (
-    <div className="bg-gradient-to-r from-slate-50 to-gray-50 dark:from-gray-900 dark:to-gray-900 border-t-2 border-gray-300 dark:border-gray-600 shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.1)]">
+    <div className="bg-white dark:from-gray-900 border-t-2 border-gray-300 dark:border-gray-600 shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.1)]">
       {/* Header - Always visible, clickable to expand/collapse */}
       <button
         onClick={onToggleExpand}
-        className="w-full h-12 px-4 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
+        className="w-full h-12 px-4 flex items-center justify-between bg-alchemyPrimaryNavyBlue hover:bg-alchemyPrimaryNavyBlue/90 transition-all duration-200 hover:shadow-lg"
       >
         <div className="flex items-center gap-2">
-          <BrainIcon />
-          <span className="font-medium text-gray-900 dark:text-gray-100">Ask AI</span>
+          <BrainIcon className="text-white" />
+          <span className="font-medium text-white">Ask AI</span>
           {selectedFinding && (
-            <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">
+            <span className="text-xs text-white/70 bg-white/20 px-2 py-0.5 rounded">
               Context: {selectedFinding.title.substring(0, 30)}...
             </span>
           )}
           {messages.length > 0 && (
-            <span className="text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded">
+            <span className="text-xs text-white bg-white/20 px-2 py-0.5 rounded">
               {messages.length} messages
             </span>
           )}
         </div>
-        <ChevronDownIcon isOpen={isExpanded} />
+        <ChevronDownIcon isOpen={isExpanded} className="text-white" />
       </button>
 
       {/* Expanded Content - Expands in place, adds height to container */}
@@ -195,7 +195,7 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
                     <button
                       key={i}
                       onClick={() => handleSuggestedQuestion(q)}
-                      className="px-3 py-1.5 text-xs bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700 shadow-sm"
+                      className="px-3 py-1.5 text-xs bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-105 hover:shadow-md border border-gray-200 dark:border-gray-700 shadow-sm"
                     >
                       {q}
                     </button>
@@ -245,12 +245,12 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
                   : 'Ask a question about this DD...'
                 }
                 disabled={isLoading}
-                className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+                className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-alchemyPrimaryNavyBlue focus:border-transparent disabled:opacity-50"
               />
               <button
                 onClick={handleSend}
                 disabled={!inputValue.trim() || isLoading}
-                className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center justify-center w-10 h-10 bg-alchemyPrimaryNavyBlue text-white rounded-lg hover:bg-alchemyPrimaryNavyBlue/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 <SendIcon />
               </button>
@@ -262,7 +262,7 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
                     key={i}
                     onClick={() => handleSuggestedQuestion(q)}
                     disabled={isLoading}
-                    className="px-2 py-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors disabled:opacity-50"
+                    className="px-2 py-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-all duration-200 hover:scale-105 disabled:opacity-50"
                   >
                     {q}
                   </button>

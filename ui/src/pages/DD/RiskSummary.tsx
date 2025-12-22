@@ -472,7 +472,7 @@ export function RiskSummary() {
   }, [mutateGetLink]);
 
   return (
-    <div className="p-6 pb-32 space-y-4">
+    <div className="p-6 pb-32 space-y-4 bg-gray-200 dark:bg-gray-900 min-h-screen">
       {/* Modals */}
       <EnhancedRiskManager
         folders={dd?.folders ?? []}

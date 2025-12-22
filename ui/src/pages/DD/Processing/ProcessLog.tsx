@@ -206,36 +206,36 @@ export const ProcessLog: React.FC<ProcessLogProps> = ({
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-700 dark:to-gray-700 border-b border-gray-200 dark:border-gray-600 cursor-pointer"
+        className="flex items-center justify-between px-4 py-3 bg-alchemyPrimaryNavyBlue border-b border-gray-700 cursor-pointer"
         onClick={onToggleCollapse}
       >
         <div className="flex items-center gap-2">
           {isCollapsed ? (
-            <ChevronRight className="w-4 h-4 text-gray-500" />
+            <ChevronRight className="w-4 h-4 text-white/70" />
           ) : (
-            <ChevronDown className="w-4 h-4 text-gray-500" />
+            <ChevronDown className="w-4 h-4 text-white/70" />
           )}
-          <h3 className="font-medium text-gray-900 dark:text-gray-100">{title}</h3>
+          <h3 className="font-medium text-white">{title}</h3>
         </div>
         <div className="flex items-center gap-3 text-xs">
           {entries.length > 0 && (
             <>
               {counts.success > 0 && (
-                <span className="flex items-center gap-1 text-green-600">
+                <span className="flex items-center gap-1 text-green-400">
                   <Check className="w-3 h-3" />
                   {counts.success}
                 </span>
               )}
               {counts.errors > 0 && (
-                <span className="flex items-center gap-1 text-red-600">
+                <span className="flex items-center gap-1 text-red-400">
                   <X className="w-3 h-3" />
                   {counts.errors}
                 </span>
               )}
-              <span className="text-gray-400">|</span>
+              <span className="text-white/40">|</span>
             </>
           )}
-          <span className="text-gray-500">{entries.length} entries</span>
+          <span className="text-white/70">{entries.length} entries</span>
         </div>
       </div>
 

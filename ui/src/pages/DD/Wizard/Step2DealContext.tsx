@@ -99,29 +99,28 @@ const COMMON_CONCERNS = [
 
 export function Step2DealContext({ data, onChange }: Step2Props) {
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold mb-2">Deal Context</h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          Help the AI understand the deal better for more relevant analysis.
-        </p>
+    <div className="space-y-5">
+      {/* Deal Rationale Section */}
+      <div className="bg-slate-50 rounded-lg border border-gray-200 shadow-sm p-4">
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">Deal Rationale</h3>
+        <Label htmlFor="dealRationale" className="text-xs text-muted-foreground mb-1 block">
+          Why is this deal happening?
+        </Label>
+        <Textarea
+          id="dealRationale"
+          placeholder="e.g., Strategic acquisition to expand coal supply capacity, seller exiting non-core assets..."
+          value={data.dealRationale}
+          onChange={(e) => onChange({ dealRationale: e.target.value })}
+          rows={3}
+          className="bg-white"
+        />
       </div>
 
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="dealRationale">Why is this deal happening?</Label>
-          <Textarea
-            id="dealRationale"
-            placeholder="e.g., Strategic acquisition to expand coal supply capacity, seller exiting non-core assets..."
-            value={data.dealRationale}
-            onChange={(e) => onChange({ dealRationale: e.target.value })}
-            rows={3}
-            className="mt-2"
-          />
-        </div>
-
+      {/* Known Concerns Section */}
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">Known Concerns</h3>
         <TagInput
-          label="Known Concerns (if any)"
+          label="Add concerns that should be investigated"
           placeholder="Type and press Enter..."
           tags={data.knownConcerns}
           onChange={(concerns) => onChange({ knownConcerns: concerns })}

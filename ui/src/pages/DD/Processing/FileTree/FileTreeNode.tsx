@@ -222,7 +222,7 @@ export function FileTreeNode({ node }: FileTreeNodeProps) {
       {/* Node row */}
       <div
         className={cn(
-          "group flex items-center gap-1 py-1.5 px-2 rounded-md cursor-pointer select-none transition-colors",
+          "group flex items-center gap-1 py-1.5 px-2 rounded-lg cursor-pointer select-none transition-colors",
           isSelected && "bg-blue-100 dark:bg-blue-900/40",
           !isSelected && "hover:bg-gray-200 dark:hover:bg-gray-700/50",
           isDragOver && "bg-blue-50 ring-2 ring-blue-300 dark:ring-blue-600"

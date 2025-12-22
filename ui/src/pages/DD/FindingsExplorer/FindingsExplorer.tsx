@@ -533,7 +533,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
       style={{ minHeight: containerHeight }}
     >
       {/* Top Bar - Compact with Run Selector, Filters, and Actions */}
-      <div className="flex-shrink-0 px-4 py-3 border-b border-gray-300 dark:border-gray-600 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-gray-800 dark:to-gray-800">
+      <div className="flex-shrink-0 px-4 py-3 border-b border-gray-700 bg-alchemyPrimaryNavyBlue">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {/* Run Selector */}
@@ -547,7 +547,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
             <select
               value={activeTab}
               onChange={(e) => setActiveTab(e.target.value as ActiveTab)}
-              className="h-8 px-2.5 text-xs font-medium bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="h-8 px-2.5 text-xs font-medium bg-white border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               <optgroup label="Analysis">
                 <option value="findings">Findings</option>
@@ -570,7 +570,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
               <select
                 value={filterCategory || ''}
                 onChange={(e) => setFilterCategory((e.target.value as DDCategory) || null)}
-                className="h-8 px-2.5 text-xs bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="h-8 px-2.5 text-xs bg-white border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="">All Categories</option>
                 {DD_CATEGORY_ORDER.map(cat => (
@@ -586,7 +586,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
               <select
                 value={filterSeverity || ''}
                 onChange={(e) => setFilterSeverity(e.target.value as FindingSeverity || null)}
-                className="h-8 px-2.5 text-xs bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="h-8 px-2.5 text-xs bg-white border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="">All Severities</option>
                 {availableSeverities.map(sev => (
@@ -600,23 +600,6 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
 
           {/* Right side actions */}
           <div className="flex items-center gap-2">
-            {/* Copy content button */}
-            <button
-              onClick={handleCopyContent}
-              className={`
-                h-8 flex items-center gap-1.5 px-2.5 text-xs font-medium rounded-md
-                transition-all duration-200
-                ${copySuccess
-                  ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-700'
-                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200'
-                }
-              `}
-              title="Copy content to clipboard"
-            >
-              {copySuccess ? <CheckIcon /> : <CopyIcon />}
-              {copySuccess ? 'Copied!' : 'Copy'}
-            </button>
-
             {/* Export controls */}
             {onExportFindings && activeTab === 'findings' && (
               <div className="flex items-center gap-2">
@@ -627,13 +610,13 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                     </span>
                     <button
                       onClick={handleClearExportSelection}
-                      className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all duration-200 hover:scale-105"
                     >
                       Clear
                     </button>
                     <button
                       onClick={handleExportSelected}
-                      className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors"
+                      className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105 hover:shadow-md"
                     >
                       <DownloadIcon />
                       Export
@@ -643,7 +626,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                 {selectedForExport.size === 0 && (
                   <button
                     onClick={handleSelectAllForExport}
-                    className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all duration-200 hover:scale-105"
                   >
                     Select all
                   </button>
@@ -658,14 +641,14 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                   onClick={() => onDownloadReport('preliminary')}
                   disabled={reportTypeLoading !== null}
                   className={`
-                    h-8 flex items-center gap-1.5 px-3 text-xs font-medium rounded-md
+                    h-8 flex items-center gap-1.5 px-3 text-xs font-medium rounded-lg
                     transition-all duration-200 ease-in-out
                     border border-gray-300 dark:border-gray-600
                     ${reportTypeLoading === 'preliminary'
                       ? 'bg-amber-50 dark:bg-amber-900/30 border-amber-300 text-amber-700 cursor-wait'
                       : reportTypeLoading !== null
                       ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
-                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700 dark:hover:bg-amber-900/20 dark:hover:border-amber-600 dark:hover:text-amber-400 hover:shadow-sm active:scale-95'
+                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700 dark:hover:bg-amber-900/20 dark:hover:border-amber-600 dark:hover:text-amber-400 hover:shadow-md hover:scale-105 active:scale-95'
                     }
                   `}
                   title="Download preliminary report (Word document)"
@@ -677,13 +660,13 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                   onClick={() => onDownloadReport('final')}
                   disabled={reportTypeLoading !== null}
                   className={`
-                    h-8 flex items-center gap-1.5 px-3 text-xs font-medium rounded-md
+                    h-8 flex items-center gap-1.5 px-3 text-xs font-medium rounded-lg
                     transition-all duration-200 ease-in-out
                     ${reportTypeLoading === 'final'
-                      ? 'bg-green-500 text-white cursor-wait'
+                      ? 'bg-[#ff6b00] text-white cursor-wait'
                       : reportTypeLoading !== null
                       ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                      : 'bg-green-600 text-white hover:bg-green-500 hover:shadow-md active:scale-95 active:bg-green-700'
+                      : 'bg-[#ff6b00] text-white hover:bg-[#e55f00] hover:shadow-md hover:scale-105 active:scale-95 active:bg-[#cc5500]'
                     }
                   `}
                   title="Download final report with all findings (Word document)"
@@ -711,10 +694,13 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                 {/* Collapse button */}
                 <button
                   onClick={() => setLeftPanelCollapsed(!leftPanelCollapsed)}
-                  className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                  className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200 hover:scale-105 flex items-center gap-2"
                   title={leftPanelCollapsed ? 'Expand documents panel' : 'Collapse documents panel'}
                 >
                   {leftPanelCollapsed ? <ExpandLeftIcon /> : <CollapseLeftIcon />}
+                  {!leftPanelCollapsed && (
+                    <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Documents</span>
+                  )}
                 </button>
                 {/* Content */}
                 {!leftPanelCollapsed && (
@@ -771,7 +757,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                 {/* Collapse button */}
                 <button
                   onClick={() => setRightPanelCollapsed(!rightPanelCollapsed)}
-                  className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                  className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200 hover:scale-105"
                   title={rightPanelCollapsed ? 'Expand details panel' : 'Collapse details panel'}
                 >
                   {rightPanelCollapsed ? <ExpandRightIcon /> : <CollapseRightIcon />}
@@ -819,7 +805,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                   {onRefreshCompletenessAssessment && (
                     <button
                       onClick={onRefreshCompletenessAssessment}
-                      className="mt-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                      className="mt-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105 hover:shadow-md"
                     >
                       Run Assessment
                     </button>
@@ -908,7 +894,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
             })}
             <button
               onClick={() => setShowLegend(!showLegend)}
-              className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs"
+              className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs transition-all duration-200 hover:scale-105"
             >
               {showLegend ? 'Hide labels' : 'Show labels'}
             </button>

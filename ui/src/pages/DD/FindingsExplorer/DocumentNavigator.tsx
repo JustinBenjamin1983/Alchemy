@@ -32,6 +32,13 @@ const DownloadIcon = () => (
   </svg>
 );
 
+// Vertical 3-dots menu icon
+const MoreVerticalIcon = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+  </svg>
+);
+
 // Tooltip component for document preview
 const DocumentTooltip: React.FC<{
   doc: DocumentWithFindings;
@@ -107,14 +114,14 @@ const DocumentItem: React.FC<{
   onDownloadDocument?: (docId: string) => void;
 }> = ({ doc, isSelected, onSelect, onViewDocument, onDownloadDocument }) => {
   const [showTooltip, setShowTooltip] = useState(false);
-  const [showActions, setShowActions] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const hasIssues = doc.critical_count > 0 || doc.high_count > 0;
 
   return (
     <div
       className="relative group"
-      onMouseEnter={() => { setShowTooltip(true); setShowActions(true); }}
-      onMouseLeave={() => { setShowTooltip(false); setShowActions(false); }}
+      onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => { setShowTooltip(false); setShowMenu(false); }}
     >
       <button
         onClick={onSelect}
@@ -127,7 +134,7 @@ const DocumentItem: React.FC<{
         <div className="flex items-start gap-2">
           <span className="flex-shrink-0 mt-0.5"><FileIcon /></span>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate pr-12">
+            <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate pr-6">
               {doc.name}
             </div>
             <div className="flex items-center gap-2 mt-1">
@@ -162,37 +169,55 @@ const DocumentItem: React.FC<{
         </div>
       </button>
 
-      {/* Action buttons - show on hover */}
-      {(onViewDocument || onDownloadDocument) && showActions && (
-        <div className="absolute top-2 right-2 flex items-center gap-1">
-          {onViewDocument && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onViewDocument(doc.id);
-              }}
-              className="p-1 rounded hover:bg-blue-100 dark:hover:bg-blue-900/30 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
-              title="View document in new tab"
-            >
-              <ExternalLinkIcon />
-            </button>
-          )}
-          {onDownloadDocument && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDownloadDocument(doc.id);
-              }}
-              className="p-1 rounded hover:bg-green-100 dark:hover:bg-green-900/30 text-gray-500 hover:text-green-600 dark:text-gray-400 dark:hover:text-green-400 transition-colors"
-              title="Download document"
-            >
-              <DownloadIcon />
-            </button>
+      {/* 3-dots menu button */}
+      {(onViewDocument || onDownloadDocument) && (
+        <div className="absolute top-2 right-1">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowMenu(!showMenu);
+            }}
+            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all duration-200 hover:scale-110"
+            title="Document options"
+          >
+            <MoreVerticalIcon />
+          </button>
+
+          {/* Dropdown menu */}
+          {showMenu && (
+            <div className="absolute right-0 top-full mt-1 w-36 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 py-1">
+              {onViewDocument && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onViewDocument(doc.id);
+                    setShowMenu(false);
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2 transition-all duration-200"
+                >
+                  <ExternalLinkIcon />
+                  View
+                </button>
+              )}
+              {onDownloadDocument && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDownloadDocument(doc.id);
+                    setShowMenu(false);
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 flex items-center gap-2 transition-all duration-200"
+                >
+                  <DownloadIcon />
+                  Download
+                </button>
+              )}
+            </div>
           )}
         </div>
       )}
 
-      <DocumentTooltip doc={doc} visible={showTooltip && !showActions} />
+      <DocumentTooltip doc={doc} visible={showTooltip && !showMenu} />
     </div>
   );
 };
@@ -209,13 +234,6 @@ export const DocumentNavigator: React.FC<DocumentNavigatorProps> = ({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="flex-shrink-0 px-3 py-2.5 border-b border-gray-300 dark:border-gray-600 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-gray-800 dark:to-gray-800">
-        <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-          Documents
-        </h3>
-      </div>
-
       {/* All Documents option */}
       <button
         onClick={() => onDocumentSelect(null)}

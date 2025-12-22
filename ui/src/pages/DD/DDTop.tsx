@@ -80,34 +80,36 @@ export function DDTop({
             <div className="flex gap-4 justify-between items-center">
               <div className="flex gap-4">
                 <Button
-                  className={
+                  className={`transition-all duration-200 hover:scale-105 hover:shadow-md ${
                     screenState === "Processing"
-                      ? "bg-alchemyPrimaryGoldenWeb"
-                      : ""
-                  }
+                      ? "bg-alchemyPrimaryOrange text-white hover:bg-alchemyPrimaryOrange/90"
+                      : "hover:border-gray-400"
+                  }`}
                   variant="outline"
                   onClick={() => setScreenState("Processing")}
                 >
-                  <Activity className="mr-2 h-4 w-4" />
                   Console
                 </Button>
                 <Button
-                  className={
-                    screenState === "Analysis" ? "bg-alchemyPrimaryGoldenWeb" : ""
-                  }
+                  className={`transition-all duration-200 hover:scale-105 hover:shadow-md ${
+                    screenState === "Analysis"
+                      ? "bg-alchemyPrimaryOrange text-white hover:bg-alchemyPrimaryOrange/90"
+                      : "hover:border-gray-400"
+                  }`}
                   variant="outline"
                   onClick={() => setScreenState("Analysis")}
                 >
                   Analysis
                 </Button>
                 <Button
+                  className="transition-all duration-200 hover:scale-105 hover:shadow-md hover:border-gray-400"
                   variant="outline"
                   onClick={() => setScreenState("Wizard-Chooser")}
                 >
                   Start / join
                 </Button>
                 <Button
-                  className="bg-alchemyPrimaryNavyBlue text-white"
+                  className="bg-alchemyPrimaryNavyBlue text-white transition-all duration-200 hover:scale-105 hover:shadow-md hover:bg-alchemyPrimaryNavyBlue/90"
                   variant="outline"
                   onClick={onGenerateReport}
                   disabled={isGeneratingReport || !onGenerateReport}
@@ -124,7 +126,7 @@ export function DDTop({
                 size="sm"
                 onClick={handleDeleteClick}
                 disabled={isDeleting}
-                className="text-gray-400 hover:text-red-600 hover:bg-red-50"
+                className="text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all duration-200 hover:scale-110"
                 title="Delete project"
               >
                 {isDeleting ? (
@@ -153,6 +155,7 @@ export function DDTop({
             <Button
               variant="outline"
               onClick={() => setShowDeleteDialog(false)}
+              className="transition-all duration-200 hover:scale-105 hover:shadow-md hover:border-gray-400"
             >
               Cancel
             </Button>
@@ -160,6 +163,7 @@ export function DDTop({
               variant="destructive"
               onClick={handleConfirmDelete}
               disabled={isDeleting}
+              className="transition-all duration-200 hover:scale-105 hover:shadow-md"
             >
               {isDeleting && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
               Delete Permanently

@@ -251,7 +251,7 @@ function renderStakeholderList(items: string, delimiter: string = ";") {
         return (
           <div
             key={idx}
-            className="bg-gray-50 dark:bg-gray-700/50 rounded-md px-2.5 py-1.5 text-xs"
+            className="bg-gray-50 dark:bg-gray-700/50 rounded-lg px-2.5 py-1.5 text-xs"
           >
             <div className="font-medium text-gray-800 dark:text-gray-200">{name}</div>
             {description && (
@@ -464,17 +464,17 @@ export const TransactionSummary: React.FC<TransactionSummaryProps> = ({
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-700 dark:via-gray-700 dark:to-gray-700 border-b border-gray-200 dark:border-gray-600 cursor-pointer"
+        className="flex items-center justify-between px-4 py-3 bg-alchemyPrimaryNavyBlue border-b border-gray-700 cursor-pointer"
         onClick={onToggleCollapse}
       >
         <div className="flex items-center gap-2">
           {isCollapsed ? (
-            <ChevronRight className="w-4 h-4 text-gray-500" />
+            <ChevronRight className="w-4 h-4 text-white/70" />
           ) : (
-            <ChevronDown className="w-4 h-4 text-gray-500" />
+            <ChevronDown className="w-4 h-4 text-white/70" />
           )}
-          <FileText className="w-4 h-4 text-blue-600" />
-          <h3 className="font-medium text-gray-900 dark:text-gray-100">
+          <FileText className="w-4 h-4 text-white" />
+          <h3 className="font-medium text-white">
             {name}
           </h3>
           {typeInfo && (
@@ -484,7 +484,7 @@ export const TransactionSummary: React.FC<TransactionSummaryProps> = ({
                   <span onClick={(e) => e.stopPropagation()}>
                     <Badge
                       variant="outline"
-                      className="ml-1 text-xs py-0.5 px-2 bg-white/80 dark:bg-gray-700 border-blue-200 dark:border-blue-700 cursor-help"
+                      className="ml-1 text-xs py-0.5 px-2 bg-white/20 border-white/30 text-white cursor-help"
                     >
                       <span className="mr-1">{typeInfo.icon}</span>
                       {typeInfo.name}
@@ -503,10 +503,10 @@ export const TransactionSummary: React.FC<TransactionSummaryProps> = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                className="p-1 rounded-full hover:bg-blue-100 dark:hover:bg-gray-600 transition-colors"
+                className="p-1 rounded-full hover:bg-white/20 transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
-                <Info className="w-4 h-4 text-blue-500" />
+                <Info className="w-4 h-4 text-white/70" />
               </button>
             </TooltipTrigger>
             <TooltipContent

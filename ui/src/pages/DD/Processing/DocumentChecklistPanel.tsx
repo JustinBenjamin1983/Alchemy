@@ -156,16 +156,16 @@ export const DocumentChecklistPanel: React.FC<DocumentChecklistPanelProps> = ({
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-700 dark:to-gray-700 border-b border-gray-200 dark:border-gray-600 cursor-pointer"
+        className="flex items-center justify-between px-4 py-3 bg-alchemyPrimaryNavyBlue border-b border-gray-700 cursor-pointer"
         onClick={onToggleCollapse}
       >
         <div className="flex items-center gap-2">
           {isCollapsed ? (
-            <ChevronRight className="w-4 h-4 text-gray-500" />
+            <ChevronRight className="w-4 h-4 text-white/70" />
           ) : (
-            <ChevronDown className="w-4 h-4 text-gray-500" />
+            <ChevronDown className="w-4 h-4 text-white/70" />
           )}
-          <h3 className="font-medium text-gray-900 dark:text-gray-100">
+          <h3 className="font-medium text-white">
             Documents ({processableDocuments.length})
           </h3>
         </div>
@@ -173,19 +173,19 @@ export const DocumentChecklistPanel: React.FC<DocumentChecklistPanelProps> = ({
           {/* Status Summary */}
           <div className="flex items-center gap-2">
             {summary.ready > 0 && (
-              <span className="flex items-center gap-1 text-green-600">
+              <span className="flex items-center gap-1 text-green-400">
                 <Check className="w-3 h-3" />
                 {summary.ready}
               </span>
             )}
             {summary.failed > 0 && (
-              <span className="flex items-center gap-1 text-red-600">
+              <span className="flex items-center gap-1 text-red-400">
                 <X className="w-3 h-3" />
                 {summary.failed}
               </span>
             )}
             {(summary.checking > 0 || isCheckingReadability) && (
-              <span className="flex items-center gap-1 text-blue-500">
+              <span className="flex items-center gap-1 text-blue-300">
                 <Loader2 className="w-3 h-3 animate-spin" />
                 {summary.checking > 0 ? summary.checking : "Checking..."}
               </span>

@@ -496,11 +496,13 @@ export function Step5DocumentChecklist({ data, onChange }: Step5Props) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* File Upload Section - Always visible */}
-      <Card className={`border-2 ${data.uploadedFile ? 'border-green-500 bg-green-50' : isDragging ? 'border-alchemyPrimaryOrange bg-orange-50' : 'border-dashed border-gray-300'}`}>
-        <CardContent className="pt-6">
-          <div
+      <div className="bg-slate-50 rounded-lg border border-gray-200 shadow-sm p-4">
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">Upload Documents</h3>
+        <Card className={`border-2 ${data.uploadedFile ? 'border-green-500 bg-green-50' : isDragging ? 'border-alchemyPrimaryOrange bg-orange-50' : 'border-dashed border-gray-300'}`}>
+          <CardContent className="pt-6">
+            <div
             className="flex flex-col items-center justify-center py-6 cursor-pointer"
             onClick={() => fileInputRef.current?.click()}
             onDrop={handleDrop}
@@ -554,33 +556,31 @@ export function Step5DocumentChecklist({ data, onChange }: Step5Props) {
             onChange={handleFileInputChange}
           />
         </CardContent>
-      </Card>
+        </Card>
+      </div>
 
       {/* Document Checklist Section - Shows loading, error, or content */}
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">Document Checklist</h3>
       {isLoading ? (
         <div className="flex items-center justify-center py-8">
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground mr-2" />
           <span className="text-muted-foreground">Loading document checklist...</span>
         </div>
       ) : isError || !registry ? (
-        <Card className="bg-gray-50">
-          <CardContent className="pt-6">
-            <div className="text-center py-4 text-muted-foreground">
-              <AlertCircle className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-              <p className="font-medium">Document checklist unavailable</p>
-              <p className="text-sm mt-1">
-                {data.transactionType
-                  ? "Unable to load the document checklist. You can still upload your files and proceed."
-                  : "Please select a transaction type in Step 1 to see the document checklist."}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="text-center py-4 text-muted-foreground bg-gray-50 rounded-lg">
+          <AlertCircle className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+          <p className="font-medium">Document checklist unavailable</p>
+          <p className="text-sm mt-1">
+            {data.transactionType
+              ? "Unable to load the document checklist. You can still upload your files and proceed."
+              : "Please select a transaction type in Step 1 to see the document checklist."}
+          </p>
+        </div>
       ) : (
         <>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h2 className="text-xl font-semibold">Document Checklist</h2>
               <p className="text-sm text-muted-foreground">
                 {filteredDocuments.length} documents expected for{" "}
                 {TRANSACTION_TYPE_INFO[data.transactionType!]?.name || data.transactionType}{" "}
@@ -659,6 +659,7 @@ export function Step5DocumentChecklist({ data, onChange }: Step5Props) {
           )}
         </>
       )}
+      </div>
     </div>
   );
 }

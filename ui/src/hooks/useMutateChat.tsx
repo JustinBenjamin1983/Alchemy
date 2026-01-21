@@ -4,6 +4,7 @@ import { useAxiosWithAuth } from "./useAxiosWithAuth";
 interface ChatMutationData {
   question: string;
   dd_id: string;
+  run_id?: string; // Analysis run ID for findings context
   document_id?: string; // Legacy support - single document
   folder_id?: string; // Legacy support - single folder
   document_ids?: string[]; // New - multiple documents
@@ -13,6 +14,7 @@ interface ChatMutationData {
 interface ChatRequestData {
   question: string;
   dd_id: string;
+  run_id?: string;
   document_ids?: string[];
   folder_ids?: string[];
 }
@@ -25,6 +27,7 @@ export function useMutateChat() {
     const requestData: ChatRequestData = {
       question: data.question,
       dd_id: data.dd_id,
+      run_id: data.run_id,
       document_ids: [],
       folder_ids: [],
     };

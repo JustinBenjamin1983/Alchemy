@@ -64,6 +64,7 @@ export function DDMain() {
   const deleteWizardDraft = useDeleteWizardDraft();
   const generateSAS = useGenerateSAS();
   const { data: dds } = useGetDDListing("im_not_a_member");
+  const { data: myDDs } = useGetDDListing("involves_me");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [projectName, setProjectName] = useState<string>("");
   const [clientBriefing, setClientBriefing] = useState<string>("");
@@ -110,6 +111,7 @@ export function DDMain() {
       };
   const location = useLocation();
   const [selectedDDToJoin, setSelectedDDToJoin] = useState(null);
+  const [selectedDDToOpen, setSelectedDDToOpen] = useState<string | undefined>(undefined);
   const [selectedDDID, setSelectedDDID] = useState(() => {
     const query = new URLSearchParams(location.search);
     return query.get("id");
@@ -360,6 +362,13 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
     });
   };
 
+  const openExistingDD = () => {
+    if (selectedDDToOpen) {
+      setSelectedDDID(selectedDDToOpen);
+      setScreenState("Processing");
+    }
+  };
+
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
 
   // Get risk results for report generation
@@ -397,6 +406,7 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
     | "Wizard-Chooser"
     | "Wizard-NewProject"
     | "Wizard-JoinProject"
+    | "Wizard-OpenProject"
     | "Analysis"
     | "Processing"
   >("Wizard-Chooser");
@@ -441,7 +451,11 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
           onOpenChange={(open) => (!open ? setScreenState("Processing") : null)}
         >
           {/* <DialogContent className="w-[1200px]"> */}
-          <DialogContent className="w-[95vw] max-w-[1200px] max-h-[85vh] overflow-y-auto overflow-x-hidden p-0">
+          <DialogContent className={`max-h-[85vh] overflow-y-auto overflow-x-hidden p-0 ${
+            screenState === "Wizard-OpenProject"
+              ? "w-[50vw] max-w-[600px]"
+              : "w-[95vw] max-w-[1200px]"
+          }`}>
             <DialogHeader className="px-6 py-4 bg-alchemyPrimaryNavyBlue rounded-t-lg">
               <DialogTitle className="text-white">Due Diligence Configuration</DialogTitle>
               <DialogDescription className="text-white/70">
@@ -531,6 +545,39 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
                 </div>
               </div>
             )}
+            {screenState == "Wizard-OpenProject" && (
+              <div className="flex flex-col items-center">
+                <div className="py-4">
+                  <Select
+                    onValueChange={setSelectedDDToOpen}
+                    value={selectedDDToOpen}
+                  >
+                    <SelectTrigger className="w-[400px] bg-white">
+                      <SelectValue placeholder="Select a project" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                      <SelectGroup>
+                        {myDDs?.due_diligences?.map((dd) => {
+                          return (
+                            <SelectItem
+                              key={dd.id}
+                              value={dd.id}
+                            >
+                              {dd.name}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {myDDs?.due_diligences?.length === 0 && (
+                  <div className="text-muted-foreground text-sm text-center py-4">
+                    You don't have any existing projects yet. Start a new project to get started.
+                  </div>
+                )}
+              </div>
+            )}
             {screenState == "Wizard-Chooser" && (
               <div className="space-y-6 p-6">
                 {/* Saved Drafts Section */}
@@ -601,7 +648,7 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
                 )}
 
                 {/* Main Options */}
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-3 gap-6">
                   <Card className="rounded-2xl shadow-md">
                     <CardContent className="p-6 flex flex-col gap-4">
                       <h2 className="text-xl font-semibold">
@@ -618,6 +665,21 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
                         }}
                       >
                         Start Now
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="rounded-2xl shadow-md">
+                    <CardContent className="p-6 flex flex-col gap-4">
+                      <h2 className="text-xl font-semibold">Open existing project</h2>
+                      <p className="text-sm text-muted-foreground">
+                        Continue working on a project you've already created
+                      </p>
+                      <Button
+                        onClick={() => setScreenState("Wizard-OpenProject")}
+                        disabled={!myDDs?.due_diligences?.length}
+                      >
+                        Open
                       </Button>
                     </CardContent>
                   </Card>
@@ -652,6 +714,14 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
                     <Loader2 className="animate-spin" />
                   )}
                   Join Due Diligence
+                </Button>
+              )}
+              {screenState === "Wizard-OpenProject" && (
+                <Button
+                  onClick={openExistingDD}
+                  disabled={!selectedDDToOpen}
+                >
+                  Open Project
                 </Button>
               )}
             </DialogFooter>

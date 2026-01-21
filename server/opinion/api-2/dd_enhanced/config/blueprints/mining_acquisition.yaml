@@ -150,6 +150,828 @@ conditions_precedent_patterns:
   cp_type: Third Party Consent
 - pattern: ministerial approval
   cp_type: Regulatory Approval
+
+# ============================================================================
+# WARRANTIES & INDEMNITIES FRAMEWORK
+# ============================================================================
+# This section defines transaction-specific warranty and indemnity categories,
+# standard protections, and patterns for identifying existing W&I provisions.
+# Used to generate recommended warranties and indemnities based on DD findings.
+# ============================================================================
+
+warranty_categories:
+  # ---------------------------------------------------------------------------
+  # TITLE & CAPACITY WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Title & Capacity"
+    description: "Warranties relating to share ownership, corporate capacity, and authority"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-TC-001"
+        description: "Seller has full legal and beneficial ownership of the sale shares"
+        detailed_wording: "The Seller is the sole legal and beneficial owner of the Sale Shares, free from any encumbrances, liens, charges, pledges, or third-party rights whatsoever"
+        typical_cap: "Purchase price"
+        survival_period: "3 years from Closing Date"
+        priority: critical
+        dd_triggers:
+          - "Share certificate review"
+          - "Securities register check"
+          - "CIPC records verification"
+      - id: "W-TC-002"
+        description: "Sale shares are fully paid up and non-assessable"
+        detailed_wording: "The Sale Shares are validly issued, fully paid up, and non-assessable, and no further amounts are payable in respect thereof"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-TC-003"
+        description: "No options, pre-emptive rights, or rights of first refusal over the sale shares"
+        detailed_wording: "There are no outstanding options, warrants, convertible securities, pre-emptive rights, rights of first refusal, tag-along rights, drag-along rights, or other rights to acquire any of the Sale Shares"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Shareholders agreement review"
+          - "Option agreements"
+      - id: "W-TC-004"
+        description: "Seller has full power and authority to enter into and perform the transaction"
+        detailed_wording: "The Seller has full corporate power and authority to enter into this Agreement and to perform its obligations hereunder, and all necessary corporate approvals have been obtained"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-TC-005"
+        description: "Transaction does not conflict with constitutional documents or material agreements"
+        detailed_wording: "The execution, delivery, and performance of this Agreement will not result in a breach of, or constitute a default under, the MOI, any shareholders agreement, or any material contract to which the Seller or Target is a party"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # MINING RIGHTS & REGULATORY WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Mining Rights & Regulatory"
+    description: "Warranties specific to mining rights, MPRDA compliance, and regulatory standing"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    mining_specific: true
+    standard_warranties:
+      - id: "W-MR-001"
+        description: "Mining right is valid, in good standing, and not subject to forfeiture"
+        detailed_wording: "The Mining Right is valid and subsisting, is held in good standing with the DMRE, is not subject to any forfeiture proceedings, suspension, cancellation, or withdrawal, and all conditions attached thereto have been complied with in all material respects"
+        typical_cap: "Purchase price"
+        survival_period: "5 years or life of mining right"
+        priority: critical
+        dd_triggers:
+          - "Mining right certificate"
+          - "DMRE correspondence"
+          - "Compliance status report"
+        red_flags:
+          - "DMRE directive received"
+          - "Compliance notice outstanding"
+          - "Section 93 suspension"
+      - id: "W-MR-002"
+        description: "Mining Work Programme obligations have been complied with"
+        detailed_wording: "All obligations under the Mining Work Programme attached to the Mining Right have been complied with, and there are no material deviations from the approved programme that have not been disclosed"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Mining Work Programme document"
+          - "Production records"
+          - "DMRE audit reports"
+      - id: "W-MR-003"
+        description: "Social and Labour Plan is compliant with no material arrears"
+        detailed_wording: "The Social and Labour Plan has been approved by the DMRE, all SLP commitments have been complied with in all material respects, and there are no material arrears or outstanding obligations that could result in enforcement action"
+        typical_cap: "Quantified SLP arrears + 50%"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "SLP document"
+          - "SLP progress reports"
+          - "HRD and LED expenditure records"
+        quantification_required: true
+      - id: "W-MR-004"
+        description: "No DMRE notices, directives, or enforcement actions outstanding"
+        detailed_wording: "No notices, directives, compliance orders, or enforcement actions have been received from the DMRE that have not been fully disclosed, and the Target is not aware of any circumstances that may give rise to such notices"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-MR-005"
+        description: "Mining right boundaries accurately described and surveyed"
+        detailed_wording: "The boundaries of the Mining Right as set out in Schedule [X] accurately reflect the surveyed and registered mining area, and there are no disputes regarding the extent or boundaries of the mining area"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: high
+      - id: "W-MR-006"
+        description: "All regulatory consents for current operations have been obtained"
+        detailed_wording: "All consents, approvals, permits, and authorisations required under the MPRDA, NEMA, NWA, and other applicable legislation for the conduct of current mining operations have been obtained and are in full force and effect"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-MR-007"
+        description: "Competent Person Report accurately reflects mineral resources and reserves"
+        detailed_wording: "The Competent Person Report dated [date] has been prepared in accordance with SAMREC and accurately reflects the mineral resources and ore reserves of the Target as at the date thereof"
+        typical_cap: "As negotiated (often excluded or heavily qualified)"
+        survival_period: "18-24 months"
+        priority: high
+        special_considerations:
+          - "Often heavily negotiated"
+          - "May require materiality threshold"
+          - "Consider technical expert opinion"
+
+  # ---------------------------------------------------------------------------
+  # MINING CHARTER / BEE WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Mining Charter & BEE"
+    description: "Warranties specific to Mining Charter III compliance and HDSA ownership"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    mining_specific: true
+    standard_warranties:
+      - id: "W-BEE-001"
+        description: "Current HDSA ownership meets Mining Charter III requirements"
+        detailed_wording: "The Target's HDSA ownership is not less than 30% calculated in accordance with Mining Charter III methodology, and all HDSA shareholders constitute qualifying Historically Disadvantaged South Africans"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Shareholder register"
+          - "BEE ownership analysis"
+          - "Mining Charter scorecard"
+      - id: "W-BEE-002"
+        description: "HDSA shareholders have meaningful economic participation"
+        detailed_wording: "All HDSA shareholders have meaningful economic participation in the Target including the right to receive dividends and participate in any increase in value, and are not subject to arrangements that would undermine genuine ownership"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: high
+      - id: "W-BEE-003"
+        description: "No BEE fronting arrangements exist"
+        detailed_wording: "The Target is not a party to, and has no knowledge of, any fronting arrangements as defined in the B-BBEE Act or Mining Charter, and all disclosed BEE ownership is genuine and compliant"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-BEE-004"
+        description: "Mining Charter scorecard elements accurately disclosed"
+        detailed_wording: "The Mining Charter scorecard submitted to the DMRE is accurate and complete, and the Target has achieved the disclosed levels of compliance with all Mining Charter III elements"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # ENVIRONMENTAL WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Environmental"
+    description: "Warranties relating to environmental compliance, authorisations, and liabilities"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    mining_specific: true
+    standard_warranties:
+      - id: "W-ENV-001"
+        description: "Environmental Management Programme is approved and compliant"
+        detailed_wording: "The Environmental Management Programme has been approved by the competent authority, all conditions thereof have been complied with, and all required environmental performance assessment reports have been submitted"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "EMPr approval"
+          - "Environmental audit reports"
+          - "EPAR submissions"
+      - id: "W-ENV-002"
+        description: "Water Use License is valid and compliant"
+        detailed_wording: "The Water Use License is valid and subsisting, all conditions thereof have been complied with, water use is within licensed volumes, and there are no outstanding compliance notices from DWS"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "WUL document"
+          - "Water use monitoring records"
+          - "DWS correspondence"
+      - id: "W-ENV-003"
+        description: "Rehabilitation liability provision is adequate"
+        detailed_wording: "The financial provision for rehabilitation and closure costs has been calculated in accordance with applicable regulations and is adequate to cover the estimated rehabilitation liability as at the Effective Date"
+        typical_cap: "Gap amount identified"
+        survival_period: "5 years"
+        priority: critical
+        quantification_required: true
+        dd_triggers:
+          - "Closure cost estimate"
+          - "Financial provision certificate"
+          - "Rehabilitation liability assessment"
+      - id: "W-ENV-004"
+        description: "No undisclosed environmental contamination"
+        detailed_wording: "To the best of Seller's knowledge, there is no soil, groundwater, or surface water contamination at the mining operations other than as disclosed, and no environmental incident has occurred that has not been reported to the authorities"
+        typical_cap: "Unlimited or significant cap"
+        survival_period: "7 years or perpetual"
+        priority: critical
+        knowledge_qualifier: true
+      - id: "W-ENV-005"
+        description: "Tailings storage facility is stable and compliant"
+        detailed_wording: "The tailings storage facility has been designed, constructed, and operated in accordance with applicable standards, is structurally stable, and all required monitoring and inspections have been conducted"
+        typical_cap: "As negotiated"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "TSF stability assessment"
+          - "TSF monitoring reports"
+          - "GISTM compliance"
+      - id: "W-ENV-006"
+        description: "No pending environmental prosecutions or enforcement"
+        detailed_wording: "There are no pending or threatened prosecutions, enforcement actions, administrative penalties, or compliance notices under any environmental legislation that have not been disclosed"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "5 years"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # FINANCIAL WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Financial"
+    description: "Warranties relating to financial statements, debt, and financial position"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-FIN-001"
+        description: "Financial statements fairly present the financial position"
+        detailed_wording: "The audited financial statements for the financial year ended [date] have been prepared in accordance with IFRS and fairly present the financial position, results of operations, and cash flows of the Target"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Audited AFS"
+          - "Audit report"
+          - "Management accounts"
+      - id: "W-FIN-002"
+        description: "No undisclosed liabilities"
+        detailed_wording: "The Target has no liabilities (actual, contingent, or otherwise) other than liabilities reflected in the Accounts, liabilities incurred in the ordinary course since the Accounts Date, or liabilities disclosed in the Disclosure Schedule"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-FIN-003"
+        description: "Complete disclosure of all indebtedness"
+        detailed_wording: "Complete and accurate details of all borrowings, loan facilities, shareholder loans, and other indebtedness of the Target have been disclosed, including outstanding amounts, interest rates, maturity dates, and all covenants"
+        typical_cap: "Full amount of undisclosed debt"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Facility agreements"
+          - "Loan schedules"
+          - "Inter-company loan agreements"
+      - id: "W-FIN-004"
+        description: "No covenant breaches or events of default"
+        detailed_wording: "No event of default, covenant breach, or event which with notice or lapse of time would constitute an event of default, has occurred under any facility agreement or other financing document"
+        typical_cap: "Acceleration amount at risk"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-FIN-005"
+        description: "Receivables are valid and collectible"
+        detailed_wording: "All receivables shown in the Accounts represent valid debts owing to the Target, are collectible in the ordinary course, and adequate provision has been made for doubtful debts"
+        typical_cap: "25% of purchase price"
+        survival_period: "2 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # MATERIAL CONTRACTS WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Material Contracts"
+    description: "Warranties relating to key commercial contracts including offtake agreements"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    mining_specific: true
+    standard_warranties:
+      - id: "W-MC-001"
+        description: "All material contracts have been disclosed"
+        detailed_wording: "Complete and accurate copies of all Material Contracts (being contracts with annual value exceeding R[X] or with strategic importance) have been disclosed, and the Disclosure Schedule sets out all such contracts"
+        typical_cap: "Value of undisclosed contracts"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-MC-002"
+        description: "Offtake/supply agreements are valid and binding"
+        detailed_wording: "Each offtake agreement and coal/mineral supply agreement disclosed is valid, binding, and enforceable, has not been amended other than as disclosed, and neither party is in material breach thereof"
+        typical_cap: "Annual contract value"
+        survival_period: "Term of contract"
+        priority: critical
+        dd_triggers:
+          - "Offtake agreements"
+          - "Coal supply agreements"
+          - "Contract performance records"
+      - id: "W-MC-003"
+        description: "No termination notices or disputes under material contracts"
+        detailed_wording: "No notice of termination, breach, or dispute has been given or received under any Material Contract, and the Target is not aware of any circumstances that may give rise to such notice"
+        typical_cap: "Contract exposure value"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-MC-004"
+        description: "Target can perform all contractual volume commitments"
+        detailed_wording: "Based on current production levels and the approved mining plan, the Target has the operational capacity to perform all volume commitments under offtake and supply agreements"
+        typical_cap: "Liquidated damages exposure"
+        survival_period: "Term of contracts"
+        priority: high
+        dd_triggers:
+          - "Production records"
+          - "Mining plan"
+          - "Contractual commitments"
+      - id: "W-MC-005"
+        description: "No change of control consent required or has been obtained"
+        detailed_wording: "Either (i) the execution of this Agreement and the change of control of the Target does not require consent under any Material Contract, or (ii) all required consents have been obtained"
+        typical_cap: "Contract value at risk"
+        survival_period: "3 years"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # EMPLOYMENT WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Employment"
+    description: "Warranties relating to employees, unions, and labour matters"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-EMP-001"
+        description: "Complete employee information disclosed"
+        detailed_wording: "Complete and accurate details of all employees have been disclosed including remuneration, benefits, notice periods, and any special terms, and there are no undisclosed arrangements"
+        typical_cap: "12 months total remuneration"
+        survival_period: "2 years"
+        priority: high
+      - id: "W-EMP-002"
+        description: "Compliance with labour legislation"
+        detailed_wording: "The Target has complied in all material respects with all applicable labour legislation including the LRA, BCEA, and EEA, and all statutory returns have been filed"
+        typical_cap: "25% of purchase price"
+        survival_period: "3 years"
+        priority: high
+      - id: "W-EMP-003"
+        description: "No pending retrenchment processes"
+        detailed_wording: "No Section 189 or Section 189A consultation process is pending or contemplated, and no notice of intention to retrench employees has been given"
+        typical_cap: "Quantified severance exposure"
+        survival_period: "2 years"
+        priority: high
+      - id: "W-EMP-004"
+        description: "Union agreements and collective bargaining disclosed"
+        detailed_wording: "All recognition agreements, collective bargaining agreements, and union-related arrangements have been disclosed, and the Target is in compliance with all obligations thereunder"
+        typical_cap: "As negotiated"
+        survival_period: "Term of agreements"
+        priority: high
+        dd_triggers:
+          - "Recognition agreements"
+          - "Collective agreements"
+          - "Wage agreements"
+      - id: "W-EMP-005"
+        description: "MHSA compliance and no pending safety matters"
+        detailed_wording: "The Target has complied with the Mine Health and Safety Act, no Section 54 or Section 55 notices are outstanding, and no safety-related prosecutions are pending"
+        typical_cap: "As negotiated"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "MHSA compliance certificates"
+          - "Safety incident records"
+          - "Section 54/55 history"
+
+  # ---------------------------------------------------------------------------
+  # TAX WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Tax"
+    description: "Warranties relating to tax compliance and liabilities"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-TAX-001"
+        description: "All tax returns filed and taxes paid"
+        detailed_wording: "All tax returns required to be filed by the Target have been filed on time, all taxes due have been paid, and adequate provision has been made in the Accounts for taxes not yet due"
+        typical_cap: "Amount of underpaid taxes + penalties"
+        survival_period: "5 years (statute of limitations)"
+        priority: critical
+      - id: "W-TAX-002"
+        description: "No tax disputes or audits outstanding"
+        detailed_wording: "There are no pending or threatened tax audits, disputes, or assessments, and the Target has not received any notice of intention to audit from SARS"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "5 years"
+        priority: critical
+      - id: "W-TAX-003"
+        description: "Mining royalty obligations current"
+        detailed_wording: "All mining royalties payable under the Mineral and Petroleum Resources Royalty Act have been correctly calculated and paid, and no disputes exist with SARS regarding royalty calculations"
+        typical_cap: "Full royalty exposure"
+        survival_period: "5 years"
+        priority: high
+        mining_specific: true
+        dd_triggers:
+          - "Royalty calculations"
+          - "SARS correspondence"
+          - "Royalty returns"
+      - id: "W-TAX-004"
+        description: "Transfer pricing arrangements compliant"
+        detailed_wording: "All related party transactions and transfer pricing arrangements are at arm's length and in compliance with Section 31 of the Income Tax Act, and adequate documentation exists"
+        typical_cap: "Tax adjustment exposure"
+        survival_period: "5 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # PROPERTY WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Property & Surface Rights"
+    description: "Warranties relating to immovable property, surface rights, and servitudes"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    mining_specific: true
+    standard_warranties:
+      - id: "W-PROP-001"
+        description: "Surface rights cover the mining right area"
+        detailed_wording: "The Target has valid surface rights (whether owned or leased) over all land necessary to conduct the mining operations, and such rights are co-extensive with or exceed the Mining Right area"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Title deeds"
+          - "Surface lease agreements"
+          - "Mining right coordinates"
+      - id: "W-PROP-002"
+        description: "All necessary servitudes in place"
+        detailed_wording: "All servitudes required for mining operations including access roads, pipeline routes, and power line routes have been validly registered and are not subject to any disputes"
+        typical_cap: "As negotiated"
+        survival_period: "3 years"
+        priority: high
+      - id: "W-PROP-003"
+        description: "No pending land claims"
+        detailed_wording: "There are no pending or threatened land claims, restitution claims, or claims under the Extension of Security of Tenure Act affecting the mining operations"
+        typical_cap: "As negotiated"
+        survival_period: "5 years"
+        priority: high
+        dd_triggers:
+          - "Land claims register"
+          - "Community correspondence"
+
+  # ---------------------------------------------------------------------------
+  # LITIGATION WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Litigation"
+    description: "Warranties relating to disputes, claims, and legal proceedings"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-LIT-001"
+        description: "No material litigation pending or threatened"
+        detailed_wording: "There is no litigation, arbitration, or administrative proceeding pending or threatened against the Target with a value exceeding R[X], other than as disclosed in the Disclosure Schedule"
+        typical_cap: "Claim value"
+        survival_period: "3 years"
+        priority: high
+      - id: "W-LIT-002"
+        description: "No silicosis or occupational disease claims undisclosed"
+        detailed_wording: "All claims, potential claims, and compensation paid in respect of silicosis, tuberculosis, or other occupational diseases have been disclosed, and adequate provision has been made therefor"
+        typical_cap: "As negotiated (significant in mining)"
+        survival_period: "5 years or claim period"
+        priority: critical
+        mining_specific: true
+        dd_triggers:
+          - "Occupational health records"
+          - "Compensation claims"
+          - "Class action notifications"
+
+# ============================================================================
+# INDEMNITY CATEGORIES
+# ============================================================================
+
+indemnity_categories:
+  # ---------------------------------------------------------------------------
+  # ENVIRONMENTAL INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Environmental"
+    description: "Indemnities for environmental contamination and rehabilitation liabilities"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    mining_specific: true
+    triggers:
+      - "Rehabilitation liability gap identified (provision < estimated liability)"
+      - "Contamination discovered during DD"
+      - "Environmental compliance issues identified"
+      - "TSF stability concerns"
+      - "Water license non-compliance"
+    standard_indemnities:
+      - id: "I-ENV-001"
+        description: "Pre-Closing environmental contamination"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any contamination of soil, groundwater, or surface water that occurred prior to the Closing Date, whether known or unknown at Closing"
+        typical_cap: "Uncapped or large escrow"
+        survival_period: "7 years or perpetual"
+        priority: critical
+        escrow_recommendation: "10-20% of purchase price in escrow for 3-5 years"
+        calculation_basis: "Remediation cost estimates"
+      - id: "I-ENV-002"
+        description: "Rehabilitation liability shortfall"
+        detailed_wording: "The Seller shall indemnify the Buyer against any shortfall between the rehabilitation provision as at Closing Date and the actual cost of rehabilitation, to the extent such shortfall arises from pre-Closing activities or conditions"
+        typical_cap: "Quantified gap amount + contingency"
+        survival_period: "Until closure"
+        priority: critical
+        quantification_required: true
+        dd_triggers:
+          - "Closure cost estimate exceeds financial provision"
+          - "Financial provision certificate shows underfunding"
+      - id: "I-ENV-003"
+        description: "Water license non-compliance"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any non-compliance with the Water Use License conditions that occurred prior to Closing, including fines, penalties, and remediation costs"
+        typical_cap: "As negotiated"
+        survival_period: "5 years"
+        priority: high
+      - id: "I-ENV-004"
+        description: "Tailings storage facility failure"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any structural failure of the tailings storage facility to the extent caused by design, construction, or operational defects occurring prior to Closing"
+        typical_cap: "As negotiated (potentially unlimited)"
+        survival_period: "10 years"
+        priority: critical
+        special_considerations:
+          - "Consider insurance requirements"
+          - "May need specific engineering assessment"
+
+  # ---------------------------------------------------------------------------
+  # MINING RIGHTS INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Mining Rights"
+    description: "Indemnities for mining right defects and regulatory issues"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    mining_specific: true
+    triggers:
+      - "Mining right validity concerns"
+      - "DMRE compliance issues"
+      - "SLP arrears identified"
+      - "Mining Work Programme non-compliance"
+    standard_indemnities:
+      - id: "I-MR-001"
+        description: "Mining right defects or challenges"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any defect in the Mining Right or any successful challenge to the validity of the Mining Right, to the extent arising from pre-Closing matters"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+      - id: "I-MR-002"
+        description: "SLP catch-up costs"
+        detailed_wording: "The Seller shall indemnify the Buyer for the cost of remedying any SLP non-compliance that existed as at Closing, including all catch-up expenditure required to bring the Target into compliance"
+        typical_cap: "Quantified SLP arrears"
+        survival_period: "3 years"
+        priority: critical
+        quantification_required: true
+        calculation_basis: "SLP audit showing arrears"
+      - id: "I-MR-003"
+        description: "DMRE enforcement actions"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any DMRE enforcement action, directive, or compliance notice relating to pre-Closing non-compliance"
+        typical_cap: "As negotiated"
+        survival_period: "3 years"
+        priority: critical
+      - id: "I-MR-004"
+        description: "Section 11 consent refusal"
+        detailed_wording: "If Section 11 consent is refused due to pre-Closing non-compliance by the Target with Mining Charter or MPRDA requirements, the Seller shall indemnify the Buyer for all costs incurred"
+        typical_cap: "Transaction costs + damages"
+        survival_period: "Until consent obtained"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # CONTRACT TERMINATION INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Material Contract Termination"
+    description: "Indemnities for contract terminations arising from pre-closing breaches"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Material contract at risk of termination"
+      - "Pre-closing breach of material contract"
+      - "Counterparty consent not obtained"
+    standard_indemnities:
+      - id: "I-MC-001"
+        description: "Offtake/supply agreement termination"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from the termination of any offtake or supply agreement due to pre-Closing breach by the Target, including lost profits and liquidated damages"
+        typical_cap: "Contract value for remaining term"
+        survival_period: "Term of contract"
+        priority: critical
+        calculation_basis: "Present value of contract margin"
+        dd_triggers:
+          - "Breach notices from offtakers"
+          - "Volume shortfall history"
+          - "Quality disputes"
+      - id: "I-MC-002"
+        description: "Liquidated damages for pre-closing shortfalls"
+        detailed_wording: "The Seller shall indemnify the Buyer against any liquidated damages payable under offtake or supply agreements that relate to supply shortfalls or quality failures occurring prior to Closing"
+        typical_cap: "Quantified LD exposure"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # TAX INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Tax"
+    description: "Indemnities for tax liabilities arising from pre-closing periods"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Tax audit findings"
+      - "Uncertain tax positions"
+      - "Transfer pricing exposure"
+      - "Mining royalty disputes"
+    standard_indemnities:
+      - id: "I-TAX-001"
+        description: "Pre-Closing tax liabilities"
+        detailed_wording: "The Seller shall indemnify the Buyer against any tax liability of the Target relating to any period ending on or before the Closing Date, to the extent not provided for in the Closing Accounts"
+        typical_cap: "Unlimited for tax"
+        survival_period: "5 years (statute of limitations)"
+        priority: critical
+      - id: "I-TAX-002"
+        description: "Mining royalty reassessments"
+        detailed_wording: "The Seller shall indemnify the Buyer against any additional mining royalty payable following reassessment by SARS of royalty returns for periods prior to Closing"
+        typical_cap: "Royalty amount plus penalties"
+        survival_period: "5 years"
+        priority: high
+        mining_specific: true
+      - id: "I-TAX-003"
+        description: "Transfer pricing adjustments"
+        detailed_wording: "The Seller shall indemnify the Buyer against any tax adjustment arising from SARS transfer pricing audits relating to pre-Closing transactions"
+        typical_cap: "Tax adjustment plus interest"
+        survival_period: "5 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # EMPLOYMENT INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Employment & Occupational Health"
+    description: "Indemnities for employment claims and occupational disease"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    mining_specific: true
+    triggers:
+      - "Occupational disease history"
+      - "Pending retrenchment"
+      - "Union disputes"
+      - "MHSA violations"
+    standard_indemnities:
+      - id: "I-EMP-001"
+        description: "Pre-Closing silicosis and occupational disease claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against all claims for compensation relating to silicosis, tuberculosis, noise-induced hearing loss, or other occupational diseases contracted by employees during their employment prior to Closing"
+        typical_cap: "Aggregate cap or per-claim cap"
+        survival_period: "10 years or claims period"
+        priority: critical
+        special_considerations:
+          - "Class action risk"
+          - "Insurance availability"
+          - "MBOD claims process"
+      - id: "I-EMP-002"
+        description: "Pre-Closing retrenchment liabilities"
+        detailed_wording: "The Seller shall indemnify the Buyer against any severance or retrenchment costs arising from any Section 189 process initiated prior to Closing or required due to pre-Closing decisions"
+        typical_cap: "Quantified severance exposure"
+        survival_period: "2 years"
+        priority: high
+      - id: "I-EMP-003"
+        description: "MHSA penalties and prosecutions"
+        detailed_wording: "The Seller shall indemnify the Buyer against any fines, penalties, or costs arising from MHSA prosecutions or enforcement actions relating to safety incidents or violations occurring prior to Closing"
+        typical_cap: "As negotiated"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # THIRD PARTY CLAIMS INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Third Party Claims"
+    description: "Indemnities for claims by third parties arising from pre-closing matters"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Pending litigation identified"
+      - "Community disputes"
+      - "Supplier/customer claims"
+    standard_indemnities:
+      - id: "I-3P-001"
+        description: "Undisclosed litigation"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any litigation, claim, or dispute that was pending or threatened as at Closing but not disclosed in the Disclosure Schedule"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "3 years"
+        priority: critical
+      - id: "I-3P-002"
+        description: "Community claims and land disputes"
+        detailed_wording: "The Seller shall indemnify the Buyer against any claims by communities, land claimants, or traditional authorities relating to pre-Closing activities or agreements"
+        typical_cap: "As negotiated"
+        survival_period: "5 years"
+        priority: high
+        mining_specific: true
+
+  # ---------------------------------------------------------------------------
+  # BEE INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "BEE & Mining Charter"
+    description: "Indemnities for BEE non-compliance and Mining Charter issues"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    mining_specific: true
+    triggers:
+      - "BEE ownership uncertainty"
+      - "Mining Charter non-compliance"
+      - "DMRE BEE-related concerns"
+    standard_indemnities:
+      - id: "I-BEE-001"
+        description: "BEE misrepresentation consequences"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising if the DMRE determines that BEE representations made to it were inaccurate, including any requirement to restructure ownership"
+        typical_cap: "As negotiated"
+        survival_period: "3 years"
+        priority: high
+      - id: "I-BEE-002"
+        description: "Mining Charter penalty for pre-closing non-compliance"
+        detailed_wording: "The Seller shall indemnify the Buyer against any Mining Charter penalties or requirements imposed by DMRE arising from non-compliance during the period prior to Closing"
+        typical_cap: "Penalty amounts"
+        survival_period: "3 years"
+        priority: high
+
+# ============================================================================
+# WARRANTY & INDEMNITY DETECTION PATTERNS
+# ============================================================================
+
+warranty_indemnity_patterns:
+  warranty_patterns:
+    - pattern: "represents and warrants|seller warrants|vendor warrants"
+      type: warranty
+      category: General
+    - pattern: "warranted that|representation that"
+      type: warranty
+      category: General
+    - pattern: "title to|ownership of|free from encumbrance|unencumbered"
+      type: warranty
+      category: "Title & Capacity"
+    - pattern: "mining right.*valid|good standing|not subject to forfeiture"
+      type: warranty
+      category: "Mining Rights & Regulatory"
+    - pattern: "SLP.*compli|social and labour plan"
+      type: warranty
+      category: "Mining Rights & Regulatory"
+    - pattern: "environmental.*compli|EMPr|water use license"
+      type: warranty
+      category: Environmental
+    - pattern: "rehabilitation.*provision|closure.*cost"
+      type: warranty
+      category: Environmental
+    - pattern: "financial statements.*fair|prepared in accordance"
+      type: warranty
+      category: Financial
+    - pattern: "no.*undisclosed.*liabilit"
+      type: warranty
+      category: Financial
+    - pattern: "HDSA.*ownership|Mining Charter.*compli|BEE.*compli"
+      type: warranty
+      category: "Mining Charter & BEE"
+    - pattern: "tax.*return.*filed|taxes.*paid"
+      type: warranty
+      category: Tax
+    - pattern: "no.*litigation|no.*claims.*pending"
+      type: warranty
+      category: Litigation
+    - pattern: "employee.*compli|labour.*compli"
+      type: warranty
+      category: Employment
+
+  indemnity_patterns:
+    - pattern: "indemnify|hold harmless|indemnification"
+      type: indemnity
+      category: General
+    - pattern: "shall indemnify.*against"
+      type: indemnity
+      category: General
+    - pattern: "environmental.*indemnity|contamination.*indemnity"
+      type: indemnity
+      category: Environmental
+    - pattern: "rehabilitation.*indemnity|closure.*indemnity"
+      type: indemnity
+      category: Environmental
+    - pattern: "tax.*indemnity|pre-closing.*tax"
+      type: indemnity
+      category: Tax
+    - pattern: "silicosis|occupational disease.*indemnity"
+      type: indemnity
+      category: "Employment & Occupational Health"
+    - pattern: "SLP.*indemnity|mining right.*indemnity"
+      type: indemnity
+      category: "Mining Rights"
+
 folder_questions:
   01_Corporate_Governance:
     display_name: Corporate & Governance
@@ -167,6 +989,17 @@ folder_questions:
       priority: high
       detail: MOI and SHA change of control triggers
       cot_hint: Review MOI/SHA → identify CoC provisions → assess impact
+    # WARRANTY/INDEMNITY QUESTIONS
+    - question: What title and capacity warranties should be obtained regarding share ownership?
+      priority: critical
+      detail: Share ownership, encumbrances, pre-emptive rights, corporate authority
+      cot_hint: Check share register → verify ownership → identify any encumbrances → recommend warranties
+      warranty_focus: true
+      suggested_warranties:
+        - "W-TC-001: Seller ownership of shares free from encumbrances"
+        - "W-TC-002: Shares fully paid up and non-assessable"
+        - "W-TC-003: No options or pre-emptive rights"
+        - "W-TC-004: Seller authority and capacity"
     cross_doc_checks:
     - check: Verify board authority matches MOI requirements
       related_folders: []
@@ -191,6 +1024,30 @@ folder_questions:
       priority: high
       detail: Third-party royalty agreements, historical BEE arrangements
       cot_hint: List royalties → calculate cost → assess impact on economics
+    # WARRANTY/INDEMNITY QUESTIONS
+    - question: What material contract warranties should be obtained for offtake and supply agreements?
+      priority: critical
+      detail: Contract validity, no breaches, no termination notices, volume capacity
+      cot_hint: Review contracts → check compliance history → identify breach risks → recommend warranties
+      warranty_focus: true
+      suggested_warranties:
+        - "W-MC-001: All material contracts disclosed"
+        - "W-MC-002: Offtake/supply agreements valid and binding"
+        - "W-MC-003: No termination notices or disputes"
+        - "W-MC-004: Target can perform volume commitments"
+        - "W-MC-005: No CoC consent required or has been obtained"
+    - question: What indemnities are needed for contract termination risks from pre-closing breaches?
+      priority: critical
+      detail: Pre-closing breaches, volume shortfalls, quality failures, liquidated damages
+      cot_hint: Identify breach history → calculate LD exposure → recommend indemnities
+      indemnity_focus: true
+      triggered_by:
+        - "Volume shortfall identified"
+        - "Quality dispute with offtaker"
+        - "CoC consent at risk"
+      suggested_indemnities:
+        - "I-MC-001: Offtake/supply agreement termination due to pre-closing breach"
+        - "I-MC-002: Liquidated damages for pre-closing shortfalls"
     cross_doc_checks:
     - check: Verify offtake volumes match production capacity
       related_folders:
@@ -216,6 +1073,32 @@ folder_questions:
       priority: critical
       detail: Environmental provision vs financial guarantee/trust
       cot_hint: Compare liability estimate → check guarantee → calculate gap
+    # WARRANTY/INDEMNITY QUESTIONS
+    - question: What financial warranties should be obtained regarding the AFS and liabilities?
+      priority: critical
+      detail: AFS accuracy, no undisclosed liabilities, debt disclosure, covenant compliance
+      cot_hint: Review AFS → check audit report → identify undisclosed items → recommend warranties
+      warranty_focus: true
+      suggested_warranties:
+        - "W-FIN-001: Financial statements fairly present financial position"
+        - "W-FIN-002: No undisclosed liabilities"
+        - "W-FIN-003: Complete disclosure of all indebtedness"
+        - "W-FIN-004: No covenant breaches or events of default"
+        - "W-FIN-005: Receivables valid and collectible"
+    - question: What tax indemnities are required based on the tax compliance position?
+      priority: critical
+      detail: Pre-closing tax liabilities, mining royalties, transfer pricing, SARS disputes
+      cot_hint: Review tax returns → check SARS correspondence → identify exposure → recommend indemnities
+      indemnity_focus: true
+      triggered_by:
+        - "Tax audit findings"
+        - "Uncertain tax positions"
+        - "Mining royalty disputes"
+        - "Transfer pricing exposure"
+      suggested_indemnities:
+        - "I-TAX-001: Pre-Closing tax liabilities"
+        - "I-TAX-002: Mining royalty reassessments"
+        - "I-TAX-003: Transfer pricing adjustments"
     cross_doc_checks:
     - check: Verify covenant calculations match financial statements
       related_folders: []
@@ -252,6 +1135,49 @@ folder_questions:
       priority: critical
       detail: WUL conditions, DWS compliance
       cot_hint: Check WUL → verify compliance → assess risk
+    # WARRANTY/INDEMNITY QUESTIONS
+    - question: What mining right warranties should be obtained for MPRDA compliance?
+      priority: critical
+      detail: Mining right validity, good standing, MWP compliance, SLP compliance, DMRE notices
+      cot_hint: Check mining right status → assess SLP/MWP compliance → identify DMRE risks → recommend warranties
+      warranty_focus: true
+      suggested_warranties:
+        - "W-MR-001: Mining right valid and in good standing"
+        - "W-MR-002: Mining Work Programme obligations complied with"
+        - "W-MR-003: SLP compliant with no material arrears"
+        - "W-MR-004: No DMRE notices or enforcement actions"
+        - "W-MR-005: Mining right boundaries accurate"
+        - "W-MR-006: All regulatory consents obtained"
+        - "W-MR-007: CPR accurately reflects resources/reserves"
+    - question: What indemnities are required for mining right defects and SLP arrears?
+      priority: critical
+      detail: Mining right challenges, SLP catch-up costs, DMRE enforcement, Section 11 refusal
+      cot_hint: Quantify SLP arrears → assess DMRE risk → calculate catch-up costs → recommend indemnities
+      indemnity_focus: true
+      triggered_by:
+        - "SLP arrears identified"
+        - "Mining Work Programme non-compliance"
+        - "DMRE directive or notice"
+        - "Mining Charter non-compliance"
+      suggested_indemnities:
+        - "I-MR-001: Mining right defects or challenges"
+        - "I-MR-002: SLP catch-up costs"
+        - "I-MR-003: DMRE enforcement actions"
+        - "I-MR-004: Section 11 consent refusal due to non-compliance"
+    - question: What BEE and Mining Charter warranties and indemnities are required?
+      priority: critical
+      detail: HDSA ownership, Mining Charter compliance, fronting risk, scorecard accuracy
+      cot_hint: Verify HDSA ownership → check Mining Charter scorecard → assess fronting risk → recommend protections
+      warranty_focus: true
+      indemnity_focus: true
+      suggested_warranties:
+        - "W-BEE-001: HDSA ownership meets Mining Charter III requirements"
+        - "W-BEE-002: HDSA shareholders have meaningful economic participation"
+        - "W-BEE-003: No BEE fronting arrangements"
+        - "W-BEE-004: Mining Charter scorecard accurate"
+      suggested_indemnities:
+        - "I-BEE-001: BEE misrepresentation consequences"
+        - "I-BEE-002: Mining Charter penalty for pre-closing non-compliance"
     cross_doc_checks:
     - check: Verify mining right area matches property titles
       related_folders:
@@ -277,6 +1203,32 @@ folder_questions:
       priority: high
       detail: MHSA Section 54/55 history, safety stoppages
       cot_hint: Review safety record → check for notices → assess risk
+    # WARRANTY/INDEMNITY QUESTIONS
+    - question: What employment warranties should be obtained regarding employees and labour compliance?
+      priority: high
+      detail: Employee disclosure, labour law compliance, retrenchment, union agreements, MHSA
+      cot_hint: Review employee records → check union agreements → assess MHSA compliance → recommend warranties
+      warranty_focus: true
+      suggested_warranties:
+        - "W-EMP-001: Complete employee information disclosed"
+        - "W-EMP-002: Compliance with labour legislation"
+        - "W-EMP-003: No pending retrenchment processes"
+        - "W-EMP-004: Union agreements and collective bargaining disclosed"
+        - "W-EMP-005: MHSA compliance and no pending safety matters"
+    - question: What indemnities are needed for silicosis, occupational disease, and other employee claims?
+      priority: critical
+      detail: Silicosis, TB, NIHL, pre-closing retrenchment, MHSA penalties
+      cot_hint: Review occupational health records → assess class action risk → check insurance → recommend indemnities
+      indemnity_focus: true
+      triggered_by:
+        - "Occupational disease history"
+        - "Silicosis compensation claims"
+        - "MHSA Section 54/55 notices"
+        - "Pending retrenchment"
+      suggested_indemnities:
+        - "I-EMP-001: Pre-Closing silicosis and occupational disease claims"
+        - "I-EMP-002: Pre-Closing retrenchment liabilities"
+        - "I-EMP-003: MHSA penalties and prosecutions"
     cross_doc_checks:
     - check: Verify employee numbers match SLP commitments
       related_folders:
@@ -391,6 +1343,40 @@ folder_questions:
       priority: high
       detail: TSF stability, waste rock, hazardous waste
       cot_hint: Review TSF → check stability → assess risk
+    # WARRANTY/INDEMNITY QUESTIONS
+    - question: What environmental warranties should be obtained for EMPr, WUL, and rehabilitation?
+      priority: critical
+      detail: EMPr compliance, WUL compliance, rehabilitation provision, contamination, TSF stability
+      cot_hint: Review EMPr status → check WUL compliance → assess rehabilitation gap → recommend warranties
+      warranty_focus: true
+      suggested_warranties:
+        - "W-ENV-001: Environmental Management Programme approved and compliant"
+        - "W-ENV-002: Water Use License valid and compliant"
+        - "W-ENV-003: Rehabilitation liability provision adequate"
+        - "W-ENV-004: No undisclosed environmental contamination"
+        - "W-ENV-005: Tailings storage facility stable and compliant"
+        - "W-ENV-006: No pending environmental prosecutions or enforcement"
+    - question: What environmental indemnities are required for pre-closing contamination and rehabilitation shortfall?
+      priority: critical
+      detail: Pre-closing contamination, rehabilitation gap, WUL non-compliance, TSF failure
+      cot_hint: Calculate rehabilitation gap → identify contamination → assess TSF risk → recommend indemnities with escrow
+      indemnity_focus: true
+      triggered_by:
+        - "Rehabilitation liability gap > R10M"
+        - "Contamination discovered"
+        - "TSF stability concerns"
+        - "WUL non-compliance"
+        - "Environmental compliance issues"
+      suggested_indemnities:
+        - "I-ENV-001: Pre-Closing environmental contamination (consider 10-20% escrow)"
+        - "I-ENV-002: Rehabilitation liability shortfall (quantify gap amount)"
+        - "I-ENV-003: Water license non-compliance"
+        - "I-ENV-004: Tailings storage facility failure"
+      escrow_recommendation: "10-20% of purchase price in escrow for 3-5 years for environmental indemnities"
+      quantification_guidance:
+        - "Compare closure cost estimate to financial provision"
+        - "Calculate rehabilitation gap = Estimated liability - Current provision"
+        - "Add 20-30% contingency to gap amount for indemnity cap"
     cross_doc_checks:
     - check: Verify rehabilitation provision matches NEMA requirement
       related_folders:
@@ -557,6 +1543,47 @@ cot_questions:
   - Are there any BEE lock-in periods or restrictions on share transfers?
   - What is the ownership flow-through analysis? Any related party issues?
   - What are the consequences of falling below Mining Charter thresholds?
+
+  # WARRANTY & INDEMNITY COT QUESTIONS
+  warranties_analysis:
+  - What title and capacity risks exist that require warranty protection (share ownership, encumbrances, authority)?
+  - What mining right issues require warranty coverage (validity, good standing, SLP, MWP, DMRE compliance)?
+  - What Mining Charter/BEE risks need warranty protection (HDSA ownership, fronting, meaningful participation)?
+  - What environmental issues require warranty coverage (EMPr, WUL, rehabilitation provision, contamination, TSF)?
+  - What financial statement issues require warranty protection (AFS accuracy, undisclosed liabilities, debt disclosure)?
+  - What material contract risks need warranty coverage (disclosure, validity, breaches, CoC consents)?
+  - What employment issues require warranty protection (employee disclosure, labour compliance, MHSA, unions)?
+  - What tax issues require warranty coverage (returns filed, taxes paid, royalties, disputes)?
+  - What property and surface rights issues require warranty protection (coverage, servitudes, land claims)?
+  - What litigation risks require warranty coverage (pending claims, silicosis, occupational disease)?
+  - For each identified warranty, what is the appropriate cap and survival period?
+  - Which warranties should be fundamental (longer survival, higher/no cap)?
+
+  indemnities_analysis:
+  - Based on DD findings, what specific risks require indemnity protection rather than just warranty?
+  - What is the rehabilitation liability gap and does it warrant an indemnity (calculate: estimated liability - provision)?
+  - Is there evidence of environmental contamination requiring a pre-closing contamination indemnity?
+  - What is the TSF stability assessment - does it warrant a specific TSF indemnity?
+  - What are the SLP arrears and do they warrant an SLP catch-up indemnity (quantify the catch-up cost)?
+  - Are there DMRE compliance issues that warrant a regulatory enforcement indemnity?
+  - What is the occupational disease history - are silicosis/TB indemnities required?
+  - What is the tax audit history - are specific tax indemnities required beyond general pre-closing tax indemnity?
+  - Are there pre-closing breaches of material contracts that warrant termination indemnities?
+  - For each indemnity, what is the appropriate cap, survival period, and basket/deductible?
+  - Should escrow be recommended for environmental or other critical indemnities (typically 10-20% of price)?
+  - What indemnities should be uncapped or have extended survival (environmental, tax, occupational disease)?
+
+  warranty_indemnity_structuring:
+  - What aggregate warranty cap is appropriate for this transaction (typically 20-50% of purchase price)?
+  - What mini-basket and basket thresholds are appropriate (typically 0.1% and 1% of purchase price)?
+  - Which warranties should be carved out from limitations (title, capacity, tax, fraud)?
+  - What is the appropriate general warranty survival period (typically 18-36 months)?
+  - Which warranties require extended survival (environmental 5-7 years, tax 5 years, title 5+ years)?
+  - Should W&I insurance be recommended and what implications does this have for warranty/indemnity scope?
+  - What disclosure mechanism is appropriate (data room deemed disclosure vs specific disclosure schedule)?
+  - Are any indemnities time-limited (e.g., SLP indemnity until compliance achieved)?
+  - How should indemnities interact with purchase price adjustments (no double recovery)?
+
 output_requirements:
   must_include:
   - Deal blocker identification with full reasoning
@@ -566,8 +1593,16 @@ output_requirements:
   - Key risk summary
   - Recommendations
   - CoT reasoning audit trail for critical findings
+  # WARRANTY & INDEMNITY OUTPUT REQUIREMENTS
+  - Warranties register (recommended warranties for client protection)
+  - Indemnities register (recommended indemnities based on DD findings)
+  - W&I structuring recommendations (caps, baskets, survival periods, escrow)
   format:
   - Executive summary (1-2 pages)
   - Detailed findings by category with reasoning
   - Financial exposure schedule
   - CP checklist
+  # WARRANTY & INDEMNITY OUTPUT FORMAT
+  - Warranties schedule by category with detailed wording suggestions
+  - Indemnities schedule with triggers, caps, and survival periods
+  - W&I negotiation matrix (critical vs negotiable items)

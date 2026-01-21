@@ -1,6 +1,6 @@
 // DDTop.tsx
 import { Button } from "@/components/ui/button";
-import { Trash2, Loader2, Activity } from "lucide-react";
+import { Trash2, Loader2, Activity, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import {
   Dialog,
@@ -11,11 +11,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { TRANSACTION_TYPE_INFO, TransactionTypeCode } from "./Wizard/types";
+import { useSidebar } from "@/components/ui/sidebar";
 
 type ScreenState =
   | "Wizard-Chooser"
   | "Wizard-NewProject"
   | "Wizard-JoinProject"
+  | "Wizard-OpenProject"
   | "Analysis"
   | "Processing";
 
@@ -46,6 +48,7 @@ export function DDTop({
   const typeCode = transactionType as TransactionTypeCode | undefined;
   const typeInfo = typeCode ? TRANSACTION_TYPE_INFO[typeCode] : null;
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const { toggleSidebar, state } = useSidebar();
 
   const handleDeleteClick = () => {
     console.log("[DDTop] Delete button clicked, opening dialog");
@@ -67,15 +70,28 @@ export function DDTop({
       <header className="flex flex-col shrink-0 gap-3 p-4 border-b bg-white">
         {ddName && (
           <>
-            {/* Title row */}
-            <p className="font-semibold text-gray-700 text-lg">
-              {ddName}
-              {typeInfo && (
-                <span className="text-gray-500 font-normal">
-                  {" "}&mdash; {typeInfo.name}
-                </span>
-              )}
-            </p>
+            {/* Title row with sidebar toggle */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={toggleSidebar}
+                className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"
+                aria-label="Toggle Sidebar"
+              >
+                {state === "expanded" ? (
+                  <ChevronLeft className="h-5 w-5 text-gray-600" />
+                ) : (
+                  <ChevronRight className="h-5 w-5 text-gray-600" />
+                )}
+              </button>
+              <p className="font-semibold text-gray-700 text-lg">
+                {ddName}
+                {typeInfo && (
+                  <span className="text-gray-500 font-normal">
+                    {" "}&mdash; {typeInfo.name}
+                  </span>
+                )}
+              </p>
+            </div>
             {/* Navigation Buttons */}
             <div className="flex gap-4 justify-between items-center">
               <div className="flex gap-4">

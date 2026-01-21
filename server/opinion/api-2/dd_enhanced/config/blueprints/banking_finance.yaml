@@ -276,6 +276,681 @@ conditions_precedent_patterns:
   cp_type: Legal Opinion
 - pattern: solvency|liquidity
   cp_type: Solvency Confirmation
+
+# ============================================================================
+# WARRANTIES & INDEMNITIES FRAMEWORK
+# ============================================================================
+# This section defines transaction-specific warranty and indemnity categories
+# for banking and finance transactions. Covers both:
+# - Lender-side DD: What warranties/protections to require from borrower
+# - Borrower-side DD: What warranties can be given, disclosure requirements
+# ============================================================================
+
+warranty_categories:
+  # ---------------------------------------------------------------------------
+  # CAPACITY & AUTHORITY WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Capacity & Authority"
+    description: "Warranties relating to borrower's legal capacity and authority to borrow"
+    weight: critical
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    standard_warranties:
+      - id: "W-CA-001"
+        description: "Borrower is duly incorporated and validly existing"
+        detailed_wording: "The Borrower is a company duly incorporated and validly existing under the laws of its jurisdiction of incorporation and has the power to own its assets and carry on its business as it is being conducted"
+        typical_cap: "Fundamental warranty - uncapped"
+        survival_period: "Term of facility"
+        priority: critical
+        dd_triggers:
+          - "CIPC registration documents"
+          - "Company search"
+          - "Good standing certificate"
+      - id: "W-CA-002"
+        description: "Borrower has power to enter into and perform the Finance Documents"
+        detailed_wording: "The Borrower has the power to enter into, perform and deliver, and has taken all necessary action to authorise its entry into, performance and delivery of, the Finance Documents and the transactions contemplated by those Finance Documents"
+        typical_cap: "Fundamental warranty - uncapped"
+        survival_period: "Term of facility"
+        priority: critical
+        dd_triggers:
+          - "MOI review"
+          - "Board resolutions"
+          - "Borrowing powers"
+      - id: "W-CA-003"
+        description: "No MOI borrowing limits are breached"
+        detailed_wording: "The entry into and performance of the Finance Documents and the transactions contemplated thereby do not and will not exceed any borrowing limit binding on the Borrower under its constitutional documents"
+        typical_cap: "Fundamental warranty - uncapped"
+        survival_period: "Term of facility"
+        priority: critical
+        dd_triggers:
+          - "MOI borrowing limit clause"
+          - "Aggregate debt calculation"
+      - id: "W-CA-004"
+        description: "All corporate authorizations obtained"
+        detailed_wording: "All authorisations required or desirable to enable the Borrower to lawfully enter into, exercise its rights and comply with its obligations under the Finance Documents have been obtained and are in full force and effect"
+        typical_cap: "Fundamental warranty - uncapped"
+        survival_period: "Term of facility"
+        priority: critical
+      - id: "W-CA-005"
+        description: "Finance Documents are binding obligations"
+        detailed_wording: "The obligations expressed to be assumed by the Borrower in each Finance Document are legal, valid, binding and enforceable obligations, subject to applicable bankruptcy and enforcement laws"
+        typical_cap: "Fundamental warranty - uncapped"
+        survival_period: "Term of facility"
+        priority: critical
+      - id: "W-CA-006"
+        description: "No conflict with constitutional documents or other agreements"
+        detailed_wording: "The entry into and performance by the Borrower of, and the transactions contemplated by, the Finance Documents do not and will not conflict with any law, its constitutional documents, or any agreement or instrument binding upon it"
+        typical_cap: "Fundamental warranty - uncapped"
+        survival_period: "Term of facility"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # EXISTING INDEBTEDNESS WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Existing Indebtedness"
+    description: "Warranties relating to existing debt, facilities, and financial obligations"
+    weight: critical
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    standard_warranties:
+      - id: "W-DEBT-001"
+        description: "Complete disclosure of all existing indebtedness"
+        detailed_wording: "Complete and accurate details of all Financial Indebtedness of the Group have been disclosed to the Lender, and there is no Financial Indebtedness outstanding other than as disclosed"
+        typical_cap: "Amount of undisclosed debt"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Facility agreement schedules"
+          - "AFS debt note"
+          - "Inter-company loan agreements"
+      - id: "W-DEBT-002"
+        description: "No existing default or event of default"
+        detailed_wording: "No Default or Event of Default is continuing or might reasonably be expected to result from the making of any Utilisation or entry into any Finance Document"
+        typical_cap: "Acceleration amount at risk"
+        survival_period: "Term of facility"
+        priority: critical
+        repeating_warranty: true
+      - id: "W-DEBT-003"
+        description: "No cross-default triggers exist"
+        detailed_wording: "No event or circumstance is outstanding which constitutes a default or termination event under any other agreement binding on the Borrower or which, with the giving of notice or lapse of time, would constitute such a default"
+        typical_cap: "Cross-default exposure"
+        survival_period: "Term of facility"
+        priority: critical
+        repeating_warranty: true
+      - id: "W-DEBT-004"
+        description: "Existing lender consents obtained or not required"
+        detailed_wording: "All consents required from existing lenders for the Borrower to enter into this Facility and grant the Security have been obtained, or no such consents are required under the Existing Facilities"
+        typical_cap: "Refinancing cost if consent refused"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Existing facility consent requirements"
+          - "Negative pledge waivers"
+      - id: "W-DEBT-005"
+        description: "Permitted debt basket available"
+        detailed_wording: "The incurrence of the Financial Indebtedness under this Facility is permitted under all Existing Facilities and falls within the permitted debt baskets thereunder"
+        typical_cap: "Facility amount"
+        survival_period: "Term of facility"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # FINANCIAL INFORMATION WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Financial Information"
+    description: "Warranties relating to financial statements and financial position"
+    weight: critical
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    standard_warranties:
+      - id: "W-FI-001"
+        description: "Financial statements fairly represent financial position"
+        detailed_wording: "The Original Financial Statements were prepared in accordance with IFRS consistently applied and give a true and fair view of the financial position of the Group as at the date thereof and the results of its operations for the period then ended"
+        typical_cap: "50% of facility amount"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Audited financial statements"
+          - "Audit report qualifications"
+      - id: "W-FI-002"
+        description: "No material adverse change since accounts date"
+        detailed_wording: "There has been no material adverse change in the business, assets or financial condition of the Group since the date of the Original Financial Statements"
+        typical_cap: "As negotiated"
+        survival_period: "Term of facility"
+        priority: critical
+        repeating_warranty: true
+      - id: "W-FI-003"
+        description: "No undisclosed liabilities"
+        detailed_wording: "There are no liabilities (contingent or otherwise) of any member of the Group which are not disclosed in the Original Financial Statements or which have not been disclosed to the Lender in writing"
+        typical_cap: "50% of facility amount"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-FI-004"
+        description: "Financial projections prepared in good faith"
+        detailed_wording: "Any financial projections or forecasts supplied to the Lender have been prepared in good faith on the basis of recent historical information and assumptions which were reasonable at the time they were made"
+        typical_cap: "N/A - good faith standard"
+        survival_period: "N/A"
+        priority: high
+        special_considerations:
+          - "Borrower typically resists projections warranty"
+          - "Often limited to 'good faith' and 'reasonable assumptions'"
+      - id: "W-FI-005"
+        description: "Information provided is true and accurate"
+        detailed_wording: "All information provided to the Lender by or on behalf of the Borrower in connection with the Finance Documents was true, complete and accurate in all material respects as at the date it was provided and is not misleading"
+        typical_cap: "As negotiated"
+        survival_period: "3 years"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # SECURITY WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Security"
+    description: "Warranties relating to security package and secured assets"
+    weight: critical
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    standard_warranties:
+      - id: "W-SEC-001"
+        description: "Borrower has good title to assets offered as security"
+        detailed_wording: "The Borrower has good, valid and marketable title to, or valid leases or licences of, and all appropriate authorisations to use, all assets necessary to carry on its business and which are subject to the Security Documents"
+        typical_cap: "Security value"
+        survival_period: "Term of facility"
+        priority: critical
+        dd_triggers:
+          - "Title deeds"
+          - "Asset register"
+          - "Deeds office search"
+      - id: "W-SEC-002"
+        description: "Security assets are free from encumbrances"
+        detailed_wording: "No Security Interest exists over all or any of the present or future assets of the Borrower other than Permitted Security Interests"
+        typical_cap: "Security value"
+        survival_period: "Term of facility"
+        priority: critical
+        repeating_warranty: true
+        dd_triggers:
+          - "Deeds office search"
+          - "CIPC security register"
+          - "PPSA search"
+      - id: "W-SEC-003"
+        description: "Security creates valid first-ranking security"
+        detailed_wording: "The Security Documents create valid, enforceable and (subject to registration) perfected security interests over the assets expressed to be subject thereto with the ranking and priority expressed therein"
+        typical_cap: "Security value"
+        survival_period: "Term of facility"
+        priority: critical
+      - id: "W-SEC-004"
+        description: "No consents required for security or have been obtained"
+        detailed_wording: "All consents, approvals and authorisations required for the creation, perfection and enforcement of the Security have been obtained and are in full force and effect"
+        typical_cap: "Security value"
+        survival_period: "Term of facility"
+        priority: critical
+        dd_triggers:
+          - "Landlord consents"
+          - "Lessor consents"
+          - "Contractual consent requirements"
+      - id: "W-SEC-005"
+        description: "Security assets are adequately insured"
+        detailed_wording: "All assets subject to the Security Documents are insured in accordance with the requirements of the Finance Documents with the Lender noted as loss payee and/or first mortgagee as applicable"
+        typical_cap: "Insurance shortfall"
+        survival_period: "Term of facility"
+        priority: high
+        repeating_warranty: true
+
+  # ---------------------------------------------------------------------------
+  # COVENANT COMPLIANCE WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Covenant Compliance"
+    description: "Warranties relating to compliance with financial and other covenants"
+    weight: critical
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    standard_warranties:
+      - id: "W-COV-001"
+        description: "Financial covenant compliance"
+        detailed_wording: "As at the date of this Agreement and each Utilisation Request, the Borrower is in compliance with all Financial Covenants set out in Schedule [X]"
+        typical_cap: "Acceleration exposure"
+        survival_period: "Term of facility"
+        priority: critical
+        repeating_warranty: true
+        dd_triggers:
+          - "Financial covenant calculations"
+          - "Management accounts"
+          - "Compliance certificates"
+      - id: "W-COV-002"
+        description: "No covenant breach under existing facilities"
+        detailed_wording: "The Borrower is not in breach of any covenant, undertaking or other provision of any agreement relating to Financial Indebtedness which could have a Material Adverse Effect"
+        typical_cap: "Cross-default exposure"
+        survival_period: "Term of facility"
+        priority: critical
+        repeating_warranty: true
+
+  # ---------------------------------------------------------------------------
+  # REGULATORY & COMPLIANCE WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Regulatory Compliance"
+    description: "Warranties relating to regulatory compliance including NCA and FICA"
+    weight: high
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    standard_warranties:
+      - id: "W-REG-001"
+        description: "All regulatory authorizations in place"
+        detailed_wording: "All authorisations, consents, approvals, resolutions, licences, exemptions, filings, notarisations or registrations required to enable the Borrower to carry on its business have been obtained and are in full force and effect"
+        typical_cap: "As negotiated"
+        survival_period: "Term of facility"
+        priority: critical
+        repeating_warranty: true
+      - id: "W-REG-002"
+        description: "NCA compliance (if applicable)"
+        detailed_wording: "The Borrower is registered as required under the National Credit Act and is in compliance with all applicable provisions thereof, or the National Credit Act does not apply to the Finance Documents"
+        typical_cap: "As negotiated"
+        survival_period: "Term of facility"
+        priority: critical
+        dd_triggers:
+          - "NCA registration certificate"
+          - "Compliance confirmation"
+      - id: "W-REG-003"
+        description: "FICA compliance"
+        detailed_wording: "The Borrower has complied with all applicable requirements of the Financial Intelligence Centre Act including customer due diligence requirements"
+        typical_cap: "As negotiated"
+        survival_period: "Term of facility"
+        priority: high
+      - id: "W-REG-004"
+        description: "No sanctions or AML issues"
+        detailed_wording: "Neither the Borrower nor any of its directors, officers or employees is a Sanctioned Person or has violated any applicable anti-money laundering or anti-corruption laws"
+        typical_cap: "Fundamental warranty - uncapped"
+        survival_period: "Term of facility"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # TAX WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Tax"
+    description: "Warranties relating to tax compliance and status"
+    weight: high
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    standard_warranties:
+      - id: "W-TAX-001"
+        description: "All tax returns filed and taxes paid"
+        detailed_wording: "All tax returns required to be filed by the Borrower have been filed and all taxes due and payable have been paid (other than taxes which are being contested in good faith with adequate provision)"
+        typical_cap: "Tax exposure"
+        survival_period: "5 years"
+        priority: critical
+      - id: "W-TAX-002"
+        description: "Valid tax clearance certificate"
+        detailed_wording: "The Borrower holds a valid Tax Clearance Certificate issued by SARS and is not aware of any reason why such certificate would be withdrawn or not renewed"
+        typical_cap: "As negotiated"
+        survival_period: "Term of facility"
+        priority: high
+        dd_triggers:
+          - "Tax clearance certificate"
+          - "SARS correspondence"
+      - id: "W-TAX-003"
+        description: "No withholding on payments"
+        detailed_wording: "The Borrower is not required to make any deduction or withholding for or on account of tax from any payment it may make under any Finance Document"
+        typical_cap: "Tax gross-up exposure"
+        survival_period: "Term of facility"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # LITIGATION WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Litigation"
+    description: "Warranties relating to disputes and legal proceedings"
+    weight: high
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    standard_warranties:
+      - id: "W-LIT-001"
+        description: "No material litigation pending or threatened"
+        detailed_wording: "No litigation, arbitration, administrative or other proceedings are current, pending or threatened against the Borrower which could, if adversely determined, have a Material Adverse Effect"
+        typical_cap: "Claim value"
+        survival_period: "3 years"
+        priority: high
+        repeating_warranty: true
+      - id: "W-LIT-002"
+        description: "No regulatory enforcement pending"
+        detailed_wording: "No governmental, regulatory or official investigation or inquiry is current, pending or threatened against the Borrower which could have a Material Adverse Effect"
+        typical_cap: "As negotiated"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # SOLVENCY WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Solvency"
+    description: "Warranties relating to borrower solvency"
+    weight: critical
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    standard_warranties:
+      - id: "W-SOL-001"
+        description: "Borrower is solvent"
+        detailed_wording: "The Borrower is not insolvent or unable to pay its debts as they fall due, no insolvency proceedings have been commenced, and no step has been taken for the winding-up or business rescue of the Borrower"
+        typical_cap: "Fundamental warranty - uncapped"
+        survival_period: "Term of facility"
+        priority: critical
+        repeating_warranty: true
+      - id: "W-SOL-002"
+        description: "No business rescue contemplated"
+        detailed_wording: "No resolution has been passed and no petition or application has been presented or made for the business rescue, liquidation, judicial management or winding-up of the Borrower"
+        typical_cap: "Fundamental warranty - uncapped"
+        survival_period: "Term of facility"
+        priority: critical
+        repeating_warranty: true
+
+  # ---------------------------------------------------------------------------
+  # GUARANTOR WARRANTIES (if applicable)
+  # ---------------------------------------------------------------------------
+  - category: "Guarantor"
+    description: "Warranties relating to guarantors and guarantee validity"
+    weight: high
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    standard_warranties:
+      - id: "W-GUAR-001"
+        description: "Guarantor has capacity to provide guarantee"
+        detailed_wording: "The Guarantor has the corporate power and authority to provide the Guarantee and has taken all necessary action to authorise its entry into and performance of the Guarantee"
+        typical_cap: "Guarantee amount"
+        survival_period: "Term of guarantee"
+        priority: critical
+      - id: "W-GUAR-002"
+        description: "Guarantee is valid and enforceable"
+        detailed_wording: "The obligations of the Guarantor under the Guarantee are legal, valid, binding and enforceable obligations"
+        typical_cap: "Guarantee amount"
+        survival_period: "Term of guarantee"
+        priority: critical
+      - id: "W-GUAR-003"
+        description: "No financial assistance concerns"
+        detailed_wording: "The provision of the Guarantee does not constitute financial assistance in contravention of Section 44 or Section 45 of the Companies Act, or all required approvals have been obtained"
+        typical_cap: "Guarantee amount"
+        survival_period: "Term of guarantee"
+        priority: critical
+        dd_triggers:
+          - "Section 44/45 analysis"
+          - "Shareholder resolutions"
+
+# ============================================================================
+# INDEMNITY CATEGORIES
+# ============================================================================
+
+indemnity_categories:
+  # ---------------------------------------------------------------------------
+  # INCREASED COSTS INDEMNITY
+  # ---------------------------------------------------------------------------
+  - category: "Increased Costs"
+    description: "Standard lending indemnity for increased costs due to regulatory changes"
+    weight: high
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    standard_indemnities:
+      - id: "I-IC-001"
+        description: "Increased costs indemnity"
+        detailed_wording: "The Borrower shall indemnify the Lender against any cost, loss or liability incurred as a result of any change in law or regulation which increases the cost of making or maintaining the Facility or reduces the amount receivable"
+        typical_cap: "Uncapped"
+        survival_period: "Term of facility"
+        priority: high
+        special_considerations:
+          - "Standard LMA clause"
+          - "Borrower may negotiate notification requirements"
+          - "May negotiate right to prepay if costs material"
+
+  # ---------------------------------------------------------------------------
+  # TAX INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Tax"
+    description: "Indemnities for tax liabilities and withholding"
+    weight: critical
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    triggers:
+      - "Cross-border lending"
+      - "Withholding tax applicable"
+      - "Tax audit findings"
+    standard_indemnities:
+      - id: "I-TAX-001"
+        description: "Tax gross-up indemnity"
+        detailed_wording: "If the Borrower is required to make any deduction or withholding for tax from any payment, the Borrower shall increase the payment to ensure the Lender receives the amount it would have received had no deduction been made"
+        typical_cap: "Uncapped"
+        survival_period: "Term of facility + claims period"
+        priority: critical
+      - id: "I-TAX-002"
+        description: "Stamp duty and transaction tax indemnity"
+        detailed_wording: "The Borrower shall indemnify the Lender against any stamp duty, registration tax or similar tax payable in connection with the Finance Documents"
+        typical_cap: "Tax amount"
+        survival_period: "Term of facility"
+        priority: high
+      - id: "I-TAX-003"
+        description: "Tax indemnity (general)"
+        detailed_wording: "The Borrower shall indemnify the Lender against any tax liability arising out of or in connection with any Finance Document, except to the extent such tax is imposed on the Lender's overall net income"
+        typical_cap: "Tax amount"
+        survival_period: "5 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # CURRENCY INDEMNITY
+  # ---------------------------------------------------------------------------
+  - category: "Currency"
+    description: "Indemnities for currency conversion and exchange losses"
+    weight: high
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    standard_indemnities:
+      - id: "I-CUR-001"
+        description: "Currency indemnity"
+        detailed_wording: "If any sum due from the Borrower is received in a currency other than that in which it is due, or any amount is converted for enforcement purposes, the Borrower shall indemnify the Lender against any shortfall"
+        typical_cap: "Uncapped"
+        survival_period: "Term of facility"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # BREAK COSTS INDEMNITY
+  # ---------------------------------------------------------------------------
+  - category: "Break Costs"
+    description: "Indemnities for prepayment and break funding costs"
+    weight: high
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    triggers:
+      - "Prepayment"
+      - "Acceleration"
+      - "Failure to draw"
+    standard_indemnities:
+      - id: "I-BC-001"
+        description: "Break costs indemnity"
+        detailed_wording: "The Borrower shall indemnify the Lender against any cost, loss or liability incurred as a result of a Loan being prepaid or not being borrowed on the scheduled date"
+        typical_cap: "Break cost amount"
+        survival_period: "Interest period"
+        priority: high
+        calculation_basis: "Difference between contracted rate and redeployment rate for remaining interest period"
+
+  # ---------------------------------------------------------------------------
+  # ENFORCEMENT INDEMNITY
+  # ---------------------------------------------------------------------------
+  - category: "Enforcement"
+    description: "Indemnities for costs of enforcement and security realization"
+    weight: high
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    triggers:
+      - "Event of default"
+      - "Security enforcement"
+      - "Legal proceedings"
+    standard_indemnities:
+      - id: "I-ENF-001"
+        description: "Enforcement costs indemnity"
+        detailed_wording: "The Borrower shall indemnify the Lender against all costs, charges and expenses incurred in connection with the enforcement of, or preservation of rights under, any Finance Document"
+        typical_cap: "Uncapped"
+        survival_period: "Term + enforcement period"
+        priority: critical
+      - id: "I-ENF-002"
+        description: "Security enforcement indemnity"
+        detailed_wording: "The Borrower shall indemnify the Security Agent against all costs and liabilities incurred in connection with the enforcement or attempted enforcement of any Security"
+        typical_cap: "Uncapped"
+        survival_period: "Term + enforcement period"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # DOCUMENTATION INDEMNITY
+  # ---------------------------------------------------------------------------
+  - category: "Documentation"
+    description: "Indemnities for costs of documentation and amendments"
+    weight: medium
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    standard_indemnities:
+      - id: "I-DOC-001"
+        description: "Documentation and amendment costs"
+        detailed_wording: "The Borrower shall indemnify the Lender against all costs and expenses incurred in connection with the negotiation, preparation, execution and perfection of the Finance Documents and any amendment or waiver"
+        typical_cap: "Uncapped"
+        survival_period: "Term of facility"
+        priority: medium
+
+  # ---------------------------------------------------------------------------
+  # ENVIRONMENTAL INDEMNITY (for secured lending)
+  # ---------------------------------------------------------------------------
+  - category: "Environmental"
+    description: "Indemnities for environmental liabilities affecting security"
+    weight: high
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    triggers:
+      - "Property security"
+      - "Industrial assets as security"
+      - "Environmental contamination identified"
+    standard_indemnities:
+      - id: "I-ENV-001"
+        description: "Environmental indemnity"
+        detailed_wording: "The Borrower shall indemnify the Lender against all liabilities arising from any environmental contamination or environmental claims affecting the Secured Property, whether arising before or after the date of the Security"
+        typical_cap: "Security value or uncapped"
+        survival_period: "Term + claims period"
+        priority: high
+        special_considerations:
+          - "Critical for property-secured lending"
+          - "Lender liability on enforcement"
+
+  # ---------------------------------------------------------------------------
+  # REPRESENTATION BREACH INDEMNITY
+  # ---------------------------------------------------------------------------
+  - category: "Representation Breach"
+    description: "Indemnities for losses arising from breach of representations"
+    weight: high
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    triggers:
+      - "Misrepresentation identified"
+      - "Information provided found to be inaccurate"
+    standard_indemnities:
+      - id: "I-REP-001"
+        description: "Representation breach indemnity"
+        detailed_wording: "The Borrower shall indemnify the Lender against all losses, costs and liabilities arising from any breach of representation or warranty contained in the Finance Documents"
+        typical_cap: "As negotiated - often facility amount"
+        survival_period: "3 years from breach"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # UNDISCLOSED DEBT INDEMNITY (for acquisition finance)
+  # ---------------------------------------------------------------------------
+  - category: "Undisclosed Liabilities"
+    description: "Indemnities for undisclosed debt and liabilities"
+    weight: critical
+    applies_when_client_is:
+      lender: true
+      borrower: false
+    triggers:
+      - "Acquisition finance"
+      - "DD reveals incomplete disclosure"
+    standard_indemnities:
+      - id: "I-UL-001"
+        description: "Undisclosed indebtedness indemnity"
+        detailed_wording: "The Borrower shall indemnify the Lender against all losses arising from any Financial Indebtedness which was not disclosed to the Lender prior to signing but which was outstanding at that date"
+        typical_cap: "Amount of undisclosed debt"
+        survival_period: "3 years"
+        priority: critical
+
+# ============================================================================
+# WARRANTY & INDEMNITY DETECTION PATTERNS
+# ============================================================================
+
+warranty_indemnity_patterns:
+  warranty_patterns:
+    - pattern: "represents and warrants|borrower warrants|obligor warrants"
+      type: warranty
+      category: General
+    - pattern: "duly incorporated|validly existing|corporate power"
+      type: warranty
+      category: "Capacity & Authority"
+    - pattern: "authorized.*borrow|power to enter|taken all necessary action"
+      type: warranty
+      category: "Capacity & Authority"
+    - pattern: "no.*default|no event of default|not in breach"
+      type: warranty
+      category: "Existing Indebtedness"
+    - pattern: "financial statements.*true|fair view|prepared in accordance"
+      type: warranty
+      category: "Financial Information"
+    - pattern: "no material adverse change|MAC"
+      type: warranty
+      category: "Financial Information"
+    - pattern: "good title|free from.*encumbrance|security interest"
+      type: warranty
+      category: Security
+    - pattern: "first ranking|priority|no prior"
+      type: warranty
+      category: Security
+    - pattern: "solvent|able to pay.*debts|not insolvent"
+      type: warranty
+      category: Solvency
+    - pattern: "tax.*filed|tax.*paid|tax clearance"
+      type: warranty
+      category: Tax
+    - pattern: "no.*litigation|no.*proceedings|no.*claims"
+      type: warranty
+      category: Litigation
+    - pattern: "NCA.*compli|FICA.*compli|regulatory.*authorization"
+      type: warranty
+      category: "Regulatory Compliance"
+
+  indemnity_patterns:
+    - pattern: "indemnify|hold harmless|indemnification"
+      type: indemnity
+      category: General
+    - pattern: "increased costs|regulatory costs"
+      type: indemnity
+      category: "Increased Costs"
+    - pattern: "gross.*up|withholding|tax deduction"
+      type: indemnity
+      category: Tax
+    - pattern: "break.*cost|prepayment.*cost|funding.*cost"
+      type: indemnity
+      category: "Break Costs"
+    - pattern: "enforcement.*cost|preservation.*cost"
+      type: indemnity
+      category: Enforcement
+    - pattern: "currency.*indemnity|exchange.*loss"
+      type: indemnity
+      category: Currency
+    - pattern: "environmental.*indemnity|contamination"
+      type: indemnity
+      category: Environmental
+
 folder_questions:
   01_Corporate_Governance:
     display_name: Corporate & Capacity
@@ -301,6 +976,28 @@ folder_questions:
       priority: high
       detail: Verify signing authority for facility agreement
       cot_hint: Board resolution → signatory list → specimen signatures
+    # WARRANTY/INDEMNITY QUESTIONS
+    - question: What capacity and authority warranties can be given/should be required?
+      priority: critical
+      detail: Corporate existence, borrowing power, MOI compliance, board authorization
+      cot_hint: Review MOI → check authorizations → confirm warranties are accurate
+      warranty_focus: true
+      suggested_warranties:
+        - "W-CA-001: Borrower duly incorporated and validly existing"
+        - "W-CA-002: Power to enter into Finance Documents"
+        - "W-CA-003: No MOI borrowing limits breached"
+        - "W-CA-004: All corporate authorizations obtained"
+        - "W-CA-005: Finance Documents are binding obligations"
+        - "W-CA-006: No conflict with other agreements"
+    - question: What guarantor warranties and Section 44/45 analysis is required?
+      priority: critical
+      detail: Guarantor capacity, financial assistance compliance, upstream guarantee issues
+      cot_hint: Identify guarantors → check Section 44/45 → assess upstream concerns
+      warranty_focus: true
+      suggested_warranties:
+        - "W-GUAR-001: Guarantor has capacity to provide guarantee"
+        - "W-GUAR-002: Guarantee is valid and enforceable"
+        - "W-GUAR-003: No financial assistance concerns"
     cross_doc_checks:
     - check: Board resolution borrowing amount vs facility agreement amount
       related_folders:
@@ -355,6 +1052,46 @@ folder_questions:
       priority: critical
       detail: Affects inter-creditor arrangements and security ranking
       cot_hint: Determine refinancing vs parallel facility structure
+    # WARRANTY/INDEMNITY QUESTIONS
+    - question: What existing indebtedness and default warranties can be given/should be required?
+      priority: critical
+      detail: Debt disclosure, no defaults, cross-default, existing lender consents
+      cot_hint: List all debt → check for breaches → verify consent requirements → confirm warranties
+      warranty_focus: true
+      suggested_warranties:
+        - "W-DEBT-001: Complete disclosure of existing indebtedness"
+        - "W-DEBT-002: No existing default or event of default"
+        - "W-DEBT-003: No cross-default triggers exist"
+        - "W-DEBT-004: Existing lender consents obtained"
+        - "W-DEBT-005: Permitted debt basket available"
+    - question: What financial information warranties should apply?
+      priority: critical
+      detail: AFS accuracy, no MAC, no undisclosed liabilities, covenant compliance
+      cot_hint: Review AFS → check for qualifications → assess MAC risk → recommend warranties
+      warranty_focus: true
+      suggested_warranties:
+        - "W-FI-001: Financial statements fairly represent position"
+        - "W-FI-002: No material adverse change"
+        - "W-FI-003: No undisclosed liabilities"
+        - "W-FI-005: Information provided is accurate"
+        - "W-COV-001: Financial covenant compliance"
+    - question: What solvency warranties are appropriate?
+      priority: critical
+      detail: Borrower solvency, no business rescue, ability to pay debts
+      cot_hint: Review financial position → assess solvency → confirm warranty accuracy
+      warranty_focus: true
+      suggested_warranties:
+        - "W-SOL-001: Borrower is solvent"
+        - "W-SOL-002: No business rescue contemplated"
+    - question: What indemnities are needed for undisclosed debt and representation breaches?
+      priority: high
+      detail: Undisclosed indebtedness, misrepresentation, tax gross-up
+      cot_hint: Assess disclosure completeness → identify gaps → recommend indemnities
+      indemnity_focus: true
+      suggested_indemnities:
+        - "I-UL-001: Undisclosed indebtedness indemnity"
+        - "I-REP-001: Representation breach indemnity"
+        - "I-TAX-001: Tax gross-up indemnity"
     cross_doc_checks:
     - check: Facility agreement security requirements vs registered security documents
       related_folders:
@@ -379,6 +1116,17 @@ folder_questions:
       priority: high
       detail: Sector regulators may have notification requirements
       cot_hint: Identify applicable regulators → check consent requirements
+    # WARRANTY/INDEMNITY QUESTIONS
+    - question: What regulatory compliance warranties should apply?
+      priority: critical
+      detail: NCA compliance, FICA compliance, industry licenses, no sanctions
+      cot_hint: Check regulatory status → verify licenses → assess AML compliance → recommend warranties
+      warranty_focus: true
+      suggested_warranties:
+        - "W-REG-001: All regulatory authorizations in place"
+        - "W-REG-002: NCA compliance (if applicable)"
+        - "W-REG-003: FICA compliance"
+        - "W-REG-004: No sanctions or AML issues"
     cross_doc_checks:
     - check: Facility CP list vs regulatory approvals obtained
       related_folders:
@@ -413,6 +1161,30 @@ folder_questions:
       priority: high
       detail: Lender requirements for valuation standards
       cot_hint: Check valuation date → verify valuer credentials
+    # WARRANTY/INDEMNITY QUESTIONS
+    - question: What security warranties should be obtained over assets?
+      priority: critical
+      detail: Title, no encumbrances, first-ranking priority, consents, insurance
+      cot_hint: Verify title → check encumbrances → assess priority → recommend warranties
+      warranty_focus: true
+      suggested_warranties:
+        - "W-SEC-001: Good title to security assets"
+        - "W-SEC-002: Assets free from encumbrances"
+        - "W-SEC-003: Security creates valid first-ranking security"
+        - "W-SEC-004: All consents for security obtained"
+        - "W-SEC-005: Security assets adequately insured"
+    - question: What environmental and enforcement indemnities are needed for secured assets?
+      priority: high
+      detail: Environmental contamination affecting security, enforcement costs
+      cot_hint: Assess environmental risk on secured property → recommend indemnities
+      indemnity_focus: true
+      triggered_by:
+        - "Property security over industrial assets"
+        - "Environmental contamination risk"
+      suggested_indemnities:
+        - "I-ENV-001: Environmental indemnity for secured property"
+        - "I-ENF-001: Enforcement costs indemnity"
+        - "I-ENF-002: Security enforcement indemnity"
     cross_doc_checks:
     - check: Property values vs security coverage requirements
       related_folders:
@@ -576,3 +1348,78 @@ bee_analysis:
     - "Covenant requiring minimum BEE ownership percentage"
     - "Facility amount exceeds 50% of company equity value"
     - "Mezzanine or convertible instrument structure identified"
+
+# ============================================================================
+# WARRANTY & INDEMNITY COT QUESTIONS
+# ============================================================================
+
+  # WARRANTY & INDEMNITY COT QUESTIONS
+  warranties_analysis:
+  - What capacity and authority issues exist that affect warranty accuracy (MOI limits, board authorization, signing authority)?
+  - What existing indebtedness risks require warranty protection (undisclosed debt, defaults, cross-defaults, negative pledges)?
+  - What financial information issues require warranty coverage (AFS qualifications, contingent liabilities, MAC events)?
+  - What security risks need warranty protection (title defects, prior encumbrances, ranking issues, consent requirements)?
+  - What regulatory issues require warranty coverage (NCA, FICA, industry licenses, sanctions)?
+  - What solvency concerns exist that affect warranty accuracy?
+  - What guarantor issues require warranty protection (capacity, financial assistance, upstream concerns)?
+  - Which warranties should be repeating (refreshed at each utilisation)?
+  - Which warranties are fundamental (should survive facility termination)?
+  - What disclosure is required against the proposed warranties?
+  - What matters need to be carved out or qualified in warranties?
+  - For lender-side DD: Are all standard LMA warranties appropriate?
+  - For borrower-side DD: Which warranties can be given without qualification?
+
+  indemnities_analysis:
+  - What standard finance indemnities are required (increased costs, tax gross-up, break costs)?
+  - What tax indemnity exposure exists (withholding, stamp duty, general tax liability)?
+  - What enforcement cost indemnities are appropriate?
+  - What environmental indemnities are needed for secured property?
+  - What currency indemnities are required for cross-border facilities?
+  - What documentation cost indemnities apply?
+  - What representation breach indemnities are appropriate?
+  - What undisclosed liability indemnities are needed (for acquisition finance)?
+  - For borrower-side DD: Which indemnities can be negotiated or capped?
+  - For lender-side DD: Are all indemnities market standard?
+  - What is the appropriate cap structure for indemnities (if any)?
+  - Should any indemnities be subject to de minimis or aggregate thresholds?
+
+  finance_specific_structuring:
+  - What is the appropriate repeat warranty mechanism (each utilisation vs annual)?
+  - Which warranties should be deemed repeated?
+  - What is the materiality threshold for warranties?
+  - How should MAC be defined and what carve-outs are appropriate?
+  - What knowledge qualifiers are acceptable (actual knowledge vs deemed knowledge)?
+  - How should warranty disclosure work (data room vs disclosure letter)?
+  - What are the consequences of warranty breach (event of default vs indemnity only)?
+  - Are warranty and indemnity limits appropriate for facility size and risk?
+  - Should warranty and indemnity insurance be considered?
+
+# ============================================================================
+# OUTPUT REQUIREMENTS
+# ============================================================================
+
+output_requirements:
+  must_include:
+  - Deal blocker identification with full reasoning
+  - Capacity and authority confirmation
+  - Existing debt analysis and cross-default assessment
+  - Security package validity and ranking confirmation
+  - Covenant compliance assessment
+  - Conditions precedent register
+  - Consent matrix
+  - Key risk summary
+  - Recommendations
+  # WARRANTY & INDEMNITY OUTPUT REQUIREMENTS
+  - Warranties register (recommended warranties with disclosure requirements)
+  - Indemnities register (standard finance indemnities applicable)
+  - W&I negotiation points (borrower vs lender perspective)
+  format:
+  - Executive summary (1-2 pages)
+  - Detailed findings by category with reasoning
+  - Security package assessment
+  - CP checklist
+  # WARRANTY & INDEMNITY OUTPUT FORMAT
+  - Warranties schedule with disclosure matrix
+  - Repeating vs initial warranties identification
+  - Standard finance indemnities checklist
+  - Negotiation matrix (market vs aggressive positions)

@@ -3,13 +3,14 @@
 "use client";
 
 import * as React from "react";
-import { SquareTerminal, FileEdit } from "lucide-react";
+import { SquareTerminal, FileEdit, ChevronLeft, ChevronRight } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { NavMain } from "./NavMain";
 import { NavUser } from "./NavUser";
@@ -109,8 +110,22 @@ export function AppSidebar({
     ],
   };
 
+  const { toggleSidebar, state } = useSidebar();
+
   return (
     <Sidebar collapsible="icon" {...props} className="border-none">
+      {/* Collapse toggle button */}
+      <button
+        onClick={toggleSidebar}
+        className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 flex h-6 w-6 items-center justify-center rounded-full bg-alchemyPrimaryNavyBlue border border-gray-300 shadow-md hover:bg-alchemyPrimaryNavyBlue/80 transition-colors"
+        aria-label="Toggle Sidebar"
+      >
+        {state === "expanded" ? (
+          <ChevronLeft className="h-4 w-4 text-white" />
+        ) : (
+          <ChevronRight className="h-4 w-4 text-white" />
+        )}
+      </button>
       <SidebarHeader className="bg-alchemyPrimaryNavyBlue p-0">
         {/* <TeamSwitcher teams={data.teams} /> */}
         <div className="grid grid-cols-[50px_1fr] p-2">
@@ -125,14 +140,16 @@ export function AppSidebar({
               <AvatarFallback className="rounded-lg"></AvatarFallback>
             </Avatar>
           </div>
-          <div
-            className="pt-[2px] text-lg text-left cursor-pointer text-white"
-            onClick={() => {
-              navigate("/activity");
-            }}
-          >
-            Alchemy Law Africa
-          </div>
+          {state === "expanded" && (
+            <div
+              className="pt-[2px] text-lg text-left cursor-pointer text-white"
+              onClick={() => {
+                navigate("/activity");
+              }}
+            >
+              Alchemy Law Africa
+            </div>
+          )}
         </div>
       </SidebarHeader>
       <SidebarContent>

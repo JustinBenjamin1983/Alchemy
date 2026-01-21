@@ -56,7 +56,23 @@ type SynthesisTab =
   | 'financial_exposures'
   | 'deal_blockers'
   | 'conditions_precedent'
+  | 'warranties'
+  | 'indemnities'
   | 'recommendations';
+
+// Shield icon for warranties
+const ShieldCheckIcon = () => (
+  <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+  </svg>
+);
+
+// Document warning icon for indemnities
+const DocumentShieldIcon = () => (
+  <svg className="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+  </svg>
+);
 
 interface SynthesisViewProps {
   activeTab: SynthesisTab | string;
@@ -390,6 +406,233 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Warranties Register View
+  if (activeTab === 'warranties') {
+    const warranties = synthesisData.warranties_register || [];
+
+    // Priority badge helper
+    const getPriorityBadge = (priority?: string) => {
+      const colors = {
+        critical: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+        high: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
+        medium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+      };
+      return colors[priority as keyof typeof colors] || colors.medium;
+    };
+
+    return (
+      <div className="max-w-5xl mx-auto">
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+            <ShieldCheckIcon />
+            Warranties Register
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Recommended warranties to protect the client based on DD findings
+          </p>
+        </div>
+
+        {warranties.length === 0 ? (
+          <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 text-center">
+            <ShieldCheckIcon />
+            <p className="mt-2 text-gray-600 dark:text-gray-400">No warranties identified yet</p>
+            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+              Warranties will be generated based on the DD analysis findings
+            </p>
+          </div>
+        ) : (
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-100 dark:bg-gray-700/50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-12">#</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Category</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cap / Survival</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Priority</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                {warranties.map((warranty, index) => (
+                  <tr key={index} className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 ${warranty.is_fundamental ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}`}>
+                    <td className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {warranty.warranty_number || index + 1}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-700 dark:text-gray-300">
+                      <span className="font-medium">{warranty.category}</span>
+                      {warranty.is_fundamental && (
+                        <span className="ml-2 inline-block px-2 py-0.5 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded">
+                          Fundamental
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
+                      <p>{warranty.description}</p>
+                      {warranty.source_finding && (
+                        <p className="mt-1 text-xs text-gray-400">Source: {warranty.source_finding}</p>
+                      )}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
+                      <div>{warranty.typical_cap || '-'}</div>
+                      <div className="text-xs text-gray-400">{warranty.survival_period || '-'}</div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${getPriorityBadge(warranty.priority)}`}>
+                        {warranty.priority || 'medium'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Summary Stats */}
+        {warranties.length > 0 && (
+          <div className="mt-6 grid grid-cols-3 gap-4">
+            <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+              <div className="text-2xl font-bold text-red-700 dark:text-red-400">
+                {warranties.filter(w => w.priority === 'critical').length}
+              </div>
+              <div className="text-sm text-red-600 dark:text-red-400">Critical Priority</div>
+            </div>
+            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="text-2xl font-bold text-blue-700 dark:text-blue-400">
+                {warranties.filter(w => w.is_fundamental).length}
+              </div>
+              <div className="text-sm text-blue-600 dark:text-blue-400">Fundamental Warranties</div>
+            </div>
+            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
+              <div className="text-2xl font-bold text-gray-700 dark:text-gray-300">
+                {warranties.length}
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Total Warranties</div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Indemnities Register View
+  if (activeTab === 'indemnities') {
+    const indemnities = synthesisData.indemnities_register || [];
+
+    // Priority badge helper
+    const getPriorityBadge = (priority?: string) => {
+      const colors = {
+        critical: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+        high: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
+        medium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+      };
+      return colors[priority as keyof typeof colors] || colors.medium;
+    };
+
+    return (
+      <div className="max-w-5xl mx-auto">
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+            <DocumentShieldIcon />
+            Indemnities Register
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Recommended indemnities to protect the client based on DD risk findings
+          </p>
+        </div>
+
+        {indemnities.length === 0 ? (
+          <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 text-center">
+            <DocumentShieldIcon />
+            <p className="mt-2 text-gray-600 dark:text-gray-400">No indemnities identified yet</p>
+            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+              Indemnities will be generated based on specific risks identified in DD
+            </p>
+          </div>
+        ) : (
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-100 dark:bg-gray-700/50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-12">#</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Category</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Trigger / Exposure</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cap / Survival</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Priority</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                {indemnities.map((indemnity, index) => (
+                  <tr key={index} className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 ${indemnity.escrow_recommendation ? 'bg-orange-50/50 dark:bg-orange-900/10' : ''}`}>
+                    <td className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {indemnity.indemnity_number || index + 1}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-700 dark:text-gray-300">
+                      <span className="font-medium">{indemnity.category}</span>
+                      {indemnity.escrow_recommendation && (
+                        <span className="ml-2 inline-block px-2 py-0.5 text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded">
+                          Escrow
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
+                      <p>{indemnity.description}</p>
+                      {indemnity.source_finding && (
+                        <p className="mt-1 text-xs text-gray-400">Source: {indemnity.source_finding}</p>
+                      )}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
+                      {indemnity.trigger_event && (
+                        <div className="text-xs text-gray-500 mb-1">Trigger: {indemnity.trigger_event}</div>
+                      )}
+                      {indemnity.quantified_exposure && (
+                        <div className="font-medium text-amber-600 dark:text-amber-400">{indemnity.quantified_exposure}</div>
+                      )}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
+                      <div>{indemnity.typical_cap || '-'}</div>
+                      <div className="text-xs text-gray-400">{indemnity.survival_period || '-'}</div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${getPriorityBadge(indemnity.priority)}`}>
+                        {indemnity.priority || 'medium'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Summary Stats */}
+        {indemnities.length > 0 && (
+          <div className="mt-6 grid grid-cols-3 gap-4">
+            <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+              <div className="text-2xl font-bold text-red-700 dark:text-red-400">
+                {indemnities.filter(i => i.priority === 'critical').length}
+              </div>
+              <div className="text-sm text-red-600 dark:text-red-400">Critical Priority</div>
+            </div>
+            <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+              <div className="text-2xl font-bold text-orange-700 dark:text-orange-400">
+                {indemnities.filter(i => i.escrow_recommendation).length}
+              </div>
+              <div className="text-sm text-orange-600 dark:text-orange-400">Escrow Recommended</div>
+            </div>
+            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
+              <div className="text-2xl font-bold text-gray-700 dark:text-gray-300">
+                {indemnities.length}
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Total Indemnities</div>
+            </div>
           </div>
         )}
       </div>

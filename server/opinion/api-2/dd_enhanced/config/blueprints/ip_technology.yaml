@@ -169,6 +169,668 @@ conditions_precedent_patterns:
   cp_type: Source Code Delivery
 - pattern: POPIA|data protection
   cp_type: Data Compliance
+
+# ============================================================================
+# WARRANTIES & INDEMNITIES FRAMEWORK
+# ============================================================================
+# This section defines transaction-specific warranty and indemnity categories
+# for IP and Technology transactions. Covers:
+# - IP ownership and chain of title
+# - Open source and licensing compliance
+# - Data protection and privacy
+# - Cybersecurity and technology risks
+# ============================================================================
+
+warranty_categories:
+  # ---------------------------------------------------------------------------
+  # IP OWNERSHIP & TITLE WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "IP Ownership & Title"
+    description: "Warranties relating to IP ownership, chain of title, and freedom from encumbrances"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    ip_tech_specific: true
+    standard_warranties:
+      - id: "W-IP-001"
+        description: "Target owns all material IP free from encumbrances"
+        detailed_wording: "The Target is the sole legal and beneficial owner of all Intellectual Property set out in the IP Schedule, free from any Security Interest, lien, charge, encumbrance, license (other than Permitted Licenses), or third-party right"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "IP register review"
+          - "CIPC/patent office searches"
+          - "Encumbrance searches"
+      - id: "W-IP-002"
+        description: "Complete chain of title exists for all material IP"
+        detailed_wording: "A complete and unbroken chain of title exists for all material Intellectual Property from the original creator/inventor to the Target, and all necessary assignments have been validly executed and recorded"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "Assignment agreements"
+          - "Patent assignment records"
+          - "Trademark assignment records"
+      - id: "W-IP-003"
+        description: "All employee IP has been validly assigned to Target"
+        detailed_wording: "All Intellectual Property created by employees during their employment has been validly assigned to the Target by operation of law or pursuant to valid written assignment agreements"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "Employment contracts"
+          - "IP assignment clauses"
+          - "IP policy documents"
+      - id: "W-IP-004"
+        description: "All contractor and consultant IP has been assigned"
+        detailed_wording: "All Intellectual Property created by contractors, consultants, or other third parties for or on behalf of the Target has been validly assigned to the Target pursuant to written assignment agreements"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "Contractor agreements"
+          - "Consulting agreements"
+          - "Work-for-hire provisions"
+      - id: "W-IP-005"
+        description: "No founder-held IP exists that should belong to Target"
+        detailed_wording: "No founder, director, or shareholder of the Target holds any Intellectual Property that was created for, or should properly belong to, the Target, and all pre-incorporation IP has been validly assigned"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "Founder IP assignments"
+          - "Pre-incorporation IP audit"
+          - "Background IP schedules"
+      - id: "W-IP-006"
+        description: "IP registrations are current and properly maintained"
+        detailed_wording: "All registered Intellectual Property is validly registered in the name of the Target, all renewal fees have been paid, and all registrations are in full force and effect and not subject to any challenge"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Patent renewal records"
+          - "Trademark renewal records"
+          - "IP maintenance records"
+      - id: "W-IP-007"
+        description: "No joint ownership or disputed ownership exists"
+        detailed_wording: "No Intellectual Property is subject to joint ownership, co-ownership, or disputed ownership, and there are no agreements granting any third party rights to acquire any Intellectual Property"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: high
+        dd_triggers:
+          - "Joint development agreements"
+          - "Co-ownership arrangements"
+
+  # ---------------------------------------------------------------------------
+  # IP NON-INFRINGEMENT WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "IP Non-Infringement"
+    description: "Warranties that products and technology do not infringe third-party IP"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    ip_tech_specific: true
+    standard_warranties:
+      - id: "W-INF-001"
+        description: "Products do not infringe third-party patents"
+        detailed_wording: "To the best of the Seller's knowledge, the products and services of the Target do not infringe any third-party patent rights, and no claim of patent infringement has been made or threatened"
+        typical_cap: "50% of purchase price or specific cap"
+        survival_period: "3 years"
+        priority: critical
+        knowledge_qualifier: true
+        dd_triggers:
+          - "Freedom to operate analysis"
+          - "Patent clearance searches"
+          - "Cease and desist history"
+      - id: "W-INF-002"
+        description: "Products do not infringe third-party copyrights"
+        detailed_wording: "The products, software, and materials of the Target do not infringe any third-party copyright, and all third-party content is properly licensed"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: high
+      - id: "W-INF-003"
+        description: "Trademarks do not infringe third-party marks"
+        detailed_wording: "The trademarks, trade names, and branding of the Target do not infringe any third-party trademark rights, and no claim of trademark infringement has been made or threatened"
+        typical_cap: "25% of purchase price"
+        survival_period: "3 years"
+        priority: high
+      - id: "W-INF-004"
+        description: "No cease and desist letters received"
+        detailed_wording: "The Target has not received any cease and desist letter, demand letter, or other communication alleging infringement of any third-party Intellectual Property that has not been disclosed"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-INF-005"
+        description: "No IP infringement claims pending or threatened"
+        detailed_wording: "There are no pending or threatened claims, actions, or proceedings alleging that the Target has infringed any Intellectual Property of any third party"
+        typical_cap: "As negotiated"
+        survival_period: "3 years"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # OPEN SOURCE & LICENSING WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Open Source & Licensing"
+    description: "Warranties relating to open source compliance and software licensing"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    ip_tech_specific: true
+    standard_warranties:
+      - id: "W-OSS-001"
+        description: "Open source software is properly tracked and managed"
+        detailed_wording: "The Target maintains a complete and accurate inventory of all open source software used in its products, and has processes in place to ensure compliance with applicable open source licenses"
+        typical_cap: "25% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Software bill of materials (SBOM)"
+          - "Open source audit"
+          - "License scanning tools"
+      - id: "W-OSS-002"
+        description: "No copyleft/GPL contamination of proprietary code"
+        detailed_wording: "No proprietary source code of the Target is subject to copyleft obligations (including GPL, AGPL, or similar licenses) that would require disclosure or licensing of such proprietary code"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "GPL audit"
+          - "Code provenance analysis"
+          - "License compliance review"
+      - id: "W-OSS-003"
+        description: "All open source license terms have been complied with"
+        detailed_wording: "The Target has complied with all notice, attribution, and other requirements of open source licenses applicable to its products, including making required source code available where applicable"
+        typical_cap: "25% of purchase price"
+        survival_period: "3 years"
+        priority: high
+      - id: "W-OSS-004"
+        description: "All third-party software is properly licensed"
+        detailed_wording: "The Target has valid licenses for all third-party proprietary software used in its business, all license fees are current, and such licenses permit the Target's use"
+        typical_cap: "License value"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Software license inventory"
+          - "License agreements"
+          - "Compliance audit"
+      - id: "W-OSS-005"
+        description: "Critical licenses survive change of control"
+        detailed_wording: "Either (i) the critical software licenses identified in Schedule [X] do not contain change of control provisions that are triggered by this transaction, or (ii) all required consents have been obtained"
+        typical_cap: "License replacement cost"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "License CoC provisions"
+          - "Consent requirements"
+
+  # ---------------------------------------------------------------------------
+  # DATA PROTECTION & PRIVACY WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Data Protection & Privacy"
+    description: "Warranties relating to POPIA, GDPR, and data protection compliance"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    ip_tech_specific: true
+    standard_warranties:
+      - id: "W-DP-001"
+        description: "Target is POPIA compliant"
+        detailed_wording: "The Target has complied in all material respects with the Protection of Personal Information Act, including registration of an Information Officer, implementation of appropriate technical and organisational measures, and obtaining required consents"
+        typical_cap: "50% of purchase price"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "POPIA compliance assessment"
+          - "Information Officer registration"
+          - "Privacy policy review"
+      - id: "W-DP-002"
+        description: "No data breaches have occurred"
+        detailed_wording: "The Target has not experienced any Security Compromise (as defined in POPIA) or data breach affecting personal information, and has not been required to notify the Information Regulator or data subjects of any breach"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "Incident register"
+          - "Breach notifications"
+          - "Regulator correspondence"
+      - id: "W-DP-003"
+        description: "Adequate data processing agreements in place"
+        detailed_wording: "The Target has entered into adequate written agreements with all operators (processors) that process personal information on its behalf, as required by POPIA"
+        typical_cap: "25% of purchase price"
+        survival_period: "3 years"
+        priority: high
+        dd_triggers:
+          - "Data processing agreements"
+          - "Vendor contracts"
+      - id: "W-DP-004"
+        description: "GDPR compliance where applicable"
+        detailed_wording: "To the extent the Target processes personal data of EU data subjects, it has complied with the General Data Protection Regulation, including having a valid legal basis for processing"
+        typical_cap: "50% of purchase price"
+        survival_period: "5 years"
+        priority: high
+        dd_triggers:
+          - "GDPR assessment"
+          - "EU data flows analysis"
+      - id: "W-DP-005"
+        description: "Valid consents obtained for data processing"
+        detailed_wording: "The Target has obtained all consents required under applicable data protection laws for its collection, use, and sharing of personal information, and such consents are validly documented"
+        typical_cap: "25% of purchase price"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # CYBERSECURITY WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Cybersecurity"
+    description: "Warranties relating to security measures, incidents, and certifications"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    ip_tech_specific: true
+    standard_warranties:
+      - id: "W-SEC-001"
+        description: "No material security incidents have occurred"
+        detailed_wording: "The Target has not experienced any material cybersecurity incident, unauthorized access to systems, ransomware attack, or other security breach that has not been disclosed"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-SEC-002"
+        description: "Adequate security measures in place"
+        detailed_wording: "The Target has implemented and maintains appropriate technical and organisational security measures to protect its systems, data, and Intellectual Property, consistent with industry standards"
+        typical_cap: "25% of purchase price"
+        survival_period: "3 years"
+        priority: high
+        dd_triggers:
+          - "Security assessment"
+          - "Penetration test results"
+          - "Security policies"
+      - id: "W-SEC-003"
+        description: "Security certifications accurate"
+        detailed_wording: "All security certifications held by the Target (including ISO 27001, SOC 2, or similar) are valid, the scope accurately covers the Target's operations, and no material exceptions have been noted"
+        typical_cap: "As negotiated"
+        survival_period: "2 years"
+        priority: high
+        dd_triggers:
+          - "Security certifications"
+          - "Audit reports"
+
+  # ---------------------------------------------------------------------------
+  # SOURCE CODE & TECHNOLOGY WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Source Code & Technology"
+    description: "Warranties relating to source code, technology stack, and technical matters"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    ip_tech_specific: true
+    standard_warranties:
+      - id: "W-TECH-001"
+        description: "Source code is complete and documented"
+        detailed_wording: "The source code for all material software products is complete, compilable, and reasonably documented, and includes all components necessary to build and maintain the products"
+        typical_cap: "50% of purchase price"
+        survival_period: "2 years"
+        priority: high
+        dd_triggers:
+          - "Code repository access"
+          - "Technical documentation"
+      - id: "W-TECH-002"
+        description: "Source code escrow is current"
+        detailed_wording: "Where source code escrow arrangements exist with customers or licensees, the escrow deposits are current and reflect the latest released version of the software"
+        typical_cap: "As negotiated"
+        survival_period: "2 years"
+        priority: medium
+      - id: "W-TECH-003"
+        description: "No critical person dependencies"
+        detailed_wording: "The development and maintenance of the Target's technology is not dependent on any single individual whose departure would materially impair the Target's ability to operate"
+        typical_cap: "As negotiated"
+        survival_period: "18 months"
+        priority: high
+        knowledge_qualifier: true
+      - id: "W-TECH-004"
+        description: "Technology stack is adequately documented"
+        detailed_wording: "The technology architecture, infrastructure, and dependencies are reasonably documented, and such documentation is accurate in all material respects"
+        typical_cap: "As negotiated"
+        survival_period: "18 months"
+        priority: medium
+
+  # ---------------------------------------------------------------------------
+  # STANDARD CORPORATE WARRANTIES (for IP/Tech context)
+  # ---------------------------------------------------------------------------
+  - category: "Title & Capacity"
+    description: "Standard warranties relating to share ownership and authority"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-TC-001"
+        description: "Seller has full ownership of shares"
+        detailed_wording: "The Seller is the sole legal and beneficial owner of the Sale Shares, free from any encumbrances"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+      - id: "W-TC-002"
+        description: "Seller has authority to sell"
+        detailed_wording: "The Seller has full power and authority to enter into this Agreement and to sell and transfer the Sale Shares"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+
+# ============================================================================
+# INDEMNITY CATEGORIES
+# ============================================================================
+
+indemnity_categories:
+  # ---------------------------------------------------------------------------
+  # IP INFRINGEMENT INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "IP Infringement"
+    description: "Indemnities for third-party IP infringement claims"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    ip_tech_specific: true
+    triggers:
+      - "Pending or threatened IP infringement claims"
+      - "Cease and desist letters received"
+      - "Products using third-party technology"
+      - "Freedom to operate concerns identified"
+    standard_indemnities:
+      - id: "I-INF-001"
+        description: "Third-party IP infringement claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any claim that the products, services, or technology of the Target infringe the Intellectual Property of any third party, including defense costs, damages, and settlement amounts"
+        typical_cap: "50-100% of purchase price or specific IP cap"
+        survival_period: "5 years"
+        priority: critical
+        special_considerations:
+          - "May carve out known risks"
+          - "Consider insurance availability"
+          - "May include conduct of defense provisions"
+      - id: "I-INF-002"
+        description: "Patent infringement claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any claim that the Target's products infringe any patent, including costs of redesigning products to avoid infringement"
+        typical_cap: "As negotiated - often significant"
+        survival_period: "5-7 years (patent claim period)"
+        priority: critical
+      - id: "I-INF-003"
+        description: "Copyright infringement claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any claim that software or content infringes third-party copyright"
+        typical_cap: "25-50% of purchase price"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # OPEN SOURCE INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Open Source Contamination"
+    description: "Indemnities for open source compliance failures and GPL contamination"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    ip_tech_specific: true
+    triggers:
+      - "GPL or copyleft code detected in proprietary products"
+      - "Open source license violations identified"
+      - "SBOM audit reveals compliance gaps"
+    standard_indemnities:
+      - id: "I-OSS-001"
+        description: "GPL/copyleft contamination remediation"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any copyleft or open source license that requires disclosure or licensing of the Target's proprietary source code, including costs of identifying and removing contaminated code"
+        typical_cap: "Purchase price or uncapped"
+        survival_period: "5 years"
+        priority: critical
+        escrow_recommendation: "10-20% escrow for open source risk"
+      - id: "I-OSS-002"
+        description: "Open source license violation claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any claim that the Target has violated the terms of an open source license, including costs of compliance remediation"
+        typical_cap: "25% of purchase price"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # LICENSE TERMINATION INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "License Termination"
+    description: "Indemnities for critical license terminations"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    ip_tech_specific: true
+    triggers:
+      - "Critical license has CoC termination right"
+      - "Pre-closing license breach identified"
+      - "License consent not obtained"
+    standard_indemnities:
+      - id: "I-LIC-001"
+        description: "Critical license termination"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from the termination of any critical software license due to pre-Closing breach by the Target or failure to obtain required CoC consent"
+        typical_cap: "License replacement cost + business interruption"
+        survival_period: "3 years"
+        priority: critical
+        calculation_basis: "Cost of replacement + lost business"
+      - id: "I-LIC-002"
+        description: "License audit liabilities"
+        detailed_wording: "The Seller shall indemnify the Buyer against any license fees, penalties, or back-payments arising from third-party license audits relating to the pre-Closing period"
+        typical_cap: "Audit liability amount"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # FOUNDER/EMPLOYEE IP INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Founder & Employee IP"
+    description: "Indemnities for IP ownership gaps from founders and employees"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    ip_tech_specific: true
+    triggers:
+      - "IP assignment gaps identified"
+      - "Founder-held IP not properly assigned"
+      - "Former employee claiming IP ownership"
+    standard_indemnities:
+      - id: "I-EMP-001"
+        description: "Founder IP ownership claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any claim by a founder, former founder, or related party that they own Intellectual Property that should belong to the Target"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+      - id: "I-EMP-002"
+        description: "Employee/contractor IP claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any claim by a current or former employee, contractor, or consultant that they own Intellectual Property created for or used by the Target"
+        typical_cap: "50% of purchase price"
+        survival_period: "5 years"
+        priority: critical
+      - id: "I-EMP-003"
+        description: "IP assignment remediation costs"
+        detailed_wording: "The Seller shall indemnify the Buyer against costs of obtaining IP assignments that should have been obtained prior to Closing, including legal fees and payments to assignors"
+        typical_cap: "As negotiated"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # DATA BREACH INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Data Breach & Privacy"
+    description: "Indemnities for data breaches and privacy violations"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    ip_tech_specific: true
+    triggers:
+      - "Pre-closing data breach discovered"
+      - "POPIA non-compliance identified"
+      - "GDPR exposure with EU data subjects"
+    standard_indemnities:
+      - id: "I-DATA-001"
+        description: "Pre-closing data breach"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any data breach or Security Compromise that occurred prior to Closing, including notification costs, credit monitoring, regulatory fines, and third-party claims"
+        typical_cap: "Uncapped or significant cap"
+        survival_period: "5 years"
+        priority: critical
+        escrow_recommendation: "Consider escrow for data breach risk"
+      - id: "I-DATA-002"
+        description: "POPIA regulatory fines and penalties"
+        detailed_wording: "The Seller shall indemnify the Buyer against any fines, penalties, or administrative sanctions imposed by the Information Regulator relating to pre-Closing non-compliance with POPIA"
+        typical_cap: "As negotiated"
+        survival_period: "5 years"
+        priority: critical
+      - id: "I-DATA-003"
+        description: "GDPR fines and penalties"
+        detailed_wording: "The Seller shall indemnify the Buyer against any fines, penalties, or administrative sanctions imposed under GDPR relating to pre-Closing processing activities"
+        typical_cap: "As negotiated (GDPR fines can be up to 4% of global revenue)"
+        survival_period: "5 years"
+        priority: critical
+      - id: "I-DATA-004"
+        description: "Data subject claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against claims by data subjects arising from pre-Closing mishandling of their personal information"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # CYBERSECURITY INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Cybersecurity"
+    description: "Indemnities for cybersecurity incidents and vulnerabilities"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    ip_tech_specific: true
+    triggers:
+      - "Security incident history"
+      - "Known vulnerabilities not remediated"
+      - "Inadequate security controls"
+    standard_indemnities:
+      - id: "I-SEC-001"
+        description: "Pre-closing security incidents"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any cybersecurity incident, unauthorized access, or ransomware attack that occurred prior to Closing"
+        typical_cap: "As negotiated"
+        survival_period: "3 years"
+        priority: high
+      - id: "I-SEC-002"
+        description: "Pre-existing vulnerabilities"
+        detailed_wording: "The Seller shall indemnify the Buyer against Losses arising from exploitation of known security vulnerabilities that existed at Closing but were not disclosed or remediated"
+        typical_cap: "25% of purchase price"
+        survival_period: "2 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # TAX INDEMNITIES (IP-specific)
+  # ---------------------------------------------------------------------------
+  - category: "Tax"
+    description: "Indemnities for IP-related tax matters"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    ip_tech_specific: true
+    triggers:
+      - "R&D tax credit audit risk"
+      - "IP royalty withholding exposure"
+      - "Transfer pricing for IP transactions"
+    standard_indemnities:
+      - id: "I-TAX-001"
+        description: "Pre-closing tax liabilities"
+        detailed_wording: "The Seller shall indemnify the Buyer against any tax liability of the Target relating to periods ending on or before Closing"
+        typical_cap: "Unlimited for tax"
+        survival_period: "5 years"
+        priority: critical
+      - id: "I-TAX-002"
+        description: "R&D tax credit clawback"
+        detailed_wording: "The Seller shall indemnify the Buyer against any clawback or disallowance of R&D tax incentives claimed for pre-Closing periods"
+        typical_cap: "Tax benefit amount"
+        survival_period: "5 years"
+        priority: high
+      - id: "I-TAX-003"
+        description: "IP royalty withholding"
+        detailed_wording: "The Seller shall indemnify the Buyer against any withholding tax liability arising from pre-Closing royalty payments that should have been subject to withholding"
+        typical_cap: "Tax amount"
+        survival_period: "5 years"
+        priority: high
+
+# ============================================================================
+# WARRANTY & INDEMNITY DETECTION PATTERNS
+# ============================================================================
+
+warranty_indemnity_patterns:
+  warranty_patterns:
+    - pattern: "represents and warrants|seller warrants"
+      type: warranty
+      category: General
+    - pattern: "owns.*intellectual property|title to.*IP"
+      type: warranty
+      category: "IP Ownership & Title"
+    - pattern: "chain of title|validly assigned"
+      type: warranty
+      category: "IP Ownership & Title"
+    - pattern: "employee.*IP.*assign|work.*for.*hire"
+      type: warranty
+      category: "IP Ownership & Title"
+    - pattern: "does not infringe|non-infringement|freedom to operate"
+      type: warranty
+      category: "IP Non-Infringement"
+    - pattern: "no.*cease and desist|no.*IP.*claims"
+      type: warranty
+      category: "IP Non-Infringement"
+    - pattern: "open source|GPL|copyleft"
+      type: warranty
+      category: "Open Source & Licensing"
+    - pattern: "software.*license|properly licensed"
+      type: warranty
+      category: "Open Source & Licensing"
+    - pattern: "POPIA|data protection|personal information"
+      type: warranty
+      category: "Data Protection & Privacy"
+    - pattern: "data breach|security compromise|privacy"
+      type: warranty
+      category: "Data Protection & Privacy"
+    - pattern: "GDPR|EU.*data"
+      type: warranty
+      category: "Data Protection & Privacy"
+    - pattern: "security.*measures|cybersecurity|ISO 27001|SOC 2"
+      type: warranty
+      category: Cybersecurity
+    - pattern: "source code|escrow|technical documentation"
+      type: warranty
+      category: "Source Code & Technology"
+
+  indemnity_patterns:
+    - pattern: "indemnify|hold harmless|indemnification"
+      type: indemnity
+      category: General
+    - pattern: "IP.*infringement.*indemnity|patent.*indemnity"
+      type: indemnity
+      category: "IP Infringement"
+    - pattern: "open source.*indemnity|GPL.*indemnity"
+      type: indemnity
+      category: "Open Source Contamination"
+    - pattern: "license.*termination.*indemnity"
+      type: indemnity
+      category: "License Termination"
+    - pattern: "data breach.*indemnity|POPIA.*indemnity"
+      type: indemnity
+      category: "Data Breach & Privacy"
+    - pattern: "founder.*IP|employee.*IP.*claim"
+      type: indemnity
+      category: "Founder & Employee IP"
+    - pattern: "cybersecurity.*indemnity|security.*incident"
+      type: indemnity
+      category: Cybersecurity
+
 folder_questions:
   01_Corporate_Governance:
     display_name: Corporate & Governance
@@ -223,6 +885,22 @@ folder_questions:
       priority: critical
       detail: POPIA operator agreements, cloud provider DPAs
       cot_hint: List data processors → check DPAs → verify POPIA compliance
+    # Warranty/Indemnity focused questions
+    - question: What software license warranty protections should be requested?
+      priority: high
+      detail: Warranties that licenses are valid, properly paid, and will survive
+      cot_hint: Identify critical licenses → assess CoC risk → recommend warranty scope
+      warranty_trigger: true
+    - question: What open source indemnity protection is needed?
+      priority: critical
+      detail: Indemnity for GPL contamination, license violations, disclosure obligations
+      cot_hint: Assess open source risk → identify copyleft exposure → recommend indemnity
+      indemnity_trigger: true
+    - question: What license termination indemnity protection is needed?
+      priority: high
+      detail: Indemnity for pre-closing license breaches and CoC terminations
+      cot_hint: Identify at-risk licenses → assess termination impact → recommend coverage
+      indemnity_trigger: true
     cross_doc_checks:
     - check: Verify license inventory matches financial records
       related_folders:
@@ -276,6 +954,22 @@ folder_questions:
       priority: medium
       detail: Financial services, health data, telecoms regulations
       cot_hint: Identify sector → check specific requirements → assess compliance
+    # Warranty/Indemnity focused questions
+    - question: What data protection warranty protections should be requested?
+      priority: critical
+      detail: POPIA compliance warranty, no undisclosed breaches, valid consents obtained
+      cot_hint: Assess POPIA compliance → identify gaps → recommend warranty scope
+      warranty_trigger: true
+    - question: What data breach indemnity protection is needed?
+      priority: critical
+      detail: Indemnity for pre-closing breaches, regulatory fines, notification costs
+      cot_hint: Assess breach history/risk → estimate exposure → recommend indemnity
+      indemnity_trigger: true
+    - question: What GDPR regulatory fine indemnity protection is needed?
+      priority: high
+      detail: Indemnity for EU regulatory fines relating to pre-closing processing
+      cot_hint: Assess GDPR exposure → estimate fine risk → recommend coverage
+      indemnity_trigger: true
     cross_doc_checks:
     - check: Verify POPIA compliance documentation
       related_folders:
@@ -305,6 +999,27 @@ folder_questions:
       priority: high
       detail: Retention bonuses, equity incentives, notice periods
       cot_hint: Identify key persons → check retention terms → assess risk
+    # Warranty/Indemnity focused questions
+    - question: What employee IP assignment warranty protections are needed?
+      priority: critical
+      detail: Warranty that all employee IP has been validly assigned to target
+      cot_hint: Assess IP assignment coverage → identify gaps → recommend warranty
+      warranty_trigger: true
+    - question: What contractor IP assignment warranty protections are needed?
+      priority: critical
+      detail: Warranty that all contractor work product belongs to target
+      cot_hint: Review contractor agreements → identify gaps → recommend warranty
+      warranty_trigger: true
+    - question: What founder IP ownership indemnity protection is needed?
+      priority: critical
+      detail: Indemnity for claims by founders that they retain IP rights
+      cot_hint: Assess founder IP risk → identify unassigned IP → recommend indemnity
+      indemnity_trigger: true
+    - question: What employee/contractor IP claim indemnity is needed?
+      priority: high
+      detail: Indemnity for IP claims by current or former employees/contractors
+      cot_hint: Assess employee IP risk → review assignment gaps → recommend coverage
+      indemnity_trigger: true
     cross_doc_checks:
     - check: Verify all developers covered by IP assignment
       related_folders:
@@ -368,6 +1083,27 @@ folder_questions:
       priority: critical
       detail: Data breaches, security incidents, regulatory notifications
       cot_hint: Find incident reports → assess scope → check remediation
+    # Warranty/Indemnity focused questions
+    - question: What IP non-infringement warranty protections should be requested?
+      priority: critical
+      detail: Warranty that products do not infringe third-party patents, copyrights, trademarks
+      cot_hint: Assess infringement risk → review FTO → recommend warranty scope
+      warranty_trigger: true
+    - question: What no undisclosed claims warranty protections are needed?
+      priority: critical
+      detail: Warranty that no cease and desist letters or IP claims not disclosed
+      cot_hint: Review C&D history → assess disclosure → recommend warranty
+      warranty_trigger: true
+    - question: What IP infringement indemnity protection is needed?
+      priority: critical
+      detail: Indemnity for third-party IP infringement claims, defense costs, damages
+      cot_hint: Assess infringement exposure → estimate potential claims → recommend coverage
+      indemnity_trigger: true
+    - question: What patent infringement specific indemnity is needed?
+      priority: critical
+      detail: Indemnity for patent infringement claims including product redesign costs
+      cot_hint: Assess patent landscape → identify high-risk areas → recommend indemnity
+      indemnity_trigger: true
     cross_doc_checks:
     - check: Cross-reference IP disputes with insurance claims
       related_folders:
@@ -422,6 +1158,27 @@ folder_questions:
       priority: medium
       detail: Domain registrations, social media accounts, ownership
       cot_hint: List digital assets → check ownership → verify security
+    # Warranty/Indemnity focused questions
+    - question: What IP ownership warranty protections should be requested?
+      priority: critical
+      detail: Warranty that target owns all material IP free from encumbrances
+      cot_hint: Review IP register → check ownership chain → recommend warranty scope
+      warranty_trigger: true
+    - question: What chain of title warranty protections are needed?
+      priority: critical
+      detail: Warranty that complete chain of title exists with all assignments executed
+      cot_hint: Trace title chain → identify gaps → recommend warranty
+      warranty_trigger: true
+    - question: What IP registration maintenance warranty protections are needed?
+      priority: high
+      detail: Warranty that all registrations current, fees paid, no challenges pending
+      cot_hint: Review maintenance status → identify risks → recommend warranty
+      warranty_trigger: true
+    - question: What IP assignment remediation indemnity protection is needed?
+      priority: high
+      detail: Indemnity for costs of obtaining missing IP assignments post-closing
+      cot_hint: Identify assignment gaps → estimate remediation cost → recommend indemnity
+      indemnity_trigger: true
     cross_doc_checks:
     - check: Verify IP register matches commercial license grants
       related_folders:
@@ -459,6 +1216,32 @@ folder_questions:
       priority: high
       detail: Component inventory, version tracking, vulnerability scanning
       cot_hint: Find SBOM → check completeness → assess vulnerability process
+    # Warranty/Indemnity focused questions
+    - question: What cybersecurity warranty protections should be requested?
+      priority: critical
+      detail: Warranty that no undisclosed security incidents, adequate security measures in place
+      cot_hint: Assess security posture → review incident history → recommend warranty
+      warranty_trigger: true
+    - question: What source code completeness warranty protections are needed?
+      priority: high
+      detail: Warranty that source code is complete, compilable, and adequately documented
+      cot_hint: Assess code quality → review documentation → recommend warranty
+      warranty_trigger: true
+    - question: What security certification warranty protections are needed?
+      priority: high
+      detail: Warranty that security certifications (ISO 27001, SOC 2) are valid and accurate
+      cot_hint: Verify certifications → check scope → recommend warranty
+      warranty_trigger: true
+    - question: What pre-closing security incident indemnity protection is needed?
+      priority: critical
+      detail: Indemnity for security incidents or breaches that occurred pre-closing
+      cot_hint: Assess incident risk → estimate potential exposure → recommend indemnity
+      indemnity_trigger: true
+    - question: What pre-existing vulnerability indemnity protection is needed?
+      priority: high
+      detail: Indemnity for exploitation of known vulnerabilities not remediated at closing
+      cot_hint: Assess vulnerability position → identify known issues → recommend indemnity
+      indemnity_trigger: true
     cross_doc_checks:
     - check: Verify technology dependencies match license inventory
       related_folders:
@@ -586,3 +1369,112 @@ cot_questions:
   - Has cybersecurity assessment been conducted? Any certifications (ISO 27001, SOC2)?
   - What security incidents have occurred?
   - Is there adequate cyber insurance?
+
+  # Warranty & Indemnity Analysis COT Questions
+  warranties_analysis:
+  - What are the key IP ownership risks that require warranty protection (chain of title gaps, founder IP, contractor IP)?
+  - What IP infringement risks exist that warrant non-infringement warranties (FTO gaps, cease and desist history, patent landscape)?
+  - What open source and licensing risks require warranty protection (GPL contamination, license compliance, CoC termination)?
+  - What data protection risks warrant POPIA/GDPR compliance warranties (compliance gaps, breach history, consent issues)?
+  - What cybersecurity risks require security-related warranties (incident history, vulnerability position, certification status)?
+  - What source code and technology risks warrant technical warranties (documentation, escrow, key person dependencies)?
+  - For each identified risk, what is the appropriate warranty scope, cap, and survival period?
+  - Which warranties should be fundamental warranties with enhanced protection?
+  - What knowledge qualifiers are appropriate for which warranties?
+  - What disclosure schedules should accompany the warranties?
+
+  indemnities_analysis:
+  - What IP infringement exposure exists that warrants indemnity protection (pending claims, FTO gaps, patent risk)?
+  - What is the quantified or estimated exposure for potential IP infringement claims?
+  - What open source contamination risk exists that warrants GPL/copyleft indemnity?
+  - What is the potential cost of open source remediation or product redesign?
+  - What license termination risks exist that warrant indemnity coverage (CoC provisions, pre-closing breaches)?
+  - What data breach or privacy violation risks warrant indemnity protection (breach history, POPIA/GDPR exposure)?
+  - What cybersecurity incident risks warrant indemnity coverage (incident history, known vulnerabilities)?
+  - What founder or employee IP claim risks warrant indemnity protection (assignment gaps, disputed ownership)?
+  - What IP-related tax risks warrant indemnity coverage (R&D credits, royalty withholding)?
+  - For each identified risk, what is the appropriate indemnity cap, survival period, and escrow arrangement?
+
+  warranty_indemnity_structuring:
+  - Based on the DD findings, what is the appropriate overall warranty and indemnity liability cap?
+  - Should there be a separate enhanced cap for IP-related claims?
+  - What escrow or holdback amount is appropriate given the identified IP and technology risks?
+  - What is the recommended warranty survival period based on IP claim limitation periods?
+  - What basket and deductible structure is appropriate for IP/technology warranties?
+  - Should warranty and indemnity insurance be required given the identified risks?
+  - What are the appropriate disclosure requirements for IP schedules?
+  - How should conduct of defense provisions be structured for IP claims?
+  - What pre-closing covenants are needed to preserve IP position (no new licenses, maintain registrations)?
+  - How should IP-specific representations be refreshed at closing?
+
+# ============================================================================
+# OUTPUT REQUIREMENTS
+# ============================================================================
+
+output_requirements:
+  warranties_register:
+    required_fields:
+      - warranty_number
+      - category
+      - description
+      - detailed_wording
+      - from_party
+      - to_party
+      - source_finding
+      - typical_cap
+      - survival_period
+      - priority
+      - is_fundamental
+      - disclosure_required
+    categories:
+      - "IP Ownership & Title"
+      - "IP Non-Infringement"
+      - "Open Source & Licensing"
+      - "Data Protection & Privacy"
+      - "Cybersecurity"
+      - "Source Code & Technology"
+      - "Title & Capacity"
+    priority_levels:
+      - critical
+      - high
+      - medium
+    guidance: >
+      Generate warranties based on DD findings in the ip_technology transaction context.
+      Focus on IP ownership chain, infringement risk, open source compliance, data protection,
+      and cybersecurity matters. Each warranty should be traceable to a specific DD finding.
+      Fundamental warranties should cover title, IP ownership, and major IP representations.
+
+  indemnities_register:
+    required_fields:
+      - indemnity_number
+      - category
+      - description
+      - detailed_wording
+      - from_party
+      - to_party
+      - trigger_event
+      - source_finding
+      - quantified_exposure
+      - typical_cap
+      - survival_period
+      - priority
+      - escrow_recommendation
+    categories:
+      - "IP Infringement"
+      - "Open Source Contamination"
+      - "License Termination"
+      - "Founder & Employee IP"
+      - "Data Breach & Privacy"
+      - "Cybersecurity"
+      - "Tax"
+    priority_levels:
+      - critical
+      - high
+      - medium
+    guidance: >
+      Generate indemnities based on specific identified risks in the DD findings.
+      Indemnities should be risk-specific and traceable to DD findings.
+      Consider whether escrow or holdback is appropriate for each identified risk.
+      IP infringement, open source contamination, and data breach indemnities are
+      particularly important in IP/technology transactions.
+      Quantify exposure where possible based on potential claim values.

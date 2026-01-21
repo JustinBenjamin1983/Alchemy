@@ -131,6 +131,8 @@ type ActiveTab =
   | 'financial_exposures'
   | 'deal_blockers'
   | 'conditions_precedent'
+  | 'warranties'
+  | 'indemnities'
   | 'recommendations';
 
 // Import SynthesisData type
@@ -560,6 +562,8 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                   <option value="financial_exposures">Financial Exposures</option>
                   <option value="deal_blockers">Deal Blockers</option>
                   <option value="conditions_precedent">Conditions Precedent</option>
+                  <option value="warranties">Warranties</option>
+                  <option value="indemnities">Indemnities</option>
                   <option value="recommendations">Recommendations</option>
                 </optgroup>
               )}

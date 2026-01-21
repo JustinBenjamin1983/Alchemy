@@ -45,6 +45,37 @@ export interface SynthesisData {
     status?: string;
     is_deal_blocker?: boolean;
   }>;
+  // Warranties register - recommended warranties for client protection
+  warranties_register?: Array<{
+    warranty_number?: number;
+    category?: string;
+    description?: string;
+    detailed_wording?: string;
+    from_party?: string;
+    to_party?: string;
+    source_finding?: string;
+    typical_cap?: string;
+    survival_period?: string;
+    priority?: "critical" | "high" | "medium";
+    is_fundamental?: boolean;
+    disclosure_required?: string;
+  }>;
+  // Indemnities register - recommended indemnities based on DD findings
+  indemnities_register?: Array<{
+    indemnity_number?: number;
+    category?: string;
+    description?: string;
+    detailed_wording?: string;
+    from_party?: string;
+    to_party?: string;
+    trigger_event?: string;
+    source_finding?: string;
+    quantified_exposure?: string;
+    typical_cap?: string;
+    survival_period?: string;
+    priority?: "critical" | "high" | "medium";
+    escrow_recommendation?: string;
+  }>;
   recommendations: string[];
 }
 

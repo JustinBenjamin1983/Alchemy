@@ -5,7 +5,6 @@ import { ChevronLeft, ChevronRight, Check, Loader2, Save, Cloud, CloudOff } from
 import { DDProjectSetup, DEFAULT_PROJECT_SETUP } from "./types";
 import { Step1TransactionBasics } from "./Step1TransactionBasics";
 import { Step2DealContext } from "./Step2DealContext";
-import { Step3FocusAreas } from "./Step3FocusAreas";
 import { Step4KeyParties } from "./Step4KeyParties";
 import { Step5DocumentChecklist } from "./Step5DocumentChecklist";
 import {
@@ -24,9 +23,8 @@ interface DDProjectWizardProps {
 const STEPS = [
   { id: 1, title: "Transaction Type", description: "Select transaction type and basics" },
   { id: 2, title: "Deal Context", description: "Provide context for the deal" },
-  { id: 3, title: "Focus Areas", description: "Set priorities and deal breakers" },
-  { id: 4, title: "Key Stakeholders", description: "Identify key stakeholders" },
-  { id: 5, title: "Documents", description: "Review document checklist" },
+  { id: 3, title: "Key Stakeholders", description: "Identify key stakeholders" },
+  { id: 4, title: "Documents", description: "Review document checklist" },
 ];
 
 // Convert draft data to project setup
@@ -234,10 +232,8 @@ export function DDProjectWizard({ onComplete, onCancel, initialDraft }: DDProjec
       case 2:
         return true; // All optional in step 2
       case 3:
-        return true; // All optional in step 3
+        return true; // All optional in step 3 - stakeholders are optional
       case 4:
-        return true; // All optional in step 4 - stakeholders are optional
-      case 5:
         return !!projectSetup.uploadedFile; // Require file upload
       default:
         return false;
@@ -341,7 +337,7 @@ export function DDProjectWizard({ onComplete, onCancel, initialDraft }: DDProjec
           return (
             <div
               key={step.id}
-              className={`flex flex-col items-center w-1/5 ${
+              className={`flex flex-col items-center w-1/4 ${
                 isCurrent
                   ? "text-alchemyPrimaryOrange"
                   : isCompleted
@@ -382,12 +378,9 @@ export function DDProjectWizard({ onComplete, onCancel, initialDraft }: DDProjec
           <Step2DealContext data={projectSetup} onChange={updateSetup} />
         )}
         {currentStep === 3 && (
-          <Step3FocusAreas data={projectSetup} onChange={updateSetup} />
-        )}
-        {currentStep === 4 && (
           <Step4KeyParties data={projectSetup} onChange={updateSetup} />
         )}
-        {currentStep === 5 && <Step5DocumentChecklist data={projectSetup} onChange={updateSetup} />}
+        {currentStep === 4 && <Step5DocumentChecklist data={projectSetup} onChange={updateSetup} />}
       </div>
 
       {/* Navigation Footer */}

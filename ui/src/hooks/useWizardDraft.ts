@@ -10,6 +10,8 @@ export interface WizardDraftData {
   currentStep: number;
   transactionType: string | null;
   transactionName: string;
+  clientName: string;
+  targetEntityName: string;
   clientRole: string | null;
   dealStructure: string | null;
   estimatedValue: number | null;
@@ -22,10 +24,12 @@ export interface WizardDraftData {
   targetCompanyName: string;
   keyIndividuals: string[];
   keySuppliers: string[];
-  keyCustomers: string[];
-  keyLenders: string[];
+  keyCustomers: any[];  // CounterpartyStakeholder[]
+  keyLenders: any[];    // LenderStakeholder[]
   keyRegulators: string[];
-  keyOther: string[];
+  keyOther: any[];      // OtherStakeholder[]
+  shareholderEntityName: string;
+  shareholders: any[];  // Shareholder[]
   createdAt?: string;
   updatedAt?: string;
 }

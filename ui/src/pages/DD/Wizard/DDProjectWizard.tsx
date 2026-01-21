@@ -42,8 +42,8 @@ function draftToProjectSetup(draft: WizardDraftData): DDProjectSetup {
   return {
     transactionType: draft.transactionType as any,
     transactionName: draft.transactionName || "",
-    clientName: (draft as any).clientName || "",
-    targetEntityName: (draft as any).targetEntityName || "",
+    clientName: draft.clientName || "",
+    targetEntityName: draft.targetEntityName || "",
     clientRole: draft.clientRole as any,
     dealStructure: draft.dealStructure as any,
     estimatedValue: draft.estimatedValue,

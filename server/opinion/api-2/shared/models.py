@@ -328,6 +328,8 @@ class DDWizardDraft(BaseModel):
     # Step 1: Transaction Basics
     transaction_type = Column(Text)
     transaction_name = Column(Text)
+    client_name = Column(Text)
+    target_entity_name = Column(Text)
     client_role = Column(Text)
     deal_structure = Column(Text)
     estimated_value = Column(Float)
@@ -344,10 +346,14 @@ class DDWizardDraft(BaseModel):
 
     # Step 4: Key Parties
     target_company_name = Column(Text)
-    key_persons = Column(Text)  # JSON array stored as text
-    counterparties = Column(Text)  # JSON array stored as text
+    key_persons = Column(Text)  # JSON array stored as text (keyIndividuals)
+    key_suppliers = Column(Text)  # JSON array stored as text (keySuppliers)
+    counterparties = Column(Text)  # JSON array stored as text (keyCustomers)
     key_lenders = Column(Text)  # JSON array stored as text
     key_regulators = Column(Text)  # JSON array stored as text
+    key_other = Column(Text)  # JSON array stored as text (keyOther)
+    shareholder_entity_name = Column(Text)
+    shareholders = Column(Text)  # JSON array stored as text
 
     # Metadata
     created_at = Column(DateTime, default=datetime.datetime.utcnow)

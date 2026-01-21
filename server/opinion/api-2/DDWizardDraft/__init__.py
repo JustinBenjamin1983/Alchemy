@@ -106,6 +106,8 @@ def handle_post(req: func.HttpRequest, email: str) -> func.HttpResponse:
         current_step=req_body.get("currentStep", 1),
         transaction_type=req_body.get("transactionType"),
         transaction_name=req_body.get("transactionName", ""),
+        client_name=req_body.get("clientName", ""),
+        target_entity_name=req_body.get("targetEntityName", ""),
         client_role=req_body.get("clientRole"),
         deal_structure=req_body.get("dealStructure"),
         estimated_value=req_body.get("estimatedValue"),
@@ -118,9 +120,13 @@ def handle_post(req: func.HttpRequest, email: str) -> func.HttpResponse:
         target_company_name=req_body.get("targetCompanyName", ""),
         # Map new frontend field names to DB columns
         key_persons=json.dumps(req_body.get("keyIndividuals", req_body.get("keyPersons", []))),
+        key_suppliers=json.dumps(req_body.get("keySuppliers", [])),
         counterparties=json.dumps(req_body.get("keyCustomers", req_body.get("counterparties", []))),
         key_lenders=json.dumps(req_body.get("keyLenders", [])),
         key_regulators=json.dumps(req_body.get("keyRegulators", [])),
+        key_other=json.dumps(req_body.get("keyOther", [])),
+        shareholder_entity_name=req_body.get("shareholderEntityName", ""),
+        shareholders=json.dumps(req_body.get("shareholders", [])),
         created_at=datetime.datetime.utcnow(),
         updated_at=datetime.datetime.utcnow()
     )
@@ -168,6 +174,10 @@ def handle_put(req: func.HttpRequest, email: str) -> func.HttpResponse:
             draft.transaction_type = req_body["transactionType"]
         if "transactionName" in req_body:
             draft.transaction_name = req_body["transactionName"]
+        if "clientName" in req_body:
+            draft.client_name = req_body["clientName"]
+        if "targetEntityName" in req_body:
+            draft.target_entity_name = req_body["targetEntityName"]
         if "clientRole" in req_body:
             draft.client_role = req_body["clientRole"]
         if "dealStructure" in req_body:
@@ -193,6 +203,8 @@ def handle_put(req: func.HttpRequest, email: str) -> func.HttpResponse:
             draft.key_persons = json.dumps(req_body["keyIndividuals"])
         elif "keyPersons" in req_body:
             draft.key_persons = json.dumps(req_body["keyPersons"])
+        if "keySuppliers" in req_body:
+            draft.key_suppliers = json.dumps(req_body["keySuppliers"])
         if "keyCustomers" in req_body:
             draft.counterparties = json.dumps(req_body["keyCustomers"])
         elif "counterparties" in req_body:
@@ -201,6 +213,12 @@ def handle_put(req: func.HttpRequest, email: str) -> func.HttpResponse:
             draft.key_lenders = json.dumps(req_body["keyLenders"])
         if "keyRegulators" in req_body:
             draft.key_regulators = json.dumps(req_body["keyRegulators"])
+        if "keyOther" in req_body:
+            draft.key_other = json.dumps(req_body["keyOther"])
+        if "shareholderEntityName" in req_body:
+            draft.shareholder_entity_name = req_body["shareholderEntityName"]
+        if "shareholders" in req_body:
+            draft.shareholders = json.dumps(req_body["shareholders"])
 
         draft.updated_at = datetime.datetime.utcnow()
         session.commit()
@@ -263,6 +281,8 @@ def draft_to_dict(draft: DDWizardDraft) -> dict:
         "currentStep": draft.current_step,
         "transactionType": draft.transaction_type,
         "transactionName": draft.transaction_name or "",
+        "clientName": draft.client_name or "",
+        "targetEntityName": draft.target_entity_name or "",
         "clientRole": draft.client_role,
         "dealStructure": draft.deal_structure,
         "estimatedValue": draft.estimated_value,
@@ -275,11 +295,13 @@ def draft_to_dict(draft: DDWizardDraft) -> dict:
         "targetCompanyName": draft.target_company_name or "",
         # Map old DB columns to new frontend field names
         "keyIndividuals": json.loads(draft.key_persons) if draft.key_persons else [],
-        "keySuppliers": [],  # New field - not in old schema
-        "keyCustomers": json.loads(draft.counterparties) if draft.counterparties else [],  # Map counterparties to customers
+        "keySuppliers": json.loads(draft.key_suppliers) if draft.key_suppliers else [],
+        "keyCustomers": json.loads(draft.counterparties) if draft.counterparties else [],
         "keyLenders": json.loads(draft.key_lenders) if draft.key_lenders else [],
         "keyRegulators": json.loads(draft.key_regulators) if draft.key_regulators else [],
-        "keyOther": [],  # New field - not in old schema
+        "keyOther": json.loads(draft.key_other) if draft.key_other else [],
+        "shareholderEntityName": draft.shareholder_entity_name or "",
+        "shareholders": json.loads(draft.shareholders) if draft.shareholders else [],
         "createdAt": draft.created_at.isoformat() if draft.created_at else None,
         "updatedAt": draft.updated_at.isoformat() if draft.updated_at else None,
     }

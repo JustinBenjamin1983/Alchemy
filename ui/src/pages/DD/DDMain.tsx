@@ -269,7 +269,7 @@ Shareholder Entity: ${setup.shareholderEntityName || "None specified"}
 Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => s.name).map(s => s.name + (s.percentage ? ` (${s.percentage}%)` : "")).join(", ") : "None specified"}
 `.trim();
 
-      startDD.mutate({
+      const result = await startDD.mutateAsync({
         data: {
           name: setup.transactionName,
           briefing: briefing,
@@ -278,6 +278,10 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
           projectSetup: setup, // Pass the full setup for future use
         },
       });
+
+      // Navigate to the new DD project
+      setSelectedDDID((result.data as any).dd_id);
+      setScreenState("Processing");
     } catch (err: any) {
       const errorMessage = err?.response?.data?.error || err?.message || "An error occurred during file upload or processing.";
       setUploadError(errorMessage);
@@ -287,13 +291,6 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
       setIsUploading(false);
     }
   };
-  useEffect(() => {
-    if (!startDD.isSuccess) return;
-
-    setSelectedDDID((startDD.data.data as any).dd_id);
-    // Go directly to DD Dashboard after creating a project
-    setScreenState("Processing");
-  }, [startDD.isSuccess]);
 
   const handleFiles = async (files: any, fileWasDraggedIn: boolean) => {
     const uploadedFile = Array.from(files)[0] as any;
@@ -465,9 +462,9 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
             <div className="p-6">
             {screenState == "Wizard-NewProject" && (
               <DDProjectWizard
-                onComplete={(setup) => {
+                onComplete={async (setup) => {
                   setSelectedDraft(null);
-                  handleWizardComplete(setup);
+                  await handleWizardComplete(setup);
                 }}
                 onCancel={() => {
                   setSelectedDraft(null);

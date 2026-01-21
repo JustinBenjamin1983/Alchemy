@@ -9,7 +9,13 @@ export function useMutateDDStart() {
   async function _mutationDDStart({
     data,
   }: {
-    data: { name: string; briefing: string; blobUrl: string };
+    data: {
+      name: string;
+      briefing: string;
+      blobUrl: string;
+      transactionType?: string;
+      projectSetup?: unknown;
+    };
   }) {
     const response = await axios.post("/dd-start", data);
     return response;

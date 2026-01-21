@@ -1,6 +1,5 @@
 export type TransactionTypeCode =
   | "mining_resources"
-  | "mining_acquisition"
   | "ma_corporate"
   | "banking_finance"
   | "real_estate"
@@ -122,11 +121,6 @@ export const TRANSACTION_TYPE_INFO: Record<
     icon: "⛏️",
     description: "Mining rights, mineral resources, environmental compliance",
   },
-  mining_acquisition: {
-    name: "Mining Acquisition",
-    icon: "⛏️",
-    description: "Acquisition of mining rights, shares, or assets",
-  },
   ma_corporate: {
     name: "M&A / Corporate",
     icon: "🏢",
@@ -195,8 +189,7 @@ export const TRANSACTION_TYPE_INFO: Record<
 };
 
 export const REGULATOR_SUGGESTIONS: Record<TransactionTypeCode, string[]> = {
-  mining_resources: ["DMRE", "Competition Commission", "DEA/DFFE", "DWS"],
-  mining_acquisition: ["DMRE", "Competition Commission", "DEA/DFFE", "DWS", "B-BBEE Commission"],
+  mining_resources: ["DMRE", "Competition Commission", "DEA/DFFE", "DWS", "B-BBEE Commission"],
   ma_corporate: ["Competition Commission", "CIPC", "TRP"],
   banking_finance: ["SARB", "FSCA", "NCR"],
   real_estate: ["Municipality", "Deeds Office", "NHBRC"],
@@ -214,7 +207,6 @@ export const REGULATOR_SUGGESTIONS: Record<TransactionTypeCode, string[]> = {
 
 export const TARGET_ENTITY_LABELS: Record<TransactionTypeCode, { label: string; placeholder: string }> = {
   mining_resources: { label: "Target Entity", placeholder: "e.g., ABC Resources (Pty) Ltd" },
-  mining_acquisition: { label: "Target Mining Entity", placeholder: "e.g., Mining Rights Holder (Pty) Ltd" },
   ma_corporate: { label: "Target Company", placeholder: "e.g., Target Holdings (Pty) Ltd" },
   banking_finance: { label: "Borrower / Lender / Counterparty", placeholder: "e.g., Borrower Corp Ltd" },
   real_estate: { label: "Seller / Property Owner", placeholder: "e.g., Property Owner Trust" },
@@ -235,13 +227,6 @@ export const CLIENT_ROLE_OPTIONS: Record<TransactionTypeCode, ClientRoleOption[]
     { value: "acquirer", label: "Acquirer / Purchaser" },
     { value: "seller", label: "Seller / Vendor" },
     { value: "target", label: "Target Company" },
-    { value: "joint_venture_partner", label: "Joint Venture Partner" },
-    { value: "advisor", label: "Independent Advisor" },
-  ],
-  mining_acquisition: [
-    { value: "acquirer", label: "Acquirer / Purchaser" },
-    { value: "seller", label: "Seller / Vendor" },
-    { value: "target", label: "Target Mining Company" },
     { value: "joint_venture_partner", label: "Joint Venture Partner" },
     { value: "advisor", label: "Independent Advisor" },
   ],
@@ -339,15 +324,9 @@ export const DEAL_STRUCTURE_OPTIONS: Record<TransactionTypeCode, DealStructureOp
     { value: "share_purchase", label: "Share Purchase" },
     { value: "asset_purchase", label: "Asset Purchase" },
     { value: "mining_right_transfer", label: "Mining Right Transfer" },
-    { value: "joint_venture", label: "Joint Venture" },
-    { value: "farm_in", label: "Farm-In Agreement" },
-  ],
-  mining_acquisition: [
-    { value: "share_purchase", label: "Share Purchase" },
-    { value: "asset_purchase", label: "Asset Purchase" },
-    { value: "mining_right_transfer", label: "Mining Right Transfer" },
     { value: "section_11", label: "Section 11 Transfer" },
     { value: "joint_venture", label: "Joint Venture" },
+    { value: "farm_in", label: "Farm-In Agreement" },
   ],
   ma_corporate: [
     { value: "share_purchase", label: "Share Purchase" },
@@ -447,11 +426,6 @@ export const VALUE_DATE_LABELS: Record<TransactionTypeCode, {
     valueLabel: "Transaction Value (ZAR)",
     valuePlaceholder: "e.g., R500,000,000",
     dateLabel: "Target Completion Date",
-  },
-  mining_acquisition: {
-    valueLabel: "Acquisition Value (ZAR)",
-    valuePlaceholder: "e.g., R500,000,000",
-    dateLabel: "Target Closing Date",
   },
   ma_corporate: {
     valueLabel: "Estimated Purchase Price (ZAR)",
@@ -1503,81 +1477,6 @@ export const STEP4_CONFIG: Record<TransactionTypeCode, Step4Config> = {
     },
   },
 
-  // ===== MINING ACQUISITION (SPECIFIC) =====
-  mining_acquisition: {
-    title: "Transaction Parties",
-    subtitle: "Identify key parties to the mining acquisition.",
-    fields: [
-      {
-        id: "keyIndividuals",
-        type: "tags",
-        label: "Key Individuals",
-        placeholder: "e.g., Mine Manager, CEO, Technical experts",
-      },
-      {
-        id: "seller",
-        type: "party_role",
-        label: "Seller / Vendor",
-        placeholder: "e.g., Mining Holding Co Ltd",
-        description: "Current owner of mining rights/assets",
-      },
-      {
-        id: "contractors",
-        type: "counterparty",
-        label: "Key Contractors",
-        placeholder: "e.g., Mining contractor",
-        description: "Major contractors with assignable contracts",
-        amountLabel: "Contract Value",
-        amountPlaceholder: "e.g., R200m",
-      },
-      {
-        id: "offtakers",
-        type: "counterparty",
-        label: "Offtakers",
-        placeholder: "e.g., Commodity traders",
-        description: "Existing offtake agreements",
-        amountLabel: "Offtake Value",
-        amountPlaceholder: "e.g., R1bn",
-      },
-      {
-        id: "financiers",
-        type: "lender",
-        label: "Transaction / Project Financiers",
-        placeholder: "e.g., Acquisition lenders, DFIs",
-        amountLabel: "Facility",
-        amountPlaceholder: "e.g., R500m",
-      },
-      {
-        id: "regulators",
-        type: "tags",
-        label: "Key Regulators",
-        placeholder: "e.g., DMRE, Competition Commission",
-        suggestions: ["DMRE", "Competition Commission", "DEA/DFFE", "DWS", "B-BBEE Commission"],
-      },
-      {
-        id: "communities",
-        type: "party_role",
-        label: "Communities / SLPs",
-        placeholder: "e.g., Host community trust",
-        description: "Communities with SLP commitments",
-      },
-      {
-        id: "other",
-        type: "party_role",
-        label: "Other Parties",
-        placeholder: "e.g., JV partners, technical consultants",
-      },
-    ],
-    shareholderSection: {
-      visible: true,
-      title: "Shareholders",
-      description: "Add details of the target entity shareholding.",
-      entityLabel: "Target Entity",
-      entityPlaceholder: "e.g., Mining Rights Holder (Pty) Ltd",
-      showBEECalculation: true,
-      showPrePost: false,
-    },
-  },
 };
 
 export const KEY_STAKEHOLDER_CONFIG: Record<TransactionTypeCode, StakeholderConfig> = {
@@ -1588,14 +1487,6 @@ export const KEY_STAKEHOLDER_CONFIG: Record<TransactionTypeCode, StakeholderConf
     lenders: { label: "Key Financiers", placeholder: "e.g., Project finance lenders, DFIs..." },
     regulators: { label: "Key Regulators", placeholder: "e.g., DMRE, DEA..." },
     other: { label: "Other", placeholder: "e.g., Community trusts, JV partners..." },
-  },
-  mining_acquisition: {
-    individuals: { label: "Key Individuals", placeholder: "e.g., Mine Manager, CEO, Technical experts..." },
-    suppliers: { label: "Key Contractors", placeholder: "e.g., Mining contractors..." },
-    customers: { label: "Offtakers", placeholder: "e.g., Commodity traders, smelters..." },
-    lenders: { label: "Transaction Financiers", placeholder: "e.g., Acquisition lenders, DFIs..." },
-    regulators: { label: "Key Regulators", placeholder: "e.g., DMRE, Competition Commission..." },
-    other: { label: "Other", placeholder: "e.g., Communities, JV partners..." },
   },
   ma_corporate: {
     individuals: { label: "Key Individuals", placeholder: "e.g., CEO, CFO, Key executives..." },

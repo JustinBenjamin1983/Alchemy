@@ -55,6 +55,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { Trash2, Plus, ArrowRight, Pencil } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 // Hooks
 import { useGetDD } from "@/hooks/useGetDD";
@@ -164,6 +165,9 @@ export function FileTree({
   // Hide header actions
   hideHeaderActions = false,
 }: FileTreeProps) {
+  // Toast for error notifications
+  const { toast } = useToast();
+
   // Get transaction type info for display
   const typeCode = transactionType as TransactionTypeCode | undefined;
   const typeInfo = typeCode ? TRANSACTION_TYPE_INFO[typeCode] : null;
@@ -362,6 +366,15 @@ export function FileTree({
             onSuccess: (data) => {
               window.open(data.data.url, "_blank", "noopener,noreferrer");
             },
+            onError: (error: any) => {
+              console.error("Failed to get document link:", error);
+              const errorMessage = error?.response?.data?.message || error?.message || "Unknown error";
+              toast({
+                title: "Failed to open document",
+                description: errorMessage,
+                variant: "destructive",
+              });
+            },
           }
         );
       },
@@ -375,6 +388,15 @@ export function FileTree({
               link.href = data.data.url;
               link.download = "";
               link.click();
+            },
+            onError: (error: any) => {
+              console.error("Failed to get document link:", error);
+              const errorMessage = error?.response?.data?.message || error?.message || "Unknown error";
+              toast({
+                title: "Failed to download document",
+                description: errorMessage,
+                variant: "destructive",
+              });
             },
           }
         );
@@ -429,6 +451,7 @@ export function FileTree({
       mutateFolderDelete,
       onUploadFiles,
       refetch,
+      toast,
     ]
   );
 

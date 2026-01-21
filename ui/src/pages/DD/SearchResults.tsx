@@ -18,6 +18,7 @@ import {
 import { CheckCircle2Icon, MoreHorizontal } from "lucide-react";
 import { useMutateGetLink } from "@/hooks/useMutateGetLink";
 import QandA from "./QandA";
+import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export function SearchResults({
@@ -28,6 +29,7 @@ export function SearchResults({
 }) {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const mutateGetLink = useMutateGetLink();
+  const { toast } = useToast();
   const [showQandA, setShowQandA] = useState<boolean>(false);
   const [qandAData, setQandAData] = useState<{
     dd_id: string;
@@ -40,6 +42,16 @@ export function SearchResults({
     if (!mutateGetLink.isSuccess) return;
     window.open(mutateGetLink.data.data.url, "_blank", "noopener,noreferrer");
   }, [mutateGetLink.isSuccess]);
+
+  useEffect(() => {
+    if (!mutateGetLink.isError) return;
+    const errorMessage = (mutateGetLink.error as any)?.response?.data?.message || "Failed to open document";
+    toast({
+      title: "Failed to open document",
+      description: errorMessage,
+      variant: "destructive",
+    });
+  }, [mutateGetLink.isError, mutateGetLink.error, toast]);
 
   const viewFile = (doc_id) => {
     mutateGetLink.mutate({ doc_id: doc_id, is_dd: true });

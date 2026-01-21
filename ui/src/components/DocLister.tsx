@@ -28,6 +28,7 @@ import { useMutateDeleteOpinionDoc } from "@/hooks/useMutateDeleteOpinionDoc";
 import { AlertCheckFor } from "./AlertCheckFor";
 import { useMutateDeleteGlobalOpinionDoc } from "@/hooks/useMutateDeleteGlobalOpinionDoc";
 import { useMutateGetLink } from "@/hooks/useMutateGetLink";
+import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 
 import { DocTags } from "./DocTags";
@@ -54,6 +55,7 @@ export function DocLister({
   const mutateDeleteDoc = useMutateDeleteOpinionDoc();
   const mutateDeleteGlobalDoc = useMutateDeleteGlobalOpinionDoc();
   const mutateGetLink = useMutateGetLink();
+  const { toast } = useToast();
   const WAIT_ICON = () => <Ellipsis className="animate-pulse text-blue-500" />;
 
   const [pendingDocId, setPendingDocId] = useState<string>(null);
@@ -125,6 +127,17 @@ export function DocLister({
 
     reset();
   }, [mutateGetLink.isSuccess]);
+
+  useEffect(() => {
+    if (!mutateGetLink.isError) return;
+    const errorMessage = (mutateGetLink.error as any)?.response?.data?.message || "Failed to open document";
+    toast({
+      title: "Failed to open document",
+      description: errorMessage,
+      variant: "destructive",
+    });
+  }, [mutateGetLink.isError, mutateGetLink.error, toast]);
+
   const getLink = (doc) => {
     setSelectedDoc(doc);
     mutateGetLink.mutate({ doc_id: doc.doc_id });

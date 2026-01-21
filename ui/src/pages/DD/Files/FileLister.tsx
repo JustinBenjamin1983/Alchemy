@@ -38,6 +38,7 @@ import { cn } from "@/lib/utils";
 import { useMutateDDFileRename } from "@/hooks/useMutateDDFileRename";
 import { Input } from "@/components/ui/input";
 import { useGetDD } from "@/hooks/useGetDD";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function FileLister({
   dd_id,
@@ -52,6 +53,8 @@ export default function FileLister({
   const mutateGetLink = useMutateGetLink();
   const mutateMoveFile = useMutateDDFileMove();
   const { data: _, refetch: refetchDD } = useGetDD(dd_id);
+  const { toast } = useToast();
+
   useEffect(() => {
     setSelectedDocumentAndFolder(null);
   }, [folderId]);
@@ -60,6 +63,16 @@ export default function FileLister({
     console.log(mutateGetLink.data);
     window.open(mutateGetLink.data.data.url, "_blank", "noopener,noreferrer");
   }, [mutateGetLink.isSuccess]);
+
+  useEffect(() => {
+    if (!mutateGetLink.isError) return;
+    const errorMessage = (mutateGetLink.error as any)?.response?.data?.message || "Failed to open document";
+    toast({
+      title: "Failed to open document",
+      description: errorMessage,
+      variant: "destructive",
+    });
+  }, [mutateGetLink.isError, mutateGetLink.error, toast]);
   const [showFolderPicker, setShowFolderPicker] = useState<boolean>(false);
   const [selectedFolder, setSelectedFolder] = useState<{
     folder_id: string;

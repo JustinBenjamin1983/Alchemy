@@ -11,6 +11,7 @@ import { FindingsExplorer } from "./FindingsExplorer";
 import { useMutateExportDDReport } from "@/hooks/useMutateExportDDReport";
 import { useMutateGetLink } from "@/hooks/useMutateGetLink";
 import { useMutateChat } from "@/hooks/useMutateChat";
+import { useToast } from "@/components/ui/use-toast";
 import type {
   Finding as ExplorerFinding,
   RunInfo,
@@ -139,6 +140,7 @@ export function RiskSummary() {
   const exportReportMutation = useMutateExportDDReport();
   const mutateGetLink = useMutateGetLink();
   const chatMutation = useMutateChat();
+  const { toast } = useToast();
 
   const { data: runsData } = useAnalysisRunsList(selectedDDID || undefined);
   const { data: dd } = useGetDD(selectedDDID);
@@ -336,6 +338,7 @@ export function RiskSummary() {
       {
         question: message,
         dd_id: selectedDDID,
+        run_id: selectedRunId || undefined,
         document_id: context?.documentId,
       },
       {
@@ -367,7 +370,7 @@ export function RiskSummary() {
         }
       }
     );
-  }, [selectedDDID, chatMutation]);
+  }, [selectedDDID, selectedRunId, chatMutation]);
 
   // Completeness Check handlers
   const handleUpdateDocumentStatus = useCallback((docId: string, status: MissingItemStatus, note?: string) => {
@@ -447,9 +450,18 @@ export function RiskSummary() {
             window.open(url, "_blank", "noopener,noreferrer");
           }
         },
+        onError: (error: any) => {
+          console.error("Failed to get document link:", error);
+          const errorMessage = error?.response?.data?.message || error?.message || "Unknown error";
+          toast({
+            title: "Failed to open document",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        },
       }
     );
-  }, [mutateGetLink]);
+  }, [mutateGetLink, toast]);
 
   // Document download handler
   const handleDownloadDocument = useCallback((docId: string) => {
@@ -467,9 +479,18 @@ export function RiskSummary() {
             document.body.removeChild(link);
           }
         },
+        onError: (error: any) => {
+          console.error("Failed to get document link:", error);
+          const errorMessage = error?.response?.data?.message || error?.message || "Unknown error";
+          toast({
+            title: "Failed to download document",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        },
       }
     );
-  }, [mutateGetLink]);
+  }, [mutateGetLink, toast]);
 
   return (
     <div className="p-6 pb-32 space-y-4 bg-gray-200 dark:bg-gray-900 min-h-screen">

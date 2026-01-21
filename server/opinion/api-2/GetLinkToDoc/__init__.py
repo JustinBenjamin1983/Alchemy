@@ -36,7 +36,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         # return func.HttpResponse(json.dumps({"url":sas_url}), status_code=200)
         return func.HttpResponse(body=json.dumps({"url":sas_url}), mimetype="application/json", status_code=200)
 
+    except FileNotFoundError as e:
+        logging.error(f"Document not found: {str(e)}")
+        return func.HttpResponse(
+            body=json.dumps({"error": "Document not found", "message": str(e)}),
+            mimetype="application/json",
+            status_code=404
+        )
     except Exception as e:
         logging.info(e)
         logging.error(str(e))
-        return func.HttpResponse(f"Error: {str(e)}", status_code=500)
+        return func.HttpResponse(
+            body=json.dumps({"error": "Failed to get document link", "message": str(e)}),
+            mimetype="application/json",
+            status_code=500
+        )

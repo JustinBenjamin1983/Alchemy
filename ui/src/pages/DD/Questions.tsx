@@ -46,6 +46,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Markdown from "react-markdown";
+import { useToast } from "@/components/ui/use-toast";
 
 interface QuestionsProps {
   dd_id: string;
@@ -54,6 +55,7 @@ interface QuestionsProps {
 const Questions: React.FC<QuestionsProps> = ({ dd_id }) => {
   const { data: questions, isLoading, error } = useGetDDQuestions(dd_id);
   const mutateGetLink = useMutateGetLink();
+  const { toast } = useToast();
   const [selectedQuestion, setSelectedQuestion] = useState<any>(null);
   const [showAnswerDialog, setShowAnswerDialog] = useState(false);
   const [currentTab, setCurrentTab] = useState<"Answer" | "ReferencedDocs">(
@@ -64,6 +66,16 @@ const Questions: React.FC<QuestionsProps> = ({ dd_id }) => {
     if (!mutateGetLink.isSuccess) return;
     window.open(mutateGetLink.data.data.url, "_blank", "noopener,noreferrer");
   }, [mutateGetLink.isSuccess]);
+
+  useEffect(() => {
+    if (!mutateGetLink.isError) return;
+    const errorMessage = (mutateGetLink.error as any)?.response?.data?.message || "Failed to open document";
+    toast({
+      title: "Failed to open document",
+      description: errorMessage,
+      variant: "destructive",
+    });
+  }, [mutateGetLink.isError, mutateGetLink.error, toast]);
 
   const viewFile = (doc_id: string) => {
     mutateGetLink.mutate({ doc_id: doc_id, is_dd: true });

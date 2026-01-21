@@ -408,26 +408,60 @@ def delete_from_blob_storage(connection_string, container_name, key):
     blob_client.delete_blob()
 
 def get_content_type(extension):
-    if extension == "pdf":
-        return "application/pdf"
-    elif extension == "docx":
-        return "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    else:
-        logging.info(f"unknown extension of {extension=} can't find content type")
+    if not extension:
+        return "application/octet-stream"
+
+    ext = extension.lower()
+    content_types = {
+        "pdf": "application/pdf",
+        "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "doc": "application/msword",
+        "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "xls": "application/vnd.ms-excel",
+        "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "ppt": "application/vnd.ms-powerpoint",
+        "txt": "text/plain",
+        "csv": "text/csv",
+        "png": "image/png",
+        "jpg": "image/jpeg",
+        "jpeg": "image/jpeg",
+        "gif": "image/gif",
+    }
+
+    if ext in content_types:
+        return content_types[ext]
+
+    logging.info(f"unknown extension of {extension=}, using octet-stream fallback")
+    return "application/octet-stream"
 
 def get_blob_sas_url(connection_string, container_name, key, expiry_minutes=60):
     blob_service_client = BlobServiceClient.from_connection_string(connection_string)
-    
+
     blob_client = blob_service_client.get_blob_client(container=container_name, blob=key)
-    
+
+    # Check if blob exists before trying to get properties
+    if not blob_client.exists():
+        raise FileNotFoundError(f"Blob '{key}' does not exist in container '{container_name}'")
+
     props = blob_client.get_blob_properties()
     logging.info(f"meta data of {key}") # {"original_file_name":safe_filename, "extension": extension}
     logging.info(props.metadata)
 
+    # Safely get metadata with defaults
+    metadata = props.metadata or {}
+    extension = metadata.get("extension", "")
+    original_file_name = metadata.get("original_file_name", key)  # Fall back to blob key if no filename
+
+    # If no extension in metadata, try to extract from filename
+    if not extension and original_file_name:
+        import os
+        _, ext = os.path.splitext(original_file_name)
+        extension = ext.lstrip(".") if ext else ""
+
     blob_client.set_http_headers(
         content_settings=ContentSettings(
-            content_type=get_content_type(props.metadata["extension"]),
-            content_disposition=f'inline; filename="{props.metadata['original_file_name']}"'
+            content_type=get_content_type(extension),
+            content_disposition=f'inline; filename="{original_file_name}"'
         )
     )
     logging.info("set headers")

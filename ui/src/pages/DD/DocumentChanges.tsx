@@ -19,17 +19,29 @@ import { useGetDDDocsHistory } from "@/hooks/useGetDDDocsHistory";
 import { formatDistance } from "date-fns";
 import { useMutateGetLink } from "@/hooks/useMutateGetLink";
 import QandA from "./QandA";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function DocumentChanges({ dd_id }) {
   const { data: docsHistory, refetch: refetchDocsHistory } =
     useGetDDDocsHistory(dd_id);
 
   const mutateGetLink = useMutateGetLink();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!mutateGetLink.isSuccess) return;
     window.open(mutateGetLink.data.data.url, "_blank", "noopener,noreferrer");
   }, [mutateGetLink.isSuccess]);
+
+  useEffect(() => {
+    if (!mutateGetLink.isError) return;
+    const errorMessage = (mutateGetLink.error as any)?.response?.data?.message || "Failed to open document";
+    toast({
+      title: "Failed to open document",
+      description: errorMessage,
+      variant: "destructive",
+    });
+  }, [mutateGetLink.isError, mutateGetLink.error, toast]);
 
   const viewFile = (doc_id) => {
     mutateGetLink.mutate({ doc_id: doc_id, is_dd: true });

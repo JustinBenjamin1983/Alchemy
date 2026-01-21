@@ -67,14 +67,14 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
     }
   };
 
-  // Get dynamic target entity label based on transaction type
+  // Get dynamic target entity label based on transaction type (with fallback for legacy types)
   const targetEntityConfig = data.transactionType
-    ? TARGET_ENTITY_LABELS[data.transactionType]
+    ? TARGET_ENTITY_LABELS[data.transactionType] ?? { label: "Target Entity", placeholder: "e.g., Target Co (Pty) Ltd" }
     : { label: "Target Entity", placeholder: "Select transaction type first" };
 
-  // Get dynamic value/date labels based on transaction type
+  // Get dynamic value/date labels based on transaction type (with fallback for legacy types)
   const valueDateConfig = data.transactionType
-    ? VALUE_DATE_LABELS[data.transactionType]
+    ? VALUE_DATE_LABELS[data.transactionType] ?? { valueLabel: "Estimated Value (ZAR)", valuePlaceholder: "e.g., R500,000,000", dateLabel: "Target Closing Date" }
     : { valueLabel: "Estimated Value (ZAR)", valuePlaceholder: "e.g., R500,000,000", dateLabel: "Target Closing Date" };
 
   return (
@@ -221,6 +221,7 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
             }
           />
         </div>
+      </div>
       </div>
     </div>
   );

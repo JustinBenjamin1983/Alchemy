@@ -16,6 +16,12 @@ from enum import Enum
 
 DOCS_DIR = Path(__file__).parent
 
+# Map similar transaction types to their base registry
+# This allows multiple frontend transaction types to share the same document registry
+TRANSACTION_TYPE_ALIASES = {
+    "mining_acquisition": "mining_resources",  # Mining acquisition uses mining_resources registry
+}
+
 
 class DocumentPriority(Enum):
     CRITICAL = "critical"      # Must have - deal cannot proceed without
@@ -52,13 +58,16 @@ def load_document_registry(transaction_type: str) -> Dict:
     Load the document registry for a transaction type.
     Merges common documents with transaction-specific ones.
     """
+    # Resolve transaction type alias if one exists
+    resolved_type = TRANSACTION_TYPE_ALIASES.get(transaction_type, transaction_type)
+
     # Load common documents
     common_path = DOCS_DIR / "_common_documents.yaml"
     with open(common_path) as f:
         common = yaml.safe_load(f) or {}
 
     # Load transaction-specific documents
-    specific_path = DOCS_DIR / f"{transaction_type}_docs.yaml"
+    specific_path = DOCS_DIR / f"{resolved_type}_docs.yaml"
     if not specific_path.exists():
         raise ValueError(f"No document registry for: {transaction_type}")
 

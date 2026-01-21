@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { useMutateGetLink } from "@/hooks/useMutateGetLink";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Document {
   document_id: string;
@@ -98,6 +99,7 @@ export default function ChatbotUI({ folders = [], dd_id }: ChatbotUIProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const mutateChat = useMutateChat();
   const mutateGetLink = useMutateGetLink();
+  const { toast } = useToast();
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -119,6 +121,16 @@ export default function ChatbotUI({ folders = [], dd_id }: ChatbotUIProps) {
     if (!mutateGetLink.isSuccess) return;
     window.open(mutateGetLink.data.data.url, "_blank", "noopener,noreferrer");
   }, [mutateGetLink.isSuccess]);
+
+  useEffect(() => {
+    if (!mutateGetLink.isError) return;
+    const errorMessage = (mutateGetLink.error as any)?.response?.data?.message || "Failed to open document";
+    toast({
+      title: "Failed to open document",
+      description: errorMessage,
+      variant: "destructive",
+    });
+  }, [mutateGetLink.isError, mutateGetLink.error, toast]);
 
   const viewFile = (doc_id: string) => {
     mutateGetLink.mutate({ doc_id: doc_id, is_dd: true });

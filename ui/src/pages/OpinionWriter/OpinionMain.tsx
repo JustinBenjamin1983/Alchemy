@@ -41,6 +41,7 @@ import { useGetGlobalOpinionDocs } from "@/hooks/useGetGlobalOpinionDocs";
 import { Top } from "@/components/Top";
 import { cn } from "@/lib/utils";
 import { useMutateGetLink } from "@/hooks/useMutateGetLink";
+import { useToast } from "@/components/ui/use-toast";
 import { useMutateGetOpinionDraft } from "@/hooks/useMutateGetOpinionDraft";
 import { Label } from "@/components/ui/label";
 import {
@@ -619,6 +620,7 @@ export function OpinionMain() {
   const mutateSaveOpinion = useMutateSaveOpinion();
   const mutateGenerateOpinion = useMutateGenerateOpinion();
   const mutateGetLink = useMutateGetLink();
+  const { toast } = useToast();
   const { data: loadedOpinion, refetch: refetchOpinion } =
     useGetOpinion(selectedOpinionId);
   const { data: globalDocs, refetch: refetchGlobalDocs } =
@@ -859,6 +861,16 @@ export function OpinionMain() {
     if (!mutateGetLink.isSuccess) return;
     window.open(mutateGetLink.data.data.url, "_blank", "noopener,noreferrer");
   }, [mutateGetLink.isSuccess]);
+
+  useEffect(() => {
+    if (!mutateGetLink.isError) return;
+    const errorMessage = (mutateGetLink.error as any)?.response?.data?.message || "Failed to open document";
+    toast({
+      title: "Failed to open document",
+      description: errorMessage,
+      variant: "destructive",
+    });
+  }, [mutateGetLink.isError, mutateGetLink.error, toast]);
 
   // ==== UPDATED: load from staging (handles both structured and simple string drafts) ====
   useEffect(() => {

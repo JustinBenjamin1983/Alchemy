@@ -20,3 +20,4 @@ azure-communication-email
 beautifulsoup4
 numpy
 Pillow>=10.0.0
+pyyaml>=6.0

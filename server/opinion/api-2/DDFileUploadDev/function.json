@@ -5,7 +5,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": ["post"],
+      "methods": ["post", "put"],
       "route": "dd-file-upload-dev"
     },
     {

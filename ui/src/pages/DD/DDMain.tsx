@@ -219,14 +219,14 @@ export function DDMain() {
       });
 
       if (sasResponse.devMode) {
-        // Dev mode: Upload via FormData to backend endpoint
-        const formData = new FormData();
-        formData.append("file", setup.uploadedFile);
-        formData.append("localPath", sasResponse.localPath);
-
-        await axios.post("/dd-file-upload-dev", formData, {
+        // Dev mode: Upload raw binary to backend endpoint
+        // Using PUT with raw body instead of multipart form-data
+        // because Azure Functions Python worker hangs on large multipart bodies
+        await axios.put("/dd-file-upload-dev", setup.uploadedFile, {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/octet-stream",
+            "X-Local-Path": sasResponse.localPath,
+            "X-Filename": setup.uploadedFile.name,
           },
           timeout: 120000, // 2 minute timeout for large file uploads
         });

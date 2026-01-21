@@ -16,6 +16,11 @@ export default defineConfig({
         target: "http://localhost:7071",
         changeOrigin: true,
       },
+      // Dev file upload goes to separate simple server (Azure Functions has issues with large bodies)
+      "/dd-file-upload-dev": {
+        target: "http://localhost:7072",
+        changeOrigin: true,
+      },
       // DD-specific endpoints
       "/dd-": {
         target: "http://localhost:7071/api",

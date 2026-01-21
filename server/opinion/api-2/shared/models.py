@@ -151,6 +151,11 @@ class Document(BaseModel):
     readability_status = Column(Text, default="pending")  # pending, checking, ready, failed
     readability_error = Column(Text, nullable=True)  # Error message if readability check failed
 
+    # PPTX-to-PDF conversion fields
+    converted_doc_id = Column(UUID(as_uuid=True), nullable=True)  # Reference to converted PDF document
+    conversion_status = Column(String(20), nullable=True)  # pending, converting, converted, failed
+    converted_from_id = Column(UUID(as_uuid=True), nullable=True)  # For converted docs, reference to original
+
     # AI Classification fields (Phase 1: Document Organisation)
     ai_category = Column(String(50), nullable=True)  # e.g., "01_Corporate", "02_Commercial"
     ai_subcategory = Column(String(100), nullable=True)  # e.g., "Constitutional", "Supply Agreements"

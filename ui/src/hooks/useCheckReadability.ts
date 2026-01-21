@@ -7,6 +7,8 @@ interface ReadabilityResult {
   file_type: string;
   status: "pending" | "checking" | "ready" | "failed";
   error: string | null;
+  converted_doc_id?: string | null;
+  conversion_status?: "pending" | "converting" | "converted" | "failed" | null;
 }
 
 interface ReadabilityResponse {

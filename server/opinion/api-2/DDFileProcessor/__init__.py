@@ -20,6 +20,25 @@ import numpy as np
 from datetime import datetime, timedelta
 
 
+def format_pages_with_markers(pages: list) -> tuple[str, int]:
+    """
+    Format extracted pages into text with [PAGE X] markers.
+    Returns (text_with_markers, total_pages).
+
+    This enables findings to reference specific page numbers for easy human review.
+    """
+    if not pages:
+        return "", 0
+
+    formatted_parts = []
+    for i, page in enumerate(pages, 1):
+        page_text = page.get("text", "") if isinstance(page, dict) else str(page)
+        if page_text.strip():
+            formatted_parts.append(f"\n[PAGE {i}]\n{page_text}")
+
+    return "".join(formatted_parts), len(pages)
+
+
 class TimeoutMonitor:
     """
     Monitor function execution time and trigger re-queuing before timeout.
@@ -1426,7 +1445,12 @@ def process_document_batch_parallel(session, dd_id: str, email: str, max_concurr
                                     except Exception as desc_error:
                                         logging.warning(f"Failed to generate description: {desc_error}")
                                         db_doc.description = f"{db_doc.type.upper()} document: {db_doc.original_file_name}"
-                                
+
+                                # Store page-marked text for source referencing in findings
+                                if result.get("text_with_pages"):
+                                    db_doc.extracted_text_with_pages = result["text_with_pages"]
+                                    db_doc.total_pages = result.get("total_pages", 0)
+
                                 update_session.commit()
                     else:
                         logging.error(f"❌ Document {doc.id} failed: {result.get('error')}")
@@ -1525,17 +1549,22 @@ def process_single_document_complete(doc_id: str, dd_id: str, email: str,
             chunks_and_embeddings,
             filename
         )
-        
+
+        # Generate text with page markers for source referencing
+        text_with_pages, total_pages = format_pages_with_markers(pages)
+
         total_time = time.time() - start_time
         logging.info(f"✅ Complete processing in {total_time:.2f}s: {filename}")
-        
+
         return {
             "status": "success",
             "pages": len(pages),
+            "total_pages": total_pages,
             "chunks": len(chunks_and_embeddings),
             "ocr_time": ocr_time,
             "total_time": total_time,
-            "initial_content": initial_content
+            "initial_content": initial_content,
+            "text_with_pages": text_with_pages  # For storing in document model
         }
         
     except Exception as e:

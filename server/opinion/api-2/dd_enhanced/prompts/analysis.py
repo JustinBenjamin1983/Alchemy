@@ -52,7 +52,13 @@ CLASSIFICATION DEFINITIONS:
 - noted: For information/record only
 
 Always cite the specific clause reference when identifying an issue.
-When calculating financial exposures, SHOW YOUR WORKING (e.g., "24 months × R3.2M/month = R76.8M")."""
+When calculating financial exposures, SHOW YOUR WORKING (e.g., "24 months × R3.2M/month = R76.8M").
+
+PAGE NUMBER EXTRACTION (CRITICAL for human review):
+- The document text contains [PAGE X] markers indicating page boundaries
+- For EACH finding, you MUST identify which page(s) the relevant content appears on
+- Use the actual_page_number field to specify the primary page number (integer)
+- This enables reviewers to quickly navigate to the exact location in the source document"""
 
 
 def _build_cot_methodology_section(blueprint: Optional[Dict] = None) -> str:
@@ -278,6 +284,7 @@ Return JSON:
 
             "description": "Clear description of the issue (derived from your reasoning)",
             "clause_reference": "Clause X.X",
+            "actual_page_number": 1,  // Integer: The page number where this finding appears (from [PAGE X] markers)
             "evidence_quote": "Exact quote from document (max 200 chars)",
             "severity": "critical|high|medium|low",
             "deal_impact": "deal_blocker|condition_precedent|price_chip|warranty_indemnity|post_closing|noted",

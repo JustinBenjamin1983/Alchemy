@@ -172,6 +172,10 @@ class Document(BaseModel):
     original_folder_id = Column(UUID(as_uuid=True), ForeignKey("folder.id", ondelete="SET NULL"), nullable=True)
     folder_assignment_source = Column(String(20), default="original_zip")  # original_zip, ai, manual
 
+    # Page-aware content (for source referencing in findings)
+    extracted_text_with_pages = Column(Text, nullable=True)  # Text with [PAGE X] markers
+    total_pages = Column(Integer, nullable=True)  # Total number of pages in document
+
     folder = relationship("Folder", back_populates="documents", foreign_keys="[Document.folder_id]")
     original_folder = relationship("Folder", foreign_keys="[Document.original_folder_id]")
     history = relationship("DocumentHistory", back_populates="document", cascade="all, delete")
@@ -239,7 +243,8 @@ class PerspectiveRiskFinding(BaseModel):
     perspective_risk_id = Column(UUID(as_uuid=True), ForeignKey("perspective_risk.id", ondelete="CASCADE"), nullable=False)
     document_id = Column(UUID(as_uuid=True), ForeignKey("document.id", ondelete="CASCADE"), nullable=True)
     phrase = Column(Text, nullable=False)
-    page_number = Column(Text, nullable=False)
+    page_number = Column(Text, nullable=False)  # Clause reference (e.g., "Clause 15.2")
+    actual_page_number = Column(Integer, nullable=True)  # Actual page number in document (1-indexed)
     status = Column(PerspectiveRiskFindingStatusEnum, nullable=False)
     is_reviewed = Column(Boolean, default=False)
     reviewed_by = Column(Text, nullable=True)

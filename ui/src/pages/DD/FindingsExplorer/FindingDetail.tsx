@@ -62,10 +62,18 @@ const BrainIcon = () => (
   </svg>
 );
 
+// External link icon for View Source
+const ExternalLinkIcon = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+  </svg>
+);
+
 interface ExtendedFindingDetailProps extends FindingDetailProps {
   humanReview?: HumanReview;
   onUpdateReview?: (review: Partial<HumanReview>) => void;
   showReviewSection?: boolean;
+  onViewDocument?: (docId: string, pageNumber?: number) => void;
 }
 
 const REVIEW_STATUS_CONFIG: Record<ReviewStatus, { label: string; icon: React.ReactNode; color: string; bgColor: string }> = {
@@ -80,7 +88,8 @@ export const FindingDetail: React.FC<ExtendedFindingDetailProps> = ({
   onAskQuestion,
   humanReview,
   onUpdateReview,
-  showReviewSection = true
+  showReviewSection = true,
+  onViewDocument
 }) => {
   const [question, setQuestion] = useState('');
   const [isAskingQuestion, setIsAskingQuestion] = useState(false);
@@ -125,11 +134,34 @@ export const FindingDetail: React.FC<ExtendedFindingDetailProps> = ({
             </h2>
             <div className="flex items-center gap-2 mt-1 text-sm text-gray-500 dark:text-gray-400">
               <span>{finding.document_name}</span>
-              {finding.page_reference && (
+              {finding.actual_page_number && (
+                <>
+                  <span className="text-gray-300 dark:text-gray-600">•</span>
+                  <span className="font-medium text-blue-600 dark:text-blue-400">Page {finding.actual_page_number}</span>
+                </>
+              )}
+              {finding.clause_reference && (
+                <>
+                  <span className="text-gray-300 dark:text-gray-600">•</span>
+                  <span className="font-medium text-purple-600 dark:text-purple-400">{finding.clause_reference}</span>
+                </>
+              )}
+              {finding.page_reference && !finding.clause_reference && (
                 <>
                   <span className="text-gray-300 dark:text-gray-600">•</span>
                   <span>{finding.page_reference}</span>
                 </>
+              )}
+              {/* View Source Button */}
+              {finding.document_id && onViewDocument && (
+                <button
+                  onClick={() => onViewDocument(finding.document_id, finding.actual_page_number)}
+                  className="ml-2 flex items-center gap-1 px-2 py-0.5 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
+                  title={`View document${finding.actual_page_number ? ` at page ${finding.actual_page_number}` : ''}`}
+                >
+                  <ExternalLinkIcon />
+                  View Source
+                </button>
               )}
             </div>
           </div>

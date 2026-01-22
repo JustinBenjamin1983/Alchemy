@@ -17,6 +17,7 @@ import { FindingDetail } from './FindingDetail';
 import { CompletenessCheck } from './CompletenessCheck';
 import { AIChatPanel } from './AIChatPanel';
 import { SynthesisView } from './SynthesisView';
+import { DocumentViewer } from './DocumentViewer';
 import {
   Finding,
   DocumentWithFindings,
@@ -217,6 +218,16 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
   const [showLegend, setShowLegend] = useState(false);
   const [activeTab, setActiveTab] = useState<ActiveTab>('findings');
   const [chatExpanded, setChatExpanded] = useState(false);
+
+  // Document Viewer state
+  const [documentViewerState, setDocumentViewerState] = useState<{
+    docUrl: string;
+    docName: string;
+    pageNumber?: number;
+    evidenceQuote?: string;
+    clauseReference?: string;
+  } | null>(null);
+  const [isLoadingDocViewer, setIsLoadingDocViewer] = useState(false);
 
   // Filter state
   const [filterCategory, setFilterCategory] = useState<DDCategory | null>(null);
@@ -486,6 +497,52 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
   const handleClearExportSelection = () => {
     setSelectedForExport(new Set());
   };
+
+  // Open document in viewer with optional page number, evidence quote, and clause reference
+  const handleViewDocumentSource = useCallback(async (
+    docId: string,
+    pageNumber?: number,
+    evidenceQuote?: string,
+    clauseReference?: string
+  ) => {
+    if (!docId) return;
+
+    // Find the document name
+    const doc = documents.find(d => d.id === docId);
+    const docName = doc?.name || 'Document';
+
+    setIsLoadingDocViewer(true);
+
+    try {
+      // Fetch the document URL from the API
+      const response = await fetch(`/api/get-link-to-doc?doc_id=${docId}&is_dd=true`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch document URL');
+      }
+      const data = await response.json();
+
+      setDocumentViewerState({
+        docUrl: data.url,
+        docName,
+        pageNumber,
+        evidenceQuote,
+        clauseReference
+      });
+    } catch (error) {
+      console.error('Error loading document for viewer:', error);
+      // Fallback: try opening in new tab
+      if (onOpenDocumentInTab) {
+        onOpenDocumentInTab(docId);
+      }
+    } finally {
+      setIsLoadingDocViewer(false);
+    }
+  }, [documents, onOpenDocumentInTab]);
+
+  // Close document viewer
+  const handleCloseDocumentViewer = useCallback(() => {
+    setDocumentViewerState(null);
+  }, []);
 
   // Copy content to clipboard - copies exactly what's visible in the panel
   const handleCopyContent = useCallback(() => {
@@ -778,6 +835,15 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                         : undefined
                       }
                       showReviewSection={!!onUpdateFindingReview}
+                      onViewDocument={(docId, pageNumber) => {
+                        const finding = findings.find(f => f.document_id === docId);
+                        handleViewDocumentSource(
+                          docId,
+                          pageNumber,
+                          finding?.evidence_quote || selectedFinding?.evidence_quote,
+                          finding?.clause_reference || selectedFinding?.clause_reference
+                        );
+                      }}
                     />
                   </div>
                 )}
@@ -912,6 +978,32 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
         className="absolute bottom-0 left-0 right-0 h-1 cursor-ns-resize hover:bg-blue-500/50 active:bg-blue-500 transition-colors z-10"
         title="Drag to resize height"
       />
+
+      {/* Document Viewer Modal */}
+      {documentViewerState && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="w-[90vw] h-[90vh] bg-white dark:bg-gray-900 rounded-xl shadow-2xl overflow-hidden">
+            <DocumentViewer
+              documentUrl={documentViewerState.docUrl}
+              documentName={documentViewerState.docName}
+              initialPage={documentViewerState.pageNumber}
+              evidenceQuote={documentViewerState.evidenceQuote}
+              clauseReference={documentViewerState.clauseReference}
+              onClose={handleCloseDocumentViewer}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Loading overlay for document viewer */}
+      {isLoadingDocViewer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-2xl flex items-center gap-3">
+            <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+            <span className="text-gray-700 dark:text-gray-300">Loading document...</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

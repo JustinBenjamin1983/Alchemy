@@ -40,12 +40,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     PerspectiveRiskFinding.is_reviewed.label("is_reviewed"),
                     PerspectiveRiskFinding.reviewed_by.label("reviewed_by"),
                     PerspectiveRiskFinding.page_number.label("page_number"),
+                    PerspectiveRiskFinding.actual_page_number.label("actual_page_number"),
                     PerspectiveRiskFinding.finding_type.label("finding_type"),
                     PerspectiveRiskFinding.confidence_score.label("confidence_score"),
                     PerspectiveRiskFinding.requires_action.label("requires_action"),
                     PerspectiveRiskFinding.action_priority.label("action_priority"),
                     PerspectiveRiskFinding.direct_answer.label("direct_answer"),
                     PerspectiveRiskFinding.evidence_quote.label("evidence_quote"),
+                    PerspectiveRiskFinding.clause_reference.label("clause_reference"),
                     PerspectiveRiskFinding.missing_documents.label("missing_documents"),
                     PerspectiveRiskFinding.action_items.label("action_items"),
                     PerspectiveRiskFinding.reasoning.label("reasoning"),  # Chain of Thought
@@ -97,11 +99,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 "question_type": row.question_type or "risk_search",
                 "phrase": row.phrase,
                 "page_number": row.page_number,
+                "actual_page_number": row.actual_page_number,  # Integer page number for document navigation
                 "confidence_score": row.confidence_score or 0.5,
                 "requires_action": row.requires_action or False,
                 "action_priority": row.action_priority or "none",
                 "direct_answer": row.direct_answer,
                 "evidence_quote": row.evidence_quote,
+                "clause_reference": row.clause_reference,
                 "missing_documents": row.missing_documents,
                 "action_items": row.action_items,
                 "reasoning": reasoning,  # Chain of Thought reasoning steps

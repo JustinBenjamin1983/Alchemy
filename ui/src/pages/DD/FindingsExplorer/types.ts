@@ -17,8 +17,11 @@ export interface Finding {
   category: string;
   document_id: string;
   document_name: string;
-  page_reference?: string;
+  page_reference?: string;        // Legacy: Clause reference (e.g., "Clause 15.2")
+  clause_reference?: string;      // Specific clause/section reference (e.g., "Clause 15.2.1", "Section 4(a)")
+  actual_page_number?: number;    // Actual page number in document (1-indexed)
   source_text?: string;
+  evidence_quote?: string;        // Exact quote from document supporting the finding
   analysis: string;
   chain_of_thought?: string;
   recommendation?: string;

@@ -1168,6 +1168,7 @@ def _store_findings_to_db(dd_id, run_id, owned_by, doc_dicts, pass4_results, pas
                         run_id=run_uuid,
                         phrase=finding.get("description", "")[:2000],
                         page_number=finding.get("clause_reference", ""),
+                        actual_page_number=finding.get("actual_page_number"),  # Integer page from [PAGE X] markers
                         status=status,
                         finding_type=finding.get("finding_type", "negative"),
                         confidence_score=0.85,

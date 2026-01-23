@@ -981,3 +981,231 @@ cot_questions:
   - What voting thresholds apply for scheme approval?
   - What court processes are required?
   - What is the timeline for scheme implementation?
+
+# ============================================================================
+# STATUTORY FRAMEWORK
+# Detailed statutory citation framework for capital markets regulatory findings
+# ============================================================================
+statutory_framework:
+  primary_legislation:
+    - act: "Financial Markets Act 19 of 2012"
+      acronym: "FMA"
+      regulatory_body: "Financial Sector Conduct Authority (FSCA)"
+      key_sections:
+        - section: "Section 6"
+          description: "Licensing of exchanges"
+          penalties:
+            criminal: "Fine or imprisonment"
+            administrative: "License conditions or revocation"
+          criticality: critical
+        - section: "Section 8"
+          description: "Licensing of central securities depositories"
+          penalties:
+            administrative: "License suspension or revocation"
+          criticality: critical
+        - section: "Section 78"
+          description: "Market manipulation prohibition"
+          penalties:
+            criminal: "Fine up to R50 million or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 80"
+          description: "False or misleading statements"
+          penalties:
+            criminal: "Fine up to R50 million or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 82"
+          description: "Insider trading prohibition"
+          penalties:
+            criminal: "Fine up to R50 million or imprisonment up to 10 years"
+            civil: "Disgorgement of profits"
+          criticality: critical
+
+    - act: "Companies Act 71 of 2008"
+      acronym: "Companies Act"
+      regulatory_body: "CIPC / Takeover Regulation Panel"
+      key_sections:
+        - section: "Section 95"
+          description: "Prospectus requirements for public offers"
+          penalties:
+            civil: "Directors personally liable for misleading prospectus"
+            criminal: "Fine or imprisonment"
+          criticality: critical
+        - section: "Section 100"
+          description: "Offers to public - supplementary liability"
+          penalties:
+            civil: "Compensation for losses"
+          criticality: high
+        - section: "Section 118"
+          description: "Takeover Regulations applicability"
+          penalties:
+            administrative: "TRP compliance orders"
+          criticality: critical
+        - section: "Section 119"
+          description: "Mandatory offers"
+          penalties:
+            civil: "Forced extension of offer to all shareholders"
+          criticality: critical
+        - section: "Section 121"
+          description: "Comparable and partial offers"
+          penalties:
+            administrative: "TRP intervention"
+          criticality: high
+        - section: "Section 123"
+          description: "Consideration requirements"
+          penalties:
+            civil: "Fair value determination"
+          criticality: high
+        - section: "Section 126"
+          description: "Regulated companies definition"
+          penalties:
+            administrative: "TRP jurisdiction triggered"
+          criticality: high
+        - section: "Section 127"
+          description: "Panel regulation powers"
+          penalties:
+            administrative: "Compliance orders, cost orders"
+          criticality: high
+
+    - act: "JSE Listings Requirements"
+      acronym: "JSE LR"
+      regulatory_body: "JSE Limited"
+      key_sections:
+        - section: "Section 1"
+          description: "General principles and definitions"
+          penalties:
+            administrative: "Public censure, fine up to R7.5 million"
+          criticality: high
+        - section: "Section 3"
+          description: "Continuing obligations"
+          penalties:
+            administrative: "Suspension, public censure, fine"
+          criticality: critical
+        - section: "Section 7"
+          description: "Methods of bringing securities to listing"
+          penalties:
+            administrative: "Rejection of application"
+          criticality: high
+        - section: "Section 9"
+          description: "Transactions"
+          penalties:
+            administrative: "Public censure, fine, suspension"
+          criticality: critical
+        - section: "Section 10"
+          description: "Related party transactions"
+          penalties:
+            administrative: "Transaction may be voided, censure"
+          criticality: critical
+        - section: "Section 11"
+          description: "Documents and circulars"
+          penalties:
+            administrative: "Rejection, required amendments"
+          criticality: high
+        - section: "Section 13"
+          description: "Circulars and announcements"
+          penalties:
+            administrative: "Rejection, trading suspension"
+          criticality: high
+
+    - act: "Financial Intelligence Centre Act 38 of 2001"
+      acronym: "FICA"
+      regulatory_body: "Financial Intelligence Centre (FIC)"
+      key_sections:
+        - section: "Section 21"
+          description: "Customer due diligence"
+          penalties:
+            administrative: "Fine up to R50 million"
+          criticality: critical
+        - section: "Section 29"
+          description: "Suspicious transaction reporting"
+          penalties:
+            criminal: "Fine up to R100 million or imprisonment"
+          criticality: critical
+
+    - act: "Collective Investment Schemes Control Act 45 of 2002"
+      acronym: "CISCA"
+      regulatory_body: "FSCA"
+      key_sections:
+        - section: "Section 4"
+          description: "Registration requirements"
+          penalties:
+            criminal: "Fine or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 5"
+          description: "Approval of managers"
+          penalties:
+            administrative: "Withdrawal of approval"
+          criticality: critical
+
+    - act: "Broad-Based Black Economic Empowerment Act 53 of 2003"
+      acronym: "B-BBEE Act"
+      regulatory_body: "DTIC / B-BBEE Commission"
+      key_sections:
+        - section: "Section 10"
+          description: "Fronting prohibition"
+          penalties:
+            criminal: "Fine up to 10% of turnover or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 13G"
+          description: "Misrepresentation"
+          penalties:
+            criminal: "Fine or imprisonment"
+          criticality: critical
+
+  sector_specific:
+    jse_categories:
+      name: "JSE Transaction Categories"
+      regulatory_body: "JSE Limited"
+      key_requirements:
+        - requirement: "Category 1 Transaction"
+          threshold: 30
+          measurement: "percentage ratio"
+          consequence: "Shareholder approval and circular required"
+        - requirement: "Category 2 Transaction"
+          threshold: 5
+          measurement: "percentage ratio"
+          consequence: "Announcement and circular required"
+        - requirement: "Related Party Transaction"
+          description: "Fair and reasonable opinion required"
+          consequence: "Independent board, shareholder vote"
+
+    takeover_thresholds:
+      name: "Takeover Regulation Thresholds"
+      regulatory_body: "Takeover Regulation Panel"
+      key_requirements:
+        - requirement: "Mandatory offer trigger"
+          threshold: 35
+          measurement: "percentage voting rights"
+          consequence: "Mandatory offer to all shareholders"
+        - requirement: "Squeeze-out threshold"
+          threshold: 90
+          measurement: "percentage of shares"
+          consequence: "Compulsory acquisition right"
+        - requirement: "Sell-out threshold"
+          threshold: 90
+          measurement: "percentage acceptance"
+          consequence: "Minority right to be bought out"
+
+  transaction_triggers:
+    listing:
+      - statute: "JSE LR Section 7"
+        trigger: "Application to list securities"
+        consequence: "Full prospectus and due diligence required"
+        timeline: "6-12 weeks from application to listing"
+      - statute: "FMA Section 78-82"
+        trigger: "Public offer of securities"
+        consequence: "Insider trading and market manipulation compliance"
+        timeline: "Ongoing from announcement"
+    takeover:
+      - statute: "Companies Act Section 119"
+        trigger: "Acquisition of 35% or more of voting rights"
+        consequence: "Mandatory offer to all shareholders"
+        timeline: "Offer within 5 business days of trigger"
+      - statute: "Companies Act Section 123"
+        trigger: "Takeover offer made"
+        consequence: "Consideration must be fair"
+        timeline: "TRP review within 5 business days"
+    announcements:
+      - statute: "JSE LR Section 3.4"
+        trigger: "Price sensitive information"
+        consequence: "Immediate SENS announcement required"
+        processing_time: "Without delay"

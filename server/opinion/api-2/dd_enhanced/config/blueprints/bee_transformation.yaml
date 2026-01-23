@@ -544,3 +544,181 @@ cot_questions:
   - What enterprise and supplier development obligations exist?
   - What preferential procurement requirements apply?
   - What socio-economic development commitments exist?
+
+# ============================================================================
+# STATUTORY FRAMEWORK
+# Detailed statutory citation framework for B-BBEE regulatory findings
+# ============================================================================
+statutory_framework:
+  primary_legislation:
+    - act: "Broad-Based Black Economic Empowerment Act 53 of 2003"
+      acronym: "B-BBEE Act"
+      regulatory_body: "Department of Trade, Industry and Competition (DTIC) / B-BBEE Commission"
+      key_sections:
+        - section: "Section 9"
+          description: "Issuance of Codes of Good Practice"
+          penalties:
+            administrative: "Non-compliance affects scorecard rating"
+          criticality: high
+        - section: "Section 10"
+          description: "Fronting practices prohibition"
+          penalties:
+            criminal: "Fine up to 10% of annual turnover or imprisonment up to 10 years"
+            administrative: "Cancellation of contracts, debarment"
+          criticality: critical
+        - section: "Section 13A"
+          description: "B-BBEE Commission establishment and powers"
+          penalties:
+            administrative: "Investigation powers, referral to NPA"
+          criticality: high
+        - section: "Section 13G"
+          description: "Misrepresentation of B-BBEE status"
+          penalties:
+            criminal: "Fine up to 10% of turnover, imprisonment up to 10 years"
+            administrative: "Debarment from government contracts for 10 years"
+          criticality: critical
+        - section: "Section 13J"
+          description: "Register of tender defaulters"
+          penalties:
+            administrative: "Listing on register, contract cancellation"
+          criticality: high
+        - section: "Section 13O"
+          description: "Offences and penalties"
+          penalties:
+            criminal: "Fine or imprisonment up to 10 years"
+          criticality: critical
+
+    - act: "Codes of Good Practice (Generic Codes)"
+      acronym: "Generic Codes"
+      regulatory_body: "DTIC"
+      key_sections:
+        - section: "Statement 100"
+          description: "Ownership element measurement"
+          penalties:
+            administrative: "Reduced scorecard points"
+          criticality: critical
+        - section: "Statement 200"
+          description: "Management control element"
+          penalties:
+            administrative: "Reduced scorecard points"
+          criticality: high
+        - section: "Statement 300"
+          description: "Skills development element"
+          penalties:
+            administrative: "Reduced scorecard points"
+          criticality: high
+        - section: "Statement 400"
+          description: "Enterprise and supplier development"
+          penalties:
+            administrative: "Reduced scorecard points, priority element"
+          criticality: critical
+        - section: "Statement 500"
+          description: "Socio-economic development"
+          penalties:
+            administrative: "Reduced scorecard points"
+          criticality: high
+
+    - act: "Companies Act 71 of 2008"
+      acronym: "Companies Act"
+      regulatory_body: "CIPC"
+      key_sections:
+        - section: "Section 40"
+          description: "Share issuance requirements"
+          penalties:
+            civil: "Issue may be invalid"
+          criticality: high
+        - section: "Section 41"
+          description: "Share subscription requirements"
+          penalties:
+            civil: "Subscription may be voidable"
+          criticality: high
+        - section: "Section 48"
+          description: "Company acquisition of own shares"
+          penalties:
+            civil: "Solvency and liquidity requirements"
+          criticality: high
+
+    - act: "Preferential Procurement Policy Framework Act 5 of 2000"
+      acronym: "PPPFA"
+      regulatory_body: "National Treasury"
+      key_sections:
+        - section: "Section 2"
+          description: "Framework for preferential procurement"
+          penalties:
+            administrative: "Disqualification from tender"
+          criticality: high
+        - section: "Section 5"
+          description: "Preference point system"
+          penalties:
+            administrative: "Tender disqualification"
+          criticality: high
+
+    - act: "Public Finance Management Act 1 of 1999"
+      acronym: "PFMA"
+      regulatory_body: "National Treasury"
+      key_sections:
+        - section: "Section 38"
+          description: "General responsibilities of accounting officers"
+          penalties:
+            criminal: "Personal liability, fine or imprisonment"
+          criticality: critical
+        - section: "Section 51"
+          description: "General responsibilities of accounting authorities (public entities)"
+          penalties:
+            criminal: "Personal liability"
+          criticality: critical
+
+  sector_specific:
+    mining_charter:
+      name: "Mining Charter III (2018)"
+      regulatory_body: "DMRE"
+      key_requirements:
+        - requirement: "Minimum 30% BEE ownership"
+          threshold: 30
+          measurement: "percentage"
+          consequence: "Ineligibility for new mining rights"
+        - requirement: "Meaningful economic participation"
+          description: "Flow-through of economic benefits required"
+        - requirement: "Once Empowered Always Empowered"
+          description: "Recognition of historical BEE transactions"
+
+    financial_sector_code:
+      name: "Financial Sector Code"
+      regulatory_body: "Financial Sector Transformation Council"
+      key_requirements:
+        - requirement: "Ownership targets"
+          threshold: 25
+          measurement: "percentage effective black ownership"
+        - requirement: "Access to financial services"
+          description: "Transformation in access and products"
+
+    ict_sector_code:
+      name: "ICT Sector Code"
+      regulatory_body: "DTIC"
+      key_requirements:
+        - requirement: "Ownership threshold"
+          threshold: 30
+          measurement: "percentage"
+        - requirement: "Skills development emphasis"
+          description: "Enhanced weighting for skills"
+
+  transaction_triggers:
+    ownership_change:
+      - statute: "B-BBEE Act Section 10"
+        trigger: "Change in BEE ownership structure"
+        consequence: "Must avoid fronting indicators"
+        timeline: "Ongoing compliance"
+      - statute: "Generic Codes Statement 100"
+        trigger: "Sale of BEE shareholding"
+        consequence: "May affect recognition of continuing BEE ownership"
+        timeline: "Immediate impact on scorecard"
+    verification:
+      - statute: "B-BBEE Act Section 13G"
+        trigger: "Annual verification requirement"
+        consequence: "Updated certificate required"
+        processing_time: "Annual, valid for 12 months"
+    government_contracts:
+      - statute: "PPPFA"
+        trigger: "Tender for government work"
+        consequence: "B-BBEE status verification required"
+        processing_time: "At tender submission"

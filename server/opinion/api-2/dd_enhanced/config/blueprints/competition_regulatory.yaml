@@ -502,3 +502,244 @@ cot_questions:
   - What behavioral or structural remedies might be required?
   - What is the process for negotiating conditions?
   - What monitoring requirements might apply?
+
+# ============================================================================
+# STATUTORY FRAMEWORK
+# Detailed statutory citation framework for competition and regulatory findings
+# ============================================================================
+statutory_framework:
+  primary_legislation:
+    - act: "Competition Act 89 of 1998"
+      acronym: "Competition Act"
+      regulatory_body: "Competition Commission / Competition Tribunal / Competition Appeal Court"
+      key_sections:
+        - section: "Section 4"
+          description: "Restrictive horizontal practices (cartels)"
+          penalties:
+            administrative: "Fine up to 10% of annual turnover"
+            criminal: "Directors: imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 5"
+          description: "Restrictive vertical practices"
+          penalties:
+            administrative: "Fine up to 10% of turnover"
+          criticality: high
+        - section: "Section 8"
+          description: "Abuse of dominance"
+          penalties:
+            administrative: "Fine up to 10% of turnover, divestiture"
+          criticality: critical
+        - section: "Section 9"
+          description: "Price discrimination"
+          penalties:
+            administrative: "Fine up to 10% of turnover"
+          criticality: high
+        - section: "Section 11"
+          description: "Merger definition and control"
+          penalties:
+            administrative: "Implementation prohibition, unwinding order"
+          criticality: critical
+        - section: "Section 12"
+          description: "Intermediate and large merger thresholds"
+          penalties:
+            administrative: "Mandatory notification before implementation"
+          criticality: critical
+        - section: "Section 12A"
+          description: "Merger evaluation criteria"
+          penalties:
+            administrative: "Approval, conditional approval, or prohibition"
+          criticality: critical
+        - section: "Section 13"
+          description: "Small merger thresholds"
+          penalties:
+            administrative: "May be called for review within 6 months"
+          criticality: medium
+        - section: "Section 13A"
+          description: "Implementation prohibition"
+          penalties:
+            criminal: "Fine up to 10% of turnover"
+            administrative: "Divestiture order"
+          criticality: critical
+        - section: "Section 14"
+          description: "Merger notification requirements"
+          penalties:
+            administrative: "Notification rejection, invalid filing"
+          criticality: high
+        - section: "Section 15"
+          description: "Consideration of merger"
+          penalties:
+            administrative: "Conditional approval, prohibition"
+          criticality: high
+        - section: "Section 16"
+          description: "Competition Commission investigation"
+          penalties:
+            administrative: "Conditions may be imposed"
+          criticality: high
+        - section: "Section 59"
+          description: "Administrative penalties"
+          penalties:
+            administrative: "Fine up to 10% of turnover, repeat 25%"
+          criticality: critical
+
+    - act: "Competition Amendment Act 18 of 2018"
+      acronym: "Competition Amendment Act"
+      regulatory_body: "Competition Commission"
+      key_sections:
+        - section: "Section 4"
+          description: "Enhanced public interest factors"
+          penalties:
+            administrative: "Merger conditions, prohibition"
+          criticality: high
+        - section: "Section 8"
+          description: "Expanded abuse of dominance provisions"
+          penalties:
+            administrative: "Price regulation, market inquiry"
+          criticality: high
+        - section: "Section 12A(3)"
+          description: "Enhanced public interest assessment"
+          penalties:
+            administrative: "Broader conditions available"
+          criticality: high
+
+    - act: "Consumer Protection Act 68 of 2008"
+      acronym: "CPA"
+      regulatory_body: "National Consumer Commission / National Consumer Tribunal"
+      key_sections:
+        - section: "Section 40"
+          description: "Unconscionable conduct"
+          penalties:
+            administrative: "Fine up to 10% of turnover"
+          criticality: high
+        - section: "Section 41"
+          description: "False or misleading representations"
+          penalties:
+            criminal: "Fine or imprisonment"
+            administrative: "Compliance notice"
+          criticality: high
+        - section: "Section 48"
+          description: "Unfair contract terms"
+          penalties:
+            civil: "Terms void and unenforceable"
+          criticality: high
+        - section: "Section 51"
+          description: "Prohibited contract terms"
+          penalties:
+            civil: "Terms void"
+          criticality: high
+
+    - act: "Broad-Based Black Economic Empowerment Act 53 of 2003"
+      acronym: "B-BBEE Act"
+      regulatory_body: "DTIC / B-BBEE Commission"
+      key_sections:
+        - section: "Section 10"
+          description: "Fronting prohibition (competition interface)"
+          penalties:
+            criminal: "Fine up to 10% of turnover"
+          criticality: critical
+
+    - act: "National Regulator for Compulsory Specifications Act 5 of 2008"
+      acronym: "NRCS Act"
+      regulatory_body: "National Regulator for Compulsory Specifications"
+      key_sections:
+        - section: "Section 15"
+          description: "Compulsory specifications compliance"
+          penalties:
+            criminal: "Fine or imprisonment"
+            administrative: "Product recall, prohibition"
+          criticality: high
+
+    - act: "International Trade Administration Act 71 of 2002"
+      acronym: "ITAA"
+      regulatory_body: "International Trade Administration Commission (ITAC)"
+      key_sections:
+        - section: "Section 16"
+          description: "Anti-dumping duties"
+          penalties:
+            administrative: "Additional duties imposed"
+          criticality: high
+        - section: "Section 23"
+          description: "Countervailing duties"
+          penalties:
+            administrative: "Additional duties imposed"
+          criticality: high
+        - section: "Section 26"
+          description: "Safeguard measures"
+          penalties:
+            administrative: "Quotas or tariff increases"
+          criticality: high
+
+  sector_specific:
+    merger_thresholds:
+      name: "Competition Commission Merger Thresholds"
+      regulatory_body: "Competition Commission"
+      key_requirements:
+        - requirement: "Large Merger"
+          threshold: "Combined turnover/assets > R6.6 billion OR target > R190 million"
+          measurement: "ZAR thresholds"
+          consequence: "Tribunal approval required"
+        - requirement: "Intermediate Merger"
+          threshold: "Combined > R600 million AND target > R100 million"
+          measurement: "ZAR thresholds"
+          consequence: "Commission approval required"
+        - requirement: "Small Merger"
+          threshold: "Below intermediate thresholds"
+          measurement: "ZAR thresholds"
+          consequence: "No mandatory notification, but may be called"
+
+    market_concentration:
+      name: "Market Concentration Analysis"
+      regulatory_body: "Competition Commission"
+      key_requirements:
+        - requirement: "Dominance threshold"
+          threshold: 45
+          measurement: "percentage market share"
+          consequence: "Abuse of dominance provisions apply"
+        - requirement: "Substantial market power"
+          threshold: 35
+          measurement: "percentage market share"
+          consequence: "Enhanced scrutiny"
+
+    public_interest:
+      name: "Public Interest Factors (Section 12A)"
+      regulatory_body: "Competition Commission / Tribunal"
+      key_requirements:
+        - requirement: "Employment impact"
+          description: "Effect on employment and retrenchments"
+          consequence: "Employment conditions may be imposed"
+        - requirement: "HDSA ownership"
+          description: "Impact on historically disadvantaged persons"
+          consequence: "BEE conditions may be imposed"
+        - requirement: "Industrial sector/region"
+          description: "Effect on particular industrial sector or region"
+          consequence: "Local content/investment conditions"
+        - requirement: "International competitiveness"
+          description: "Ability to compete internationally"
+          consequence: "Export/investment commitments"
+        - requirement: "SME impact"
+          description: "Effect on small and medium enterprises"
+          consequence: "Market access conditions"
+
+  transaction_triggers:
+    merger_notification:
+      - statute: "Competition Act Section 13A"
+        trigger: "Agreement to merge meeting thresholds"
+        consequence: "Must notify before implementation"
+        timeline: "Large: 40-120 business days; Intermediate: 20-60 business days"
+      - statute: "Competition Act Section 12"
+        trigger: "Acquisition of control"
+        consequence: "Notification if thresholds met"
+        timeline: "As soon as parties have firm intention"
+    prohibited_practices:
+      - statute: "Competition Act Section 4"
+        trigger: "Horizontal agreement on prices/market division"
+        consequence: "Per se prohibited, criminal liability possible"
+        processing_time: "Immediate prohibition"
+      - statute: "Competition Act Section 8"
+        trigger: "Dominant firm conduct harming competition"
+        consequence: "Commission investigation, penalties"
+        processing_time: "Complaint-driven or own-initiative"
+    public_interest:
+      - statute: "Competition Act Section 12A(3)"
+        trigger: "Merger affecting public interest factors"
+        consequence: "Conditions may be imposed"
+        timeline: "Part of merger approval process"

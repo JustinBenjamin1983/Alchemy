@@ -11,8 +11,8 @@
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 
 // Custom styles for text highlighting
 const highlightStyles = `
@@ -29,8 +29,11 @@ const highlightStyles = `
   }
 `;
 
-// Configure PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// Configure PDF.js worker - use unpkg for latest versions
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url
+).toString();
 
 interface DocumentViewerProps {
   documentUrl: string | null;
@@ -99,8 +102,52 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [hasScrolledToHighlight, setHasScrolledToHighlight] = useState<boolean>(false);
+  const [pdfData, setPdfData] = useState<Uint8Array | null>(null);
   const pageContainerRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Fetch PDF as ArrayBuffer for better error handling
+  useEffect(() => {
+    if (!documentUrl) return;
+
+    const fetchPdf = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const response = await fetch(documentUrl);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (contentType && !contentType.includes('pdf')) {
+          console.warn('Response content-type:', contentType);
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+
+        // Convert to Uint8Array to prevent "detached ArrayBuffer" errors
+        // PDF.js transfers ArrayBuffers to workers, detaching them on re-render
+        const uint8Array = new Uint8Array(arrayBuffer);
+
+        // Verify it starts with PDF magic bytes
+        const pdfHeader = String.fromCharCode(...uint8Array.slice(0, 5));
+        if (!pdfHeader.startsWith('%PDF')) {
+          console.error('Invalid PDF header:', pdfHeader);
+          throw new Error('Response is not a valid PDF file');
+        }
+
+        setPdfData(uint8Array);
+      } catch (err) {
+        console.error('Error fetching PDF:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load PDF');
+        setIsLoading(false);
+      }
+    };
+
+    fetchPdf();
+  }, [documentUrl]);
 
   // Prepare search terms for highlighting - improved fuzzy matching
   const searchTerms = useMemo(() => {
@@ -413,9 +460,10 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
           </div>
         )}
 
-        <div ref={pageContainerRef}>
+        {pdfData && (
+          <div ref={pageContainerRef}>
           <Document
-            file={documentUrl}
+            file={{ data: new Uint8Array(pdfData) }}
             onLoadSuccess={onDocumentLoadSuccess}
             onLoadError={onDocumentLoadError}
             loading={null}
@@ -431,6 +479,7 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
             />
           </Document>
         </div>
+        )}
       </div>
 
       {/* Footer with keyboard shortcuts */}

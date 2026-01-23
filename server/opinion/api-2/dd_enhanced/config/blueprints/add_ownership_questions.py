@@ -24,14 +24,7 @@ UNIVERSAL_OWNERSHIP_QUESTIONS = [
 
 # Industry-specific ownership questions
 INDUSTRY_OWNERSHIP_QUESTIONS = {
-    "mining_resources": [
-        "What is the current HDSA/BEE ownership percentage and how is it verified?",
-        "How does the acquisition affect Mining Charter III compliance (minimum 30% HDSA)?",
-        "If acquirer is non-HDSA, what mechanisms exist to restore BEE compliance (trusts, partners)?",
-        "What is the current Mining Charter scorecard status and how will it be affected?",
-        "Are there any BEE shareholding lock-in periods that affect the transaction?",
-    ],
-    "mining_acquisition": [
+    "mining_resources": [  # Also covers mining_acquisition
         "What is the current HDSA/BEE ownership percentage and how is it verified?",
         "How does the acquisition affect Mining Charter III compliance (minimum 30% HDSA)?",
         "If acquirer is non-HDSA, what mechanisms exist to restore BEE compliance (trusts, partners)?",

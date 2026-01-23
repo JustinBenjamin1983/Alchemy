@@ -136,8 +136,8 @@ def main():
 
     # Load blueprint
     try:
-        blueprint = load_blueprint("mining_acquisition")
-        print_success("Blueprint loaded: Mining/Resources Acquisition")
+        blueprint = load_blueprint("mining_resources")
+        print_success("Blueprint loaded: Mining/Resources")
     except Exception as e:
         print_warning(f"Could not load blueprint: {e}")
         blueprint = None

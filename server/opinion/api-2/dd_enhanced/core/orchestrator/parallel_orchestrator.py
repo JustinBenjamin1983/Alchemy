@@ -75,6 +75,7 @@ class ProcessingResult:
     pass2_findings: List[Dict] = field(default_factory=list)
     pass3_results: Dict[str, Any] = field(default_factory=dict)
     pass4_results: Dict[str, Any] = field(default_factory=dict)
+    pass5_results: Dict[str, Any] = field(default_factory=dict)  # Verification results
 
     # Graph stats
     graph_stats: Optional[Any] = None
@@ -273,6 +274,7 @@ class ParallelOrchestrator:
         from dd_enhanced.core.pass2_analyze import run_pass2_analysis
         from dd_enhanced.core.pass3_clustered import run_pass3_hybrid
         from dd_enhanced.core.pass4_synthesize import run_pass4_synthesis
+        from dd_enhanced.core.pass5_verify import run_pass5_verification
         from dd_enhanced.core.question_prioritizer import prioritize_questions
 
         result = ProcessingResult(
@@ -323,7 +325,7 @@ class ParallelOrchestrator:
             checkpoint_callback('pass1_extraction', {'document_count': len(documents_to_process)})
 
         if progress_callback:
-            progress_callback(0, 4, "Running Pass 1: Extract & Index")
+            progress_callback(0, 5, "Running Pass 1: Extract & Index")
 
         pass1_results = run_pass1_extraction(
             documents_to_process,
@@ -355,7 +357,7 @@ class ParallelOrchestrator:
             checkpoint_callback('pass2_analysis', {})
 
         if progress_callback:
-            progress_callback(1, 4, "Running Pass 2: Per-Document Analysis")
+            progress_callback(1, 5, "Running Pass 2: Per-Document Analysis")
 
         # Create reference doc objects
         class RefDoc:
@@ -382,7 +384,7 @@ class ParallelOrchestrator:
             checkpoint_callback('pass3_crossdoc', {})
 
         if progress_callback:
-            progress_callback(2, 4, "Running Pass 3: Cross-Document Synthesis")
+            progress_callback(2, 5, "Running Pass 3: Cross-Document Synthesis")
 
         pass3_results = run_pass3_hybrid(
             documents=documents,  # Use all documents for cross-doc
@@ -399,7 +401,7 @@ class ParallelOrchestrator:
             checkpoint_callback('pass4_synthesis', {})
 
         if progress_callback:
-            progress_callback(3, 4, "Running Pass 4: Deal Synthesis")
+            progress_callback(3, 5, "Running Pass 4: Deal Synthesis")
 
         pass4_results = run_pass4_synthesis(
             documents,
@@ -410,6 +412,26 @@ class ParallelOrchestrator:
             verbose=False
         )
         result.pass4_results = pass4_results
+
+        # Pass 5: Verification (QC)
+        if checkpoint_callback:
+            checkpoint_callback('pass5_verification', {})
+
+        if progress_callback:
+            progress_callback(4, 5, "Running Pass 5: Verification")
+
+        pass5_result = run_pass5_verification(
+            pass4_results=pass4_results,
+            pass3_results=pass3_results,
+            pass2_findings=pass2_findings,
+            pass1_results=pass1_results,
+            calculation_aggregates=pass3_results.get('calculation_aggregates'),
+            transaction_context=transaction_context,
+            client=self.claude_client,
+            verbose=False,
+            checkpoint_callback=checkpoint_callback,
+        )
+        result.pass5_results = pass5_result.to_dict() if hasattr(pass5_result, 'to_dict') else pass5_result
 
         # Update cost tracking
         if self.claude_client:
@@ -422,7 +444,7 @@ class ParallelOrchestrator:
         result.documents_processed = len(documents_to_process)
 
         if progress_callback:
-            progress_callback(4, 4, "Processing complete")
+            progress_callback(5, 5, "Processing complete")
 
         return result
 
@@ -516,7 +538,7 @@ class ParallelOrchestrator:
             })
 
         if progress_callback:
-            progress_callback(0, 5, f"Running Pass 1: Parallel extraction ({len(documents_to_process)} docs)")
+            progress_callback(0, 6, f"Running Pass 1: Parallel extraction ({len(documents_to_process)} docs)")
 
         # For Pass 1, we still run sequentially but could parallelize in future
         # The main bottleneck is Pass 2 which we parallelize below
@@ -561,7 +583,7 @@ class ParallelOrchestrator:
             })
 
         if progress_callback:
-            progress_callback(1, 5, f"Running Pass 2: Parallel analysis ({self.config.max_workers} workers)")
+            progress_callback(1, 6, f"Running Pass 2: Parallel analysis ({self.config.max_workers} workers)")
 
         # Create reference doc objects
         class RefDoc:
@@ -657,7 +679,7 @@ class ParallelOrchestrator:
             })
 
         if progress_callback:
-            progress_callback(2, 5, "Running Pass 3: Hierarchical cross-document synthesis")
+            progress_callback(2, 6, "Running Pass 3: Hierarchical cross-document synthesis")
 
         # Use hierarchical synthesis for large document sets
         pass3_results = self._run_hierarchical_pass3(
@@ -676,9 +698,10 @@ class ParallelOrchestrator:
             checkpoint_callback('pass4_synthesis', {'mode': 'parallel'})
 
         if progress_callback:
-            progress_callback(3, 5, "Running Pass 4: Deal Synthesis")
+            progress_callback(3, 6, "Running Pass 4: Deal Synthesis")
 
         from dd_enhanced.core.pass4_synthesize import run_pass4_synthesis
+        from dd_enhanced.core.pass5_verify import run_pass5_verification
 
         pass4_results = run_pass4_synthesis(
             documents,
@@ -690,12 +713,32 @@ class ParallelOrchestrator:
         )
         result.pass4_results = pass4_results
 
+        # ===== PASS 5: Verification =====
+        if checkpoint_callback:
+            checkpoint_callback('pass5_verification', {'mode': 'parallel'})
+
+        if progress_callback:
+            progress_callback(4, 6, "Running Pass 5: Verification")
+
+        pass5_result = run_pass5_verification(
+            pass4_results=pass4_results,
+            pass3_results=pass3_results,
+            pass2_findings=all_findings,
+            pass1_results=pass1_results,
+            calculation_aggregates=pass3_results.get('calculation_aggregates'),
+            transaction_context=transaction_context,
+            client=self.claude_client,
+            verbose=False,
+            checkpoint_callback=checkpoint_callback,
+        )
+        result.pass5_results = pass5_result.to_dict() if hasattr(pass5_result, 'to_dict') else pass5_result
+
         # ===== Hierarchical Synthesis (for parallel mode) =====
         if checkpoint_callback:
             checkpoint_callback('hierarchical_synthesis', {'doc_count': doc_count})
 
         if progress_callback:
-            progress_callback(4, 5, "Running hierarchical synthesis")
+            progress_callback(5, 6, "Running hierarchical synthesis")
 
         synthesis_results = self._run_hierarchical_synthesis(
             dd_id=dd_id,
@@ -723,7 +766,7 @@ class ParallelOrchestrator:
         result.success = len(failed_docs) < len(documents) * 0.5  # Success if <50% failed
 
         if progress_callback:
-            progress_callback(5, 5, "Parallel processing complete")
+            progress_callback(6, 6, "Parallel processing complete")
 
         return result
 

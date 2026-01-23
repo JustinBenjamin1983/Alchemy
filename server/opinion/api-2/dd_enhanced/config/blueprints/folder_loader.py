@@ -92,7 +92,7 @@ def load_folder_structure(transaction_type: str) -> Dict[str, Any]:
     type_mapping = {
         "mining": "mining_resources",
         "mining_resources": "mining_resources",
-        "mining_acquisition": "mining_acquisition",
+        "mining_acquisition": "mining_resources",  # Consolidated into mining_resources
         "m&a": "ma_corporate",
         "ma": "ma_corporate",
         "ma_corporate": "ma_corporate",

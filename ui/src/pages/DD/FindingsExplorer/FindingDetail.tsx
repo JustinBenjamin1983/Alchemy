@@ -69,11 +69,19 @@ const ExternalLinkIcon = () => (
   </svg>
 );
 
+// Download/Open icon for View Original
+const DownloadIcon = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+  </svg>
+);
+
 interface ExtendedFindingDetailProps extends FindingDetailProps {
   humanReview?: HumanReview;
   onUpdateReview?: (review: Partial<HumanReview>) => void;
   showReviewSection?: boolean;
   onViewDocument?: (docId: string, pageNumber?: number) => void;
+  onOpenOriginal?: (docId: string) => void;
 }
 
 const REVIEW_STATUS_CONFIG: Record<ReviewStatus, { label: string; icon: React.ReactNode; color: string; bgColor: string }> = {
@@ -89,7 +97,8 @@ export const FindingDetail: React.FC<ExtendedFindingDetailProps> = ({
   humanReview,
   onUpdateReview,
   showReviewSection = true,
-  onViewDocument
+  onViewDocument,
+  onOpenOriginal
 }) => {
   const [question, setQuestion] = useState('');
   const [isAskingQuestion, setIsAskingQuestion] = useState(false);
@@ -152,16 +161,37 @@ export const FindingDetail: React.FC<ExtendedFindingDetailProps> = ({
                   <span>{finding.page_reference}</span>
                 </>
               )}
-              {/* View Source Button */}
-              {finding.document_id && onViewDocument && (
+              {/* View Source Button - For PDFs or documents with converted PDF */}
+              {finding.document_id && onViewDocument && (finding.document_type === 'pdf' || finding.converted_doc_id) && (
                 <button
-                  onClick={() => onViewDocument(finding.document_id, finding.actual_page_number)}
+                  onClick={() => {
+                    // Use converted PDF if available, otherwise original document
+                    const docIdToView = finding.converted_doc_id || finding.document_id;
+                    onViewDocument(docIdToView, finding.actual_page_number);
+                  }}
                   className="ml-2 flex items-center gap-1 px-2 py-0.5 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
-                  title={`View document${finding.actual_page_number ? ` at page ${finding.actual_page_number}` : ''}`}
+                  title={`View ${finding.converted_doc_id ? 'converted PDF' : 'document'}${finding.actual_page_number ? ` at page ${finding.actual_page_number}` : ''}`}
                 >
                   <ExternalLinkIcon />
                   View Source
                 </button>
+              )}
+              {/* View Original Button - For non-PDF documents that were converted */}
+              {finding.document_id && onOpenOriginal && finding.document_type && finding.document_type !== 'pdf' && (
+                <button
+                  onClick={() => onOpenOriginal(finding.document_id)}
+                  className="ml-1 flex items-center gap-1 px-2 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                  title={`Download original ${finding.document_type?.toUpperCase()} file`}
+                >
+                  <DownloadIcon />
+                  Original
+                </button>
+              )}
+              {/* Show file type badge if no View Source available (no conversion) */}
+              {finding.document_id && finding.document_type && finding.document_type !== 'pdf' && !finding.converted_doc_id && !onOpenOriginal && (
+                <span className="ml-2 px-2 py-0.5 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded uppercase">
+                  {finding.document_type}
+                </span>
               )}
             </div>
           </div>

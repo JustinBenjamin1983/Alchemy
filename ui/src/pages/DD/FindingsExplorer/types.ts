@@ -17,6 +17,8 @@ export interface Finding {
   category: string;
   document_id: string;
   document_name: string;
+  document_type?: string;         // File type: "pdf", "docx", etc.
+  converted_doc_id?: string;      // ID of converted PDF (for DOCX, XLSX, PPTX)
   page_reference?: string;        // Legacy: Clause reference (e.g., "Clause 15.2")
   clause_reference?: string;      // Specific clause/section reference (e.g., "Clause 15.2.1", "Section 4(a)")
   actual_page_number?: number;    // Actual page number in document (1-indexed)

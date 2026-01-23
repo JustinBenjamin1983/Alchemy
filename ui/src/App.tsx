@@ -15,6 +15,7 @@ import { loginRequest, DEV_MODE, DEV_USER } from "./authConfig.ts";
 import { useMutateUser } from "./hooks/useMutateUser.tsx";
 import { DDMain } from "./pages/DD/DDMain.tsx";
 import { AgreementMain } from "./pages/Agreement/AgreementMain.tsx";
+import { DocumentViewerTest } from "./pages/DD/FindingsExplorer/DocumentViewerTest.tsx";
 
 const AuthRedirectHandler = () => {
   const { instance } = useMsal();
@@ -104,6 +105,10 @@ function App() {
     {
       path: "/agreement",
       element: <AgreementMain />,
+    },
+    {
+      path: "/dd-viewer-test",
+      element: <DocumentViewerTest />,
     },
     {
       path: "*",

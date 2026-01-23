@@ -1,6 +1,6 @@
 // DDTop.tsx
 import { Button } from "@/components/ui/button";
-import { Trash2, Loader2, Activity, ChevronLeft, ChevronRight } from "lucide-react";
+import { Trash2, Loader2, Activity, ChevronUp, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import {
   Dialog,
@@ -11,7 +11,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { TRANSACTION_TYPE_INFO, TransactionTypeCode } from "./Wizard/types";
-import { useSidebar } from "@/components/ui/sidebar";
 
 type ScreenState =
   | "Wizard-Chooser"
@@ -31,6 +30,8 @@ interface DDTopProps {
   isDeleting?: boolean;
   onGenerateReport?: () => void;
   isGeneratingReport?: boolean;
+  isHeaderCollapsed?: boolean;
+  onToggleHeaderCollapse?: () => void;
 }
 
 export function DDTop({
@@ -43,12 +44,13 @@ export function DDTop({
   isDeleting = false,
   onGenerateReport,
   isGeneratingReport = false,
+  isHeaderCollapsed = false,
+  onToggleHeaderCollapse,
 }: DDTopProps) {
   // Get transaction type info for display
   const typeCode = transactionType as TransactionTypeCode | undefined;
   const typeInfo = typeCode ? TRANSACTION_TYPE_INFO[typeCode] : null;
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const { toggleSidebar, state } = useSidebar();
 
   const handleDeleteClick = () => {
     console.log("[DDTop] Delete button clicked, opening dialog");
@@ -67,23 +69,12 @@ export function DDTop({
 
   return (
     <>
-      <header className="flex flex-col shrink-0 gap-3 p-4 border-b bg-white">
+      <header className="relative flex flex-col shrink-0 border-b bg-white transition-all duration-300 mb-3">
         {ddName && (
-          <>
-            {/* Title row with sidebar toggle */}
+          <div className={`transition-all duration-300 ${isHeaderCollapsed ? 'px-4 py-1' : 'p-4 pb-2'}`}>
+            {/* Title row - always visible */}
             <div className="flex items-center gap-3">
-              <button
-                onClick={toggleSidebar}
-                className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"
-                aria-label="Toggle Sidebar"
-              >
-                {state === "expanded" ? (
-                  <ChevronLeft className="h-5 w-5 text-gray-600" />
-                ) : (
-                  <ChevronRight className="h-5 w-5 text-gray-600" />
-                )}
-              </button>
-              <p className="font-semibold text-gray-700 text-lg">
+              <p className={`font-semibold text-gray-700 transition-all duration-300 ${isHeaderCollapsed ? 'text-xs' : 'text-lg'}`}>
                 {ddName}
                 {typeInfo && (
                   <span className="text-gray-500 font-normal">
@@ -92,8 +83,8 @@ export function DDTop({
                 )}
               </p>
             </div>
-            {/* Navigation Buttons */}
-            <div className="flex gap-4 justify-between items-center">
+            {/* Navigation Buttons - hidden when collapsed */}
+            <div className={`flex gap-4 justify-between items-center overflow-hidden transition-all duration-300 ${isHeaderCollapsed ? 'max-h-0 opacity-0 mt-0' : 'max-h-20 opacity-100 mt-3'}`}>
               <div className="flex gap-4">
                 <Button
                   className={`transition-all duration-200 hover:scale-105 hover:shadow-md ${
@@ -152,7 +143,22 @@ export function DDTop({
                 )}
               </Button>
             </div>
-          </>
+          </div>
+        )}
+        {/* Header collapse toggle - centered on bottom edge of header */}
+        {onToggleHeaderCollapse && (
+          <button
+            onClick={onToggleHeaderCollapse}
+            className="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-1/2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-alchemyPrimaryNavyBlue hover:bg-alchemyPrimaryNavyBlue/80 transition-colors shadow-md"
+            aria-label={isHeaderCollapsed ? "Expand header" : "Collapse header"}
+            title={isHeaderCollapsed ? "Expand header" : "Collapse header"}
+          >
+            {isHeaderCollapsed ? (
+              <ChevronDown className="h-3 w-3 text-white" />
+            ) : (
+              <ChevronUp className="h-3 w-3 text-white" />
+            )}
+          </button>
         )}
       </header>
 

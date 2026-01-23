@@ -24,8 +24,10 @@ from shared.uploader import read_from_blob_storage, write_to_blob_storage
 from sqlalchemy.orm import joinedload
 
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+from reportlab.lib.units import inch
 
 DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
 LOCAL_STORAGE_PATH = os.environ.get("LOCAL_STORAGE_PATH", "")
@@ -71,6 +73,229 @@ def convert_pptx_to_pdf(file_contents: bytes, filename: str) -> bytes:
         story.append(Spacer(1, 20))
 
     doc.build(story)
+    return pdf_buffer.getvalue()
+
+
+def convert_docx_to_pdf(file_contents: bytes, filename: str) -> bytes:
+    """
+    Extract text from DOCX and create a readable PDF.
+    Preserves basic formatting (bold, italic, underline) and paragraph structure.
+    Returns PDF bytes.
+    """
+    from docx import Document as DocxDocument
+    from docx.shared import Pt
+    from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+
+    docx_stream = io.BytesIO(file_contents)
+    doc = DocxDocument(docx_stream)
+
+    # Create PDF
+    pdf_buffer = io.BytesIO()
+    pdf_doc = SimpleDocTemplate(
+        pdf_buffer,
+        pagesize=letter,
+        leftMargin=0.75*inch,
+        rightMargin=0.75*inch,
+        topMargin=0.75*inch,
+        bottomMargin=0.75*inch
+    )
+    styles = getSampleStyleSheet()
+
+    # Create custom styles
+    heading_style = ParagraphStyle(
+        'CustomHeading',
+        parent=styles['Heading1'],
+        fontSize=14,
+        spaceAfter=12
+    )
+    normal_style = ParagraphStyle(
+        'CustomNormal',
+        parent=styles['Normal'],
+        fontSize=11,
+        leading=14,
+        spaceAfter=6
+    )
+
+    story = []
+
+    for para in doc.paragraphs:
+        if not para.text.strip():
+            story.append(Spacer(1, 6))
+            continue
+
+        # Build formatted text with inline styles
+        formatted_text = ""
+        for run in para.runs:
+            text = run.text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            if not text:
+                continue
+
+            # Apply formatting tags
+            if run.bold and run.italic:
+                text = f"<b><i>{text}</i></b>"
+            elif run.bold:
+                text = f"<b>{text}</b>"
+            elif run.italic:
+                text = f"<i>{text}</i>"
+            if run.underline:
+                text = f"<u>{text}</u>"
+
+            formatted_text += text
+
+        if not formatted_text.strip():
+            continue
+
+        # Determine if this is a heading based on style name
+        try:
+            style_name = para.style.name.lower() if para.style else ""
+            if 'heading' in style_name:
+                story.append(Paragraph(formatted_text, heading_style))
+            else:
+                story.append(Paragraph(formatted_text, normal_style))
+        except Exception as e:
+            logging.warning(f"Failed to add paragraph, using plain text: {e}")
+            # Fallback: plain text without formatting
+            plain_text = para.text[:1000].replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            story.append(Paragraph(plain_text, normal_style))
+
+    # Handle tables
+    for table in doc.tables:
+        table_data = []
+        for row in table.rows:
+            row_data = []
+            for cell in row.cells:
+                cell_text = cell.text[:200].replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                row_data.append(Paragraph(cell_text, styles['Normal']))
+            table_data.append(row_data)
+
+        if table_data:
+            try:
+                # Calculate column widths
+                num_cols = max(len(row) for row in table_data) if table_data else 1
+                col_width = (7 * inch) / num_cols
+
+                pdf_table = Table(table_data, colWidths=[col_width] * num_cols)
+                pdf_table.setStyle(TableStyle([
+                    ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+                    ('FONTSIZE', (0, 0), (-1, -1), 9),
+                    ('PADDING', (0, 0), (-1, -1), 4),
+                    ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                ]))
+                story.append(Spacer(1, 12))
+                story.append(pdf_table)
+                story.append(Spacer(1, 12))
+            except Exception as e:
+                logging.warning(f"Failed to add table: {e}")
+
+    if not story:
+        story.append(Paragraph("(Document appears to be empty)", styles['Normal']))
+
+    pdf_doc.build(story)
+    return pdf_buffer.getvalue()
+
+
+def convert_xlsx_to_pdf(file_contents: bytes, filename: str) -> bytes:
+    """
+    Extract data from XLSX and create a readable PDF with tables.
+    Each sheet becomes a section in the PDF.
+    Returns PDF bytes.
+    """
+    from openpyxl import load_workbook
+
+    xlsx_stream = io.BytesIO(file_contents)
+    wb = load_workbook(xlsx_stream, read_only=True, data_only=True)
+
+    # Create PDF
+    pdf_buffer = io.BytesIO()
+    pdf_doc = SimpleDocTemplate(
+        pdf_buffer,
+        pagesize=letter,
+        leftMargin=0.5*inch,
+        rightMargin=0.5*inch,
+        topMargin=0.75*inch,
+        bottomMargin=0.75*inch
+    )
+    styles = getSampleStyleSheet()
+    story = []
+
+    for sheet_name in wb.sheetnames:
+        sheet = wb[sheet_name]
+
+        # Add sheet header
+        story.append(Paragraph(f"<b>Sheet: {sheet_name}</b>", styles['Heading2']))
+        story.append(Spacer(1, 12))
+
+        # Collect data from sheet (limit to reasonable size)
+        table_data = []
+        max_rows = 500  # Limit rows per sheet
+        max_cols = 20   # Limit columns
+
+        for row_idx, row in enumerate(sheet.iter_rows(max_row=max_rows, max_col=max_cols)):
+            if row_idx > max_rows:
+                break
+
+            row_data = []
+            has_data = False
+            for cell in row:
+                value = cell.value
+                if value is not None:
+                    has_data = True
+                    # Format cell value
+                    if isinstance(value, (int, float)):
+                        text = str(value)
+                    else:
+                        text = str(value)[:100]  # Truncate long text
+                    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                else:
+                    text = ""
+                row_data.append(text)
+
+            # Only add rows that have data
+            if has_data:
+                table_data.append(row_data)
+
+        if table_data:
+            try:
+                # Calculate column widths based on content
+                num_cols = max(len(row) for row in table_data)
+                col_width = min(1.5*inch, (7.5 * inch) / max(num_cols, 1))
+
+                # Create table with small font
+                small_style = ParagraphStyle('Small', parent=styles['Normal'], fontSize=8)
+                formatted_data = []
+                for row in table_data[:200]:  # Limit to 200 rows for PDF
+                    formatted_row = [Paragraph(str(cell)[:50], small_style) for cell in row]
+                    # Pad row to have consistent columns
+                    while len(formatted_row) < num_cols:
+                        formatted_row.append(Paragraph("", small_style))
+                    formatted_data.append(formatted_row[:num_cols])
+
+                pdf_table = Table(formatted_data, colWidths=[col_width] * num_cols)
+                pdf_table.setStyle(TableStyle([
+                    ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),  # Header row
+                    ('FONTSIZE', (0, 0), (-1, -1), 8),
+                    ('PADDING', (0, 0), (-1, -1), 3),
+                    ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                ]))
+                story.append(pdf_table)
+
+                if len(table_data) > 200:
+                    story.append(Spacer(1, 6))
+                    story.append(Paragraph(f"<i>(Showing first 200 of {len(table_data)} rows)</i>", styles['Normal']))
+
+            except Exception as e:
+                logging.warning(f"Failed to create table for sheet {sheet_name}: {e}")
+                story.append(Paragraph(f"(Error rendering sheet: {str(e)[:100]})", styles['Normal']))
+        else:
+            story.append(Paragraph("(Sheet is empty)", styles['Normal']))
+
+        story.append(PageBreak())
+
+    if not story:
+        story.append(Paragraph("(Workbook appears to be empty)", styles['Normal']))
+
+    pdf_doc.build(story)
     return pdf_buffer.getvalue()
 
 
@@ -218,8 +443,17 @@ def check_pdf_readability(file_contents: bytes, filename: str) -> tuple[bool, st
         return False, f"Unable to open document: {str(e)}"
 
 
-def check_docx_readability(file_contents: bytes, filename: str) -> tuple[bool, str]:
-    """Check if a DOCX file is readable."""
+def check_docx_readability(
+    file_contents: bytes,
+    filename: str,
+    doc_id: str = None,
+    folder_id: str = None,
+    session = None
+) -> tuple[bool, str, str | None]:
+    """
+    Check if a DOCX file is readable and convert to PDF.
+    Returns (is_readable, error_message, converted_doc_id).
+    """
     try:
         from docx import Document as DocxDocument
 
@@ -234,19 +468,42 @@ def check_docx_readability(file_contents: bytes, filename: str) -> tuple[bool, s
             for para in doc.paragraphs:
                 text_content += para.text
             if not text_content.strip():
-                return True, ""  # Empty but valid document
+                return True, "", None  # Empty but valid document
 
-        return True, ""
+        # If we have session info, perform conversion
+        converted_doc_id = None
+        if doc_id and folder_id and session:
+            try:
+                logging.info(f"Converting DOCX to PDF: {filename}")
+                pdf_bytes = convert_docx_to_pdf(file_contents, filename)
+                converted_doc_id = store_converted_pdf(
+                    doc_id, pdf_bytes, filename, folder_id, session
+                )
+                logging.info(f"Successfully converted {filename} to PDF: {converted_doc_id}")
+            except Exception as conv_error:
+                logging.error(f"Failed to convert DOCX to PDF: {conv_error}")
+                # Conversion failure is not a readability failure
+
+        return True, "", converted_doc_id
 
     except Exception as e:
         error_str = str(e).lower()
         if "encrypted" in error_str or "password" in error_str:
-            return False, "Document is password-protected and cannot be accessed"
-        return False, f"Unable to open document: {str(e)}"
+            return False, "Document is password-protected and cannot be accessed", None
+        return False, f"Unable to open document: {str(e)}", None
 
 
-def check_xlsx_readability(file_contents: bytes, filename: str) -> tuple[bool, str]:
-    """Check if an XLSX file is readable."""
+def check_xlsx_readability(
+    file_contents: bytes,
+    filename: str,
+    doc_id: str = None,
+    folder_id: str = None,
+    session = None
+) -> tuple[bool, str, str | None]:
+    """
+    Check if an XLSX file is readable and convert to PDF.
+    Returns (is_readable, error_message, converted_doc_id).
+    """
     try:
         import openpyxl
 
@@ -256,16 +513,31 @@ def check_xlsx_readability(file_contents: bytes, filename: str) -> tuple[bool, s
         # Check if there are any sheets
         if len(workbook.sheetnames) == 0:
             workbook.close()
-            return False, "Spreadsheet contains no worksheets"
+            return False, "Spreadsheet contains no worksheets", None
 
         workbook.close()
-        return True, ""
+
+        # If we have session info, perform conversion
+        converted_doc_id = None
+        if doc_id and folder_id and session:
+            try:
+                logging.info(f"Converting XLSX to PDF: {filename}")
+                pdf_bytes = convert_xlsx_to_pdf(file_contents, filename)
+                converted_doc_id = store_converted_pdf(
+                    doc_id, pdf_bytes, filename, folder_id, session
+                )
+                logging.info(f"Successfully converted {filename} to PDF: {converted_doc_id}")
+            except Exception as conv_error:
+                logging.error(f"Failed to convert XLSX to PDF: {conv_error}")
+                # Conversion failure is not a readability failure
+
+        return True, "", converted_doc_id
 
     except Exception as e:
         error_str = str(e).lower()
         if "encrypted" in error_str or "password" in error_str:
-            return False, "Spreadsheet is password-protected and cannot be accessed"
-        return False, f"Unable to open spreadsheet: {str(e)}"
+            return False, "Spreadsheet is password-protected and cannot be accessed", None
+        return False, f"Unable to open spreadsheet: {str(e)}", None
 
 
 def check_pptx_readability(
@@ -364,13 +636,17 @@ def check_document_readability(
             if file_type_lower == "doc":
                 # .doc files need conversion, treat as potentially readable
                 return True, "", None
-            is_readable, error = check_docx_readability(file_contents, filename)
-            return is_readable, error, None
+            # DOCX files get converted to PDF
+            return check_docx_readability(
+                file_contents, filename, doc_id, folder_id, session
+            )
         elif file_type_lower in ("xlsx", "xls"):
             if file_type_lower == "xls":
                 return True, "", None  # Legacy format, assume readable
-            is_readable, error = check_xlsx_readability(file_contents, filename)
-            return is_readable, error, None
+            # XLSX files get converted to PDF
+            return check_xlsx_readability(
+                file_contents, filename, doc_id, folder_id, session
+            )
         elif file_type_lower in ("pptx", "ppt"):
             if file_type_lower == "ppt":
                 return True, "", None  # Legacy format, assume readable
@@ -478,13 +754,19 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             documents = docs_query.all()
 
+            # File types that get converted to PDF
+            CONVERTIBLE_TYPES = {"pptx", "docx", "xlsx"}
+
             for doc in documents:
+                file_type_lower = doc.type.lower()
+                is_convertible = file_type_lower in CONVERTIBLE_TYPES
+
                 # Update status to checking
                 doc.readability_status = "checking"
-                doc.conversion_status = "pending" if doc.type.lower() == "pptx" else None
+                doc.conversion_status = "pending" if is_convertible else None
                 session.commit()
 
-                # Check readability (and convert PPTX to PDF if applicable)
+                # Check readability (and convert to PDF if applicable)
                 is_readable, error_msg, converted_doc_id = check_document_readability(
                     str(doc.id),
                     doc.type,
@@ -499,18 +781,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     doc.readability_error = None
                     summary["ready"] += 1
 
-                    # Handle PPTX conversion result
+                    # Handle conversion result for convertible types
                     if converted_doc_id:
                         doc.converted_doc_id = uuid.UUID(converted_doc_id)
                         doc.conversion_status = "converted"
-                    elif doc.type.lower() == "pptx":
-                        # PPTX was readable but conversion failed
+                    elif is_convertible:
+                        # Document was readable but conversion failed
                         doc.conversion_status = "failed"
                 else:
                     doc.readability_status = "failed"
                     doc.readability_error = error_msg
                     summary["failed"] += 1
-                    if doc.type.lower() == "pptx":
+                    if is_convertible:
                         doc.conversion_status = "failed"
 
                 session.commit()

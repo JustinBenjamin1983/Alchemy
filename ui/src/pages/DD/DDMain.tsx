@@ -408,6 +408,8 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
     | "Processing"
   >("Wizard-Chooser");
 
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
+
   const handleGenerateReport = async () => {
     if (!dd || allFindings.length === 0) {
       alert("No findings available to generate report");
@@ -734,6 +736,8 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
           isDeleting={mutateDDDelete.isPending}
           onGenerateReport={handleGenerateReport}
           isGeneratingReport={isGeneratingReport}
+          isHeaderCollapsed={isHeaderCollapsed}
+          onToggleHeaderCollapse={() => setIsHeaderCollapsed(!isHeaderCollapsed)}
         />
         {!dd && !ddIsFetching && (
           <div className="flex flex-col items-center justify-center h-screen">
@@ -756,8 +760,8 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
           </div>
         )}
         {dd && (
-          <div className="text-xl flex flex-1 flex-col gap-4 p-4 pt-4">
-            <div className="text-2xl font-bold">
+          <div className="flex flex-1 flex-col gap-2 p-3 pt-2">
+            <div className="text-lg font-semibold text-gray-700">
               {screenState === "Analysis" && "Analysis"}
               {screenState === "Processing" && "Console"}
             </div>

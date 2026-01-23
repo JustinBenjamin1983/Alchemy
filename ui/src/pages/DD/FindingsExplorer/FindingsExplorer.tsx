@@ -507,22 +507,35 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
   ) => {
     if (!docId) return;
 
-    // Find the document name
-    const doc = documents.find(d => d.id === docId);
+    // Find the document name - check both document_id and converted_doc_id
+    // (docId might be a converted PDF id)
+    let doc = documents.find(d => d.id === docId);
+    if (!doc) {
+      // Check if this is a converted doc ID - look in findings
+      const finding = findings.find(f => f.converted_doc_id === docId);
+      if (finding) {
+        doc = documents.find(d => d.id === finding.document_id);
+      }
+    }
     const docName = doc?.name || 'Document';
 
     setIsLoadingDocViewer(true);
 
     try {
       // Fetch the document URL from the API
-      const response = await fetch(`/api/get-link-to-doc?doc_id=${docId}&is_dd=true`);
+      const response = await fetch(`/api/link?doc_id=${docId}&is_dd=true`);
       if (!response.ok) {
         throw new Error('Failed to fetch document URL');
       }
       const data = await response.json();
 
+      // For local files, construct absolute URL
+      const docUrl = data.local
+        ? `${window.location.origin}${data.url}`
+        : data.url;
+
       setDocumentViewerState({
-        docUrl: data.url,
+        docUrl,
         docName,
         pageNumber,
         evidenceQuote,
@@ -537,7 +550,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
     } finally {
       setIsLoadingDocViewer(false);
     }
-  }, [documents, onOpenDocumentInTab]);
+  }, [documents, findings, onOpenDocumentInTab]);
 
   // Close document viewer
   const handleCloseDocumentViewer = useCallback(() => {
@@ -836,14 +849,15 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                       }
                       showReviewSection={!!onUpdateFindingReview}
                       onViewDocument={(docId, pageNumber) => {
-                        const finding = findings.find(f => f.document_id === docId);
+                        // docId here might be the converted_doc_id if a converted PDF exists
                         handleViewDocumentSource(
                           docId,
                           pageNumber,
-                          finding?.evidence_quote || selectedFinding?.evidence_quote,
-                          finding?.clause_reference || selectedFinding?.clause_reference
+                          selectedFinding?.evidence_quote,
+                          selectedFinding?.clause_reference
                         );
                       }}
+                      onOpenOriginal={onOpenDocumentInTab}
                     />
                   </div>
                 )}

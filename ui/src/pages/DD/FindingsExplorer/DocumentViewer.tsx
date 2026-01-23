@@ -103,12 +103,19 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [hasScrolledToHighlight, setHasScrolledToHighlight] = useState<boolean>(false);
   const [pdfData, setPdfData] = useState<Uint8Array | null>(null);
+  const [isSearchingForClause, setIsSearchingForClause] = useState<boolean>(false);
+  const [searchStatus, setSearchStatus] = useState<string | null>(null);
   const pageContainerRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const hasSearchedRef = useRef<boolean>(false);
 
   // Fetch PDF as ArrayBuffer for better error handling
   useEffect(() => {
     if (!documentUrl) return;
+
+    // Reset search state when document changes
+    hasSearchedRef.current = false;
+    setSearchStatus(null);
 
     const fetchPdf = async () => {
       try {
@@ -246,6 +253,125 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
     }
   }, [pageNumber]);
 
+  // Search through PDF pages to find clause reference
+  const searchForClauseInPdf = useCallback(async () => {
+    if (!pdfData || !clauseReference || hasSearchedRef.current) return;
+
+    // Only search if initialPage is 1 (default) - means no page was provided
+    if (initialPage !== 1) return;
+
+    hasSearchedRef.current = true;
+    setIsSearchingForClause(true);
+    setSearchStatus(`Searching for ${clauseReference}...`);
+
+    try {
+      // Load the PDF document using pdfjs
+      const loadingTask = pdfjs.getDocument({ data: new Uint8Array(pdfData) });
+      const pdf = await loadingTask.promise;
+
+      // Extract just the clause number (e.g., "8.2.5" from "Clause 8.2.5")
+      const clauseNumber = clauseReference.match(/[\d.]+/)?.[0] || clauseReference;
+
+      // Create regex pattern that allows for spaces/formatting variations
+      // "8.2.5" should match "8.2.5", "8. 2. 5", "8 . 2 . 5", etc.
+      const flexiblePattern = clauseNumber
+        .split('.')
+        .map(part => part.trim())
+        .join('[.\\s]*\\.?[.\\s]*');
+      const clauseRegex = new RegExp(flexiblePattern, 'i');
+
+      console.log(`Searching ${pdf.numPages} pages for clause: ${clauseNumber} (pattern: ${flexiblePattern})`);
+
+      // Search through each page
+      for (let i = 1; i <= pdf.numPages; i++) {
+        setSearchStatus(`Searching page ${i} of ${pdf.numPages}...`);
+
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+
+        // Get text with minimal spacing normalization
+        const pageText = textContent.items
+          .map((item: any) => item.str)
+          .join(' ');
+
+        // Debug: log first 200 chars of each page to see text format
+        if (i <= 3) {
+          console.log(`Page ${i} text sample:`, pageText.substring(0, 200));
+        }
+
+        // Try regex match first (handles spacing variations)
+        if (clauseRegex.test(pageText)) {
+          console.log(`Found clause ${clauseNumber} on page ${i} (regex match)`);
+          setPageNumber(i);
+          setSearchStatus(`Found on page ${i}`);
+          setIsSearchingForClause(false);
+          setTimeout(() => setSearchStatus(null), 2000);
+          return;
+        }
+
+        // Fallback: normalize all whitespace and try exact match
+        const normalizedText = pageText.replace(/\s+/g, ' ').toLowerCase();
+        if (normalizedText.includes(clauseNumber.toLowerCase())) {
+          console.log(`Found clause ${clauseNumber} on page ${i} (normalized match)`);
+          setPageNumber(i);
+          setSearchStatus(`Found on page ${i}`);
+          setIsSearchingForClause(false);
+          setTimeout(() => setSearchStatus(null), 2000);
+          return;
+        }
+      }
+
+      // Clause number not found - try searching for evidence quote phrases as fallback
+      if (evidenceQuote && evidenceQuote.length > 20) {
+        console.log('Clause not found, trying evidence quote search...');
+        setSearchStatus('Searching by evidence text...');
+
+        // Extract meaningful phrases from evidence (skip common words)
+        const words = evidenceQuote.split(/\s+/).filter(w => w.length > 5);
+        const searchPhrase = words.slice(0, 5).join(' ').toLowerCase();
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items
+            .map((item: any) => item.str)
+            .join(' ')
+            .toLowerCase()
+            .replace(/\s+/g, ' ');
+
+          // Check if evidence phrase appears on this page
+          if (searchPhrase && pageText.includes(searchPhrase)) {
+            console.log(`Found evidence text on page ${i}`);
+            setPageNumber(i);
+            setSearchStatus(`Found on page ${i}`);
+            setIsSearchingForClause(false);
+            setTimeout(() => setSearchStatus(null), 2000);
+            return;
+          }
+        }
+      }
+
+      // Still not found
+      console.log(`Clause "${clauseReference}" not found in document`);
+      setSearchStatus(`Not found - showing page 1`);
+      setTimeout(() => setSearchStatus(null), 3000);
+
+    } catch (err) {
+      console.error('Error searching PDF:', err);
+      setSearchStatus('Search failed');
+      setTimeout(() => setSearchStatus(null), 2000);
+    } finally {
+      setIsSearchingForClause(false);
+    }
+  }, [pdfData, clauseReference, initialPage, evidenceQuote]);
+
+  // Trigger search after PDF loads
+  useEffect(() => {
+    if (pdfData && numPages > 0 && clauseReference && !hasSearchedRef.current) {
+      searchForClauseInPdf();
+    }
+  }, [pdfData, numPages, clauseReference, searchForClauseInPdf]);
+
   const onDocumentLoadError = useCallback((error: Error) => {
     console.error('Error loading PDF:', error);
     setError('Failed to load document. The file may be corrupted or unavailable.');
@@ -335,7 +461,24 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
               {clauseReference}
             </span>
           )}
-          {initialPage && (
+          {searchStatus && (
+            <span className={`text-xs px-2 py-0.5 rounded flex items-center gap-1 ${
+              isSearchingForClause
+                ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300'
+                : searchStatus.includes('Found')
+                  ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+            }`}>
+              {isSearchingForClause && (
+                <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              )}
+              {searchStatus}
+            </span>
+          )}
+          {!searchStatus && initialPage && (
             <span className="text-xs px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded">
               Page {initialPage}
             </span>

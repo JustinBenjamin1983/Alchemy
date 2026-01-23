@@ -58,6 +58,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     Document.id.label("document_id"),
                     Document.original_file_name.label("original_file_name"),
                     Document.type.label("document_type"),
+                    Document.converted_doc_id.label("converted_doc_id"),
                     Folder.path.label("folder_path"),
                     Folder.folder_category.label("folder_category")
                 )
@@ -119,6 +120,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     "id": str(row.document_id) if row.document_id else None,
                     "original_file_name": row.original_file_name or "Cross-document",
                     "type": row.document_type,
+                    "converted_doc_id": str(row.converted_doc_id) if row.converted_doc_id else None,
                     "folder": {
                         "path": row.folder_path or "",
                         "category": row.folder_category or ""

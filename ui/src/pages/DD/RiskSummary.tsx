@@ -24,6 +24,8 @@ import type {
 type DocRef = {
   id: string;
   original_file_name: string;
+  type?: string;
+  converted_doc_id?: string;
   folder: { path: string; category?: string };
 };
 
@@ -56,6 +58,8 @@ type Finding = {
   missing_documents?: string;
   document: DocRef;
   page_number?: number;
+  actual_page_number?: number;
+  clause_reference?: string;
   finding_is_reviewed?: boolean;
   detail?: string;
   category?: string;
@@ -226,7 +230,12 @@ export function RiskSummary() {
         category: f.category || 'Uncategorized',
         document_id: f.document?.id || '',
         document_name: f.document?.original_file_name || 'Unknown Document',
+        document_type: f.document?.type || undefined,
+        converted_doc_id: f.document?.converted_doc_id || undefined,
         page_reference: f.page_number ? `Page ${f.page_number}` : undefined,
+        actual_page_number: f.actual_page_number || undefined,
+        clause_reference: f.clause_reference || undefined,
+        evidence_quote: f.evidence_quote || undefined,
         source_text: f.evidence_quote,
         analysis: f.phrase || f.direct_answer || '',
         chain_of_thought: formatReasoningToChainOfThought(f.reasoning),

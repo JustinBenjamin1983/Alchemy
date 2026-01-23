@@ -212,8 +212,11 @@ export interface ProcessingProgress {
     high: number;
     medium: number;
     low: number;
+    positive: number;
     dealBlockers: number;
     conditionsPrecedent: number;
+    warranties: number;
+    indemnities: number;
   };
 
   // Error state
@@ -248,12 +251,17 @@ export interface SSEEvent<T = unknown> {
 
 // Risk summary for counters
 export interface RiskSummary {
+  total: number;
   critical: number;
   high: number;
   medium: number;
   low: number;
+  positive: number;
   dealBlockers: number;
   conditionsPrecedent: number;
+  warranties: number;
+  indemnities: number;
+  completionPercent: number;
   totalExposure: number;
   currency: string;
 }

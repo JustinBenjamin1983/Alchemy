@@ -222,17 +222,22 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         "readability_error": doc.readability_error
                     })
 
-                # Get finding counts - use status field which contains 'Red', 'Amber', 'Green'
-                # Note: DDProcessAllDev maps severity->status as: high->Red, medium->Amber, low->Green
+                # Get finding counts - MUST match RiskSummary.tsx severity mapping exactly:
+                #   - critical: action_priority = 'critical'
+                #   - high: status = 'Red' AND action_priority != 'critical', OR action_priority = 'high', OR finding_type = 'negative'
+                #   - medium: status = 'Amber'
+                #   - positive: status = 'Green' OR finding_type = 'positive'
+                #   - gap: finding_type = 'gap' OR status = 'Info'
+                #   - low: finding_type IN ('neutral', 'informational')
                 finding_query = text("""
                     SELECT
                         COUNT(*) as total,
-                        COUNT(*) FILTER (WHERE prf.status = 'Red') as critical,
-                        COUNT(*) FILTER (WHERE prf.status = 'Amber' OR prf.status = 'New') as high,
-                        COUNT(*) FILTER (WHERE prf.action_priority = 'medium') as medium,
-                        COUNT(*) FILTER (WHERE prf.status = 'Green' OR prf.status = 'Info') as low,
-                        COUNT(*) FILTER (WHERE prf.deal_impact = 'deal_blocker') as deal_blockers,
-                        COUNT(*) FILTER (WHERE prf.deal_impact = 'condition_precedent' OR prf.requires_action = true) as conditions_precedent
+                        COUNT(*) FILTER (WHERE prf.action_priority = 'critical') as critical,
+                        COUNT(*) FILTER (WHERE (prf.status = 'Red' AND prf.action_priority != 'critical') OR prf.action_priority = 'high' OR (prf.finding_type = 'negative' AND prf.status != 'Red')) as high,
+                        COUNT(*) FILTER (WHERE prf.status = 'Amber') as medium,
+                        COUNT(*) FILTER (WHERE prf.status = 'Green' OR prf.finding_type = 'positive') as positive,
+                        COUNT(*) FILTER (WHERE prf.finding_type = 'gap' OR prf.status = 'Info') as gap,
+                        COUNT(*) FILTER (WHERE prf.finding_type IN ('neutral', 'informational')) as low
                     FROM perspective_risk_finding prf
                     JOIN perspective_risk pr ON prf.perspective_risk_id = pr.id
                     JOIN perspective p ON pr.perspective_id = p.id
@@ -248,8 +253,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     "high": finding_counts_row.high if finding_counts_row else 0,
                     "medium": finding_counts_row.medium if finding_counts_row else 0,
                     "low": finding_counts_row.low if finding_counts_row else 0,
-                    "deal_blockers": finding_counts_row.deal_blockers if finding_counts_row else 0,
-                    "conditions_precedent": finding_counts_row.conditions_precedent if finding_counts_row else 0
+                    "positive": finding_counts_row.positive if finding_counts_row else 0,
+                    "gap": finding_counts_row.gap if finding_counts_row else 0,
+                    "deal_blockers": 0,  # Synthesis data not available without checkpoint
+                    "conditions_precedent": 0,
+                    "warranties": 0,
+                    "indemnities": 0
                 }
 
                 # Determine status based on what we have:
@@ -464,8 +473,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             if actual_run_id:
                 # Filter by run_id for run-specific finding counts
                 # IMPORTANT: This severity mapping MUST match RiskSummary.tsx exactly:
-                #   - critical: status = 'Red'
-                #   - high: finding_type = 'negative' AND status != 'Red'
+                #   - critical: action_priority = 'critical'
+                #   - high: status = 'Red' AND action_priority != 'critical', OR action_priority = 'high', OR finding_type = 'negative'
                 #   - medium: status = 'Amber'
                 #   - positive: status = 'Green' OR finding_type = 'positive'
                 #   - gap: finding_type = 'gap' OR status = 'Info'
@@ -473,8 +482,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 finding_query = text("""
                     SELECT
                         COUNT(*) as total,
-                        COUNT(*) FILTER (WHERE prf.status = 'Red') as critical,
-                        COUNT(*) FILTER (WHERE prf.finding_type = 'negative' AND prf.status != 'Red') as high,
+                        COUNT(*) FILTER (WHERE prf.action_priority = 'critical') as critical,
+                        COUNT(*) FILTER (WHERE (prf.status = 'Red' AND prf.action_priority != 'critical') OR prf.action_priority = 'high' OR (prf.finding_type = 'negative' AND prf.status != 'Red')) as high,
                         COUNT(*) FILTER (WHERE prf.status = 'Amber') as medium,
                         COUNT(*) FILTER (WHERE prf.status = 'Green' OR prf.finding_type = 'positive') as positive,
                         COUNT(*) FILTER (WHERE prf.finding_type = 'gap' OR prf.status = 'Info') as gap,
@@ -501,13 +510,17 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 synthesis_data = synthesis_row.synthesis_data if synthesis_row and synthesis_row.synthesis_data else {}
                 deal_blockers_count = len(synthesis_data.get('deal_blockers', [])) if isinstance(synthesis_data, dict) else 0
                 cps_count = len(synthesis_data.get('conditions_precedent', [])) if isinstance(synthesis_data, dict) else 0
+                # Warranties and indemnities are now separate registers
+                warranties_count = len(synthesis_data.get('warranties_register', [])) if isinstance(synthesis_data, dict) else 0
+                indemnities_count = len(synthesis_data.get('indemnities_register', [])) if isinstance(synthesis_data, dict) else 0
             else:
                 # Legacy: no run_id, count all findings for the DD
+                # IMPORTANT: This severity mapping MUST match RiskSummary.tsx exactly
                 finding_query = text("""
                     SELECT
                         COUNT(*) as total,
-                        COUNT(*) FILTER (WHERE prf.status = 'Red') as critical,
-                        COUNT(*) FILTER (WHERE prf.finding_type = 'negative' AND prf.status != 'Red') as high,
+                        COUNT(*) FILTER (WHERE prf.action_priority = 'critical') as critical,
+                        COUNT(*) FILTER (WHERE (prf.status = 'Red' AND prf.action_priority != 'critical') OR prf.action_priority = 'high' OR (prf.finding_type = 'negative' AND prf.status != 'Red')) as high,
                         COUNT(*) FILTER (WHERE prf.status = 'Amber') as medium,
                         COUNT(*) FILTER (WHERE prf.status = 'Green' OR prf.finding_type = 'positive') as positive,
                         COUNT(*) FILTER (WHERE prf.finding_type = 'gap' OR prf.status = 'Info') as gap,
@@ -522,6 +535,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 finding_counts_row = session.execute(finding_query, {"dd_id": actual_dd_id}).fetchone()
                 deal_blockers_count = 0
                 cps_count = 0
+                warranties_count = 0
+                indemnities_count = 0
 
             finding_counts = {
                 "total": finding_counts_row.total if finding_counts_row else 0,
@@ -532,7 +547,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 "gap": finding_counts_row.gap if finding_counts_row else 0,
                 "low": finding_counts_row.low if finding_counts_row else 0,
                 "deal_blockers": deal_blockers_count,
-                "conditions_precedent": cps_count
+                "conditions_precedent": cps_count,
+                "warranties": warranties_count,
+                "indemnities": indemnities_count
             }
 
             # Get document statuses from the document table via folder
@@ -584,7 +601,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     "gap": get_progress('findings_gap', 0),
                     "low": get_progress('findings_low', 0),
                     "deal_blockers": get_progress('findings_deal_blockers', 0),
-                    "conditions_precedent": get_progress('findings_cps', 0)
+                    "conditions_precedent": get_progress('findings_cps', 0),
+                    "warranties": 0,  # Synthesis happens at the end, so 0 during processing
+                    "indemnities": 0
                 }
             # For completed runs, we already have the correct counts from the database query above
 

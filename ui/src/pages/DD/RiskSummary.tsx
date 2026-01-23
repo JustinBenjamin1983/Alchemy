@@ -54,6 +54,7 @@ type Finding = {
   phrase?: string;
   evidence_quote?: string;
   requires_action?: boolean;
+  action_priority?: "critical" | "high" | "medium" | "low" | "none";
   action_items?: string;
   missing_documents?: string;
   document: DocRef;
@@ -207,9 +208,13 @@ export function RiskSummary() {
   // Transform findings for FindingsExplorer component
   const explorerFindings: ExplorerFinding[] = useMemo(() => {
     return allFindings.map((f, index) => {
+      // Severity mapping - use action_priority to differentiate critical from high
+      // Both critical and high have status='Red', so we need action_priority
       let severity: ExplorerFinding['severity'] = 'medium';
-      if (f.finding_status === 'Red' || f.finding_type === 'negative') {
-        severity = f.finding_status === 'Red' ? 'critical' : 'high';
+      if (f.action_priority === 'critical') {
+        severity = 'critical';
+      } else if (f.finding_status === 'Red' || f.action_priority === 'high' || f.finding_type === 'negative') {
+        severity = 'high';
       } else if (f.finding_status === 'Amber') {
         severity = 'medium';
       } else if (f.finding_status === 'Green' || f.finding_type === 'positive') {

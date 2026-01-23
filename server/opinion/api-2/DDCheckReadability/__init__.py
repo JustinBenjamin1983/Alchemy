@@ -23,7 +23,7 @@ from shared.models import Document, Folder, DueDiligence
 from shared.uploader import read_from_blob_storage, write_to_blob_storage
 from sqlalchemy.orm import joinedload
 
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import letter, landscape
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
@@ -205,15 +205,15 @@ def convert_xlsx_to_pdf(file_contents: bytes, filename: str) -> bytes:
     xlsx_stream = io.BytesIO(file_contents)
     wb = load_workbook(xlsx_stream, read_only=True, data_only=True)
 
-    # Create PDF
+    # Create PDF in landscape orientation for better table display
     pdf_buffer = io.BytesIO()
     pdf_doc = SimpleDocTemplate(
         pdf_buffer,
-        pagesize=letter,
+        pagesize=landscape(letter),
         leftMargin=0.5*inch,
         rightMargin=0.5*inch,
-        topMargin=0.75*inch,
-        bottomMargin=0.75*inch
+        topMargin=0.5*inch,
+        bottomMargin=0.5*inch
     )
     styles = getSampleStyleSheet()
     story = []
@@ -256,26 +256,47 @@ def convert_xlsx_to_pdf(file_contents: bytes, filename: str) -> bytes:
 
         if table_data:
             try:
-                # Calculate column widths based on content
                 num_cols = max(len(row) for row in table_data)
-                col_width = min(1.5*inch, (7.5 * inch) / max(num_cols, 1))
 
-                # Create table with small font
-                small_style = ParagraphStyle('Small', parent=styles['Normal'], fontSize=8)
+                # Limit columns to fit page width - max ~12 columns in landscape
+                max_cols_per_page = 12
+                if num_cols > max_cols_per_page:
+                    num_cols = max_cols_per_page
+
+                # Fixed column width to fill page (10" / num_cols)
+                col_width = (10 * inch) / num_cols
+
+                # Create paragraph style that wraps text within cell width
+                cell_style = ParagraphStyle(
+                    'CellStyle',
+                    parent=styles['Normal'],
+                    fontSize=8,
+                    leading=10,
+                    wordWrap='CJK',  # Enables word wrapping
+                )
+
+                # Format data with Paragraph objects for text wrapping
                 formatted_data = []
-                for row in table_data[:200]:  # Limit to 200 rows for PDF
-                    formatted_row = [Paragraph(str(cell)[:50], small_style) for cell in row]
+                for row in table_data[:300]:  # Limit rows
+                    formatted_row = []
+                    for col_idx, cell in enumerate(row[:num_cols]):
+                        text = str(cell) if cell else ""
+                        # Escape special characters for reportlab
+                        text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                        formatted_row.append(Paragraph(text, cell_style))
                     # Pad row to have consistent columns
                     while len(formatted_row) < num_cols:
-                        formatted_row.append(Paragraph("", small_style))
-                    formatted_data.append(formatted_row[:num_cols])
+                        formatted_row.append(Paragraph("", cell_style))
+                    formatted_data.append(formatted_row)
 
                 pdf_table = Table(formatted_data, colWidths=[col_width] * num_cols)
                 pdf_table.setStyle(TableStyle([
                     ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-                    ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),  # Header row
-                    ('FONTSIZE', (0, 0), (-1, -1), 8),
-                    ('PADDING', (0, 0), (-1, -1), 3),
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+                    ('LEFTPADDING', (0, 0), (-1, -1), 3),
+                    ('RIGHTPADDING', (0, 0), (-1, -1), 3),
+                    ('TOPPADDING', (0, 0), (-1, -1), 2),
+                    ('BOTTOMPADDING', (0, 0), (-1, -1), 2),
                     ('VALIGN', (0, 0), (-1, -1), 'TOP'),
                 ]))
                 story.append(pdf_table)

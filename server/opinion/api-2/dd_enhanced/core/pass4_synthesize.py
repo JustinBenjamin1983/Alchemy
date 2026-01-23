@@ -61,6 +61,8 @@ def run_pass4_synthesis(
         "financial_exposures": {},
         "deal_blockers": [],
         "conditions_precedent": [],
+        "warranties_register": [],
+        "indemnities_register": [],
         "executive_summary": "",
         "recommendations": [],
     }
@@ -108,16 +110,70 @@ def run_pass4_synthesis(
             pass3_results.get("consent_matrix", [])
         )
 
+    # 4.5b Extract warranties register
+    results["warranties_register"] = synthesis.get("warranties_register", [])
+    if not results["warranties_register"]:
+        # Fallback: generate basic warranties from findings with deal_impact = 'warranty_indemnity'
+        warranty_findings = [f for f in all_findings if f.get("deal_impact") == "warranty_indemnity"]
+        results["warranties_register"] = [
+            {
+                "id": f"W-{i+1:03d}",
+                "category": f.get("category", "General"),
+                "description": f.get("description", ""),
+                "detailed_wording": f"The Seller warrants that {f.get('description', '').lower()}",
+                "typical_cap": "50% of purchase price",
+                "survival_period": "3 years",
+                "priority": f.get("severity", "medium"),
+                "dd_trigger": f.get("description", ""),
+                "source_document": f.get("source_document", "")
+            }
+            for i, f in enumerate(warranty_findings[:20])  # Limit to first 20
+        ]
+
+    # 4.5c Extract indemnities register
+    results["indemnities_register"] = synthesis.get("indemnities_register", [])
+    if not results["indemnities_register"]:
+        # Fallback: generate indemnities from critical/high severity findings with quantified exposure
+        indemnity_findings = [
+            f for f in all_findings
+            if f.get("severity") in ("critical", "high")
+            and f.get("financial_exposure", {}).get("amount")
+        ]
+        results["indemnities_register"] = [
+            {
+                "id": f"I-{i+1:03d}",
+                "category": f.get("category", "General"),
+                "description": f.get("description", ""),
+                "detailed_wording": f"The Seller shall indemnify the Buyer against all Losses arising from {f.get('description', '').lower()}",
+                "trigger": f.get("action_required", "Pre-closing issue identified"),
+                "typical_cap": "Quantified amount",
+                "survival_period": "5 years",
+                "priority": f.get("severity", "high"),
+                "escrow_recommendation": None,
+                "quantified_exposure": f.get("financial_exposure", {}),
+                "dd_trigger": f.get("description", ""),
+                "source_document": f.get("source_document", "")
+            }
+            for i, f in enumerate(indemnity_findings[:15])  # Limit to first 15
+        ]
+
     # 4.6 Executive summary
     results["executive_summary"] = synthesis.get("executive_summary", "")
     results["deal_assessment"] = synthesis.get("deal_assessment", {})
     results["recommendations"] = synthesis.get("key_recommendations", [])
 
+    # 4.7 Financial analysis (from synthesis)
+    results["financial_analysis"] = synthesis.get("financial_analysis", {})
+
     if verbose:
         blockers = len(results["deal_blockers"])
         cps = len(results["conditions_precedent"])
+        warranties = len(results["warranties_register"])
+        indemnities = len(results["indemnities_register"])
         print(f"       Deal blockers: {blockers}")
         print(f"       Conditions precedent: {cps}")
+        print(f"       Warranties: {warranties}")
+        print(f"       Indemnities: {indemnities}")
 
     return results
 

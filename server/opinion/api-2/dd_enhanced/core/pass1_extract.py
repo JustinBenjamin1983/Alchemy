@@ -63,6 +63,7 @@ def extract_document(
             "coc_clauses": [],
             "consent_requirements": [],
             "key_parties": [],
+            "document_references": [],  # Phase 1 Enhancement
             "summary": f"Extraction failed: {response.get('error')}"
         }
 
@@ -73,6 +74,7 @@ def extract_document(
         "coc_clauses": response.get("change_of_control_clauses", []),
         "consent_requirements": response.get("consent_requirements", []),
         "key_parties": response.get("parties", []),
+        "document_references": response.get("document_references", []),  # Phase 1 Enhancement
         "summary": response.get("summary", "")
     }
 
@@ -102,6 +104,7 @@ def run_pass1_extraction(
         "consent_requirements": [],
         "parties": [],
         "covenants": [],
+        "document_references": [],  # Phase 1 Enhancement: References to other docs
     }
 
     for i, doc in enumerate(documents, 1):
@@ -143,6 +146,11 @@ def run_pass1_extraction(
         "total_coc_clauses": len(results["coc_clauses"]),
         "total_consent_requirements": len(results["consent_requirements"]),
         "total_covenants": len(results["covenants"]),
+        "total_document_references": len(results["document_references"]),  # Phase 1 Enhancement
+        "critical_document_references": len([
+            r for r in results["document_references"]
+            if r.get("criticality") == "critical"
+        ]),
     }
 
     return results
@@ -185,6 +193,11 @@ def _aggregate_extractions(
         covenant["source_document"] = filename
         results["covenants"].append(covenant)
 
+    # Phase 1 Enhancement: Document References
+    for doc_ref in doc_extraction.get("document_references", []):
+        doc_ref["source_document"] = filename
+        results["document_references"].append(doc_ref)
+
 
 def get_critical_dates(results: Dict[str, Any]) -> List[Dict]:
     """Get dates marked as critical."""
@@ -221,4 +234,100 @@ def get_financial_summary(results: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "total_figures": len(figures),
         "by_type": by_type,
+    }
+
+
+# ============================================================================
+# PHASE 1 ENHANCEMENT: Document Reference Functions
+# ============================================================================
+
+def get_document_references(results: Dict[str, Any]) -> List[Dict]:
+    """Get all document references extracted from Pass 1."""
+    return results.get("document_references", [])
+
+
+def get_critical_document_references(results: Dict[str, Any]) -> List[Dict]:
+    """Get document references marked as critical."""
+    return [
+        ref for ref in results.get("document_references", [])
+        if ref.get("criticality") == "critical"
+    ]
+
+
+def get_document_reference_summary(results: Dict[str, Any]) -> str:
+    """Generate a summary of document references for Pass 3 gap analysis."""
+    doc_refs = results.get("document_references", [])
+    if not doc_refs:
+        return "No document references identified."
+
+    critical = [r for r in doc_refs if r.get("criticality") == "critical"]
+    important = [r for r in doc_refs if r.get("criticality") == "important"]
+    minor = [r for r in doc_refs if r.get("criticality") == "minor"]
+
+    lines = [f"Found {len(doc_refs)} document references:"]
+    lines.append(f"  - {len(critical)} critical (must verify presence)")
+    lines.append(f"  - {len(important)} important")
+    lines.append(f"  - {len(minor)} minor")
+
+    if critical:
+        lines.append("\nCritical referenced documents:")
+        for ref in critical[:10]:  # Limit to top 10
+            doc_name = ref.get("referenced_document", "Unknown")
+            source = ref.get("source_document", "Unknown")
+            context = ref.get("reference_context", "")[:100]
+            lines.append(f"  - \"{doc_name}\" (from {source})")
+            if context:
+                lines.append(f"      Context: {context}")
+
+    return "\n".join(lines)
+
+
+def match_references_to_dataroom(
+    document_references: List[Dict],
+    available_documents: List[Dict]
+) -> Dict[str, Any]:
+    """
+    Match extracted document references against available documents.
+
+    Args:
+        document_references: List of extracted references from Pass 1
+        available_documents: List of documents in the data room (with 'filename' key)
+
+    Returns:
+        Dict with matched and unmatched references
+    """
+    available_names = {doc.get("filename", "").lower() for doc in available_documents}
+
+    matched = []
+    unmatched = []
+
+    for ref in document_references:
+        ref_name = ref.get("referenced_document", "").lower()
+
+        # Simple fuzzy matching - check if any available doc contains keywords
+        found = False
+        for avail_name in available_names:
+            # Check for substantial keyword overlap
+            ref_words = set(ref_name.split())
+            avail_words = set(avail_name.split())
+            overlap = ref_words & avail_words
+
+            # If more than 2 words match, consider it a potential match
+            if len(overlap) >= 2 or ref_name in avail_name or avail_name in ref_name:
+                matched_ref = {**ref, "matched_to": avail_name}
+                matched.append(matched_ref)
+                found = True
+                break
+
+        if not found:
+            unmatched.append(ref)
+
+    return {
+        "matched": matched,
+        "unmatched": unmatched,
+        "total_references": len(document_references),
+        "match_rate": len(matched) / len(document_references) if document_references else 0,
+        "critical_unmatched": [
+            r for r in unmatched if r.get("criticality") == "critical"
+        ],
     }

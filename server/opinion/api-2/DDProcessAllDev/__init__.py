@@ -19,6 +19,9 @@ RISK_ANALYSIS_PROMPT = """You are a legal due diligence expert analyzing documen
 
 Analyze the following document and identify potential risks, issues, and key findings relevant to due diligence.
 
+IMPORTANT: The document text contains [PAGE X] markers indicating page boundaries.
+For EACH finding, you MUST extract the actual page number from these markers.
+
 Document: {filename}
 Content:
 {content}
@@ -28,8 +31,9 @@ For each risk found, provide:
 2. Severity: High, Medium, or Low
 3. Description: Brief description of the risk
 4. Specific Finding: The exact clause, provision, or issue found
-5. Page/Section Reference: Where in the document this was found
-6. Recommendation: Suggested action or further investigation needed
+5. Page Number: The ACTUAL page number (integer) from the [PAGE X] markers where this was found
+6. Clause Reference: The clause/section reference (e.g., "Clause 8.2.5")
+7. Recommendation: Suggested action or further investigation needed
 
 Respond in JSON format:
 {{
@@ -40,7 +44,8 @@ Respond in JSON format:
             "severity": "High|Medium|Low",
             "description": "risk description",
             "finding": "specific text or clause that raises concern",
-            "reference": "page/section reference",
+            "actual_page_number": 1,
+            "clause_reference": "Clause X.X",
             "recommendation": "suggested action"
         }}
     ],
@@ -83,20 +88,24 @@ def extract_text_from_file_with_extension(file_path: str, extension: str) -> str
             try:
                 import fitz  # PyMuPDF
                 doc = fitz.open(file_path)
-                text = ""
-                for page in doc:
-                    text += page.get_text()
+                text_parts = []
+                for page_num, page in enumerate(doc, start=1):
+                    page_text = page.get_text()
+                    if page_text.strip():
+                        text_parts.append(f"\n[PAGE {page_num}]\n{page_text}")
                 doc.close()
-                return text
+                return "".join(text_parts)
             except ImportError:
                 logging.warning("PyMuPDF not installed, trying pdfplumber")
                 try:
                     import pdfplumber
                     with pdfplumber.open(file_path) as pdf:
-                        text = ""
-                        for page in pdf.pages:
-                            text += page.extract_text() or ""
-                        return text
+                        text_parts = []
+                        for page_num, page in enumerate(pdf.pages, start=1):
+                            page_text = page.extract_text() or ""
+                            if page_text.strip():
+                                text_parts.append(f"\n[PAGE {page_num}]\n{page_text}")
+                        return "".join(text_parts)
                 except ImportError:
                     logging.error("No PDF library available")
                     return f"[PDF file - {os.path.basename(file_path)}]"
@@ -357,8 +366,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             session.flush()
 
                         # Map severity to status
+                        # critical and high both map to Red, medium to Amber, low to Green
                         severity = risk_data.get('severity', 'medium').lower()
-                        status_map = {'high': 'Red', 'medium': 'Amber', 'low': 'Green'}
+                        status_map = {'critical': 'Red', 'high': 'Red', 'medium': 'Amber', 'low': 'Green'}
                         finding_status = status_map.get(severity, 'Amber')
 
                         # Build the phrase from finding + recommendation
@@ -370,12 +380,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             perspective_risk_id=risk.id,
                             document_id=doc.id,
                             phrase=phrase or "See document for details",
-                            page_number=risk_data.get('reference', 'N/A'),
+                            page_number=risk_data.get('clause_reference') or risk_data.get('reference', 'N/A'),
+                            actual_page_number=risk_data.get('actual_page_number'),  # Integer page from [PAGE X] markers
+                            clause_reference=risk_data.get('clause_reference'),
                             status=finding_status,
                             finding_type='negative',
                             confidence_score=0.8,
-                            requires_action=severity == 'high',
-                            action_priority='high' if severity == 'high' else ('medium' if severity == 'medium' else 'low'),
+                            requires_action=severity in ('critical', 'high'),
+                            action_priority=severity if severity in ('critical', 'high', 'medium', 'low') else 'medium',
                             direct_answer=description,
                             evidence_quote=finding_text
                         )

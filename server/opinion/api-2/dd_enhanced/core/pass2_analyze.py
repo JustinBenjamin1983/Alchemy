@@ -48,7 +48,8 @@ def analyze_document(
     client: ClaudeClient,
     transaction_context: str = DEFAULT_TRANSACTION_CONTEXT,
     prioritized_questions: Optional[List[Dict]] = None,
-    question_loader: Optional[QuestionLoader] = None
+    question_loader: Optional[QuestionLoader] = None,
+    return_qa_data: bool = False
 ) -> List[Dict]:
     """
     Analyze a single document for risks and issues.
@@ -61,9 +62,10 @@ def analyze_document(
         transaction_context: Context about the transaction
         prioritized_questions: Tier 1-3 questions from question_prioritizer (optional)
         question_loader: QuestionLoader for folder-specific questions (Phase 3)
+        return_qa_data: If True, returns dict with 'findings' and 'questions_answered'
 
     Returns:
-        List of findings from this document
+        List of findings from this document (or dict if return_qa_data=True)
     """
     filename = doc.get("filename", "unknown")
     doc_type = doc.get("doc_type", "")
@@ -114,10 +116,13 @@ def analyze_document(
     )
 
     if "error" in response:
-        return []
+        return {"findings": [], "questions_answered": []} if return_qa_data else []
 
     # Process findings (risks/issues)
     findings = response.get("findings", [])
+
+    # Extract Q&A data from response
+    questions_answered_raw = response.get("questions_answered", [])
     for finding in findings:
         finding["source_document"] = filename
         finding["pass"] = 2
@@ -150,6 +155,23 @@ def analyze_document(
             positive_finding["folder_category"] = folder_category
         findings.append(positive_finding)
 
+    # Enrich Q&A data with source document info
+    questions_answered = []
+    for qa in questions_answered_raw:
+        questions_answered.append({
+            "question": qa.get("question", ""),
+            "answer": qa.get("answer", ""),
+            "finding_refs": qa.get("finding_refs", []),
+            "source_document": filename,
+            "folder_category": folder_category,
+            "document_id": doc.get("id")
+        })
+
+    if return_qa_data:
+        return {
+            "findings": findings,
+            "questions_answered": questions_answered
+        }
     return findings
 
 

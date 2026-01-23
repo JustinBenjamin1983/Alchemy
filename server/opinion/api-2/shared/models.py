@@ -38,6 +38,55 @@ DealImpactEnum = ENUM(
     create_type=True
 )
 
+# Action Category classification for findings (Phase 1 Enhancement)
+ActionCategoryEnum = ENUM(
+    'terminal', 'valuation', 'indemnity', 'warranty', 'information', 'condition_precedent',
+    name='action_category_enum',
+    create_type=True
+)
+
+# Materiality Classification (Phase 1 Enhancement)
+MaterialityClassificationEnum = ENUM(
+    'material', 'potentially_material', 'likely_immaterial', 'unquantified',
+    name='materiality_classification_enum',
+    create_type=True
+)
+
+# Validation Checkpoint types
+CheckpointTypeEnum = ENUM(
+    'missing_docs', 'post_analysis', 'entity_confirmation',
+    name='checkpoint_type_enum',
+    create_type=True
+)
+
+# Validation Checkpoint status
+CheckpointStatusEnum = ENUM(
+    'pending', 'awaiting_user_input', 'completed', 'skipped',
+    name='checkpoint_status_enum',
+    create_type=True
+)
+
+# Entity relationship types
+EntityRelationshipEnum = ENUM(
+    'target', 'parent', 'subsidiary', 'related_party', 'counterparty', 'unknown',
+    name='entity_relationship_enum',
+    create_type=True
+)
+
+# Document reference types
+ReferenceTypeEnum = ENUM(
+    'agreement', 'legal_opinion', 'report', 'certificate', 'schedule', 'correspondence',
+    name='reference_type_enum',
+    create_type=True
+)
+
+# Document reference criticality
+ReferenceCriticalityEnum = ENUM(
+    'critical', 'important', 'minor',
+    name='reference_criticality_enum',
+    create_type=True
+)
+
 class BaseModel(Base):
     __abstract__ = True
 
@@ -281,6 +330,35 @@ class PerspectiveRiskFinding(BaseModel):
     # Chain of Thought reasoning - JSON object with reasoning steps
     # Format: {"step_1_identification": "...", "step_2_context": "...", "step_3_transaction_impact": "...", ...}
     reasoning = Column(Text, nullable=True)
+
+    # ===== PHASE 1 ENHANCEMENTS =====
+
+    # Action Category (Task 4) - How to resolve this finding
+    action_category = Column(String(50), nullable=True)  # terminal|valuation|indemnity|warranty|information|condition_precedent
+    resolution_mechanism = Column(String(100), nullable=True)  # suspensive_condition|price_adjustment|indemnity|warranty|disclosure|walk_away
+    resolution_responsible_party = Column(String(50), nullable=True)  # seller|buyer|both|third_party
+    resolution_timeline = Column(String(50), nullable=True)  # before_signing|between_sign_and_close|post_closing|ongoing
+    resolution_cost = Column(Float, nullable=True)
+    resolution_cost_confidence = Column(Float, nullable=True)
+    resolution_description = Column(Text, nullable=True)  # Detailed resolution recommendation
+
+    # Materiality (Task 3) - Relative importance based on deal value
+    materiality_classification = Column(String(50), nullable=True)  # material|potentially_material|likely_immaterial|unquantified
+    materiality_ratio = Column(Float, nullable=True)  # Ratio to transaction value (e.g., 0.05 = 5%)
+    materiality_threshold = Column(String(200), nullable=True)  # Threshold description applied
+    materiality_qualitative_override = Column(String(200), nullable=True)  # Qualitative factors overriding quantitative
+
+    # Confidence Calibration (Task 6) - Granular confidence scores
+    confidence_finding_exists = Column(Float, nullable=True)  # 0.0-1.0: Confidence the issue exists
+    confidence_severity = Column(Float, nullable=True)  # 0.0-1.0: Confidence severity is correct
+    confidence_amount = Column(Float, nullable=True)  # 0.0-1.0: Confidence financial amount is correct
+    confidence_basis = Column(Text, nullable=True)  # Explanation of confidence assessment
+
+    # Statutory Reference (Task 2) - Legal citation framework
+    statutory_act = Column(String(200), nullable=True)  # E.g., "Mineral and Petroleum Resources Development Act 28 of 2002"
+    statutory_section = Column(String(100), nullable=True)  # E.g., "Section 11"
+    statutory_consequence = Column(Text, nullable=True)  # What happens if provision violated
+    regulatory_body = Column(String(200), nullable=True)  # E.g., "Department of Mineral Resources and Energy"
 
     # Relationships
     perspective_risk = relationship("PerspectiveRisk", backref="findings")
@@ -551,3 +629,149 @@ class DDOrganisationStatus(BaseModel):
 
     # Relationships
     dd = relationship("DueDiligence", backref="organisation_status")
+
+
+# ============================================================================
+# PHASE 1 ENHANCEMENTS: New Tables for Human-in-the-Loop Features
+# ============================================================================
+
+class DDValidationCheckpoint(BaseModel):
+    """
+    Human-in-the-loop validation checkpoints.
+
+    Checkpoint Types:
+    - 'missing_docs': After classification, validates required documents are present
+    - 'post_analysis': After Pass 2, combined validation wizard (4 steps)
+    - 'entity_confirmation': Confirms entity relationships when ambiguous
+    """
+    __tablename__ = "dd_validation_checkpoint"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    dd_id = Column(UUID(as_uuid=True), ForeignKey("due_diligence.id", ondelete="CASCADE"), nullable=False)
+    run_id = Column(UUID(as_uuid=True), ForeignKey("dd_analysis_run.id", ondelete="CASCADE"), nullable=True)
+
+    checkpoint_type = Column(String(50), nullable=False)  # 'missing_docs' | 'post_analysis' | 'entity_confirmation'
+    status = Column(String(50), default="pending")  # 'pending' | 'awaiting_user_input' | 'completed' | 'skipped'
+
+    # AI-generated content for validation
+    preliminary_summary = Column(Text, nullable=True)  # AI-generated summary of findings/understanding
+    questions = Column(JSON, nullable=True)  # [{question, context, options, user_answer, correction}]
+    missing_docs = Column(JSON, nullable=True)  # [{doc_type, importance, reason, user_response}]
+    financial_confirmations = Column(JSON, nullable=True)  # [{metric, extracted_value, confirmed_value, source}]
+
+    # User responses
+    user_responses = Column(JSON, nullable=True)  # Freeform user responses
+    uploaded_doc_ids = Column(JSON, nullable=True)  # Document IDs uploaded during checkpoint
+    manual_data_inputs = Column(JSON, nullable=True)  # Manual data entered by user (e.g., EBITDA)
+
+    # Timestamps
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    completed_at = Column(DateTime, nullable=True)
+
+    # Relationships
+    dd = relationship("DueDiligence", backref="validation_checkpoints")
+    run = relationship("DDAnalysisRun", backref="validation_checkpoints")
+
+
+class DDReportVersion(BaseModel):
+    """
+    Report versioning for refinement loop.
+
+    Enables iterative report improvement through AI-driven refinements
+    with full version history and diff tracking.
+    """
+    __tablename__ = "dd_report_version"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    run_id = Column(UUID(as_uuid=True), ForeignKey("dd_analysis_run.id", ondelete="CASCADE"), nullable=False)
+
+    version = Column(Integer, nullable=False)  # Sequential version number (1, 2, 3...)
+    content = Column(JSON, nullable=False)  # Full report content (synthesis_data structure)
+    refinement_prompt = Column(Text, nullable=True)  # User's refinement request that led to this version
+    changes = Column(JSON, nullable=True)  # [{section, change_type, old_text, new_text, reasoning}]
+
+    # Version metadata
+    is_current = Column(Boolean, default=True)  # Is this the current/active version
+    change_summary = Column(Text, nullable=True)  # AI-generated summary of changes from previous version
+
+    # Timestamps
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_by = Column(String(200), nullable=True)  # User email who triggered refinement
+
+    # Relationships
+    run = relationship("DDAnalysisRun", backref="report_versions")
+
+
+class DDEntityMap(BaseModel):
+    """
+    Entity mapping for transaction parties.
+
+    Maps all entities mentioned in documents to their relationship
+    with the target entity. Supports entity confirmation checkpoint
+    when relationships are ambiguous.
+    """
+    __tablename__ = "dd_entity_map"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    dd_id = Column(UUID(as_uuid=True), ForeignKey("due_diligence.id", ondelete="CASCADE"), nullable=False)
+    run_id = Column(UUID(as_uuid=True), ForeignKey("dd_analysis_run.id", ondelete="CASCADE"), nullable=True)
+
+    # Entity identification
+    entity_name = Column(String(500), nullable=False)  # Full legal name of entity
+    registration_number = Column(String(100), nullable=True)  # Company registration number if found
+
+    # Relationship classification
+    relationship_to_target = Column(String(50), nullable=False)  # target|parent|subsidiary|related_party|counterparty|unknown
+    relationship_detail = Column(Text, nullable=True)  # Detailed description of relationship
+
+    # Confidence and evidence
+    confidence = Column(Float, default=0.5)  # 0.0-1.0 confidence in classification
+    documents_appearing_in = Column(JSON, nullable=True)  # Array of document IDs where entity appears
+    evidence = Column(Text, nullable=True)  # Evidence supporting the relationship classification
+
+    # Human confirmation
+    requires_human_confirmation = Column(Boolean, default=False)  # Flag for checkpoint trigger
+    human_confirmed = Column(Boolean, default=False)  # Whether human has confirmed
+    human_confirmation_value = Column(String(50), nullable=True)  # Human-provided relationship if different
+
+    # Timestamps
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    # Relationships
+    dd = relationship("DueDiligence", backref="entity_maps")
+    run = relationship("DDAnalysisRun", backref="entity_maps")
+
+
+class DDDocumentReference(BaseModel):
+    """
+    References to other documents extracted during Pass 1.
+
+    Tracks documents mentioned in analyzed documents that may or may not
+    be present in the data room. Enables gap analysis for missing critical docs.
+    """
+    __tablename__ = "dd_document_reference"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    run_id = Column(UUID(as_uuid=True), ForeignKey("dd_analysis_run.id", ondelete="CASCADE"), nullable=False)
+    source_document_id = Column(UUID(as_uuid=True), ForeignKey("document.id", ondelete="CASCADE"), nullable=False)
+
+    # Reference details
+    referenced_document_name = Column(String(500), nullable=False)  # Name/description of referenced document
+    reference_context = Column(Text, nullable=True)  # Why/how the document is referenced
+    reference_type = Column(String(50), nullable=True)  # agreement|legal_opinion|report|certificate|schedule|correspondence
+    criticality = Column(String(20), nullable=True)  # critical|important|minor
+    clause_reference = Column(String(200), nullable=True)  # Where in source document the reference appears
+    quote = Column(Text, nullable=True)  # Exact quote mentioning the reference
+
+    # Matching status
+    found_in_data_room = Column(Boolean, nullable=True)  # Whether referenced doc is in data room
+    matched_document_id = Column(UUID(as_uuid=True), ForeignKey("document.id", ondelete="SET NULL"), nullable=True)
+
+    # Timestamps
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    # Relationships
+    run = relationship("DDAnalysisRun", backref="document_references")
+    source_document = relationship("Document", foreign_keys=[source_document_id], backref="outgoing_references")
+    matched_document = relationship("Document", foreign_keys=[matched_document_id], backref="incoming_references")

@@ -17,8 +17,28 @@ import {
   SEVERITY_ORDER,
   DDCategory,
   DD_CATEGORY_CONFIG,
-  getDDCategoryForFinding
+  getDDCategoryForFinding,
+  ActionCategory,
+  MaterialityClassification
 } from './types';
+
+// Action Category icons for list view (compact)
+const ACTION_CATEGORY_ICONS: Record<ActionCategory, { icon: string; title: string }> = {
+  terminal: { icon: '🛑', title: 'Deal Blocker' },
+  valuation: { icon: '📊', title: 'Valuation Impact' },
+  indemnity: { icon: '🔒', title: 'Indemnity Required' },
+  warranty: { icon: '📋', title: 'Warranty Coverage' },
+  information: { icon: '❓', title: 'More Info Needed' },
+  condition_precedent: { icon: '⏳', title: 'Condition Precedent' }
+};
+
+// Materiality colors for list view
+const MATERIALITY_COLORS: Record<MaterialityClassification, string> = {
+  material: 'bg-red-500',
+  potentially_material: 'bg-orange-500',
+  likely_immaterial: 'bg-green-500',
+  unquantified: 'bg-gray-400'
+};
 
 // Search icon
 const SearchIcon = () => (
@@ -187,9 +207,9 @@ const SeverityGroup: React.FC<SeverityGroupProps> = ({
           {findings.map((finding) => (
             <div
               key={finding.id}
-              className={`group flex items-start gap-2 px-4 py-2.5 border-l-3 transition-all cursor-pointer ${
+              className={`group flex items-start gap-2 px-4 py-2.5 border-l-4 transition-all cursor-pointer ${
                 selectedFindingId === finding.id
-                  ? `${config.borderColor} bg-white dark:bg-gray-800 shadow-sm`
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/40 shadow-md ring-1 ring-blue-200 dark:ring-blue-800'
                   : focusedFindingId === finding.id
                   ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/30'
                   : 'border-transparent hover:bg-gray-100 dark:hover:bg-gray-800/50 hover:border-gray-300'
@@ -259,6 +279,42 @@ const SeverityGroup: React.FC<SeverityGroupProps> = ({
                     <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-xs bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 rounded">
                       <span className="text-[10px]">🔗</span>
                       Cross-doc
+                    </span>
+                  )}
+                  {/* Action Category Icon */}
+                  {finding.action_category && ACTION_CATEGORY_ICONS[finding.action_category] && (
+                    <span
+                      className="inline-flex items-center px-1.5 py-0.5 text-xs rounded bg-gray-100 dark:bg-gray-700"
+                      title={ACTION_CATEGORY_ICONS[finding.action_category].title}
+                    >
+                      {ACTION_CATEGORY_ICONS[finding.action_category].icon}
+                    </span>
+                  )}
+                  {/* Materiality Indicator */}
+                  {finding.materiality?.classification && MATERIALITY_COLORS[finding.materiality.classification] && (
+                    <span
+                      className="inline-flex items-center gap-1 px-1.5 py-0.5 text-xs rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+                      title={`Materiality: ${finding.materiality.classification.replace(/_/g, ' ')}`}
+                    >
+                      <span className={`w-2 h-2 rounded-full ${MATERIALITY_COLORS[finding.materiality.classification]}`}></span>
+                      {finding.materiality.ratio_to_deal !== undefined && (
+                        <span className="text-[10px]">{(finding.materiality.ratio_to_deal * 100).toFixed(0)}%</span>
+                      )}
+                    </span>
+                  )}
+                  {/* Confidence Indicator */}
+                  {finding.confidence?.overall !== undefined && (
+                    <span
+                      className={`inline-flex items-center px-1.5 py-0.5 text-[10px] rounded ${
+                        finding.confidence.overall >= 0.7
+                          ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                          : finding.confidence.overall >= 0.5
+                          ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
+                          : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                      }`}
+                      title={`AI Confidence: ${Math.round(finding.confidence.overall * 100)}%`}
+                    >
+                      {Math.round(finding.confidence.overall * 100)}%
                     </span>
                   )}
                 </div>

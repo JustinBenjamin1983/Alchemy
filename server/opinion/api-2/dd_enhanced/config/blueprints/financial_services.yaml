@@ -1034,3 +1034,317 @@ cot_questions:
   - Are mandate constraints being complied with?
   - What is fee structure and revenue sustainability?
   - Are there key person dependencies in investment team?
+
+# ============================================================================
+# STATUTORY FRAMEWORK
+# Detailed statutory citation framework for financial services regulatory findings
+# ============================================================================
+statutory_framework:
+  primary_legislation:
+    - act: "Financial Sector Regulation Act 9 of 2017"
+      acronym: "FSRA"
+      regulatory_body: "Prudential Authority (PA) / Financial Sector Conduct Authority (FSCA)"
+      key_sections:
+        - section: "Section 108"
+          description: "Licensing requirements"
+          penalties:
+            criminal: "Fine or imprisonment"
+            administrative: "License suspension or revocation"
+          criticality: critical
+        - section: "Section 135"
+          description: "Administrative penalties"
+          penalties:
+            administrative: "Fine up to R10 million per contravention"
+          criticality: critical
+        - section: "Section 144"
+          description: "Significant owner approval"
+          penalties:
+            administrative: "PA approval required for ownership changes"
+          criticality: critical
+        - section: "Section 153"
+          description: "Fit and proper requirements"
+          penalties:
+            administrative: "Debarment, disqualification"
+          criticality: critical
+
+    - act: "Financial Advisory and Intermediary Services Act 37 of 2002"
+      acronym: "FAIS"
+      regulatory_body: "FSCA"
+      key_sections:
+        - section: "Section 7"
+          description: "FSP licensing requirement"
+          penalties:
+            criminal: "Fine up to R10 million or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 8"
+          description: "Categories of licenses"
+          penalties:
+            administrative: "License conditions"
+          criticality: high
+        - section: "Section 13"
+          description: "Fit and proper requirements"
+          penalties:
+            administrative: "License withdrawal, debarment"
+          criticality: critical
+        - section: "Section 14"
+          description: "Approval of representatives"
+          penalties:
+            administrative: "Representative debarment"
+          criticality: high
+        - section: "Section 16"
+          description: "General duties of provider"
+          penalties:
+            administrative: "Enforcement action, compensation"
+          criticality: critical
+
+    - act: "Insurance Act 18 of 2017"
+      acronym: "Insurance Act"
+      regulatory_body: "Prudential Authority"
+      key_sections:
+        - section: "Section 8"
+          description: "Insurance license requirements"
+          penalties:
+            criminal: "Fine up to R50 million or imprisonment up to 15 years"
+          criticality: critical
+        - section: "Section 26"
+          description: "Governance requirements"
+          penalties:
+            administrative: "License conditions, suspension"
+          criticality: critical
+        - section: "Section 27"
+          description: "Risk management requirements"
+          penalties:
+            administrative: "Supervisory intervention"
+          criticality: critical
+        - section: "Section 28"
+          description: "Internal audit and actuarial function"
+          penalties:
+            administrative: "Compliance orders"
+          criticality: high
+        - section: "Section 39"
+          description: "Capital requirements"
+          penalties:
+            administrative: "Curatorship, license suspension"
+          criticality: critical
+        - section: "Section 54"
+          description: "Significant owner approval"
+          penalties:
+            administrative: "PA approval required"
+          criticality: critical
+
+    - act: "Long-term Insurance Act 52 of 1998"
+      acronym: "LTIA"
+      regulatory_body: "Prudential Authority"
+      key_sections:
+        - section: "Section 8"
+          description: "Registration requirements"
+          penalties:
+            criminal: "Fine or imprisonment"
+          criticality: critical
+        - section: "Section 29"
+          description: "Actuarial valuation"
+          penalties:
+            administrative: "Compliance orders"
+          criticality: high
+
+    - act: "Short-term Insurance Act 53 of 1998"
+      acronym: "STIA"
+      regulatory_body: "Prudential Authority"
+      key_sections:
+        - section: "Section 7"
+          description: "Registration requirements"
+          penalties:
+            criminal: "Fine or imprisonment"
+          criticality: critical
+        - section: "Section 28"
+          description: "Technical provisions"
+          penalties:
+            administrative: "Compliance orders"
+          criticality: high
+
+    - act: "Collective Investment Schemes Control Act 45 of 2002"
+      acronym: "CISCA"
+      regulatory_body: "FSCA"
+      key_sections:
+        - section: "Section 4"
+          description: "Registration of CIS manager"
+          penalties:
+            criminal: "Fine or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 5"
+          description: "Approval of manager"
+          penalties:
+            administrative: "Withdrawal of approval"
+          criticality: critical
+        - section: "Section 42"
+          description: "Investment restrictions"
+          penalties:
+            administrative: "Compliance notice, manager removal"
+          criticality: high
+        - section: "Section 65"
+          description: "Trustee/custodian requirements"
+          penalties:
+            administrative: "Replacement of trustee"
+          criticality: high
+
+    - act: "Financial Intelligence Centre Act 38 of 2001"
+      acronym: "FICA"
+      regulatory_body: "Financial Intelligence Centre (FIC)"
+      key_sections:
+        - section: "Section 21"
+          description: "Customer due diligence"
+          penalties:
+            administrative: "Fine up to R50 million"
+            criminal: "Imprisonment up to 15 years"
+          criticality: critical
+        - section: "Section 21A"
+          description: "Risk management and compliance programme"
+          penalties:
+            administrative: "Directive, fine"
+          criticality: critical
+        - section: "Section 28"
+          description: "Record keeping"
+          penalties:
+            administrative: "Fine up to R10 million"
+          criticality: high
+        - section: "Section 29"
+          description: "Suspicious transaction reporting"
+          penalties:
+            criminal: "Fine up to R100 million or imprisonment up to 15 years"
+          criticality: critical
+
+    - act: "Pension Funds Act 24 of 1956"
+      acronym: "PFA"
+      regulatory_body: "FSCA"
+      key_sections:
+        - section: "Section 4"
+          description: "Registration of pension fund"
+          penalties:
+            administrative: "Curatorship, deregistration"
+          criticality: critical
+        - section: "Section 7A"
+          description: "Board of fund composition"
+          penalties:
+            administrative: "Compliance notice"
+          criticality: high
+        - section: "Section 13A"
+          description: "Payment of contributions"
+          penalties:
+            criminal: "Fine or imprisonment"
+            civil: "Directors personally liable"
+          criticality: critical
+        - section: "Section 36"
+          description: "Investment rules (Regulation 28)"
+          penalties:
+            administrative: "Compliance notice, reporting to PA"
+          criticality: critical
+
+    - act: "Financial Markets Act 19 of 2012"
+      acronym: "FMA"
+      regulatory_body: "FSCA"
+      key_sections:
+        - section: "Section 78"
+          description: "Market manipulation"
+          penalties:
+            criminal: "Fine up to R50 million or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 82"
+          description: "Insider trading"
+          penalties:
+            criminal: "Fine up to R50 million or imprisonment up to 10 years"
+          criticality: critical
+
+    - act: "National Credit Act 34 of 2005"
+      acronym: "NCA"
+      regulatory_body: "National Credit Regulator (NCR)"
+      key_sections:
+        - section: "Section 40"
+          description: "Credit provider registration"
+          penalties:
+            criminal: "Fine up to R1 million or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 81"
+          description: "Reckless credit"
+          penalties:
+            civil: "Agreement may be set aside"
+            administrative: "Registration cancellation"
+          criticality: critical
+
+    - act: "Consumer Protection Act 68 of 2008"
+      acronym: "CPA"
+      regulatory_body: "National Consumer Commission"
+      key_sections:
+        - section: "Section 48"
+          description: "Unfair contract terms"
+          penalties:
+            civil: "Terms void"
+          criticality: high
+        - section: "Section 54"
+          description: "Consumer's right to quality services"
+          penalties:
+            civil: "Refund, redo service"
+          criticality: high
+
+  sector_specific:
+    prudential_standards:
+      name: "Prudential Standards"
+      regulatory_body: "Prudential Authority"
+      key_requirements:
+        - requirement: "Capital Adequacy"
+          description: "Risk-based capital requirements"
+          consequence: "Supervisory ladder intervention"
+        - requirement: "Liquidity requirements"
+          description: "Liquidity coverage and funding ratios"
+          consequence: "Supervisory restrictions"
+        - requirement: "Governance standards"
+          description: "Board composition, risk management, internal audit"
+          consequence: "Compliance orders"
+
+    conduct_standards:
+      name: "Conduct Standards"
+      regulatory_body: "FSCA"
+      key_requirements:
+        - requirement: "Treating Customers Fairly (TCF)"
+          description: "6 TCF outcomes"
+          consequence: "Enforcement action, license conditions"
+        - requirement: "Product governance"
+          description: "Product design and distribution"
+          consequence: "Product intervention powers"
+        - requirement: "Conflict of interest management"
+          description: "COI policy and disclosure"
+          consequence: "Enforcement action"
+
+    fit_and_proper:
+      name: "Fit and Proper Requirements"
+      regulatory_body: "PA / FSCA"
+      key_requirements:
+        - requirement: "Honesty and integrity"
+          description: "Criminal record, regulatory history"
+          consequence: "Disqualification, debarment"
+        - requirement: "Competence"
+          description: "Qualifications, experience"
+          consequence: "Conditions on approval"
+        - requirement: "Financial soundness"
+          description: "Personal financial position"
+          consequence: "Conditions or refusal"
+
+  transaction_triggers:
+    change_of_control:
+      - statute: "FSRA Section 144"
+        trigger: "Acquisition of significant ownership (>15%)"
+        consequence: "PA approval required"
+        timeline: "Application 60 days before, 60-90 days process"
+      - statute: "Insurance Act Section 54"
+        trigger: "Change of control of insurer"
+        consequence: "PA prior approval required"
+        timeline: "90-180 days"
+    license_transfer:
+      - statute: "FAIS Section 7"
+        trigger: "Transfer of FSP business"
+        consequence: "New license application required"
+        timeline: "60-90 days"
+    material_changes:
+      - statute: "FSRA Section 108"
+        trigger: "Material change in business"
+        consequence: "Notification to Authority"
+        processing_time: "30 days prior notice"

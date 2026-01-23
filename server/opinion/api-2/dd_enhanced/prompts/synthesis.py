@@ -89,6 +89,172 @@ Return JSON:
         "overall_risk_rating": "high|medium|low"
     }},
 
+    "financial_analysis": {{
+        "overview": "2-3 paragraph executive financial summary covering: (1) Overall financial health assessment, (2) Key trends and their implications, (3) Major risks/red flags identified, (4) Quality of earnings concerns if any",
+
+        "profitability_performance": {{
+            "margin_analysis": {{
+                "gross_margin": {{"current": number, "prior": number, "trend": "improving|declining|stable"}},
+                "operating_margin": {{"current": number, "prior": number, "trend": "improving|declining|stable"}},
+                "ebitda_margin": {{"current": number, "prior": number, "trend": "improving|declining|stable"}},
+                "net_margin": {{"current": number, "prior": number, "trend": "improving|declining|stable"}},
+                "notes": "Margin analysis observations - flag if declining >5% or significantly below peers"
+            }},
+            "return_metrics": {{
+                "roe": number or null,
+                "roa": number or null,
+                "roic": number or null,
+                "notes": "Return metrics assessment - high ROE from leverage vs operations = different risk"
+            }},
+            "revenue_quality": {{
+                "recurring_vs_one_off_pct": number or null,
+                "customer_concentration": {{"top_customer_pct": number, "top_5_customers_pct": number, "flag": "none|warning|critical"}},
+                "geographic_concentration": "Description of geographic revenue mix",
+                "contract_backlog": number or null,
+                "notes": ">20% from single customer = key-man risk; high one-off revenue inflates current period"
+            }}
+        }},
+
+        "liquidity_solvency": {{
+            "short_term_liquidity": {{
+                "current_ratio": number or null,
+                "quick_ratio": number or null,
+                "cash_ratio": number or null,
+                "net_working_capital": number or null,
+                "notes": "Current ratio <1.0 signals potential distress; quick ratio critical for manufacturing"
+            }},
+            "leverage_debt_service": {{
+                "debt_to_equity": number or null,
+                "net_debt_to_ebitda": number or null,
+                "interest_coverage": number or null,
+                "debt_maturity_profile": "Description of maturity schedule - wall of maturities = refinancing risk",
+                "covenant_compliance": {{"in_compliance": true or false, "headroom_pct": number, "historical_breaches": "none|waived|default"}},
+                "notes": "Net Debt/EBITDA >3.5x triggers concerns; Interest coverage <2.0x is distressed"
+            }}
+        }},
+
+        "cash_flow_health": {{
+            "operating_cash_flow": {{
+                "ocf_current": number or null,
+                "ocf_prior": number or null,
+                "ocf_vs_net_income": "Aligned with NI|Gap - investigate|Significant gap - earnings quality concern",
+                "notes": "Persistent OCF vs NI gap = earnings quality concern"
+            }},
+            "cash_conversion_cycle": {{
+                "dso": number or null,
+                "dio": number or null,
+                "dpo": number or null,
+                "total_ccc_days": number or null,
+                "ccc_trend": "improving|stable|deteriorating",
+                "notes": "Rising DSO may indicate collection issues; Rising DIO signals obsolescence risk"
+            }},
+            "free_cash_flow": {{
+                "fcf_current": number or null,
+                "capex_maintenance": number or null,
+                "capex_growth": number or null,
+                "dividend_coverage_ratio": number or null,
+                "notes": "Negative FCF with positive NI = red flag; Underspending maintenance = asset quality erosion"
+            }}
+        }},
+
+        "quality_of_earnings": {{
+            "revenue_recognition": {{
+                "policy_assessment": "Conservative|Appropriate|Aggressive",
+                "accrued_unbilled_revenue_trend": "Stable|Growing|Growing faster than billed AR - concern",
+                "deferred_revenue_trend": "Stable|Growing|Declining - may signal churn",
+                "notes": "Aggressive POC recognition, bill-and-hold arrangements"
+            }},
+            "expense_capitalisation": {{
+                "capitalised_costs_concern": true or false,
+                "rd_capitalisation_rate": number or null,
+                "depreciation_policy": "Conservative|Industry standard|Aggressive - longer lives",
+                "notes": "Capitalising opex inflates EBITDA; check policy changes"
+            }},
+            "ebitda_adjustments": [
+                {{
+                    "adjustment_type": "Description of add-back",
+                    "amount": number,
+                    "assessment": "Valid one-time|Questionable|Recurring disguised as one-time",
+                    "notes": "Assessment rationale"
+                }}
+            ],
+            "related_party_transactions": [
+                {{
+                    "description": "Transaction description",
+                    "amount": number or null,
+                    "assessment": "Arm's length|Below market|Above market - concern"
+                }}
+            ],
+            "owner_adjustments": {{
+                "above_market_compensation": number or null,
+                "personal_expenses_through_business": number or null,
+                "notes": "Normalization required for true earnings"
+            }}
+        }},
+
+        "balance_sheet_integrity": {{
+            "asset_quality": {{
+                "goodwill_to_equity_pct": number or null,
+                "receivables_aging_concern": "None|Moderate - growing >60 day|Significant - growing >90 day",
+                "inventory_obsolescence_risk": "Low|Moderate|High - slow-moving stock identified",
+                "ppe_condition": "Well maintained|Deferred maintenance concern|Impairment indicators",
+                "intercompany_balances_concern": "None|Trapped cash|Transfer pricing adjustment needed",
+                "notes": "Goodwill > 50% of equity = acquisition integration risk"
+            }},
+            "off_balance_sheet": {{
+                "operating_lease_commitments": number or null,
+                "guarantees_and_commitments": number or null,
+                "contingent_liabilities": [
+                    {{
+                        "description": "Litigation/environmental/tax dispute",
+                        "amount": number or null,
+                        "probability": "Remote|Possible|Probable",
+                        "notes": "Assessment"
+                    }}
+                ],
+                "factoring_securitisation": "None|True sale|Financing with recourse - add to debt",
+                "notes": "Off-balance sheet items that affect true leverage"
+            }}
+        }},
+
+        "trend_analysis": {{
+            "historical_performance": {{
+                "revenue_3yr_cagr": number or null,
+                "ebitda_3yr_cagr": number or null,
+                "inflection_points": ["Any significant changes and their causes"],
+                "notes": "Historical trend observations"
+            }},
+            "seasonality_patterns": {{
+                "quarterly_pattern": "Even distribution|Q4 heavy|Seasonal pattern described",
+                "hockey_stick_risk": true or false,
+                "notes": "Hockey-stick Q4 = channel stuffing risk"
+            }},
+            "forecast_credibility": {{
+                "historical_accuracy": "Consistently met|Mixed|Consistently missed",
+                "budget_variance_pattern": "On target|Systematic over-performance|Systematic under-performance",
+                "notes": "Consistent misses = credibility discount on projections"
+            }}
+        }},
+
+        "red_flags_summary": [
+            {{
+                "category": "Profitability|Liquidity|Cash Flow|Quality of Earnings|Balance Sheet|Other",
+                "flag": "Clear description of the red flag",
+                "severity": "critical|high|medium",
+                "source": "Document where identified",
+                "impact": "Transaction impact - affects valuation/structure/risk allocation"
+            }}
+        ],
+
+        "data_gaps": [
+            {{
+                "missing_item": "What financial information is missing",
+                "importance": "critical|high|medium",
+                "impact": "How this gap affects the analysis"
+            }}
+        ]
+    }},
+
     "financial_exposure_summary": {{
         "total_quantified_exposure": number,
         "currency": "ZAR",
@@ -135,10 +301,38 @@ Return JSON:
         }}
     ],
 
-    "warranty_indemnity_items": [
+    "warranties_register": [
         {{
-            "item": "Description",
-            "suggested_protection": "Specific warranty/indemnity wording or cap suggestion"
+            "id": "W-001",
+            "category": "Title & Capacity|Mining Rights|Environmental|Financial|Material Contracts|Employment|Tax|BEE",
+            "description": "Clear description of the warranty",
+            "detailed_wording": "Suggested warranty wording for the sale agreement",
+            "typical_cap": "Purchase price|50% of purchase price|Unlimited|Quantified amount",
+            "survival_period": "18 months|3 years|5 years|7 years",
+            "priority": "critical|high|medium",
+            "dd_trigger": "Which DD finding(s) triggered this warranty recommendation",
+            "source_document": "Document where issue was identified"
+        }}
+    ],
+
+    "indemnities_register": [
+        {{
+            "id": "I-001",
+            "category": "Environmental|Mining Rights|Tax|Employment|Third Party Claims|BEE",
+            "description": "Clear description of the indemnity",
+            "detailed_wording": "Suggested indemnity wording for the sale agreement",
+            "trigger": "What triggers this indemnity claim",
+            "typical_cap": "Quantified gap amount|Unlimited|As negotiated",
+            "survival_period": "3 years|5 years|7 years|Perpetual",
+            "priority": "critical|high|medium",
+            "escrow_recommendation": "10-20% of purchase price in escrow if applicable",
+            "quantified_exposure": {{
+                "amount": number or null,
+                "currency": "ZAR",
+                "calculation": "How the amount was calculated"
+            }},
+            "dd_trigger": "Which DD finding(s) triggered this indemnity recommendation",
+            "source_document": "Document where issue was identified"
         }}
     ],
 
@@ -197,7 +391,32 @@ Categories to cover:
 2. STRATEGIC & OPERATIONAL - Questions about integration and business sustainability
 3. RISK & LIABILITY - Questions about worst-case scenarios and protection mechanisms
 4. REGULATORY & COMPLIANCE - Questions about ongoing compliance obligations
-5. GOVERNANCE - Questions about management, controls, and decision-making"""
+5. GOVERNANCE - Questions about management, controls, and decision-making
+
+WARRANTIES & INDEMNITIES GUIDANCE:
+Generate SEPARATE warranties and indemnities registers based on DD findings.
+
+WARRANTIES (warranties_register):
+- Warranties are representations by the Seller about the current state of the target
+- Organize by category: Title & Capacity, Mining Rights, Environmental, Financial, Material Contracts, Employment, Tax, BEE
+- Include specific suggested wording for the sale agreement
+- Specify typical caps (e.g., "Purchase price", "50% of purchase price") and survival periods
+- Link each warranty to the specific DD finding that triggered it
+- Prioritize: Title/Capacity and Mining Rights should be "critical"; Tax warranties typically 5 years
+
+INDEMNITIES (indemnities_register):
+- Indemnities are obligations by Seller to compensate Buyer for specific identified risks
+- Indemnities are appropriate for KNOWN issues discovered in DD (not warranties for unknown risks)
+- Key triggers for indemnities:
+  * Rehabilitation liability gap (provision < estimated liability)
+  * Pre-closing environmental contamination
+  * SLP arrears requiring catch-up expenditure
+  * Pre-closing tax exposures
+  * Occupational disease claims (silicosis, etc.)
+  * Pre-closing breaches of material contracts
+- Quantify the exposure where possible (e.g., "Rehabilitation gap: R45M - R32M = R13M shortfall")
+- Recommend escrow for material environmental or rehabilitation indemnities (typically 10-20% of price)
+- Specify survival periods: Environmental 5-7 years, Tax 5 years, Occupational disease 10+ years"""
 
 
 def build_calculation_verification_prompt(extracted_figures: str, cascade_exposures: str) -> str:

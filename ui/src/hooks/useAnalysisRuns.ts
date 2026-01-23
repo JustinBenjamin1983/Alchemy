@@ -24,6 +24,177 @@ export interface SynthesisData {
     currency?: string;
     calculation_notes?: string[];
   };
+  // Comprehensive financial analysis from synthesis (based on Financial DD Checklist)
+  financial_analysis?: {
+    overview?: string;
+
+    // 1. Profitability & Performance
+    profitability_performance?: {
+      margin_analysis?: {
+        gross_margin?: { current?: number; prior?: number; trend?: string };
+        operating_margin?: { current?: number; prior?: number; trend?: string };
+        ebitda_margin?: { current?: number; prior?: number; trend?: string };
+        net_margin?: { current?: number; prior?: number; trend?: string };
+        notes?: string;
+      };
+      return_metrics?: {
+        roe?: number;
+        roa?: number;
+        roic?: number;
+        notes?: string;
+      };
+      revenue_quality?: {
+        recurring_vs_one_off_pct?: number;
+        customer_concentration?: {
+          top_customer_pct?: number;
+          top_5_customers_pct?: number;
+          flag?: string;
+        };
+        geographic_concentration?: string;
+        contract_backlog?: number;
+        notes?: string;
+      };
+    };
+
+    // 2. Liquidity & Solvency
+    liquidity_solvency?: {
+      short_term_liquidity?: {
+        current_ratio?: number;
+        quick_ratio?: number;
+        cash_ratio?: number;
+        net_working_capital?: number;
+        notes?: string;
+      };
+      leverage_debt_service?: {
+        debt_to_equity?: number;
+        net_debt_to_ebitda?: number;
+        interest_coverage?: number;
+        debt_maturity_profile?: string;
+        covenant_compliance?: {
+          in_compliance?: boolean;
+          headroom_pct?: number;
+          historical_breaches?: string;
+        };
+        notes?: string;
+      };
+    };
+
+    // 3. Cash Flow Health
+    cash_flow_health?: {
+      operating_cash_flow?: {
+        ocf_current?: number;
+        ocf_prior?: number;
+        ocf_vs_net_income?: string;
+        notes?: string;
+      };
+      cash_conversion_cycle?: {
+        dso?: number;
+        dio?: number;
+        dpo?: number;
+        total_ccc_days?: number;
+        ccc_trend?: string;
+        notes?: string;
+      };
+      free_cash_flow?: {
+        fcf_current?: number;
+        capex_maintenance?: number;
+        capex_growth?: number;
+        dividend_coverage_ratio?: number;
+        notes?: string;
+      };
+    };
+
+    // 4. Quality of Earnings
+    quality_of_earnings?: {
+      revenue_recognition?: {
+        policy_assessment?: string;
+        accrued_unbilled_revenue_trend?: string;
+        deferred_revenue_trend?: string;
+        notes?: string;
+      };
+      expense_capitalisation?: {
+        capitalised_costs_concern?: boolean;
+        rd_capitalisation_rate?: number;
+        depreciation_policy?: string;
+        notes?: string;
+      };
+      ebitda_adjustments?: Array<{
+        adjustment_type?: string;
+        amount?: number;
+        assessment?: string;
+        notes?: string;
+      }>;
+      related_party_transactions?: Array<{
+        description?: string;
+        amount?: number;
+        assessment?: string;
+      }>;
+      owner_adjustments?: {
+        above_market_compensation?: number;
+        personal_expenses_through_business?: number;
+        notes?: string;
+      };
+    };
+
+    // 5. Balance Sheet Integrity
+    balance_sheet_integrity?: {
+      asset_quality?: {
+        goodwill_to_equity_pct?: number;
+        receivables_aging_concern?: string;
+        inventory_obsolescence_risk?: string;
+        ppe_condition?: string;
+        intercompany_balances_concern?: string;
+        notes?: string;
+      };
+      off_balance_sheet?: {
+        operating_lease_commitments?: number;
+        guarantees_and_commitments?: number;
+        contingent_liabilities?: Array<{
+          description?: string;
+          amount?: number;
+          probability?: string;
+          notes?: string;
+        }>;
+        factoring_securitisation?: string;
+        notes?: string;
+      };
+    };
+
+    // 6. Trend Analysis
+    trend_analysis?: {
+      historical_performance?: {
+        revenue_3yr_cagr?: number;
+        ebitda_3yr_cagr?: number;
+        inflection_points?: string[];
+        notes?: string;
+      };
+      seasonality_patterns?: {
+        quarterly_pattern?: string;
+        hockey_stick_risk?: boolean;
+        notes?: string;
+      };
+      forecast_credibility?: {
+        historical_accuracy?: string;
+        budget_variance_pattern?: string;
+        notes?: string;
+      };
+    };
+
+    // Summary sections
+    red_flags_summary?: Array<{
+      category?: string;
+      flag?: string;
+      severity?: "critical" | "high" | "medium";
+      source?: string;
+      impact?: string;
+    }>;
+
+    data_gaps?: Array<{
+      missing_item?: string;
+      importance?: "critical" | "high" | "medium";
+      impact?: string;
+    }>;
+  };
   deal_blockers: Array<{
     issue?: string;
     description?: string;
@@ -77,6 +248,15 @@ export interface SynthesisData {
     escrow_recommendation?: string;
   }>;
   recommendations: string[];
+  // Blueprint Q&A pairs from document analysis
+  blueprint_qa?: Array<{
+    question: string;
+    answer: string;
+    finding_refs?: string[];
+    source_document: string;
+    folder_category?: string;
+    document_id?: string;
+  }>;
 }
 
 export interface AnalysisRun {

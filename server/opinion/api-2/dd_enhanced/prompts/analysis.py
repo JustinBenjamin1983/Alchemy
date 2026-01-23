@@ -51,6 +51,41 @@ CLASSIFICATION DEFINITIONS:
 - post_closing: Can be addressed after transaction completes
 - noted: For information/record only
 
+**Action Categories (How to resolve this finding):**
+- terminal: Could kill deal, requires fundamental restructure (e.g., invalid mining right, fundamental misrepresentation)
+- valuation: Should result in purchase price adjustment (e.g., liability exceeding warranty cap, unfunded pension)
+- indemnity: Requires specific indemnity from seller (e.g., pending litigation, tax exposure)
+- warranty: Should be covered by standard warranty regime (e.g., undisclosed defect, compliance issue)
+- information: More information needed before assessment (e.g., missing documents, unclear status)
+- condition_precedent: Must be resolved before closing (e.g., DMRE consent, third-party waiver)
+
+**Resolution Mechanisms:**
+- suspensive_condition: Deal suspended/conditional until resolved
+- price_adjustment: Reduce purchase price by exposure amount
+- indemnity: Specific indemnity from seller covering this exposure
+- warranty: Covered by warranty with basket/cap regime
+- disclosure: Disclose to buyer, no action needed
+- walk_away: Terminate negotiations/deal
+
+**Confidence Calibration (CRITICAL - assign for every finding):**
+Assign confidence scores (0.0-1.0) to each finding:
+- 0.9-1.0 (Very High): Direct unambiguous quote, explicit contractual provision
+- 0.7-0.89 (High): Clear inference, minimal interpretation needed
+- 0.5-0.69 (Medium): Reasonable interpretation, some ambiguity in source
+- 0.3-0.49 (Low): Inference from indirect evidence, significant assumptions made
+- 0.0-0.29 (Very Low): Speculation based on industry norms, flag for verification
+
+Provide THREE confidence scores:
+1. confidence_finding_exists: How confident the issue actually exists (vs. misreading)
+2. confidence_severity_correct: How confident the severity classification is accurate
+3. confidence_financial_amount: How confident the financial exposure calculation is accurate
+
+**Statutory Citations (for regulatory/compliance findings):**
+When identifying regulatory or compliance findings, cite:
+- The specific Act and section number
+- Applicable penalties or consequences
+- The regulatory body with jurisdiction
+
 Always cite the specific clause reference when identifying an issue.
 When calculating financial exposures, SHOW YOUR WORKING (e.g., "24 months × R3.2M/month = R76.8M").
 
@@ -217,6 +252,9 @@ def build_analysis_prompt(
     # Build CoT reasoning questions section based on document type
     cot_questions_section = _build_cot_questions_section(blueprint, doc_type)
 
+    # Phase 1 Enhancement: Build statutory citation framework section
+    statutory_section = _build_statutory_context_section(blueprint)
+
     return f"""Analyze this document for the transaction described below.
 
 TRANSACTION CONTEXT:
@@ -238,6 +276,8 @@ DOCUMENT BEING ANALYZED: {document_name} ({doc_type})
 {deal_blockers_section}
 ---
 {cot_questions_section}
+---
+{statutory_section}
 ---
 
 Conduct a thorough analysis using the Chain-of-Thought methodology. For EACH potential issue:
@@ -306,7 +346,43 @@ Return JSON:
             "action_required": "What needs to be done to address this",
             "responsible_party": "buyer|seller|third_party|dmre|lender",
             "deadline": "When this needs to be resolved if applicable",
-            "blueprint_question_answered": "The specific question from the checklist this finding addresses (if applicable)"
+            "blueprint_question_answered": "The specific question from the checklist this finding addresses (if applicable)",
+
+            // PHASE 1 ENHANCEMENTS - Action Category & Resolution Path
+            "action_category": {{
+                "type": "terminal|valuation|indemnity|warranty|information|condition_precedent",
+                "reasoning": "Why this action category was chosen"
+            }},
+            "resolution_path": {{
+                "mechanism": "suspensive_condition|price_adjustment|indemnity|warranty|disclosure|walk_away",
+                "description": "Specific resolution recommendation",
+                "responsible_party": "seller|buyer|both|third_party",
+                "timeline": "before_signing|between_sign_and_close|post_closing|ongoing",
+                "estimated_cost_to_resolve": {{
+                    "amount": null,
+                    "currency": "ZAR",
+                    "confidence": 0.0,
+                    "basis": "How cost was estimated (if applicable)"
+                }}
+            }},
+
+            // PHASE 1 ENHANCEMENTS - Confidence Calibration
+            "confidence": {{
+                "finding_exists": 0.85,      // 0.0-1.0: Confidence the issue actually exists
+                "severity_correct": 0.80,    // 0.0-1.0: Confidence severity is accurate
+                "financial_amount": 0.70,    // 0.0-1.0: Confidence financial exposure is correct
+                "overall": 0.78,             // 0.0-1.0: Weighted overall confidence
+                "basis": "Explanation of confidence assessment - e.g., 'Direct quote from contract, no ambiguity'"
+            }},
+
+            // PHASE 1 ENHANCEMENTS - Statutory Reference (for regulatory findings)
+            "statutory_reference": {{
+                "act": "Full name of Act - e.g., 'Mineral and Petroleum Resources Development Act 28 of 2002'",
+                "section": "Section number - e.g., 'Section 11'",
+                "provision": "Brief description of the provision",
+                "consequence": "What happens if provision is violated",
+                "regulatory_body": "Relevant regulatory body - e.g., 'Department of Mineral Resources and Energy'"
+            }}
         }}
     ],
 
@@ -734,6 +810,79 @@ CHAIN-OF-THOUGHT REASONING QUESTIONS FOR THIS DOCUMENT:
 (Answer these questions as part of your reasoning for each finding)
 {chr(10).join(questions_lines)}
 """
+
+
+def _build_statutory_context_section(blueprint: Optional[Dict]) -> str:
+    """
+    Build statutory context section from blueprint's statutory_framework.
+
+    Phase 1 Enhancement: Provides detailed statutory citations to Claude
+    for regulatory findings.
+    """
+    if not blueprint or not blueprint.get("statutory_framework"):
+        return ""
+
+    framework = blueprint.get("statutory_framework", {})
+    primary_leg = framework.get("primary_legislation", [])
+
+    if not primary_leg:
+        return ""
+
+    lines = ["\n", "=" * 70]
+    lines.append("STATUTORY CITATION FRAMEWORK")
+    lines.append("When identifying regulatory or compliance findings, cite the specific statute.")
+    lines.append("=" * 70)
+
+    for statute in primary_leg[:5]:  # Limit to top 5 statutes
+        act_name = statute.get("act", "Unknown Act")
+        acronym = statute.get("acronym", "")
+        reg_body = statute.get("regulatory_body", "")
+
+        lines.append(f"\n**{act_name}**")
+        if acronym:
+            lines.append(f"Acronym: {acronym}")
+        if reg_body:
+            lines.append(f"Regulatory Body: {reg_body}")
+
+        sections = statute.get("key_sections", [])[:6]  # Limit sections
+        if sections:
+            lines.append("Key Sections:")
+            for sec in sections:
+                sec_num = sec.get("section", "")
+                desc = sec.get("description", "")
+                penalties = sec.get("penalties", {})
+                criticality = sec.get("criticality", "")
+
+                lines.append(f"  - {sec_num}: {desc}")
+                if penalties:
+                    penalty_strs = []
+                    for penalty_type, penalty_desc in penalties.items():
+                        penalty_strs.append(f"{penalty_type}: {penalty_desc}")
+                    if penalty_strs:
+                        lines.append(f"      Penalties: {'; '.join(penalty_strs)}")
+                if criticality:
+                    lines.append(f"      Criticality: {criticality.upper()}")
+
+    # Add transaction triggers if available
+    triggers = framework.get("transaction_triggers", {})
+    if triggers:
+        lines.append("\n**TRANSACTION TRIGGERS:**")
+        for trigger_type, trigger_list in triggers.items():
+            lines.append(f"  {trigger_type.replace('_', ' ').title()}:")
+            for t in trigger_list[:3]:
+                statute = t.get("statute", "")
+                trigger = t.get("trigger", "")
+                consequence = t.get("consequence", "")
+                lines.append(f"    - {statute}: {trigger}")
+                if consequence:
+                    lines.append(f"        Consequence: {consequence}")
+
+    lines.append("\n" + "=" * 70)
+    lines.append("IMPORTANT: For regulatory findings, always populate the statutory_reference block")
+    lines.append("with the specific act, section, and penalties from the framework above.")
+    lines.append("=" * 70 + "\n")
+
+    return "\n".join(lines)
 
 
 def _get_default_cot_questions(doc_type: str) -> str:

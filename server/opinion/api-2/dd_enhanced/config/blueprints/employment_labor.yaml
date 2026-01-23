@@ -468,3 +468,256 @@ cot_questions:
   - What medical aid and other benefits apply?
   - Are there any defined benefit pension liabilities?
   - What share incentive schemes exist and what is the impact of CoC?
+
+# ============================================================================
+# STATUTORY FRAMEWORK
+# Detailed statutory citation framework for employment and labour findings
+# ============================================================================
+statutory_framework:
+  primary_legislation:
+    - act: "Labour Relations Act 66 of 1995"
+      acronym: "LRA"
+      regulatory_body: "Department of Employment and Labour / CCMA / Labour Court"
+      key_sections:
+        - section: "Section 185"
+          description: "Right not to be unfairly dismissed or subjected to unfair labour practice"
+          penalties:
+            civil: "Reinstatement or compensation up to 24 months remuneration"
+          criticality: critical
+        - section: "Section 186"
+          description: "Definition of dismissal and unfair labour practice"
+          penalties:
+            civil: "Compensation, reinstatement"
+          criticality: critical
+        - section: "Section 187"
+          description: "Automatically unfair dismissals"
+          penalties:
+            civil: "Compensation up to 24 months (no cap for discrimination)"
+          criticality: critical
+        - section: "Section 188"
+          description: "Fair reasons and procedure for dismissal"
+          penalties:
+            civil: "Reinstatement or compensation up to 12 months"
+          criticality: critical
+        - section: "Section 189"
+          description: "Dismissal for operational requirements (retrenchment)"
+          penalties:
+            civil: "Procedural unfairness: compensation up to 12 months"
+          criticality: critical
+        - section: "Section 189A"
+          description: "Large-scale retrenchments (50+ employees)"
+          penalties:
+            civil: "Facilitation mandatory, extended consultation, strike rights"
+          criticality: critical
+        - section: "Section 197"
+          description: "Transfer of contract of employment on transfer of business"
+          penalties:
+            civil: "Automatic transfer, old/new employer joint liability"
+          criticality: critical
+        - section: "Section 197A"
+          description: "Transfer of business in insolvency"
+          penalties:
+            civil: "Modified transfer provisions"
+          criticality: high
+        - section: "Section 23"
+          description: "Collective agreements - binding nature"
+          penalties:
+            civil: "Breach of collective agreement enforceable"
+          criticality: high
+        - section: "Section 64"
+          description: "Strike and lock-out procedures"
+          penalties:
+            civil: "Unprotected strike: dismissal, interdict, damages"
+          criticality: high
+
+    - act: "Basic Conditions of Employment Act 75 of 1997"
+      acronym: "BCEA"
+      regulatory_body: "Department of Employment and Labour"
+      key_sections:
+        - section: "Section 9"
+          description: "Ordinary hours of work"
+          penalties:
+            criminal: "Fine or imprisonment"
+          criticality: high
+        - section: "Section 10"
+          description: "Overtime"
+          penalties:
+            criminal: "Fine, back-pay"
+          criticality: high
+        - section: "Section 20"
+          description: "Annual leave"
+          penalties:
+            criminal: "Fine, accrued leave payment"
+          criticality: high
+        - section: "Section 35"
+          description: "Notice of termination"
+          penalties:
+            civil: "Payment in lieu required"
+          criticality: high
+        - section: "Section 37"
+          description: "Payments on termination"
+          penalties:
+            civil: "Immediate payment required"
+          criticality: high
+        - section: "Section 41"
+          description: "Severance pay for operational requirement dismissals"
+          penalties:
+            civil: "Minimum 1 week per completed year of service"
+          criticality: critical
+
+    - act: "Employment Equity Act 55 of 1998"
+      acronym: "EEA"
+      regulatory_body: "Department of Employment and Labour / Commission for Employment Equity"
+      key_sections:
+        - section: "Section 6"
+          description: "Prohibition of unfair discrimination"
+          penalties:
+            civil: "Compensation, compliance order"
+          criticality: critical
+        - section: "Section 13"
+          description: "Duties of designated employers"
+          penalties:
+            administrative: "Fine up to R1.5 million or 2% of turnover"
+          criticality: high
+        - section: "Section 15"
+          description: "Affirmative action measures"
+          penalties:
+            administrative: "Compliance order, fine"
+          criticality: high
+        - section: "Section 20"
+          description: "Employment equity plan"
+          penalties:
+            administrative: "Fine for non-compliance"
+          criticality: high
+        - section: "Section 21"
+          description: "Employment equity report"
+          penalties:
+            administrative: "Fine for failure to report"
+          criticality: high
+
+    - act: "Skills Development Act 97 of 1998"
+      acronym: "SDA"
+      regulatory_body: "SETAs / Department of Higher Education and Training"
+      key_sections:
+        - section: "Section 3"
+          description: "Skills development levies"
+          penalties:
+            administrative: "Interest and penalties on late payment"
+          criticality: high
+        - section: "Section 10"
+          description: "Sectoral education and training requirements"
+          penalties:
+            administrative: "Loss of levy rebates"
+          criticality: medium
+
+    - act: "Occupational Health and Safety Act 85 of 1993"
+      acronym: "OHSA"
+      regulatory_body: "Department of Employment and Labour"
+      key_sections:
+        - section: "Section 8"
+          description: "General duties of employers"
+          penalties:
+            criminal: "Fine or imprisonment up to 2 years"
+          criticality: critical
+        - section: "Section 14"
+          description: "General duties of employees"
+          penalties:
+            criminal: "Fine"
+          criticality: high
+        - section: "Section 24"
+          description: "Reporting of incidents"
+          penalties:
+            criminal: "Fine for failure to report"
+          criticality: high
+
+    - act: "Compensation for Occupational Injuries and Diseases Act 130 of 1993"
+      acronym: "COIDA"
+      regulatory_body: "Compensation Fund / Department of Employment and Labour"
+      key_sections:
+        - section: "Section 80"
+          description: "Registration and assessment"
+          penalties:
+            criminal: "Fine, personal liability for compensation"
+          criticality: critical
+        - section: "Section 82"
+          description: "Assessment payment"
+          penalties:
+            administrative: "Interest, penalties, increased assessment"
+          criticality: high
+
+    - act: "Pension Funds Act 24 of 1956"
+      acronym: "PFA"
+      regulatory_body: "Financial Sector Conduct Authority / Pension Funds Adjudicator"
+      key_sections:
+        - section: "Section 13A"
+          description: "Payment of contributions"
+          penalties:
+            criminal: "Fine or imprisonment"
+            civil: "Directors personally liable"
+          criticality: critical
+        - section: "Section 37A"
+          description: "Protection of pension benefits"
+          penalties:
+            civil: "Benefits cannot be reduced, attached, or ceded"
+          criticality: high
+
+    - act: "Unemployment Insurance Act 63 of 2001"
+      acronym: "UIA"
+      regulatory_body: "Unemployment Insurance Fund"
+      key_sections:
+        - section: "Section 4"
+          description: "Registration and contribution requirements"
+          penalties:
+            criminal: "Fine or imprisonment"
+          criticality: high
+        - section: "Section 56"
+          description: "Offences"
+          penalties:
+            criminal: "Fine up to R10,000 or imprisonment"
+          criticality: high
+
+  sector_specific:
+    sectoral_determinations:
+      name: "Sectoral Determinations"
+      regulatory_body: "Department of Employment and Labour"
+      key_requirements:
+        - requirement: "Minimum wages by sector"
+          description: "Agriculture, Domestic Workers, Hospitality, etc."
+          consequence: "Criminal penalties for underpayment"
+        - requirement: "National Minimum Wage"
+          threshold: "R27.58 per hour (2024)"
+          measurement: "hourly rate"
+          consequence: "Criminal penalties, back-pay"
+
+    bargaining_councils:
+      name: "Bargaining Council Agreements"
+      regulatory_body: "Various Bargaining Councils"
+      key_requirements:
+        - requirement: "Extended agreements"
+          description: "Industry-wide binding terms"
+          consequence: "Breach enforceable as breach of statute"
+
+  transaction_triggers:
+    transfer_of_business:
+      - statute: "LRA Section 197"
+        trigger: "Transfer of business as going concern"
+        consequence: "Automatic transfer of employees on existing terms"
+        timeline: "Effective on transfer date"
+      - statute: "LRA Section 197(6)"
+        trigger: "Transfer agreement"
+        consequence: "New employer substituted for old employer"
+        timeline: "From date of transfer"
+    retrenchment:
+      - statute: "LRA Section 189"
+        trigger: "Contemplated dismissal for operational requirements"
+        consequence: "Consultation with employees/unions required"
+        processing_time: "Minimum 30-60 days consultation"
+      - statute: "LRA Section 189A"
+        trigger: "Contemplated retrenchment of 50+ employees"
+        consequence: "Facilitation, extended consultation, possible strike"
+        processing_time: "60 days minimum"
+    change_of_control:
+      - statute: "Employment contracts"
+        trigger: "Change of control provisions in executive contracts"
+        consequence: "Acceleration, enhanced severance may apply"
+        timeline: "As per contract terms"

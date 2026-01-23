@@ -53,7 +53,7 @@ export function FindingsExplorerExample({ ddId, runId, projectName }: FindingsEx
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
             <h3 className="text-lg font-semibold mb-3">Executive Summary</h3>
             <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-              {versionData.content.executive_summary}
+              {String(versionData.content.executive_summary || '')}
             </p>
           </div>
 
@@ -64,14 +64,14 @@ export function FindingsExplorerExample({ ddId, runId, projectName }: FindingsEx
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <span className="text-sm font-medium">Can Proceed:</span>
-                  <span className={`ml-2 ${versionData.content.deal_assessment.can_proceed ? 'text-green-600' : 'text-red-600'}`}>
-                    {versionData.content.deal_assessment.can_proceed ? 'Yes' : 'No'}
+                  <span className={`ml-2 ${(versionData.content.deal_assessment as Record<string, unknown>).can_proceed ? 'text-green-600' : 'text-red-600'}`}>
+                    {(versionData.content.deal_assessment as Record<string, unknown>).can_proceed ? 'Yes' : 'No'}
                   </span>
                 </div>
                 <div>
                   <span className="text-sm font-medium">Risk Rating:</span>
                   <span className="ml-2 capitalize">
-                    {versionData.content.deal_assessment.overall_risk_rating}
+                    {String((versionData.content.deal_assessment as Record<string, unknown>).overall_risk_rating || '')}
                   </span>
                 </div>
               </div>

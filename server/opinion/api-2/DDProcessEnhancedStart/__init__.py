@@ -281,6 +281,7 @@ def _run_processing_in_background(
     from dd_enhanced.core.claude_client import ClaudeClient, ModelTier
     from dd_enhanced.core.document_clusters import group_documents_by_cluster
     from dd_enhanced.core.question_prioritizer import prioritize_questions
+    from dd_enhanced.core.materiality import calculate_materiality_thresholds, apply_materiality_to_findings
 
     try:
         # Use print for debugging since logging.info from threads isn't captured by Azure Functions
@@ -310,6 +311,11 @@ def _run_processing_in_background(
         transaction_context_str = load_result["transaction_context_str"]
         reference_docs = load_result["reference_docs"]
         owned_by = load_result["owned_by"]
+
+        # Phase 2: Calculate materiality thresholds based on transaction value
+        transaction_value = load_result.get("transaction_value")
+        materiality_thresholds = calculate_materiality_thresholds(transaction_value)
+        logging.info(f"[BackgroundProcessor] Materiality thresholds: {materiality_thresholds.get('description', 'default')}")
 
         total_docs = len(doc_dicts)
 
@@ -370,16 +376,20 @@ def _run_processing_in_background(
         # ===== PASS 2: Per-document analysis (with per-document updates) =====
         logging.info(f"[BackgroundProcessor] Pass 2: Analyzing {total_docs} documents")
 
-        pass2_findings = _run_pass2_with_progress(
+        pass2_result = _run_pass2_with_progress(
             doc_dicts, reference_docs, blueprint, client, checkpoint_id,
             transaction_context_str, prioritized_questions, total_docs, run_id,
             pass1_results  # Pass for saving on timeout
         )
 
         # Check if we should exit (None = paused timeout)
-        if pass2_findings is None:
+        if pass2_result is None:
             logging.info(f"[BackgroundProcessor] Thread exiting after Pass 2 pause timeout (state saved)")
             return
+
+        # Extract findings and blueprint Q&A from pass2 result
+        pass2_findings = pass2_result.get("findings", [])
+        blueprint_qa = pass2_result.get("blueprint_qa", [])
 
         # Check if cancelled after Pass 2
         should_stop, reason = _check_should_stop(checkpoint_id)
@@ -436,6 +446,12 @@ def _run_processing_in_background(
             'current_stage': 'storing_findings'
         })
 
+        # ===== Phase 2: Apply materiality classification to all findings =====
+        all_findings_for_materiality = pass4_results.get("all_findings", [])
+        enriched_findings = apply_materiality_to_findings(all_findings_for_materiality, materiality_thresholds)
+        pass4_results["all_findings"] = enriched_findings
+        logging.info(f"[BackgroundProcessor] Applied materiality classification to {len(enriched_findings)} findings")
+
         # ===== Store findings =====
         logging.info("[BackgroundProcessor] Storing findings in database")
 
@@ -488,9 +504,13 @@ def _run_processing_in_background(
             'executive_summary': pass4_results.get('executive_summary', ''),
             'deal_assessment': pass4_results.get('deal_assessment', {}),
             'financial_exposures': pass4_results.get('financial_exposures', {}),
+            'financial_analysis': pass4_results.get('financial_analysis', {}),  # Detailed financial analysis
             'deal_blockers': pass4_results.get('deal_blockers', []),
             'conditions_precedent': pass4_results.get('conditions_precedent', []),
+            'warranties_register': pass4_results.get('warranties_register', []),
+            'indemnities_register': pass4_results.get('indemnities_register', []),
             'recommendations': pass4_results.get('recommendations', []),
+            'blueprint_qa': blueprint_qa,  # Q&A pairs for Blueprint Answers view
         }
 
         # Update run status to completed with synthesis data
@@ -668,6 +688,11 @@ def _load_dd_data_for_processing(dd_id: str, selected_doc_ids: list = None) -> D
             transaction_type = draft.transaction_type if draft else "General"
             transaction_type_code = _map_transaction_type(transaction_type)
 
+            # Phase 2: Extract transaction value for materiality calculation
+            transaction_value = None
+            if draft and hasattr(draft, 'estimated_value'):
+                transaction_value = draft.estimated_value
+
             # Load blueprint
             try:
                 blueprint = load_blueprint(transaction_type_code)
@@ -751,7 +776,8 @@ def _load_dd_data_for_processing(dd_id: str, selected_doc_ids: list = None) -> D
                 "transaction_context_str": transaction_context_str,
                 "reference_docs": reference_docs,
                 "owned_by": owned_by,
-                "dd_name": dd_name
+                "dd_name": dd_name,
+                "transaction_value": transaction_value,  # Phase 2: For materiality calculation
             }
 
     except Exception as e:
@@ -856,6 +882,7 @@ def _run_pass2_with_progress(
 
     all_findings = []
     processed_doc_ids = []
+    all_blueprint_qa = []  # Collect all Q&A pairs for blueprint answers view
 
     # Track questions asked vs answered for gap detection
     questions_asked: Dict[str, List[Dict]] = {}  # folder_category -> list of questions
@@ -894,10 +921,10 @@ def _run_pass2_with_progress(
                     return None  # Signal to exit thread
                 else:  # cancelled
                     logging.info(f"[BackgroundProcessor] Pass 2 cancelled while paused")
-                    return all_findings
+                    return {"findings": all_findings, "blueprint_qa": all_blueprint_qa}
             else:
                 logging.info(f"[BackgroundProcessor] Pass 2 stopped: {reason}")
-                return all_findings
+                return {"findings": all_findings, "blueprint_qa": all_blueprint_qa}
 
         try:
             folder_category = doc.get("folder_category")
@@ -920,11 +947,20 @@ def _run_pass2_with_progress(
                 'pass2_progress': int((idx / total_docs) * 100)
             })
 
-            findings = analyze_document(
+            analysis_result = analyze_document(
                 doc, ref_doc_objects, blueprint, client,
                 transaction_context=transaction_context_str,
-                prioritized_questions=prioritized_questions
+                prioritized_questions=prioritized_questions,
+                return_qa_data=True  # Get Q&A pairs for blueprint answers view
             )
+
+            # Extract findings and Q&A data
+            findings = analysis_result.get("findings", [])
+            qa_pairs = analysis_result.get("questions_answered", [])
+
+            # Collect Q&A pairs for blueprint answers
+            if qa_pairs:
+                all_blueprint_qa.extend(qa_pairs)
 
             # Update finding counts as we go
             if findings:
@@ -977,7 +1013,10 @@ def _run_pass2_with_progress(
             'findings_gap': len(gap_findings)
         })
 
-    return all_findings
+    return {
+        "findings": all_findings,
+        "blueprint_qa": all_blueprint_qa
+    }
 
 
 def _run_pass3_clustered_with_progress(doc_dicts, pass1_results, blueprint, client, checkpoint_id, run_id: str = None, pass2_findings: list = None):
@@ -1161,7 +1200,44 @@ def _store_findings_to_db(dd_id, run_id, owned_by, doc_dicts, pass4_results, pas
                     status_map = {"critical": "Red", "high": "Red", "medium": "Amber", "low": "Green"}
                     status = status_map.get(severity.lower(), "Amber")
 
-                    # Create finding with run_id
+                    # Extract action_category (from nested structure)
+                    action_category_data = finding.get("action_category", {})
+                    action_category = action_category_data.get("type") if isinstance(action_category_data, dict) else action_category_data
+
+                    # Extract resolution_path fields
+                    resolution_path = finding.get("resolution_path", {})
+                    resolution_mechanism = resolution_path.get("mechanism") if isinstance(resolution_path, dict) else None
+                    resolution_responsible = resolution_path.get("responsible_party") if isinstance(resolution_path, dict) else None
+                    resolution_timeline = resolution_path.get("timeline") if isinstance(resolution_path, dict) else None
+                    resolution_description = resolution_path.get("description") if isinstance(resolution_path, dict) else None
+
+                    # Extract resolution cost
+                    resolution_cost_data = resolution_path.get("estimated_cost_to_resolve", {}) if isinstance(resolution_path, dict) else {}
+                    resolution_cost = resolution_cost_data.get("amount") if isinstance(resolution_cost_data, dict) else None
+                    resolution_cost_confidence = resolution_cost_data.get("confidence") if isinstance(resolution_cost_data, dict) else None
+
+                    # Extract confidence fields
+                    confidence_data = finding.get("confidence", {})
+                    confidence_finding_exists = confidence_data.get("finding_exists") if isinstance(confidence_data, dict) else None
+                    confidence_severity = confidence_data.get("severity_correct") if isinstance(confidence_data, dict) else None
+                    confidence_amount = confidence_data.get("financial_amount") if isinstance(confidence_data, dict) else None
+                    confidence_basis = confidence_data.get("basis") if isinstance(confidence_data, dict) else None
+                    confidence_overall = confidence_data.get("overall", 0.85) if isinstance(confidence_data, dict) else 0.85
+
+                    # Extract statutory reference fields
+                    statutory_ref = finding.get("statutory_reference", {})
+                    statutory_act = statutory_ref.get("act") if isinstance(statutory_ref, dict) else None
+                    statutory_section = statutory_ref.get("section") if isinstance(statutory_ref, dict) else None
+                    statutory_consequence = statutory_ref.get("consequence") if isinstance(statutory_ref, dict) else None
+                    regulatory_body = statutory_ref.get("regulatory_body") if isinstance(statutory_ref, dict) else None
+
+                    # Extract materiality fields (from Phase 2 enrichment)
+                    materiality_classification = finding.get("materiality_classification")
+                    materiality_ratio = finding.get("materiality_ratio")
+                    materiality_threshold = finding.get("materiality_threshold")
+                    materiality_qualitative = finding.get("materiality_qualitative_override")
+
+                    # Create finding with run_id and Phase 1 enhancement fields
                     db_finding = PerspectiveRiskFinding(
                         perspective_risk_id=risk.id,
                         document_id=doc_id,
@@ -1171,14 +1247,41 @@ def _store_findings_to_db(dd_id, run_id, owned_by, doc_dicts, pass4_results, pas
                         actual_page_number=finding.get("actual_page_number"),  # Integer page from [PAGE X] markers
                         status=status,
                         finding_type=finding.get("finding_type", "negative"),
-                        confidence_score=0.85,
+                        confidence_score=confidence_overall,
                         requires_action=finding.get("deal_impact") in ["deal_blocker", "condition_precedent"],
                         action_priority=_map_priority(finding.get("deal_impact")),
                         direct_answer=finding.get("action_required", "")[:500] if finding.get("action_required") else "",
                         evidence_quote=finding.get("evidence_quote", "")[:500] if finding.get("evidence_quote") else "",
                         deal_impact=finding.get("deal_impact", "none") if finding.get("deal_impact") else "none",
                         clause_reference=finding.get("clause_reference", "")[:100] if finding.get("clause_reference") else None,
-                        analysis_pass=finding.get("pass", 2)
+                        analysis_pass=finding.get("pass", 2),
+
+                        # Phase 1: Action Category fields
+                        action_category=action_category[:50] if action_category else None,
+                        resolution_mechanism=resolution_mechanism[:100] if resolution_mechanism else None,
+                        resolution_responsible_party=resolution_responsible[:50] if resolution_responsible else None,
+                        resolution_timeline=resolution_timeline[:50] if resolution_timeline else None,
+                        resolution_cost=resolution_cost,
+                        resolution_cost_confidence=resolution_cost_confidence,
+                        resolution_description=resolution_description[:2000] if resolution_description else None,
+
+                        # Phase 1: Materiality fields
+                        materiality_classification=materiality_classification[:50] if materiality_classification else None,
+                        materiality_ratio=materiality_ratio,
+                        materiality_threshold=materiality_threshold[:200] if materiality_threshold else None,
+                        materiality_qualitative_override=materiality_qualitative[:200] if materiality_qualitative else None,
+
+                        # Phase 1: Confidence fields
+                        confidence_finding_exists=confidence_finding_exists,
+                        confidence_severity=confidence_severity,
+                        confidence_amount=confidence_amount,
+                        confidence_basis=confidence_basis[:2000] if confidence_basis else None,
+
+                        # Phase 1: Statutory Reference fields
+                        statutory_act=statutory_act[:200] if statutory_act else None,
+                        statutory_section=statutory_section[:100] if statutory_section else None,
+                        statutory_consequence=statutory_consequence[:2000] if statutory_consequence else None,
+                        regulatory_body=regulatory_body[:200] if regulatory_body else None,
                     )
                     session.add(db_finding)
                     stored_count += 1

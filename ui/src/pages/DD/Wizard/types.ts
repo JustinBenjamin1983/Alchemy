@@ -49,6 +49,18 @@ export interface CounterpartyStakeholder {
   exposure: string;
 }
 
+// Known Subsidiary for Entity Mapping
+export interface KnownSubsidiary {
+  name: string;
+  relationship: 'subsidiary' | 'joint_venture' | 'associate' | 'related_party';
+}
+
+// Holding Company for Entity Mapping
+export interface HoldingCompany {
+  name: string;
+  percentage: number;  // Percentage ownership
+}
+
 export interface DDProjectSetup {
   // Step 1: Transaction Basics
   transactionType: TransactionTypeCode | null;
@@ -84,6 +96,21 @@ export interface DDProjectSetup {
 
   // Step 5: Documents
   uploadedFile: File | null;
+
+  // ===== PHASE 1 ENHANCEMENTS: Entity Mapping Context =====
+  // These fields help the AI correctly identify entities across documents
+
+  // Target entity registration number (helps match entity names across docs)
+  targetRegistrationNumber?: string;
+
+  // Known subsidiaries of the target (pre-populate entity map)
+  knownSubsidiaries?: KnownSubsidiary[];
+
+  // Holding company details (if target has a parent)
+  holdingCompany?: HoldingCompany | null;
+
+  // Expected counterparties (contract partners, customers, suppliers to watch for)
+  expectedCounterparties?: string[];
 }
 
 export const DEFAULT_PROJECT_SETUP: DDProjectSetup = {

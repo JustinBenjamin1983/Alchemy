@@ -116,8 +116,28 @@ Extract and return as JSON:
             "current_status": "compliant|breach|waiver if mentioned in document",
             "clause_reference": "Clause X.X"
         }}
+    ],
+
+    // PHASE 1 ENHANCEMENT: Document References
+    // Extract references to OTHER documents mentioned in this document
+    "document_references": [
+        {{
+            "referenced_document": "Name or description of referenced document (e.g., 'the Shareholders Agreement dated 15 March 2020')",
+            "reference_context": "Why this document is referenced (e.g., 'defines the pre-emptive rights that apply')",
+            "reference_type": "agreement|legal_opinion|report|certificate|schedule|correspondence|annexure|exhibit",
+            "criticality": "critical|important|minor",
+            "clause_reference": "Where in THIS document the reference appears (e.g., 'Clause 5.2')",
+            "quote": "Exact quote mentioning the reference (max 200 chars)"
+        }}
     ]
 }}
 
 Only include sections where you find relevant information. Empty arrays are fine.
-Be precise with financial figures - include the exact numbers from the document."""
+Be precise with financial figures - include the exact numbers from the document.
+
+IMPORTANT FOR DOCUMENT REFERENCES:
+- Extract ALL references to other documents, agreements, certificates, reports, etc.
+- Mark as 'critical' if the referenced document defines key terms, rights, or obligations
+- Mark as 'important' if it provides supporting information
+- Mark as 'minor' if it's mentioned in passing
+- This helps identify missing documents in the data room"""

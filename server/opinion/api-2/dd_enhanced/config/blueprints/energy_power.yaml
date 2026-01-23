@@ -526,3 +526,220 @@ cot_questions:
   - Is there a valid Environmental Authorization and Water Use License?
   - What conditions attach and is compliance on track?
   - What decommissioning obligations and financial provision exist?
+
+# ============================================================================
+# STATUTORY FRAMEWORK
+# Detailed statutory citation framework for energy and power regulatory findings
+# ============================================================================
+statutory_framework:
+  primary_legislation:
+    - act: "Electricity Regulation Act 4 of 2006"
+      acronym: "ERA"
+      regulatory_body: "National Energy Regulator of South Africa (NERSA)"
+      key_sections:
+        - section: "Section 4"
+          description: "Generation, transmission, distribution, trading licenses"
+          penalties:
+            criminal: "Fine up to R5 million or imprisonment up to 5 years"
+          criticality: critical
+        - section: "Section 7"
+          description: "License conditions"
+          penalties:
+            administrative: "License amendment, suspension, revocation"
+          criticality: critical
+        - section: "Section 10"
+          description: "License transfer and amendment"
+          penalties:
+            administrative: "NERSA approval required for transfer"
+          criticality: critical
+        - section: "Section 14"
+          description: "Tariff approval requirements"
+          penalties:
+            administrative: "Tariffs must be NERSA-approved"
+          criticality: high
+        - section: "Section 15"
+          description: "Dispute resolution"
+          penalties:
+            administrative: "NERSA binding decisions"
+          criticality: high
+
+    - act: "National Energy Act 34 of 2008"
+      acronym: "NEA"
+      regulatory_body: "Department of Mineral Resources and Energy (DMRE)"
+      key_sections:
+        - section: "Section 6"
+          description: "Integrated Energy Planning"
+          penalties:
+            administrative: "Policy compliance requirements"
+          criticality: high
+        - section: "Section 19"
+          description: "Energy data and information"
+          penalties:
+            criminal: "Fine for failure to provide data"
+          criticality: medium
+
+    - act: "National Environmental Management Act 107 of 1998"
+      acronym: "NEMA"
+      regulatory_body: "Department of Forestry, Fisheries and Environment (DFFE)"
+      key_sections:
+        - section: "Section 24"
+          description: "Environmental authorization for listed activities"
+          penalties:
+            criminal: "Fine up to R10 million or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 24G"
+          description: "Rectification of unlawful commencement"
+          penalties:
+            administrative: "Fine up to R5 million plus rectification"
+          criticality: high
+        - section: "Section 28"
+          description: "Duty of care and remediation"
+          penalties:
+            civil: "Unlimited remediation liability"
+          criticality: critical
+
+    - act: "National Water Act 36 of 1998"
+      acronym: "NWA"
+      regulatory_body: "Department of Water and Sanitation (DWS)"
+      key_sections:
+        - section: "Section 21"
+          description: "Water use license requirements"
+          penalties:
+            criminal: "Fine or imprisonment up to 5 years"
+          criticality: critical
+        - section: "Section 40"
+          description: "General authorization for water use"
+          penalties:
+            administrative: "Limited water use without license"
+          criticality: high
+        - section: "Section 151"
+          description: "Pollution offences"
+          penalties:
+            criminal: "Fine up to R10 million or imprisonment"
+          criticality: critical
+
+    - act: "Gas Act 48 of 2001"
+      acronym: "Gas Act"
+      regulatory_body: "NERSA"
+      key_sections:
+        - section: "Section 2"
+          description: "Gas transmission, distribution, trading licenses"
+          penalties:
+            criminal: "Fine or imprisonment"
+          criticality: critical
+        - section: "Section 9"
+          description: "License requirements"
+          penalties:
+            administrative: "License suspension or revocation"
+          criticality: critical
+
+    - act: "Petroleum Pipelines Act 60 of 2003"
+      acronym: "PPA"
+      regulatory_body: "NERSA"
+      key_sections:
+        - section: "Section 3"
+          description: "Licensing for petroleum pipeline activities"
+          penalties:
+            criminal: "Fine or imprisonment"
+          criticality: critical
+        - section: "Section 19"
+          description: "Third party access to pipelines"
+          penalties:
+            administrative: "Mandatory access requirements"
+          criticality: high
+
+    - act: "National Nuclear Regulator Act 47 of 1999"
+      acronym: "NNR Act"
+      regulatory_body: "National Nuclear Regulator (NNR)"
+      key_sections:
+        - section: "Section 20"
+          description: "Nuclear authorization requirements"
+          penalties:
+            criminal: "Fine up to R10 million or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 45"
+          description: "Nuclear damage liability"
+          penalties:
+            civil: "Unlimited operator liability"
+          criticality: critical
+
+    - act: "Carbon Tax Act 15 of 2019"
+      acronym: "Carbon Tax Act"
+      regulatory_body: "South African Revenue Service (SARS)"
+      key_sections:
+        - section: "Section 3"
+          description: "Carbon tax liability"
+          penalties:
+            administrative: "Tax penalties and interest"
+          criticality: high
+        - section: "Section 6"
+          description: "Emissions allowances and offsets"
+          penalties:
+            administrative: "Reduced tax liability for compliance"
+          criticality: high
+
+  sector_specific:
+    reipppp:
+      name: "Renewable Energy IPP Procurement Programme"
+      regulatory_body: "Department of Mineral Resources and Energy / IPP Office"
+      key_requirements:
+        - requirement: "PPA with Eskom"
+          description: "20-year power purchase agreement"
+          consequence: "Revenue certainty but Eskom credit risk"
+        - requirement: "Economic Development obligations"
+          threshold: "Various by bid window"
+          measurement: "Job creation, local content, ownership"
+          consequence: "Penalty mechanisms, termination risk"
+        - requirement: "Community ownership"
+          threshold: "2.5-5%"
+          measurement: "percentage equity"
+          consequence: "Compliance certificates required"
+
+    generation_licenses:
+      name: "Generation License Categories"
+      regulatory_body: "NERSA"
+      key_requirements:
+        - requirement: "Schedule 2 exemption"
+          threshold: 100
+          measurement: "MW maximum"
+          consequence: "Registration only, no license required"
+        - requirement: "Licensed generation"
+          threshold: "Above 100 MW"
+          measurement: "MW capacity"
+          consequence: "Full NERSA license process"
+
+    grid_code:
+      name: "South African Grid Code"
+      regulatory_body: "NERSA / Eskom System Operator"
+      key_requirements:
+        - requirement: "Network code compliance"
+          description: "Technical requirements for grid connection"
+          consequence: "Connection refused if non-compliant"
+        - requirement: "Metering code"
+          description: "Revenue metering requirements"
+          consequence: "Payment disputes if non-compliant"
+
+  transaction_triggers:
+    license_transfer:
+      - statute: "ERA Section 10"
+        trigger: "Change of control of licensed entity"
+        consequence: "NERSA approval required"
+        timeline: "Application 60 days before, 90-180 days process"
+      - statute: "ERA Section 4"
+        trigger: "Sale of generation asset"
+        consequence: "License transfer or new application"
+        timeline: "90-180 days"
+    ppa_change_of_control:
+      - statute: "REIPPPP PPA"
+        trigger: "Change of control of project company"
+        consequence: "Eskom consent required"
+        timeline: "60-90 days for consent process"
+    environmental:
+      - statute: "NEMA Section 24"
+        trigger: "New generation project"
+        consequence: "Environmental Impact Assessment required"
+        processing_time: "300 days statutory timeline"
+      - statute: "NWA Section 21"
+        trigger: "Water use for power generation"
+        consequence: "Water use license required"
+        processing_time: "300 days statutory timeline"

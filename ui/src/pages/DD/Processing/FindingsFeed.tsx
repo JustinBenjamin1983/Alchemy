@@ -305,19 +305,24 @@ interface RiskCounterProps {
   value: number;
   color: string;
   bgColor?: string;
-  icon?: React.ReactNode;
+  borderColor?: string;
+  labelColor?: string;
   pulse?: boolean;
+  suffix?: string;
 }
 
-const RiskCounter: React.FC<RiskCounterProps> = ({ label, value, color, bgColor, icon, pulse }) => {
+const RiskCounter: React.FC<RiskCounterProps> = ({ label, value, color, bgColor, borderColor, labelColor, pulse, suffix }) => {
   const reducedMotion = useReducedMotion();
   const animatedValue = useAnimatedNumber(value, reducedMotion ? 0 : 300);
 
   return (
     <motion.div
       variants={reducedMotion ? reducedMotionVariants : staggerChildVariants}
-      className="relative flex flex-col items-center justify-center p-3 rounded-lg shadow-sm overflow-hidden min-h-[88px]"
-      style={{ backgroundColor: bgColor || 'white' }}
+      className="relative flex flex-col items-center justify-center p-3 rounded-lg shadow-sm overflow-hidden min-h-[80px]"
+      style={{
+        backgroundColor: bgColor || 'white',
+        border: borderColor ? `2px solid ${borderColor}` : undefined
+      }}
     >
       {/* Pulse effect for non-zero critical values */}
       {pulse && value > 0 && !reducedMotion && (
@@ -334,8 +339,10 @@ const RiskCounter: React.FC<RiskCounterProps> = ({ label, value, color, bgColor,
         />
       )}
       <div className="flex flex-col items-center justify-center gap-0.5 mb-1 relative z-10">
-        {icon && <span className="flex-shrink-0 mb-0.5">{icon}</span>}
-        <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide text-center leading-tight">
+        <span
+          className="text-xs font-semibold uppercase tracking-wide text-center leading-tight"
+          style={{ color: labelColor || '#4B5563' }}
+        >
           {label}
         </span>
       </div>
@@ -349,7 +356,7 @@ const RiskCounter: React.FC<RiskCounterProps> = ({ label, value, color, bgColor,
           className="text-2xl font-bold relative z-10"
           style={{ color }}
         >
-          {animatedValue}
+          {animatedValue}{suffix}
         </motion.span>
       </AnimatePresence>
     </motion.div>
@@ -367,58 +374,99 @@ export const RiskSummaryCounters: React.FC<RiskSummaryCountersProps> = ({
 }) => {
   const reducedMotion = useReducedMotion();
 
+  // Dark blue theme for deal-specific cards
+  const dealCardStyle = {
+    color: '#1e3a5f',        // Dark blue number
+    bgColor: '#EFF6FF',      // Light blue background
+    borderColor: '#1e3a5f',  // Dark blue border
+    labelColor: '#1f2937'    // Near-black label
+  };
+
   return (
     <motion.div
       variants={reducedMotion ? undefined : staggerContainerVariants}
       initial="initial"
       animate="animate"
-      className={`grid grid-cols-2 md:grid-cols-4 gap-4 ${className}`}
+      className={`grid grid-cols-2 md:grid-cols-5 gap-3 ${className}`}
     >
+      {/* Row 1: Finding severity counts */}
+      <RiskCounter
+        label="Total Findings"
+        value={summary.total}
+        color="#2563EB"
+        bgColor={summary.total > 0 ? '#EFF6FF' : '#FFFFFF'}
+        borderColor="#93C5FD"
+      />
       <RiskCounter
         label="Critical"
         value={summary.critical}
         color="#DC2626"
         bgColor={summary.critical > 0 ? '#FEF2F2' : '#FFFFFF'}
+        borderColor="#FECACA"
         pulse={true}
-        icon={
-          <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-          </svg>
-        }
       />
       <RiskCounter
         label="High"
         value={summary.high}
         color="#EA580C"
         bgColor={summary.high > 0 ? '#FFF7ED' : '#FFFFFF'}
-        icon={
-          <svg className="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-          </svg>
-        }
+        borderColor="#FDBA74"
       />
+      <RiskCounter
+        label="Medium"
+        value={summary.medium}
+        color="#CA8A04"
+        bgColor={summary.medium > 0 ? '#FEFCE8' : '#FFFFFF'}
+        borderColor="#FDE047"
+      />
+      <RiskCounter
+        label="Positive"
+        value={summary.positive}
+        color="#16A34A"
+        bgColor={summary.positive > 0 ? '#F0FDF4' : '#FFFFFF'}
+        borderColor="#86EFAC"
+      />
+
+      {/* Row 2: Deal-specific metrics (consistent dark blue theme) */}
       <RiskCounter
         label="Deal Blockers"
         value={summary.dealBlockers}
-        color="#B91C1C"
-        bgColor={summary.dealBlockers > 0 ? '#FEE2E2' : '#FFFFFF'}
-        pulse={true}
-        icon={
-          <svg className="w-4 h-4 text-red-700" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clipRule="evenodd" />
-          </svg>
-        }
+        color={dealCardStyle.color}
+        bgColor={dealCardStyle.bgColor}
+        borderColor={dealCardStyle.borderColor}
+        labelColor={dealCardStyle.labelColor}
       />
       <RiskCounter
-        label="Conditions Precedent"
+        label="Conditions Prec."
         value={summary.conditionsPrecedent}
-        color="#7C3AED"
-        bgColor={summary.conditionsPrecedent > 0 ? '#F5F3FF' : '#FFFFFF'}
-        icon={
-          <svg className="w-4 h-4 text-violet-600" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-          </svg>
-        }
+        color={dealCardStyle.color}
+        bgColor={dealCardStyle.bgColor}
+        borderColor={dealCardStyle.borderColor}
+        labelColor={dealCardStyle.labelColor}
+      />
+      <RiskCounter
+        label="Warranties"
+        value={summary.warranties}
+        color={dealCardStyle.color}
+        bgColor={dealCardStyle.bgColor}
+        borderColor={dealCardStyle.borderColor}
+        labelColor={dealCardStyle.labelColor}
+      />
+      <RiskCounter
+        label="Indemnities"
+        value={summary.indemnities}
+        color={dealCardStyle.color}
+        bgColor={dealCardStyle.bgColor}
+        borderColor={dealCardStyle.borderColor}
+        labelColor={dealCardStyle.labelColor}
+      />
+      <RiskCounter
+        label="Completion %"
+        value={summary.completionPercent}
+        color="#059669"
+        bgColor={summary.completionPercent >= 100 ? '#D1FAE5' : summary.completionPercent > 0 ? '#ECFDF5' : '#FFFFFF'}
+        borderColor="#6EE7B7"
+        suffix="%"
       />
     </motion.div>
   );

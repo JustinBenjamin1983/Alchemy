@@ -169,8 +169,11 @@ export function useProcessingProgress(
           high: data.finding_counts?.high ?? 0,
           medium: data.finding_counts?.medium ?? 0,
           low: data.finding_counts?.low ?? 0,
+          positive: data.finding_counts?.positive ?? 0,
           dealBlockers: data.finding_counts?.deal_blockers ?? 0,
-          conditionsPrecedent: data.finding_counts?.conditions_precedent ?? 0
+          conditionsPrecedent: data.finding_counts?.conditions_precedent ?? 0,
+          warranties: data.finding_counts?.warranties ?? 0,
+          indemnities: data.finding_counts?.indemnities ?? 0
         },
 
         lastError: data.last_error,

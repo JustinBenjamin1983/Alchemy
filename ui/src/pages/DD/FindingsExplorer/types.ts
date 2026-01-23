@@ -10,6 +10,62 @@ export interface FinancialExposureDetail {
   calculation: string | null;  // "Show your working" - e.g., "500,000 tonnes × R927/tonne × 24 months = R927M"
 }
 
+// ============================================
+// Action Category Types (Phase 1 Enhancement)
+// ============================================
+
+export type ActionCategory = 'terminal' | 'valuation' | 'indemnity' | 'warranty' | 'information' | 'condition_precedent';
+
+export interface ResolutionPath {
+  mechanism?: 'suspensive_condition' | 'price_adjustment' | 'indemnity' | 'warranty' | 'disclosure' | 'walk_away';
+  description?: string;
+  responsible_party?: 'seller' | 'buyer' | 'both' | 'third_party';
+  timeline?: 'before_signing' | 'between_sign_and_close' | 'post_closing' | 'ongoing';
+  estimated_cost?: number;
+  cost_confidence?: number;  // 0.0-1.0
+}
+
+// ============================================
+// Materiality Types (Phase 1 Enhancement)
+// ============================================
+
+export type MaterialityClassification = 'material' | 'potentially_material' | 'likely_immaterial' | 'unquantified';
+
+export interface Materiality {
+  classification?: MaterialityClassification;
+  ratio_to_deal?: number;  // e.g., 0.05 = 5% of deal value
+  threshold_applied?: string;  // Description of threshold used
+  qualitative_override?: string;  // Qualitative factor overriding quantitative
+}
+
+// ============================================
+// Confidence Types (Phase 1 Enhancement)
+// ============================================
+
+export interface Confidence {
+  overall?: number;  // 0.0-1.0: Combined confidence score
+  finding_exists?: number;  // 0.0-1.0: Confidence the issue exists
+  severity_correct?: number;  // 0.0-1.0: Confidence severity is correct
+  financial_amount_correct?: number;  // 0.0-1.0: Confidence financial amount is correct
+  basis?: string;  // Explanation of confidence assessment
+}
+
+// ============================================
+// Statutory Reference Types (Phase 1 Enhancement)
+// ============================================
+
+export interface StatutoryReference {
+  act?: string;  // E.g., "Mineral and Petroleum Resources Development Act 28 of 2002"
+  section?: string;  // E.g., "Section 11"
+  provision?: string;  // Specific provision text
+  consequence?: string;  // What happens if provision violated
+  regulatory_body?: string;  // E.g., "Department of Mineral Resources and Energy"
+}
+
+// ============================================
+// Finding Interface (Extended)
+// ============================================
+
 export interface Finding {
   id: string;
   title: string;
@@ -43,6 +99,21 @@ export interface Finding {
   gap_reason?: 'documents_not_provided' | 'information_not_found' | 'inconclusive';
   gap_detail?: string;       // Detailed explanation of the gap
   documents_analyzed_count?: number;  // How many docs were analyzed for this category
+
+  // ===== PHASE 1 ENHANCEMENTS =====
+
+  // Action Category (Task 4) - How to resolve this finding
+  action_category?: ActionCategory;
+  resolution_path?: ResolutionPath;
+
+  // Materiality (Task 3) - Relative importance based on deal value
+  materiality?: Materiality;
+
+  // Confidence Calibration (Task 6) - Granular confidence scores
+  confidence?: Confidence;
+
+  // Statutory Reference (Task 2) - Legal citation framework
+  statutory_reference?: StatutoryReference;
 }
 
 export interface DocumentWithFindings {

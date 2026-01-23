@@ -26,7 +26,7 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
-import { Play, Pause, Square, AlertTriangle, CheckCircle2, Loader2, X, RotateCcw, RefreshCw } from "lucide-react";
+import { Play, Pause, Square, AlertTriangle, CheckCircle2, Loader2, X, RotateCcw, RefreshCw, ClipboardCheck } from "lucide-react";
 import { ProcessingProgress, RiskSummary, PASS_CONFIG, STATUS_COLORS, RING_COLORS, ProcessingPass } from "./types";
 import {
   useProcessingProgress,
@@ -63,6 +63,8 @@ import {
 import { celebrationVariants, SPRING_GENTLE } from "./animations";
 import { AccuracyTierSelector, ModelTier } from "./AccuracyTierSelector";
 import { ControlBar } from "./ControlBar";
+import { useValidationCheckpoint } from "@/hooks/useValidationCheckpoint";
+import { ValidationWizardModal } from "../ValidationWizardModal";
 
 interface DDProcessingDashboardProps {
   ddId?: string;
@@ -179,6 +181,17 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   const checkReadability = useCheckReadability();
   const { startProcessing, isStarting, error: startError } = useStartProcessing();
   const createRun = useCreateAnalysisRun();
+
+  // Validation checkpoint hook - polls for pending checkpoints during processing
+  const { data: checkpointData, refetch: refetchCheckpoint } = useValidationCheckpoint(ddId || undefined);
+  const [showValidationWizard, setShowValidationWizard] = useState(false);
+
+  // Auto-show validation wizard when checkpoint is awaiting user input
+  useEffect(() => {
+    if (checkpointData?.has_checkpoint && checkpointData.checkpoint?.status === 'awaiting_user_input') {
+      setShowValidationWizard(true);
+    }
+  }, [checkpointData]);
 
   // Sanitized progress - returns undefined during new run creation to reset UI
   // This ensures pipeline rings, progress bars, and elapsed time reset when starting a new run
@@ -329,16 +342,28 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   // Risk summary from progress
   // Note: progress is already sanitized to be undefined during new run transitions
   const riskSummary: RiskSummary = useMemo(
-    () => ({
-      critical: progress?.findingCounts?.critical ?? 0,
-      high: progress?.findingCounts?.high ?? 0,
-      medium: progress?.findingCounts?.medium ?? 0,
-      low: progress?.findingCounts?.low ?? 0,
-      dealBlockers: progress?.findingCounts?.dealBlockers ?? 0,
-      conditionsPrecedent: progress?.findingCounts?.conditionsPrecedent ?? 0,
-      totalExposure: 0,
-      currency: "ZAR",
-    }),
+    () => {
+      // Calculate completion percentage from documents processed
+      const totalDocs = progress?.totalDocuments ?? 0;
+      const processedDocs = progress?.documentsProcessed ?? 0;
+      const completionPercent = totalDocs > 0 ? Math.round((processedDocs / totalDocs) * 100) : 0;
+
+      return {
+        total: progress?.findingCounts?.total ?? 0,
+        critical: progress?.findingCounts?.critical ?? 0,
+        high: progress?.findingCounts?.high ?? 0,
+        medium: progress?.findingCounts?.medium ?? 0,
+        low: progress?.findingCounts?.low ?? 0,
+        positive: progress?.findingCounts?.positive ?? 0,
+        dealBlockers: progress?.findingCounts?.dealBlockers ?? 0,
+        conditionsPrecedent: progress?.findingCounts?.conditionsPrecedent ?? 0,
+        warranties: progress?.findingCounts?.warranties ?? 0,
+        indemnities: progress?.findingCounts?.indemnities ?? 0,
+        completionPercent,
+        totalExposure: 0,
+        currency: "ZAR",
+      };
+    },
     [progress]
   );
 
@@ -1344,6 +1369,40 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         disabled={isClassificationInProgress || isOrganisationInProgress}
       />
 
+      {/* Pending Checkpoint Banner */}
+      {checkpointData?.has_checkpoint && checkpointData.checkpoint?.status === 'awaiting_user_input' && !showValidationWizard && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 p-4 rounded-lg border-2 border-amber-400 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-600"
+        >
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-amber-100 dark:bg-amber-800/40 rounded-full">
+                <ClipboardCheck className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-amber-900 dark:text-amber-200">
+                  Your Input Needed
+                </h4>
+                <p className="text-sm text-amber-700 dark:text-amber-300">
+                  {checkpointData.checkpoint.checkpoint_type === 'entity_confirmation'
+                    ? 'Please confirm the entity relationships identified in the documents.'
+                    : 'Please review and confirm our understanding of the transaction before continuing analysis.'}
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={() => setShowValidationWizard(true)}
+              className="bg-amber-600 hover:bg-amber-700 text-white transition-all duration-200 hover:scale-105"
+            >
+              <ClipboardCheck className="w-4 h-4 mr-2" />
+              Open Validation Wizard
+            </Button>
+          </div>
+        </motion.div>
+      )}
+
       {/* Main content - Two column layout (Documents 60% | Pipeline 40%) */}
       <div className="grid grid-cols-1 lg:grid-cols-10 gap-6">
         {/* LEFT COLUMN (6/10 = 60%) - Documents (primary action area) */}
@@ -1582,7 +1641,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
               {/* Header */}
               <div className="flex items-center justify-between px-4 py-3 bg-alchemyPrimaryNavyBlue border-b border-gray-700">
                 <h2 className="font-medium text-white">
-                  Risk Summary
+                  Due Diligence Findings
                 </h2>
               </div>
               {/* Content */}
@@ -1684,6 +1743,28 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Validation Wizard Modal - Human-in-the-loop Checkpoint B */}
+      {checkpointData?.has_checkpoint && checkpointData.checkpoint && (
+        <ValidationWizardModal
+          open={showValidationWizard}
+          onClose={() => setShowValidationWizard(false)}
+          checkpoint={checkpointData.checkpoint}
+          ddId={ddId}
+          onComplete={() => {
+            setShowValidationWizard(false);
+            refetchCheckpoint();
+            refetch(); // Refresh processing progress
+            addLogEntry("success", "Validation checkpoint completed", "Analysis will continue with your corrections");
+          }}
+          onSkip={() => {
+            setShowValidationWizard(false);
+            refetchCheckpoint();
+            refetch();
+            addLogEntry("info", "Validation checkpoint skipped", "Analysis will continue with AI assessments");
+          }}
+        />
+      )}
 
       {/* Completion celebration */}
       <AnimatePresence>

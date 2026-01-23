@@ -38,7 +38,7 @@ import { useGetUser } from "@/hooks/useGetUser";
 import { useIdle } from "@uidotdev/usehooks";
 import { useMsal } from "@azure/msal-react";
 import { useGenerateSAS } from "@/hooks/useGenerateSAS";
-import { DDTop } from "./DDTop";
+import { DDTop, ScreenState } from "./DDTop";
 import axios from "axios";
 import ChatbotUI from "./ChatbotUI";
 import { generateDDReport } from "@/utils/reportGenerator";
@@ -167,18 +167,7 @@ export function DDMainEnhanced() {
     setScreenState("Documents");
   }, [mutateDDJoin.isSuccess]);
 
-  const [screenState, setScreenState] = useState<
-    | "Documents"
-    | "Wizard-Enhanced"
-    | "Wizard-JoinProject"
-    | "DocumentErrors"
-    | "Search"
-    | "Analysis"
-    | "Questions"
-    | "DocumentChanges"
-    | "ShowReport"
-    | "MissingDocs"
-  >("Wizard-Enhanced");
+  const [screenState, setScreenState] = useState<ScreenState>("Wizard-Enhanced");
 
   const handleGenerateReport = async () => {
     if (!dd || allFindings.length === 0) {
@@ -244,7 +233,6 @@ export function DDMainEnhanced() {
           ddName={dd?.name}
           screenState={screenState}
           setScreenState={setScreenState}
-          docHistoryCount={dd?.docHistory?.length}
           onDelete={handleDeleteDD}
           isDeleting={mutateDDDelete.isPending}
           onGenerateReport={handleGenerateReport}

@@ -10,7 +10,7 @@ import {
 } from "../../components/ui/dialog";
 import { SidebarInset, SidebarProvider } from "../../components/ui/sidebar";
 import { useMutateCompileOpinion } from "@/hooks/useMutateCompileOpinion";
-import { toast } from "sonner";
+import { toast as sonnerToast } from "sonner";
 import { OpinionViewToggle, OpinionView } from "./OpinionViewToggle";
 
 import { Textarea } from "@/components/ui/textarea";
@@ -365,20 +365,20 @@ export function OpinionMain() {
       !f.name.toLowerCase().endsWith(".docx") &&
       !f.name.toLowerCase().endsWith(".dotx")
     ) {
-      toast?.error("Please upload a .docx or .dotx template");
+      sonnerToast.error("Please upload a .docx or .dotx template");
       return;
     }
     setTemplateFile(f);
     const b64 = await fileToBase64(f);
     setTemplateB64(b64);
-    toast?.success(`Custom template "${f.name}" will be used`);
+    sonnerToast.success(`Custom template "${f.name}" will be used`);
   };
 
   const clearCustomTemplate = () => {
     setTemplateFile(null);
     setTemplateB64(null);
     setUseCustomTemplate(false);
-    toast?.success("Using default template");
+    sonnerToast.success("Using default template");
   };
 
   const handleCustomTemplateToggle = (checked: boolean | "indeterminate") => {
@@ -475,12 +475,12 @@ export function OpinionMain() {
             if (payload?.success) {
               setCompileUrl(payload.url);
               setCompileFileName(payload.file_name || "Compiled_Opinion.docx");
-              toast?.success("Compiled DOCX ready");
+              sonnerToast.success("Compiled DOCX ready");
               window.open(payload.url, "_blank", "noopener,noreferrer");
             } else {
               const msg = payload?.error || "Failed to compile";
               setCompileError(msg);
-              toast?.error(msg);
+              sonnerToast.error(msg);
             }
           },
           onError: (err: any) => {
@@ -489,14 +489,14 @@ export function OpinionMain() {
               err?.message ||
               "Could not call compile endpoint";
             setCompileError(msg);
-            if (toast) toast.error(msg);
+            sonnerToast.error(msg);
           },
         }
       );
     } catch (e: any) {
       const msg = e?.message || "Could not save/compile opinion";
       setCompileError(msg);
-      if (toast) toast.error(msg);
+      sonnerToast.error(msg);
     }
   };
 

@@ -17,7 +17,10 @@ import { FindingDetail } from './FindingDetail';
 import { CompletenessCheck } from './CompletenessCheck';
 import { AIChatPanel } from './AIChatPanel';
 import { SynthesisView } from './SynthesisView';
+import { BlueprintAnswersView } from './BlueprintAnswersView';
+import { FinancialAnalysisView } from './FinancialAnalysisView';
 import { DocumentViewer } from './DocumentViewer';
+import { ReportVersionManager } from '../ReportVersionManager';
 import {
   Finding,
   DocumentWithFindings,
@@ -127,6 +130,8 @@ const DocumentIcon = () => (
 type ActiveTab =
   | 'findings'
   | 'completeness'
+  | 'blueprint_answers'
+  | 'financial_analysis'
   | 'executive_summary'
   | 'deal_assessment'
   | 'financial_exposures'
@@ -624,6 +629,12 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
               <optgroup label="Analysis">
                 <option value="findings">Findings</option>
                 <option value="completeness">Completeness Check</option>
+                {synthesisData?.blueprint_qa && synthesisData.blueprint_qa.length > 0 && (
+                  <option value="blueprint_answers">Blueprint Answers</option>
+                )}
+                {synthesisData?.financial_analysis && Object.keys(synthesisData.financial_analysis).length > 0 && (
+                  <option value="financial_analysis">Financial Analysis</option>
+                )}
               </optgroup>
               {synthesisData && (
                 <optgroup label="Synthesis Report">
@@ -748,6 +759,17 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                   {reportTypeLoading === 'final' ? <SpinnerIcon /> : <DownloadIcon />}
                   {reportTypeLoading === 'final' ? 'Generating...' : 'Final Report'}
                 </button>
+              </div>
+            )}
+
+            {/* Version Manager - show when synthesis is available */}
+            {selectedRunId && synthesisData && (
+              <div className="pl-3 border-l border-gray-300 dark:border-gray-600">
+                <ReportVersionManager
+                  runId={selectedRunId}
+                  ddId={ddId}
+                  className="h-8"
+                />
               </div>
             )}
           </div>
@@ -895,6 +917,42 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                     </button>
                   )}
                 </div>
+              </div>
+            )}
+          </div>
+        ) : activeTab === 'blueprint_answers' ? (
+          /* Blueprint Answers View - 3-Panel Layout */
+          <div ref={contentPanelRef} className="flex-1 overflow-auto p-6">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                Blueprint Answers
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Questions from the DD blueprint and Claude's answers based on document analysis
+              </p>
+            </div>
+            <BlueprintAnswersView
+              blueprintQA={synthesisData?.blueprint_qa || []}
+              onViewDocument={(docId) => onOpenDocumentInTab?.(docId)}
+              onDownloadDocument={(docId) => onOpenDocumentInTab?.(docId)}
+            />
+          </div>
+        ) : activeTab === 'financial_analysis' ? (
+          /* Financial Analysis View */
+          <div ref={contentPanelRef} className="flex-1 overflow-auto p-6">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                Financial Analysis
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Comprehensive financial overview based on DD financial documents
+              </p>
+            </div>
+            {synthesisData ? (
+              <FinancialAnalysisView synthesisData={synthesisData} />
+            ) : (
+              <div className="flex items-center justify-center h-64 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
+                <p className="text-gray-400 dark:text-gray-500">No financial analysis available</p>
               </div>
             )}
           </div>

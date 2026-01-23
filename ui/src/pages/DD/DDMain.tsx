@@ -42,7 +42,7 @@ import { useGetUser } from "@/hooks/useGetUser";
 import { useIdle } from "@uidotdev/usehooks";
 import { useMsal } from "@azure/msal-react";
 import { useGenerateSAS } from "@/hooks/useGenerateSAS";
-import { DDTop } from "./DDTop";
+import { DDTop, ScreenState } from "./DDTop";
 import axios from "axios";
 import ChatbotUI from "./ChatbotUI";
 import { generateDDReport } from "@/utils/reportGenerator";
@@ -399,14 +399,7 @@ Shareholders: ${setup.shareholders?.length > 0 ? setup.shareholders.filter(s => 
     setSelectedDDID(selectedDDToJoin);
     setScreenState("Processing");
   }, [mutateDDJoin.isSuccess]);
-  const [screenState, setScreenState] = useState<
-    | "Wizard-Chooser"
-    | "Wizard-NewProject"
-    | "Wizard-JoinProject"
-    | "Wizard-OpenProject"
-    | "Analysis"
-    | "Processing"
-  >("Wizard-Chooser");
+  const [screenState, setScreenState] = useState<ScreenState>("Wizard-Chooser");
 
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
 

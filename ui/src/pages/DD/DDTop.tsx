@@ -12,13 +12,21 @@ import {
 } from "@/components/ui/dialog";
 import { TRANSACTION_TYPE_INFO, TransactionTypeCode } from "./Wizard/types";
 
-type ScreenState =
+export type ScreenState =
   | "Wizard-Chooser"
   | "Wizard-NewProject"
   | "Wizard-JoinProject"
   | "Wizard-OpenProject"
+  | "Wizard-Enhanced"
   | "Analysis"
-  | "Processing";
+  | "Processing"
+  | "Documents"
+  | "DocumentErrors"
+  | "Search"
+  | "Questions"
+  | "DocumentChanges"
+  | "ShowReport"
+  | "MissingDocs";
 
 interface DDTopProps {
   ddId: string;

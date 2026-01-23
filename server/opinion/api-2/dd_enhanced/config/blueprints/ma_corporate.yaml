@@ -715,3 +715,445 @@ cot_questions:
   - Does the transaction require Competition Commission approval?
   - Are there any pending regulatory investigations?
   - What happens if regulatory approval is refused or delayed?
+
+# ============================================================================
+# STATUTORY FRAMEWORK
+# Detailed statutory citation framework for regulatory findings
+# ============================================================================
+statutory_framework:
+  primary_legislation:
+    - act: "Companies Act 71 of 2008"
+      acronym: "Companies Act"
+      regulatory_body: "Companies and Intellectual Property Commission (CIPC)"
+      key_sections:
+        - section: "Section 112"
+          description: "Disposal of all or greater part of assets or undertaking"
+          penalties:
+            other: "Transaction voidable if proper approvals not obtained"
+          criticality: critical
+        - section: "Section 113"
+          description: "Proposals for scheme of arrangement"
+          penalties:
+            other: "Scheme ineffective without court approval"
+          criticality: critical
+        - section: "Section 114"
+          description: "Approval for amalgamation or merger"
+          penalties:
+            other: "Merger void without proper approvals"
+          criticality: critical
+        - section: "Section 115"
+          description: "Required approval for fundamental transactions"
+          penalties:
+            other: "Special resolution required (75% vote)"
+          criticality: critical
+        - section: "Section 126"
+          description: "Takeover regulations applicability"
+          penalties:
+            administrative: "TRP enforcement action, mandatory offer obligations"
+          criticality: high
+        - section: "Section 164"
+          description: "Dissenting shareholders' appraisal rights"
+          penalties:
+            civil: "Fair value buyout obligation"
+          criticality: high
+
+    - act: "Competition Act 89 of 1998"
+      acronym: "Competition Act"
+      regulatory_body: "Competition Commission / Competition Tribunal"
+      key_sections:
+        - section: "Section 11"
+          description: "Merger definition - acquisition of control"
+          penalties:
+            other: "Merger notification obligation triggered"
+          criticality: critical
+        - section: "Section 12"
+          description: "Intermediate and large merger thresholds"
+          penalties:
+            administrative: "Mandatory pre-implementation notification"
+          criticality: critical
+        - section: "Section 13"
+          description: "Small merger thresholds and voluntary notification"
+          penalties:
+            administrative: "May be called for review within 6 months"
+          criticality: medium
+        - section: "Section 13A"
+          description: "Merger implementation prohibition pending approval"
+          penalties:
+            criminal: "Fine up to 10% of annual turnover"
+            administrative: "Divestiture order"
+          criticality: critical
+        - section: "Section 16"
+          description: "Competition Commission merger investigation"
+          penalties:
+            administrative: "Conditions may be imposed on approval"
+          criticality: high
+
+    - act: "Labour Relations Act 66 of 1995"
+      acronym: "LRA"
+      regulatory_body: "Department of Employment and Labour / CCMA"
+      key_sections:
+        - section: "Section 189"
+          description: "Consultation requirements for dismissals based on operational requirements"
+          penalties:
+            civil: "Unfair dismissal claims, reinstatement, compensation up to 24 months"
+          criticality: high
+        - section: "Section 189A"
+          description: "Large-scale retrenchment requirements (50+ employees)"
+          penalties:
+            civil: "Facilitation process mandatory, extended consultation periods"
+          criticality: high
+        - section: "Section 197"
+          description: "Transfer of contract of employment on transfer of business"
+          penalties:
+            civil: "Automatic transfer, dismissal protection, joint and several liability"
+          criticality: critical
+        - section: "Section 197A"
+          description: "Transfer of undertaking in insolvency"
+          penalties:
+            civil: "Modified transfer provisions apply"
+          criticality: high
+
+    - act: "Broad-Based Black Economic Empowerment Act 53 of 2003"
+      acronym: "B-BBEE Act"
+      regulatory_body: "Department of Trade, Industry and Competition (DTIC) / B-BBEE Commission"
+      key_sections:
+        - section: "Section 10"
+          description: "Fronting prohibition"
+          penalties:
+            criminal: "Fine up to 10% of annual turnover or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 13G"
+          description: "Misrepresentation of B-BBEE status"
+          penalties:
+            criminal: "Fine up to 10% of turnover, imprisonment up to 10 years"
+            administrative: "Debarment from government contracts"
+          criticality: critical
+
+    - act: "Financial Markets Act 19 of 2012"
+      acronym: "FMA"
+      regulatory_body: "Financial Sector Conduct Authority (FSCA)"
+      key_sections:
+        - section: "Section 78"
+          description: "Market manipulation prohibition"
+          penalties:
+            criminal: "Fine up to R50 million or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 82"
+          description: "Insider trading prohibition"
+          penalties:
+            criminal: "Fine up to R50 million or imprisonment up to 10 years"
+          criticality: critical
+
+  transaction_triggers:
+    change_of_control:
+      - statute: "Competition Act Section 12/13"
+        trigger: "Acquisition of control (ability to materially influence policy)"
+        consequence: "Merger notification mandatory if thresholds met"
+        timeline: "Must notify before implementation, 20-60 business days review"
+      - statute: "Companies Act Section 126"
+        trigger: "Acquisition of 35% or more in regulated company"
+        consequence: "Takeover Regulations apply, mandatory offer may be required"
+        timeline: "As prescribed by TRP Rules"
+    share_sale:
+      - statute: "Companies Act Section 115"
+        trigger: "Sale of shares constituting fundamental transaction"
+        consequence: "Special resolution required"
+        processing_time: "21 days notice for shareholders meeting"
+    asset_sale:
+      - statute: "Companies Act Section 112"
+        trigger: "Disposal of all or greater part of assets/undertaking"
+        consequence: "Special resolution required"
+        processing_time: "21 days notice for shareholders meeting"
+
+# ============================================================================
+# WARRANTY CATEGORIES
+# Standard warranties for M&A transactions in South Africa
+# ============================================================================
+warranty_categories:
+  - category: "Title & Capacity"
+    description: "Warranties relating to share ownership, corporate capacity, and authority"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-TC-001"
+        description: "Seller has full legal and beneficial ownership of the sale shares"
+        detailed_wording: "The Seller is the sole legal and beneficial owner of the Sale Shares, free from any encumbrances, liens, charges, pledges, or third-party rights whatsoever"
+        typical_cap: "Purchase price"
+        survival_period: "3 years from Closing Date"
+        priority: critical
+      - id: "W-TC-002"
+        description: "Sale shares are fully paid up and non-assessable"
+        detailed_wording: "The Sale Shares are validly issued, fully paid up, and non-assessable"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-TC-003"
+        description: "No options or pre-emptive rights over sale shares"
+        detailed_wording: "There are no outstanding options, warrants, convertible securities, pre-emptive rights, rights of first refusal, tag-along, drag-along, or other rights to acquire any Sale Shares"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+
+  - category: "Corporate"
+    description: "Warranties relating to corporate status and compliance"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-CORP-001"
+        description: "Company duly incorporated and validly existing"
+        detailed_wording: "The Company is a company duly incorporated, validly existing and in good standing under the laws of South Africa"
+        typical_cap: "General cap (15-25% of purchase price)"
+        survival_period: "2-3 years"
+        priority: high
+      - id: "W-CORP-002"
+        description: "Statutory registers are accurate and up to date"
+        detailed_wording: "All statutory registers of the Company have been properly maintained and are accurate and up to date"
+        typical_cap: "General cap"
+        survival_period: "2-3 years"
+        priority: high
+      - id: "W-CORP-003"
+        description: "Company has power to conduct its business"
+        detailed_wording: "The Company has full corporate power and authority to own its assets and carry on its business as currently conducted"
+        typical_cap: "General cap"
+        survival_period: "2-3 years"
+        priority: high
+
+  - category: "Financial"
+    description: "Warranties relating to financial statements and position"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-FIN-001"
+        description: "Financial statements fairly present financial position"
+        detailed_wording: "The Financial Statements have been prepared in accordance with IFRS and fairly present the financial position of the Company as at their date"
+        typical_cap: "General cap"
+        survival_period: "2-3 years"
+        priority: critical
+      - id: "W-FIN-002"
+        description: "No undisclosed liabilities"
+        detailed_wording: "There are no liabilities of the Company other than those reflected or reserved for in the Financial Statements or disclosed in the Disclosure Letter"
+        typical_cap: "General cap"
+        survival_period: "2-3 years"
+        priority: critical
+      - id: "W-FIN-003"
+        description: "No material adverse change since accounts date"
+        detailed_wording: "Since the Accounts Date, there has been no Material Adverse Change in the business, operations, assets, or financial condition of the Company"
+        typical_cap: "General cap"
+        survival_period: "Until Closing"
+        priority: critical
+
+  - category: "Material Contracts"
+    description: "Warranties relating to key commercial agreements"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-MC-001"
+        description: "Material contracts are valid and binding"
+        detailed_wording: "Each Material Contract is valid, binding, and enforceable against all parties thereto"
+        typical_cap: "General cap"
+        survival_period: "2-3 years"
+        priority: high
+      - id: "W-MC-002"
+        description: "No breach of material contracts"
+        detailed_wording: "Neither the Company nor any other party is in material breach of any Material Contract"
+        typical_cap: "General cap"
+        survival_period: "2-3 years"
+        priority: high
+      - id: "W-MC-003"
+        description: "No termination notices received"
+        detailed_wording: "The Company has not received notice of termination or intention to terminate any Material Contract"
+        typical_cap: "General cap"
+        survival_period: "2-3 years"
+        priority: high
+
+  - category: "Employment"
+    description: "Warranties relating to employees and employment matters"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-EMP-001"
+        description: "Employee details disclosed are complete and accurate"
+        detailed_wording: "The schedule of employees is complete and accurate, including all remuneration, benefits, and terms of employment"
+        typical_cap: "General cap"
+        survival_period: "2-3 years"
+        priority: high
+      - id: "W-EMP-002"
+        description: "Compliance with labour laws"
+        detailed_wording: "The Company is in compliance in all material respects with all applicable labour and employment laws"
+        typical_cap: "General cap"
+        survival_period: "2-3 years"
+        priority: high
+      - id: "W-EMP-003"
+        description: "No pending disputes or claims"
+        detailed_wording: "There are no pending or threatened labour disputes, unfair dismissal claims, or employment-related litigation"
+        typical_cap: "General cap"
+        survival_period: "2-3 years"
+        priority: high
+
+  - category: "Tax"
+    description: "Warranties relating to tax compliance and liabilities"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-TAX-001"
+        description: "All tax returns filed and taxes paid"
+        detailed_wording: "The Company has filed all required tax returns and has paid all taxes due and payable"
+        typical_cap: "Tax indemnity often separate"
+        survival_period: "Prescription period (3-5 years)"
+        priority: critical
+      - id: "W-TAX-002"
+        description: "No tax disputes or audits"
+        detailed_wording: "There are no pending or threatened tax audits, investigations, or disputes"
+        typical_cap: "Tax indemnity"
+        survival_period: "Prescription period"
+        priority: critical
+      - id: "W-TAX-003"
+        description: "Adequate provision for tax liabilities"
+        detailed_wording: "Adequate provision has been made in the Financial Statements for all tax liabilities"
+        typical_cap: "Tax indemnity"
+        survival_period: "Prescription period"
+        priority: critical
+
+  - category: "Litigation"
+    description: "Warranties relating to legal proceedings"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-LIT-001"
+        description: "No litigation pending or threatened"
+        detailed_wording: "There is no litigation, arbitration, or administrative proceedings pending or threatened against the Company"
+        typical_cap: "General cap"
+        survival_period: "2-3 years"
+        priority: high
+      - id: "W-LIT-002"
+        description: "No judgments or orders outstanding"
+        detailed_wording: "There are no outstanding judgments, orders, or awards against the Company"
+        typical_cap: "General cap"
+        survival_period: "2-3 years"
+        priority: high
+
+# ============================================================================
+# INDEMNITY CATEGORIES
+# Standard indemnities for M&A transactions in South Africa
+# ============================================================================
+indemnity_categories:
+  - category: "Tax"
+    description: "Indemnities for tax liabilities arising from pre-closing periods"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Tax compliance issues identified in DD"
+      - "Pending tax audits or disputes"
+      - "Transfer pricing arrangements with related parties"
+      - "Aggressive tax positions taken"
+    standard_indemnities:
+      - id: "I-TAX-001"
+        description: "Pre-Closing tax liabilities"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Tax liabilities of the Company relating to periods ending on or before the Closing Date"
+        typical_cap: "Often uncapped or separate cap"
+        survival_period: "Prescription period plus 1 year"
+        priority: critical
+        escrow_recommendation: "Consider escrow if material tax exposure identified"
+      - id: "I-TAX-002"
+        description: "Tax audit adjustments"
+        detailed_wording: "The Seller shall indemnify the Buyer against any additional Tax arising from audit adjustments relating to pre-Closing periods"
+        typical_cap: "Often uncapped"
+        survival_period: "Prescription period plus 1 year"
+        priority: critical
+
+  - category: "Employment"
+    description: "Indemnities for employment-related liabilities"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Section 197 transfer identified"
+      - "Retrenchment process underway or contemplated"
+      - "Pending labour disputes"
+      - "Non-compliant employment practices"
+    standard_indemnities:
+      - id: "I-EMP-001"
+        description: "Pre-Closing employment claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against all claims by employees arising from matters occurring prior to the Closing Date"
+        typical_cap: "General cap or specific sub-cap"
+        survival_period: "3 years"
+        priority: high
+      - id: "I-EMP-002"
+        description: "Section 197 liabilities"
+        detailed_wording: "The Seller shall indemnify the Buyer against all liabilities arising from the automatic transfer of employees under Section 197"
+        typical_cap: "Specific sub-cap"
+        survival_period: "2-3 years"
+        priority: high
+
+  - category: "Environmental"
+    description: "Indemnities for environmental contamination and compliance"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Environmental contamination identified"
+      - "Environmental compliance issues"
+      - "Manufacturing or industrial operations"
+      - "Historical use of hazardous materials"
+    standard_indemnities:
+      - id: "I-ENV-001"
+        description: "Pre-Closing environmental contamination"
+        detailed_wording: "The Seller shall indemnify the Buyer against all costs arising from environmental contamination that occurred prior to the Closing Date"
+        typical_cap: "Often uncapped or high cap"
+        survival_period: "5-7 years or longer"
+        priority: high
+        escrow_recommendation: "Escrow if contamination identified"
+
+  - category: "Litigation"
+    description: "Indemnities for known and potential litigation matters"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Pending litigation identified"
+      - "Threatened claims"
+      - "Regulatory investigations"
+    standard_indemnities:
+      - id: "I-LIT-001"
+        description: "Disclosed litigation"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from the matters set out in Schedule [X] (Disclosed Litigation)"
+        typical_cap: "Specific to matter or uncapped"
+        survival_period: "Until resolution plus 1 year"
+        priority: high
+
+  - category: "Change of Control"
+    description: "Indemnities for contract terminations due to change of control"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Material contracts with change of control provisions"
+      - "Consents not obtained pre-closing"
+      - "Key customer/supplier relationship at risk"
+    standard_indemnities:
+      - id: "I-COC-001"
+        description: "Contract termination due to change of control"
+        detailed_wording: "The Seller shall indemnify the Buyer against Losses arising from the termination of any Material Contract as a result of the transaction"
+        typical_cap: "Specific sub-cap based on contract value"
+        survival_period: "2-3 years"
+        priority: high

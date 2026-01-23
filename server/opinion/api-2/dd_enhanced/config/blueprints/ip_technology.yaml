@@ -1478,3 +1478,251 @@ output_requirements:
       IP infringement, open source contamination, and data breach indemnities are
       particularly important in IP/technology transactions.
       Quantify exposure where possible based on potential claim values.
+
+# ============================================================================
+# STATUTORY FRAMEWORK
+# Detailed statutory citation framework for IP & technology regulatory findings
+# ============================================================================
+statutory_framework:
+  primary_legislation:
+    - act: "Patents Act 57 of 1978"
+      acronym: "Patents Act"
+      regulatory_body: "Companies and Intellectual Property Commission (CIPC)"
+      key_sections:
+        - section: "Section 25"
+          description: "Patentable inventions requirements"
+          penalties:
+            civil: "Patent invalidity"
+          criticality: high
+        - section: "Section 45"
+          description: "Patent infringement"
+          penalties:
+            civil: "Interdict, damages, delivery up"
+          criticality: critical
+        - section: "Section 53"
+          description: "Compulsory licensing"
+          penalties:
+            administrative: "Compulsory license may be granted"
+          criticality: high
+        - section: "Section 61"
+          description: "Assignment and licensing requirements"
+          penalties:
+            civil: "Unregistered assignments not enforceable against third parties"
+          criticality: high
+
+    - act: "Trade Marks Act 194 of 1993"
+      acronym: "Trade Marks Act"
+      regulatory_body: "Companies and Intellectual Property Commission (CIPC)"
+      key_sections:
+        - section: "Section 34"
+          description: "Infringement of registered trade mark"
+          penalties:
+            civil: "Interdict, damages, destruction of infringing goods"
+            criminal: "Fine or imprisonment up to 3 years"
+          criticality: critical
+        - section: "Section 35"
+          description: "Passing off protection"
+          penalties:
+            civil: "Interdict, damages"
+          criticality: high
+        - section: "Section 39"
+          description: "Assignment and transmission of trade marks"
+          penalties:
+            civil: "Unregistered assignments void against third parties"
+          criticality: high
+
+    - act: "Copyright Act 98 of 1978"
+      acronym: "Copyright Act"
+      regulatory_body: "Department of Trade, Industry and Competition"
+      key_sections:
+        - section: "Section 21"
+          description: "Ownership of copyright - employer works"
+          penalties:
+            civil: "Ownership disputes"
+          criticality: critical
+        - section: "Section 22"
+          description: "Assignment of copyright"
+          penalties:
+            civil: "Assignment must be in writing to be valid"
+          criticality: critical
+        - section: "Section 23"
+          description: "Infringement of copyright"
+          penalties:
+            civil: "Interdict, damages"
+            criminal: "Fine or imprisonment up to 5 years"
+          criticality: critical
+        - section: "Section 27"
+          description: "Criminal penalties for piracy"
+          penalties:
+            criminal: "Fine up to R5,000 per article or imprisonment up to 5 years"
+          criticality: high
+
+    - act: "Protection of Personal Information Act 4 of 2013"
+      acronym: "POPIA"
+      regulatory_body: "Information Regulator"
+      key_sections:
+        - section: "Section 9"
+          description: "Lawfulness of processing"
+          penalties:
+            administrative: "Administrative fines up to R10 million"
+            criminal: "Fine or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 11"
+          description: "Consent requirements"
+          penalties:
+            administrative: "Enforcement notice, administrative fine"
+          criticality: critical
+        - section: "Section 19"
+          description: "Security safeguards"
+          penalties:
+            administrative: "Administrative fine up to R10 million"
+            criminal: "Imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 22"
+          description: "Notification of security compromises"
+          penalties:
+            administrative: "Administrative fine"
+            criminal: "Fine or imprisonment"
+          criticality: critical
+        - section: "Section 72"
+          description: "Trans-border information flows"
+          penalties:
+            administrative: "Processing prohibition, administrative fine"
+          criticality: high
+
+    - act: "Electronic Communications and Transactions Act 25 of 2002"
+      acronym: "ECTA"
+      regulatory_body: "Department of Communications and Digital Technologies"
+      key_sections:
+        - section: "Section 11"
+          description: "Legal recognition of data messages"
+          penalties:
+            civil: "Contracts may be unenforceable"
+          criticality: high
+        - section: "Section 13"
+          description: "Electronic signature requirements"
+          penalties:
+            civil: "Signature may be invalid"
+          criticality: high
+        - section: "Section 43"
+          description: "Domain name disputes"
+          penalties:
+            administrative: "Domain transfer or cancellation"
+          criticality: medium
+        - section: "Section 86"
+          description: "Cybercrimes - unauthorized access"
+          penalties:
+            criminal: "Fine or imprisonment up to 5 years"
+          criticality: critical
+        - section: "Section 87"
+          description: "Interception of data"
+          penalties:
+            criminal: "Fine or imprisonment up to 5 years"
+          criticality: critical
+
+    - act: "Cybercrimes Act 19 of 2020"
+      acronym: "Cybercrimes Act"
+      regulatory_body: "South African Police Service / National Prosecuting Authority"
+      key_sections:
+        - section: "Section 2"
+          description: "Unlawful access to computer system"
+          penalties:
+            criminal: "Fine or imprisonment up to 5 years"
+          criticality: critical
+        - section: "Section 3"
+          description: "Unlawful interception of data"
+          penalties:
+            criminal: "Fine or imprisonment up to 5 years"
+          criticality: critical
+        - section: "Section 5"
+          description: "Unlawful interference with data"
+          penalties:
+            criminal: "Fine or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 6"
+          description: "Unlawful interference with computer system"
+          penalties:
+            criminal: "Fine or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 54"
+          description: "Reporting obligations for electronic service providers"
+          penalties:
+            criminal: "Fine or imprisonment up to 3 years"
+          criticality: high
+
+    - act: "Counterfeit Goods Act 37 of 1997"
+      acronym: "Counterfeit Goods Act"
+      regulatory_body: "South African Revenue Service (customs) / South African Police Service"
+      key_sections:
+        - section: "Section 2"
+          description: "Prohibition on dealings in counterfeit goods"
+          penalties:
+            criminal: "Fine up to R5,000 per article or imprisonment up to 3 years"
+          criticality: critical
+        - section: "Section 4"
+          description: "Inspector powers and seizure"
+          penalties:
+            administrative: "Goods may be seized and destroyed"
+          criticality: high
+
+    - act: "Designs Act 195 of 1993"
+      acronym: "Designs Act"
+      regulatory_body: "Companies and Intellectual Property Commission (CIPC)"
+      key_sections:
+        - section: "Section 20"
+          description: "Design infringement"
+          penalties:
+            civil: "Interdict, damages"
+          criticality: high
+        - section: "Section 26"
+          description: "Assignment requirements"
+          penalties:
+            civil: "Unregistered assignments not binding on third parties"
+          criticality: high
+
+  sector_specific:
+    open_source_compliance:
+      name: "Open Source License Compliance"
+      regulatory_body: "Self-regulatory / Contractual"
+      key_requirements:
+        - requirement: "GPL Copyleft Compliance"
+          threshold: "Any use of GPL code"
+          measurement: "Binary trigger"
+          consequence: "Source code disclosure obligation, potential IP contamination"
+        - requirement: "LGPL Compliance"
+          threshold: "Linking to LGPL libraries"
+          measurement: "Binary trigger"
+          consequence: "Modified library source disclosure"
+        - requirement: "Attribution Requirements"
+          threshold: "Use of permissive licensed code (MIT, BSD, Apache)"
+          measurement: "Binary trigger"
+          consequence: "Attribution notice requirements"
+        - requirement: "License Compatibility"
+          threshold: "Combining code under different licenses"
+          measurement: "Analysis required"
+          consequence: "Incompatible licenses may prevent distribution"
+
+  transaction_triggers:
+    ip_transfer:
+      - statute: "Patents Act Section 61"
+        trigger: "Assignment of patent"
+        consequence: "Must be registered with CIPC to be effective against third parties"
+        timeline: "Register within reasonable time, typically before closing"
+      - statute: "Copyright Act Section 22"
+        trigger: "Assignment of copyright"
+        consequence: "Must be in writing, signed by assignor"
+        timeline: "At or before closing"
+      - statute: "Trade Marks Act Section 39"
+        trigger: "Assignment of trade mark"
+        consequence: "Must be registered to be effective against third parties"
+        timeline: "Register within 6 months"
+    data_processing:
+      - statute: "POPIA Section 72"
+        trigger: "Transfer of personal information outside South Africa"
+        consequence: "Adequate protection required or consent"
+        processing_time: "Prior to transfer"
+    security_incident:
+      - statute: "POPIA Section 22"
+        trigger: "Security compromise affecting personal information"
+        consequence: "Notification to Information Regulator and data subjects"
+        processing_time: "As soon as reasonably possible"

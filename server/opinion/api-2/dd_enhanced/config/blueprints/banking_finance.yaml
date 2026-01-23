@@ -1423,3 +1423,208 @@ output_requirements:
   - Repeating vs initial warranties identification
   - Standard finance indemnities checklist
   - Negotiation matrix (market vs aggressive positions)
+
+# ============================================================================
+# STATUTORY FRAMEWORK
+# Detailed statutory citation framework for banking and finance regulatory findings
+# ============================================================================
+statutory_framework:
+  primary_legislation:
+    - act: "Banks Act 94 of 1990"
+      acronym: "Banks Act"
+      regulatory_body: "Prudential Authority (PA) / South African Reserve Bank (SARB)"
+      key_sections:
+        - section: "Section 11"
+          description: "Prohibition on conducting banking business without registration"
+          penalties:
+            criminal: "Fine up to R10 million or imprisonment up to 5 years"
+          criticality: critical
+        - section: "Section 35"
+          description: "Minimum capital requirements"
+          penalties:
+            administrative: "Curatorship, license revocation"
+          criticality: critical
+        - section: "Section 52"
+          description: "Restrictions on lending to related parties"
+          penalties:
+            administrative: "Enforcement action, fines"
+          criticality: high
+        - section: "Section 60"
+          description: "Large exposure limits"
+          penalties:
+            administrative: "Supervisory intervention, capital requirements"
+          criticality: high
+        - section: "Section 78"
+          description: "Fit and proper requirements for management"
+          penalties:
+            administrative: "Disqualification, removal from office"
+          criticality: critical
+
+    - act: "Financial Sector Regulation Act 9 of 2017"
+      acronym: "FSRA"
+      regulatory_body: "Prudential Authority / Financial Sector Conduct Authority (FSCA)"
+      key_sections:
+        - section: "Section 108"
+          description: "Licensing requirements for financial service providers"
+          penalties:
+            criminal: "Fine or imprisonment"
+            administrative: "License suspension or revocation"
+          criticality: critical
+        - section: "Section 135"
+          description: "Administrative penalties"
+          penalties:
+            administrative: "Penalty up to R10 million per contravention"
+          criticality: high
+        - section: "Section 153"
+          description: "Fit and proper requirements"
+          penalties:
+            administrative: "Debarment, disqualification"
+          criticality: critical
+
+    - act: "National Credit Act 34 of 2005"
+      acronym: "NCA"
+      regulatory_body: "National Credit Regulator (NCR)"
+      key_sections:
+        - section: "Section 40"
+          description: "Credit provider registration requirements"
+          penalties:
+            criminal: "Fine up to R1 million or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 81"
+          description: "Reckless credit prohibition"
+          penalties:
+            civil: "Credit agreement may be set aside"
+            administrative: "Registration cancellation"
+          criticality: critical
+        - section: "Section 100"
+          description: "Maximum interest rate and fee restrictions"
+          penalties:
+            administrative: "Excess amounts refundable, registration action"
+          criticality: high
+        - section: "Section 129"
+          description: "Notice requirements before enforcement"
+          penalties:
+            civil: "Enforcement may be stayed"
+          criticality: high
+
+    - act: "Financial Advisory and Intermediary Services Act 37 of 2002"
+      acronym: "FAIS"
+      regulatory_body: "Financial Sector Conduct Authority (FSCA)"
+      key_sections:
+        - section: "Section 7"
+          description: "Licensing requirement for financial service providers"
+          penalties:
+            criminal: "Fine up to R10 million or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 13"
+          description: "Fit and proper requirements"
+          penalties:
+            administrative: "License withdrawal"
+          criticality: critical
+        - section: "Section 16"
+          description: "General duties of provider"
+          penalties:
+            administrative: "Enforcement action, compensation orders"
+          criticality: high
+
+    - act: "Financial Intelligence Centre Act 38 of 2001"
+      acronym: "FICA"
+      regulatory_body: "Financial Intelligence Centre (FIC)"
+      key_sections:
+        - section: "Section 21"
+          description: "Customer due diligence requirements"
+          penalties:
+            administrative: "Fine up to R50 million"
+            criminal: "Imprisonment up to 15 years"
+          criticality: critical
+        - section: "Section 28"
+          description: "Record keeping requirements"
+          penalties:
+            administrative: "Fine up to R10 million"
+          criticality: high
+        - section: "Section 29"
+          description: "Suspicious transaction reporting"
+          penalties:
+            criminal: "Fine up to R100 million or imprisonment up to 15 years"
+          criticality: critical
+
+    - act: "Consumer Protection Act 68 of 2008"
+      acronym: "CPA"
+      regulatory_body: "National Consumer Commission / National Consumer Tribunal"
+      key_sections:
+        - section: "Section 48"
+          description: "Unfair contract terms prohibition"
+          penalties:
+            civil: "Terms may be declared void"
+          criticality: high
+        - section: "Section 51"
+          description: "Prohibited contract terms"
+          penalties:
+            civil: "Void and unenforceable"
+            administrative: "Compliance notice, fines"
+          criticality: high
+
+    - act: "Insolvency Act 24 of 1936"
+      acronym: "Insolvency Act"
+      regulatory_body: "Master of the High Court"
+      key_sections:
+        - section: "Section 26"
+          description: "Voidable preference within 6 months"
+          penalties:
+            civil: "Transaction may be set aside"
+          criticality: critical
+        - section: "Section 29"
+          description: "Undue preference disposition"
+          penalties:
+            civil: "Transaction set aside, recovery of property"
+          criticality: critical
+        - section: "Section 30"
+          description: "Voidable dispositions not for value"
+          penalties:
+            civil: "Transaction void if within 2 years"
+          criticality: high
+        - section: "Section 34"
+          description: "Collusive dealings"
+          penalties:
+            civil: "Transaction void"
+            criminal: "Criminal liability"
+          criticality: critical
+
+  sector_specific:
+    prudential_requirements:
+      name: "Basel III / Prudential Requirements"
+      regulatory_body: "Prudential Authority"
+      key_requirements:
+        - requirement: "Capital Adequacy Ratio"
+          threshold: 10
+          measurement: "percentage minimum"
+          consequence: "Supervisory intervention, restrictions on dividends"
+        - requirement: "Liquidity Coverage Ratio"
+          threshold: 100
+          measurement: "percentage minimum"
+          consequence: "Liquidity buffer requirements"
+        - requirement: "Large Exposure Limit"
+          threshold: 25
+          measurement: "percentage of capital"
+          consequence: "Additional capital requirements"
+
+  transaction_triggers:
+    change_of_control:
+      - statute: "Banks Act Section 37"
+        trigger: "Change in significant ownership of a bank"
+        consequence: "Prior PA approval required"
+        timeline: "Application 60 days before, approval typically 3-6 months"
+      - statute: "FSRA Section 108"
+        trigger: "Change of control in licensed financial institution"
+        consequence: "Notification to relevant Authority required"
+        timeline: "As prescribed"
+    facility_drawdown:
+      - statute: "NCA Section 81"
+        trigger: "Extension of credit to consumer"
+        consequence: "Affordability assessment required"
+        processing_time: "Before each extension"
+    security_enforcement:
+      - statute: "NCA Section 129"
+        trigger: "Default under credit agreement"
+        consequence: "Section 129 notice required before enforcement"
+        processing_time: "10 business days notice minimum"

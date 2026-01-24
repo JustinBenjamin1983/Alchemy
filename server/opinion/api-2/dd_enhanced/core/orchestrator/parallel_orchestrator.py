@@ -172,6 +172,8 @@ class ParallelOrchestrator:
         progress_callback: Optional[Callable[[int, int, str], None]] = None,
         checkpoint_callback: Optional[Callable[[str, Dict], None]] = None,
         include_tier3: bool = False,
+        entity_map: Optional[List[Dict[str, Any]]] = None,
+        validated_context: Optional[Dict[str, Any]] = None,
     ) -> ProcessingResult:
         """
         Process all documents in a DD project.
@@ -189,6 +191,8 @@ class ParallelOrchestrator:
             progress_callback: Optional callback(current, total, message)
             checkpoint_callback: Optional callback(stage, data)
             include_tier3: Whether to include tier 3 questions
+            entity_map: Optional list of entity dicts for party validation
+            validated_context: User-validated corrections from Checkpoint B
 
         Returns:
             ProcessingResult with all findings and statistics
@@ -224,6 +228,8 @@ class ParallelOrchestrator:
                     progress_callback=progress_callback,
                     checkpoint_callback=checkpoint_callback,
                     include_tier3=include_tier3,
+                    entity_map=entity_map,
+                    validated_context=validated_context,
                 )
             else:
                 result = self._process_parallel(
@@ -237,6 +243,8 @@ class ParallelOrchestrator:
                     progress_callback=progress_callback,
                     checkpoint_callback=checkpoint_callback,
                     include_tier3=include_tier3,
+                    entity_map=entity_map,
+                    validated_context=validated_context,
                 )
 
             result.completed_at = datetime.utcnow()
@@ -263,6 +271,8 @@ class ParallelOrchestrator:
         progress_callback: Optional[Callable] = None,
         checkpoint_callback: Optional[Callable] = None,
         include_tier3: bool = False,
+        entity_map: Optional[List[Dict[str, Any]]] = None,
+        validated_context: Optional[Dict[str, Any]] = None,
     ) -> ProcessingResult:
         """
         Process documents sequentially (existing behavior).
@@ -375,7 +385,8 @@ class ParallelOrchestrator:
             self.claude_client,
             transaction_context=transaction_context,
             prioritized_questions=prioritized_questions,
-            verbose=False
+            verbose=False,
+            entity_map=entity_map
         )
         result.pass2_findings = pass2_findings
 
@@ -409,7 +420,8 @@ class ParallelOrchestrator:
             pass2_findings,
             pass3_results,
             self.claude_client,
-            verbose=False
+            verbose=False,
+            validated_context=validated_context
         )
         result.pass4_results = pass4_results
 
@@ -460,6 +472,8 @@ class ParallelOrchestrator:
         progress_callback: Optional[Callable] = None,
         checkpoint_callback: Optional[Callable] = None,
         include_tier3: bool = False,
+        entity_map: Optional[List[Dict[str, Any]]] = None,
+        validated_context: Optional[Dict[str, Any]] = None,
     ) -> ProcessingResult:
         """
         Process documents in parallel using worker pool.
@@ -612,6 +626,7 @@ class ParallelOrchestrator:
                         self.claude_client,
                         transaction_context=transaction_context,
                         prioritized_questions=prioritized_questions,
+                        entity_map=entity_map,
                     )
                     return {
                         'success': True,
@@ -709,7 +724,8 @@ class ParallelOrchestrator:
             all_findings,
             pass3_results,
             self.claude_client,
-            verbose=False
+            verbose=False,
+            validated_context=validated_context
         )
         result.pass4_results = pass4_results
 

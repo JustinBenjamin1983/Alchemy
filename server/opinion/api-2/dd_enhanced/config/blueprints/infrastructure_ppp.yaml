@@ -469,3 +469,204 @@ cot_questions:
   - Is lender consent required for CoC?
   - What are the debt service coverage requirements?
   - Are there any covenant breaches or waivers?
+
+# ============================================================================
+# STATUTORY FRAMEWORK
+# Detailed statutory citation framework for infrastructure and PPP findings
+# ============================================================================
+statutory_framework:
+  primary_legislation:
+    - act: "Public Finance Management Act 1 of 1999"
+      acronym: "PFMA"
+      regulatory_body: "National Treasury"
+      key_sections:
+        - section: "Section 38(1)(j)"
+          description: "Accounting officer duties - proper financial management"
+          penalties:
+            criminal: "Fine or imprisonment up to 5 years"
+          criticality: critical
+        - section: "Section 51(1)(g)"
+          description: "Public entities - proper financial management"
+          penalties:
+            criminal: "Fine or imprisonment"
+          criticality: critical
+        - section: "Section 66"
+          description: "Restrictions on borrowing, guarantees, and PPPs"
+          penalties:
+            administrative: "Invalid transactions"
+          criticality: critical
+        - section: "Treasury Regulation 16"
+          description: "PPP regulations - approval and implementation"
+          penalties:
+            administrative: "Transaction voidable"
+          criticality: critical
+
+    - act: "Municipal Finance Management Act 56 of 2003"
+      acronym: "MFMA"
+      regulatory_body: "National Treasury / Provincial Treasury"
+      key_sections:
+        - section: "Section 33"
+          description: "Contracts having budgetary implications"
+          penalties:
+            administrative: "Contract may be void"
+          criticality: critical
+        - section: "Section 78"
+          description: "Tariff policy"
+          penalties:
+            administrative: "Compliance orders"
+          criticality: high
+        - section: "Section 120"
+          description: "Municipal PPP requirements"
+          penalties:
+            administrative: "Transaction invalid without Treasury approval"
+          criticality: critical
+        - section: "MFMA Circular 62"
+          description: "Municipal PPP guidelines"
+          penalties:
+            administrative: "Non-compliance findings"
+          criticality: high
+
+    - act: "Infrastructure Development Act 23 of 2014"
+      acronym: "IDA"
+      regulatory_body: "Presidential Infrastructure Coordinating Commission"
+      key_sections:
+        - section: "Section 7"
+          description: "Strategic integrated projects (SIPs)"
+          penalties:
+            administrative: "Project de-designation"
+          criticality: high
+        - section: "Section 8"
+          description: "Fast-tracking and approval processes"
+          penalties:
+            administrative: "Loss of expedited processes"
+          criticality: medium
+
+    - act: "Preferential Procurement Policy Framework Act 5 of 2000"
+      acronym: "PPPFA"
+      regulatory_body: "National Treasury"
+      key_sections:
+        - section: "Section 2"
+          description: "Preferential procurement framework"
+          penalties:
+            administrative: "Procurement set aside"
+          criticality: high
+        - section: "Section 5"
+          description: "Goals for procurement"
+          penalties:
+            administrative: "Non-compliance findings"
+          criticality: high
+        - section: "PPPFA Regulations 2017"
+          description: "80/20 and 90/10 preference point systems"
+          penalties:
+            administrative: "Procurement invalid"
+          criticality: critical
+
+    - act: "National Environmental Management Act 107 of 1998"
+      acronym: "NEMA"
+      regulatory_body: "Department of Forestry, Fisheries and Environment"
+      key_sections:
+        - section: "Section 24"
+          description: "Environmental authorization for listed activities"
+          penalties:
+            criminal: "Fine up to R10 million or imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 28"
+          description: "Duty of care and remediation"
+          penalties:
+            civil: "Unlimited remediation liability"
+          criticality: critical
+
+    - act: "National Water Act 36 of 1998"
+      acronym: "NWA"
+      regulatory_body: "Department of Water and Sanitation"
+      key_sections:
+        - section: "Section 21"
+          description: "Water use license requirements"
+          penalties:
+            criminal: "Fine or imprisonment up to 5 years"
+          criticality: critical
+        - section: "Section 40"
+          description: "General authorization for water use"
+          penalties:
+            administrative: "Limited water use without license"
+          criticality: high
+
+    - act: "Construction Industry Development Board Act 38 of 2000"
+      acronym: "CIDB Act"
+      regulatory_body: "Construction Industry Development Board"
+      key_sections:
+        - section: "Section 18"
+          description: "Registration of contractors"
+          penalties:
+            administrative: "Prohibition from public contracts"
+          criticality: high
+        - section: "CIDB Regulations"
+          description: "Contractor grading and categories"
+          penalties:
+            administrative: "Contract limitations"
+          criticality: high
+
+    - act: "Promotion of Administrative Justice Act 3 of 2000"
+      acronym: "PAJA"
+      regulatory_body: "Courts"
+      key_sections:
+        - section: "Section 3"
+          description: "Procedural fairness"
+          penalties:
+            civil: "Judicial review, setting aside decisions"
+          criticality: high
+        - section: "Section 6"
+          description: "Grounds for judicial review"
+          penalties:
+            civil: "Administrative action set aside"
+          criticality: high
+
+  sector_specific:
+    treasury_ppp_regulations:
+      name: "Treasury PPP Regulations"
+      regulatory_body: "National Treasury / PPP Unit"
+      key_requirements:
+        - requirement: "Treasury Approval I"
+          description: "Project inception and feasibility"
+          consequence: "Cannot proceed without approval"
+        - requirement: "Treasury Approval IIA"
+          description: "Procurement documents"
+          consequence: "Cannot issue tender without approval"
+        - requirement: "Treasury Approval IIB"
+          description: "Contract after negotiation"
+          consequence: "Cannot sign without approval"
+        - requirement: "Treasury Approval III"
+          description: "Contract amendments"
+          consequence: "Amendment invalid without approval"
+
+    toll_roads:
+      name: "Toll Road Regulations"
+      regulatory_body: "SANRAL / Transport Department"
+      key_requirements:
+        - requirement: "Toll declaration"
+          description: "Government Gazette declaration of toll road"
+          consequence: "Cannot collect tolls without declaration"
+        - requirement: "Tariff approval"
+          description: "Toll tariffs require ministerial approval"
+          consequence: "Tariff disputes, revenue risk"
+
+  transaction_triggers:
+    change_of_control:
+      - statute: "Treasury Regulation 16"
+        trigger: "Change of control of concessionaire"
+        consequence: "Treasury consent required"
+        timeline: "60 days notice, 90-180 days approval"
+      - statute: "PFMA Section 66"
+        trigger: "Transfer of PPP rights"
+        consequence: "Accounting officer approval required"
+        timeline: "Treasury notification required"
+    concession_assignment:
+      - statute: "Concession Agreement"
+        trigger: "Assignment or novation of concession"
+        consequence: "Authority consent typically required"
+        timeline: "As per concession terms"
+    lender_consent:
+      - statute: "Project Finance Documents"
+        trigger: "Change of control, material amendments"
+        consequence: "Lender consent required"
+        timeline: "60-90 days process"

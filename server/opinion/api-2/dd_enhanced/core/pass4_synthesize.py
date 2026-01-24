@@ -32,7 +32,8 @@ def run_pass4_synthesis(
     pass3_results: Dict,
     client: ClaudeClient,
     transaction_value: str = "undisclosed",
-    verbose: bool = True
+    verbose: bool = True,
+    validated_context: Optional[Dict] = None
 ) -> Dict[str, Any]:
     """
     Pass 4: Final synthesis and deal analysis.
@@ -45,6 +46,10 @@ def run_pass4_synthesis(
         client: Claude API client
         transaction_value: Transaction value for context
         verbose: Print progress
+        validated_context: User-validated corrections from Checkpoint B containing:
+            - transaction_understanding: User corrections to structure, parties, deal type
+            - financial_corrections: Corrected financial values
+            - manual_inputs: Manually entered data
 
     Returns:
         Complete synthesis with deal-blockers, exposures, CP register, summary
@@ -475,7 +480,8 @@ def _generate_synthesis(
         pass3_cascade=cascade_str,
         pass3_authorization=auth_str,
         pass3_consents=consents_str,
-        transaction_value=transaction_value
+        transaction_value=transaction_value,
+        validated_context=validated_context
     )
 
     # Note: complete_critical already sets json_mode=True internally

@@ -214,13 +214,13 @@ def get_validated_context(run_id: str) -> dict:
     Get validated context from completed checkpoints for a run.
 
     This is used by Pass 2.5 (Calculate) and Pass 4 (Synthesize) to
-    incorporate user corrections.
+    incorporate user corrections including entity confirmations.
 
     Args:
         run_id: Analysis run ID
 
     Returns:
-        Validated context dict with corrections
+        Validated context dict with corrections and entity confirmations
     """
     run_uuid = uuid_module.UUID(run_id) if isinstance(run_id, str) else run_id
 
@@ -241,6 +241,7 @@ def get_validated_context(run_id: str) -> dict:
             "has_validated_context": True,
             "transaction_understanding": [],
             "financial_corrections": [],
+            "entity_confirmations": [],  # User-confirmed entity relationships
             "manual_inputs": {},
             "validated_at": None
         }
@@ -253,6 +254,14 @@ def get_validated_context(run_id: str) -> dict:
                         validated_context["transaction_understanding"].append({
                             "question_id": key,
                             "response": value
+                        })
+                    # Collect entity confirmations from user responses
+                    elif key.startswith("entity_"):
+                        entity_name = key.replace("entity_", "").replace("_", " ")
+                        validated_context["entity_confirmations"].append({
+                            "entity_name": entity_name,
+                            "confirmed_relationship": value.get("relationship") if isinstance(value, dict) else value,
+                            "user_notes": value.get("notes") if isinstance(value, dict) else None
                         })
 
             if cp.financial_confirmations:
@@ -268,10 +277,122 @@ def get_validated_context(run_id: str) -> dict:
             if cp.manual_data_inputs:
                 validated_context["manual_inputs"].update(cp.manual_data_inputs)
 
+            # Handle entity_confirmation checkpoint type specifically
+            if cp.checkpoint_type == "entity_confirmation" and cp.questions:
+                for entity_q in cp.questions:
+                    entity_name = entity_q.get("entity_name", "")
+                    entity_key = f"entity_{entity_name.replace(' ', '_').lower()}"
+
+                    # Check if this entity was confirmed in responses
+                    if cp.user_responses and entity_key in cp.user_responses:
+                        response = cp.user_responses[entity_key]
+                        validated_context["entity_confirmations"].append({
+                            "entity_name": entity_name,
+                            "original_relationship": entity_q.get("detected_relationship"),
+                            "confirmed_relationship": response.get("relationship") if isinstance(response, dict) else response,
+                            "confidence": entity_q.get("confidence"),
+                            "user_notes": response.get("notes") if isinstance(response, dict) else None
+                        })
+
             if cp.completed_at:
                 validated_context["validated_at"] = cp.completed_at.isoformat()
 
         return validated_context
+
+
+def build_entity_confirmation_content(entity_map: list, dd_id: str = None) -> dict:
+    """
+    Build checkpoint content for entity confirmation from entity map.
+
+    This should be called when creating Checkpoint B to include entity
+    confirmations alongside financial and transaction understanding validations.
+
+    Args:
+        entity_map: List of entity dicts from DDEntityMapping
+        dd_id: Optional DD ID for context
+
+    Returns:
+        Dict with entity confirmation questions for checkpoint
+    """
+    if not entity_map:
+        return {
+            "entity_summary": {
+                "status": "missing",
+                "message": "Entity mapping was not performed during pre-processing. Please provide key party information.",
+                "total_entities": 0,
+                "entities_needing_confirmation": 0
+            },
+            "questions": [{
+                "question_type": "entity_input",
+                "prompt": "No entities were automatically identified. Please provide the key parties involved in this transaction:",
+                "fields": [
+                    {"name": "target_entity", "label": "Target Entity Name", "required": True},
+                    {"name": "parent_company", "label": "Parent/Holding Company (if any)", "required": False},
+                    {"name": "counterparties", "label": "Key Counterparties (comma-separated)", "required": False},
+                    {"name": "subsidiaries", "label": "Known Subsidiaries (comma-separated)", "required": False}
+                ]
+            }]
+        }
+
+    # Identify entities needing confirmation
+    entities_needing_confirmation = [
+        e for e in entity_map if e.get("requires_human_confirmation", False)
+    ]
+
+    # Build summary
+    summary = {
+        "status": "loaded",
+        "total_entities": len(entity_map),
+        "entities_needing_confirmation": len(entities_needing_confirmation),
+        "high_confidence_entities": sum(1 for e in entity_map if e.get("confidence", 0) >= 0.8),
+        "relationship_breakdown": {}
+    }
+
+    # Count by relationship type
+    for entity in entity_map:
+        rel = entity.get("relationship_to_target", "unknown")
+        summary["relationship_breakdown"][rel] = summary["relationship_breakdown"].get(rel, 0) + 1
+
+    # Build questions for entities needing confirmation
+    questions = []
+    for entity in entities_needing_confirmation:
+        questions.append({
+            "question_type": "entity_confirmation",
+            "entity_name": entity.get("entity_name", ""),
+            "detected_relationship": entity.get("relationship_to_target", "unknown"),
+            "confidence": entity.get("confidence", 0),
+            "confirmation_reason": entity.get("confirmation_reason", "Requires verification"),
+            "documents_appearing_in": entity.get("documents_appearing_in", [])[:5],  # Limit to 5
+            "evidence": entity.get("evidence", "")[:500],  # Truncate evidence
+            "options": [
+                {"value": "subsidiary", "label": "Subsidiary of Target"},
+                {"value": "parent", "label": "Parent/Holding Company"},
+                {"value": "counterparty", "label": "Counterparty (customer, supplier, lender)"},
+                {"value": "related_party", "label": "Related Party"},
+                {"value": "target", "label": "This is the Target Entity"},
+                {"value": "not_relevant", "label": "Not Relevant to Transaction"},
+                {"value": "unknown", "label": "Cannot Determine"}
+            ]
+        })
+
+    # Add high-confidence entities for reference (not requiring confirmation)
+    high_confidence_entities = [
+        {
+            "entity_name": e.get("entity_name", ""),
+            "relationship_to_target": e.get("relationship_to_target", ""),
+            "confidence": e.get("confidence", 0)
+        }
+        for e in entity_map
+        if e.get("confidence", 0) >= 0.8 and not e.get("requires_human_confirmation")
+    ][:10]  # Limit to top 10
+
+    return {
+        "entity_summary": summary,
+        "questions": questions,
+        "high_confidence_entities": high_confidence_entities,
+        "message": f"Found {len(entity_map)} entities. {len(entities_needing_confirmation)} require your confirmation."
+            if entities_needing_confirmation else f"Found {len(entity_map)} entities with high confidence. Review if needed."
+    }
 
 
 def _check_checkpoint_complete(checkpoint: DDValidationCheckpoint, responses: dict) -> bool:

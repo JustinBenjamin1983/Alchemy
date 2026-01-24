@@ -580,3 +580,241 @@ cot_questions:
   - What environmental authorizations are required?
   - What is the flood risk and stormwater management?
   - Are there any protected species or ecosystems?
+
+# ============================================================================
+# STATUTORY FRAMEWORK
+# Detailed statutory citation framework for real estate findings
+# ============================================================================
+statutory_framework:
+  primary_legislation:
+    - act: "Deeds Registries Act 47 of 1937"
+      acronym: "DRA"
+      regulatory_body: "Deeds Registries Office"
+      key_sections:
+        - section: "Section 3"
+          description: "Functions and duties of registrar"
+          penalties:
+            administrative: "Registration refusal"
+          criticality: critical
+        - section: "Section 16"
+          description: "Form of deeds"
+          penalties:
+            administrative: "Deed not registrable"
+          criticality: high
+        - section: "Section 63"
+          description: "Transfer duties"
+          penalties:
+            administrative: "Transfer refused without duty payment"
+          criticality: critical
+        - section: "Section 102"
+          description: "Rectification of registry"
+          penalties:
+            civil: "Court order required for rectification"
+          criticality: high
+
+    - act: "Alienation of Land Act 68 of 1981"
+      acronym: "ALA"
+      regulatory_body: "Courts"
+      key_sections:
+        - section: "Section 2"
+          description: "Requirement for written deed of alienation"
+          penalties:
+            civil: "Contract unenforceable if oral"
+          criticality: critical
+        - section: "Section 28"
+          description: "Prohibition on receipt of consideration before registration"
+          penalties:
+            criminal: "Fine or imprisonment"
+            civil: "Must be held in trust"
+          criticality: critical
+
+    - act: "Sectional Titles Act 95 of 1986"
+      acronym: "STA"
+      regulatory_body: "Deeds Registries / CSOS"
+      key_sections:
+        - section: "Section 2"
+          description: "Division of building into sections"
+          penalties:
+            administrative: "Scheme rules apply"
+          criticality: high
+        - section: "Section 15B"
+          description: "Duty of owners to bodies corporate"
+          penalties:
+            civil: "Levy liability, interest"
+          criticality: high
+        - section: "Section 35"
+          description: "Transfer of units"
+          penalties:
+            administrative: "Clearance certificate required"
+          criticality: critical
+
+    - act: "Sectional Titles Schemes Management Act 8 of 2011"
+      acronym: "STSMA"
+      regulatory_body: "Community Schemes Ombud Service (CSOS)"
+      key_sections:
+        - section: "Section 3"
+          description: "Body corporate establishment"
+          penalties:
+            administrative: "Non-compliance orders"
+          criticality: high
+        - section: "Section 13"
+          description: "Trustees duties"
+          penalties:
+            administrative: "Removal, personal liability"
+          criticality: high
+
+    - act: "Property Practitioners Act 22 of 2019"
+      acronym: "PPA"
+      regulatory_body: "Property Practitioners Regulatory Authority (PPRA)"
+      key_sections:
+        - section: "Section 47"
+          description: "Mandatory disclosure by property practitioners"
+          penalties:
+            administrative: "Fine, suspension"
+            criminal: "Imprisonment up to 10 years for fraud"
+          criticality: critical
+        - section: "Section 54"
+          description: "Trust account requirements"
+          penalties:
+            administrative: "Fidelity Fund claims"
+          criticality: critical
+
+    - act: "Spatial Planning and Land Use Management Act 16 of 2013"
+      acronym: "SPLUMA"
+      regulatory_body: "Municipality"
+      key_sections:
+        - section: "Section 26"
+          description: "Municipal planning tribunal"
+          penalties:
+            administrative: "Development rights refused"
+          criticality: critical
+        - section: "Section 52"
+          description: "Use of land contrary to scheme"
+          penalties:
+            criminal: "Fine"
+            administrative: "Demolition order"
+          criticality: critical
+        - section: "Section 67"
+          description: "Offences"
+          penalties:
+            criminal: "Fine or imprisonment"
+          criticality: high
+
+    - act: "National Building Regulations and Building Standards Act 103 of 1977"
+      acronym: "NBR Act"
+      regulatory_body: "Municipality"
+      key_sections:
+        - section: "Section 4"
+          description: "Building plan approval"
+          penalties:
+            administrative: "Demolition order if unapproved"
+          criticality: critical
+        - section: "Section 14"
+          description: "Occupation certificate"
+          penalties:
+            administrative: "Unlawful occupation"
+          criticality: critical
+
+    - act: "Transfer Duty Act 40 of 1949"
+      acronym: "TDA"
+      regulatory_body: "SARS"
+      key_sections:
+        - section: "Section 2"
+          description: "Levy of transfer duty"
+          penalties:
+            administrative: "Interest and penalties on late payment"
+          criticality: critical
+        - section: "Section 9"
+          description: "Exemptions from transfer duty"
+          penalties:
+            administrative: "Incorrect exemption = duty + penalties"
+          criticality: high
+
+    - act: "Value-Added Tax Act 89 of 1991"
+      acronym: "VAT Act"
+      regulatory_body: "SARS"
+      key_sections:
+        - section: "Section 11(1)(e)"
+          description: "Zero-rating of fixed property"
+          penalties:
+            administrative: "VAT @ 15% if incorrectly zero-rated"
+          criticality: critical
+        - section: "Section 18(1)"
+          description: "Change in use adjustment"
+          penalties:
+            administrative: "Output VAT adjustment"
+          criticality: high
+
+    - act: "National Environmental Management Act 107 of 1998"
+      acronym: "NEMA"
+      regulatory_body: "DFFE"
+      key_sections:
+        - section: "Section 24"
+          description: "Environmental authorization"
+          penalties:
+            criminal: "Fine up to R10 million or imprisonment"
+          criticality: critical
+        - section: "Section 28"
+          description: "Duty of care"
+          penalties:
+            civil: "Remediation liability"
+          criticality: critical
+
+    - act: "National Heritage Resources Act 25 of 1999"
+      acronym: "NHRA"
+      regulatory_body: "SAHRA / Provincial Heritage Authority"
+      key_sections:
+        - section: "Section 38"
+          description: "Heritage impact assessment"
+          penalties:
+            criminal: "Fine or imprisonment"
+          criticality: high
+        - section: "Section 34"
+          description: "Protection of heritage resources"
+          penalties:
+            criminal: "Fine, restoration order"
+          criticality: high
+
+  sector_specific:
+    municipal_clearances:
+      name: "Municipal Clearance Requirements"
+      regulatory_body: "Municipality"
+      key_requirements:
+        - requirement: "Rates clearance certificate"
+          description: "Section 118 clearance required for transfer"
+          consequence: "Transfer cannot be registered without clearance"
+        - requirement: "Zoning certificate"
+          description: "Confirmation of current zoning"
+          consequence: "Evidence of lawful use"
+
+    body_corporate:
+      name: "Sectional Title Body Corporate"
+      regulatory_body: "CSOS"
+      key_requirements:
+        - requirement: "Levy clearance"
+          description: "Body corporate clearance for unit transfer"
+          consequence: "Transfer refused without clearance"
+        - requirement: "Trustee consent"
+          description: "Consent for lease/sale if required by rules"
+          consequence: "Transaction may be challenged"
+
+  transaction_triggers:
+    transfer_registration:
+      - statute: "Deeds Registries Act"
+        trigger: "Property sale"
+        consequence: "Transfer must be registered"
+        timeline: "60-90 days typical conveyancing process"
+      - statute: "Transfer Duty Act"
+        trigger: "Property acquisition"
+        consequence: "Transfer duty payable within 6 months"
+        timeline: "Payment before registration"
+    zoning_compliance:
+      - statute: "SPLUMA Section 26"
+        trigger: "Change of use, development"
+        consequence: "Land use application required"
+        timeline: "60-180 days for application"
+    heritage_approval:
+      - statute: "NHRA Section 38"
+        trigger: "Alteration of building >60 years old"
+        consequence: "Heritage permit required"
+        timeline: "60-120 days"

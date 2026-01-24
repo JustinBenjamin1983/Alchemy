@@ -98,12 +98,19 @@ class CalculationOrchestrator:
     - Aggregating cross-document exposures
     """
 
-    def __init__(self, transaction_value: Optional[float] = None):
+    def __init__(
+        self,
+        transaction_value: Optional[float] = None,
+        validated_context: Optional[Dict] = None
+    ):
         """
         Initialize the orchestrator.
 
         Args:
             transaction_value: Transaction value for validation (e.g., 850000000 for R850M)
+            validated_context: User-validated context from Checkpoint B containing:
+                - financial_corrections: List of {metric, original_value, corrected_value, source}
+                - manual_inputs: Dict of manually entered data
         """
         config = {}
         if transaction_value:
@@ -116,12 +123,46 @@ class CalculationOrchestrator:
         self._calculations: Dict[str, CalculationResult] = {}
         self._pending_dependencies: Dict[str, List[Dict]] = {}
 
+        # Store validated context for applying corrections
+        self._validated_context = validated_context or {}
+        self._financial_corrections = self._build_corrections_lookup(
+            validated_context.get("financial_corrections", []) if validated_context else []
+        )
+        self._manual_inputs = validated_context.get("manual_inputs", {}) if validated_context else {}
+
+        if self._financial_corrections:
+            logger.info(f"CalculationOrchestrator: Loaded {len(self._financial_corrections)} financial corrections")
+
+    def _build_corrections_lookup(self, corrections: List[Dict]) -> Dict[str, Dict]:
+        """
+        Build a lookup dict from financial corrections for fast access.
+
+        Args:
+            corrections: List of correction dicts with metric, original_value, corrected_value
+
+        Returns:
+            Dict keyed by metric name for quick lookup
+        """
+        lookup = {}
+        for correction in corrections:
+            metric = correction.get("metric", "").lower().strip()
+            if metric:
+                lookup[metric] = {
+                    "original": correction.get("original_value"),
+                    "corrected": correction.get("corrected_value"),
+                    "source": correction.get("source"),
+                }
+        return lookup
+
     def process_pass2_findings(self, findings: List[Dict]) -> List[Dict]:
         """
         Process findings after Pass 2, enriching with calculations.
 
         Called after Pass 2 analysis to add calculated financial exposures
         to findings that have calculable amounts.
+
+        If validated_context was provided, financial corrections from
+        Checkpoint B are applied to findings before calculation.
 
         Args:
             findings: List of finding dictionaries from Pass 2
@@ -132,10 +173,67 @@ class CalculationOrchestrator:
         enriched_findings = []
 
         for finding in findings:
+            # Apply user corrections from Checkpoint B before calculating
+            if self._financial_corrections:
+                finding = self._apply_financial_corrections(finding)
+
             enriched = self._process_single_finding(finding)
             enriched_findings.append(enriched)
 
         return enriched_findings
+
+    def _apply_financial_corrections(self, finding: Dict) -> Dict:
+        """
+        Apply user-validated financial corrections to a finding.
+
+        Checks if the finding's financial data matches any corrected metrics
+        and updates the values accordingly.
+
+        Args:
+            finding: Finding dict potentially containing financial_extraction
+
+        Returns:
+            Finding with corrected values applied
+        """
+        extraction_data = finding.get("financial_extraction")
+        if not extraction_data or not extraction_data.get("variables"):
+            return finding
+
+        variables = extraction_data.get("variables", {})
+        corrections_applied = []
+
+        for var_name, var_data in variables.items():
+            if not isinstance(var_data, dict):
+                continue
+
+            # Try to match variable to a correction
+            var_name_lower = var_name.lower().strip()
+
+            # Check direct match
+            if var_name_lower in self._financial_corrections:
+                correction = self._financial_corrections[var_name_lower]
+                original_value = var_data.get("value")
+                corrected_value = correction.get("corrected")
+
+                if corrected_value is not None and corrected_value != original_value:
+                    var_data["value"] = corrected_value
+                    var_data["user_corrected"] = True
+                    var_data["original_value"] = original_value
+                    corrections_applied.append({
+                        "variable": var_name,
+                        "original": original_value,
+                        "corrected": corrected_value,
+                    })
+                    logger.info(
+                        f"Applied correction to {var_name}: {original_value} → {corrected_value}"
+                    )
+
+        # Mark finding as having corrections if any were applied
+        if corrections_applied:
+            finding["user_corrections_applied"] = corrections_applied
+            finding["financial_extraction"]["variables"] = variables
+
+        return finding
 
     def _process_single_finding(self, finding: Dict) -> Dict:
         """Process a single finding for calculable exposure."""

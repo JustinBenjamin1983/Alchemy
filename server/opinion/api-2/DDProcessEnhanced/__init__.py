@@ -83,6 +83,14 @@ from dd_enhanced.core.pass_calculations import CalculationOrchestrator
 # Phase 7: Import Pass 5 Opus verification
 from dd_enhanced.core.pass5_verify import run_pass5_verification, apply_verification_adjustments
 
+# Entity Mapping: Import for loading pre-computed entity map
+# Note: Entity mapping should be run as a pre-processing step via DDEntityMapping endpoint
+# before DDProcessEnhanced is called. This import is only for loading the results.
+from dd_enhanced.core.entity_mapping import get_entity_map_for_dd
+
+# Checkpoint B: Import for validated context in calculations
+from DDValidationCheckpoint import get_validated_context
+
 DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
 
 # Phase 6: Parallel processing configuration
@@ -161,6 +169,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         transaction_context_str = load_result["transaction_context_str"]
         dd_name = load_result["dd_name"]
         owned_by = load_result["owned_by"]
+        entity_map = load_result.get("entity_map")  # Entity map for party validation
 
         logging.info(f"[DDProcessEnhanced] Phase 1 complete: {len(doc_dicts)} documents loaded")
 
@@ -186,6 +195,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             use_clustered_pass3=use_clustered_pass3,
             dd_id=dd_id,  # Phase 6: for parallel orchestrator
             run_id=checkpoint_id,  # Phase 6: use checkpoint as run_id
+            entity_map=entity_map,  # Entity map for party validation
         )
 
         if processing_result.get("error"):
@@ -502,6 +512,14 @@ def _load_dd_data(dd_id: str, resume_from_checkpoint: bool) -> Dict[str, Any]:
             # Build transaction context string for prompts
             transaction_context_str = _build_transaction_context(blueprint, dd_name, dd_briefing)
 
+            # Retrieve entity map for party validation during analysis
+            # (Entity mapping pass should have been run earlier after classification)
+            entity_map = get_entity_map_for_dd(dd_id, session)
+            if entity_map:
+                logging.info(f"[DDProcessEnhanced] Loaded entity map: {len(entity_map)} entities")
+            else:
+                logging.info("[DDProcessEnhanced] No entity map found - party validation will be skipped")
+
             # Commit checkpoint update
             session.commit()
 
@@ -516,7 +534,8 @@ def _load_dd_data(dd_id: str, resume_from_checkpoint: bool) -> Dict[str, Any]:
                 "reference_docs": reference_docs,
                 "transaction_context_str": transaction_context_str,
                 "dd_name": dd_name,
-                "owned_by": owned_by
+                "owned_by": owned_by,
+                "entity_map": entity_map
             }
 
     except Exception as e:
@@ -537,6 +556,7 @@ def _run_all_passes(
     dd_id: Optional[str] = None,
     run_id: Optional[str] = None,
     previous_run_id: Optional[str] = None,
+    entity_map: Optional[List[Dict]] = None,
 ) -> Dict[str, Any]:
     """
     Phase 2: Run all 4 passes of Claude API processing.
@@ -549,6 +569,28 @@ def _run_all_passes(
     """
     try:
         doc_count = len(doc_dicts)
+
+        # ===== ENTITY MAP STATUS =====
+        # Entity mapping should be run as a pre-processing step (DDEntityMapping endpoint)
+        # before DDProcessEnhanced is called. If no entity map exists, we log this clearly
+        # so it can be surfaced in Checkpoint B for user to provide entity information.
+        if entity_map is None or len(entity_map) == 0:
+            logging.warning("[DDProcessEnhanced] No entity map found - entity mapping was not run during pre-processing. "
+                          "Party validation will be limited. User should confirm key parties in Checkpoint B.")
+            _save_checkpoint_safely(checkpoint_id, {
+                'entity_map_status': 'missing',
+                'entity_map_warning': 'Entity mapping not performed during pre-processing'
+            })
+        else:
+            logging.info(f"[DDProcessEnhanced] Entity map loaded: {len(entity_map)} entities")
+            entities_needing_confirmation = sum(1 for e in entity_map if e.get('requires_human_confirmation'))
+            if entities_needing_confirmation > 0:
+                logging.info(f"[DDProcessEnhanced] {entities_needing_confirmation} entities flagged for user confirmation")
+            _save_checkpoint_safely(checkpoint_id, {
+                'entity_map_status': 'loaded',
+                'entity_count': len(entity_map),
+                'entities_needing_confirmation': entities_needing_confirmation
+            })
 
         # Phase 6: Check if we should use parallel orchestrator
         if USE_PARALLEL_ORCHESTRATOR and doc_count >= PARALLEL_THRESHOLD:
@@ -565,6 +607,7 @@ def _run_all_passes(
                 client=client,
                 include_tier3=include_tier3,
                 previous_run_id=previous_run_id,
+                entity_map=entity_map,
             )
 
         logging.info(f"[DDProcessEnhanced] Using SEQUENTIAL processing for {doc_count} documents "
@@ -731,7 +774,8 @@ def _run_all_passes(
             client,
             transaction_context=transaction_context_str,
             prioritized_questions=prioritized_questions,
-            verbose=False
+            verbose=False,
+            entity_map=entity_map
         )
 
         # Save checkpoint with costs after Pass 2
@@ -760,7 +804,21 @@ def _run_all_passes(
                 transaction_value = fig.get('amount')
                 break
 
-        calc_orchestrator = CalculationOrchestrator(transaction_value=transaction_value)
+        # Get validated context from Checkpoint B (user-corrected financial values)
+        validated_context = None
+        try:
+            validated_result = get_validated_context(checkpoint_id)
+            if validated_result.get("has_validated_context"):
+                validated_context = validated_result
+                corrections_count = len(validated_result.get("financial_corrections", []))
+                logging.info(f"[DDProcessEnhanced] Loaded validated context: {corrections_count} financial corrections")
+        except Exception as e:
+            logging.warning(f"[DDProcessEnhanced] Could not load validated context (non-fatal): {e}")
+
+        calc_orchestrator = CalculationOrchestrator(
+            transaction_value=transaction_value,
+            validated_context=validated_context
+        )
 
         try:
             # Get findings list (pass2_findings may be a dict with 'findings' key or a list)
@@ -993,7 +1051,8 @@ def _run_all_passes(
             pass2_findings,
             pass3_results,
             client,
-            verbose=False
+            verbose=False,
+            validated_context=validated_context
         )
 
         # Save checkpoint after Pass 4
@@ -1101,6 +1160,7 @@ def _run_parallel_passes(
     client: ClaudeClient,
     include_tier3: bool,
     previous_run_id: Optional[str] = None,
+    entity_map: Optional[List[Dict]] = None,
 ) -> Dict[str, Any]:
     """
     Phase 6: Run all passes using the parallel orchestrator.
@@ -1131,6 +1191,15 @@ def _run_parallel_passes(
                 'documents_processed': current
             })
 
+        # Get validated context for parallel orchestrator
+        parallel_validated_context = None
+        try:
+            validated_result = get_validated_context(checkpoint_id)
+            if validated_result.get("has_validated_context"):
+                parallel_validated_context = validated_result
+        except Exception as e:
+            logging.warning(f"[DDProcessEnhanced] Could not load validated context for parallel (non-fatal): {e}")
+
         # Run processing through orchestrator
         result = orchestrator.process(
             dd_id=dd_id,
@@ -1143,6 +1212,8 @@ def _run_parallel_passes(
             progress_callback=progress_callback,
             checkpoint_callback=checkpoint_callback,
             include_tier3=include_tier3,
+            entity_map=entity_map,
+            validated_context=parallel_validated_context,
         )
 
         # Check for errors

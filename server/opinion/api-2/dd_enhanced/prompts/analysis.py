@@ -223,7 +223,8 @@ def build_analysis_prompt(
     blueprint: Optional[Dict] = None,
     prioritized_questions: Optional[List[Dict]] = None,
     folder_category: Optional[str] = None,
-    folder_questions: Optional[List[Dict]] = None
+    folder_questions: Optional[List[Dict]] = None,
+    entity_map: Optional[List[Dict]] = None
 ) -> str:
     """
     Build the analysis prompt for a single document.
@@ -236,6 +237,7 @@ def build_analysis_prompt(
     5. Prioritized questions from question_prioritizer take precedence
     6. Chain-of-Thought (CoT) reasoning questions guide analysis methodology
     7. Phase 3: Folder-specific questions for targeted analysis
+    8. Entity map context for validating parties against known entities
     """
 
     # Build questions section - use folder questions, then prioritized, then blueprint
@@ -254,6 +256,9 @@ def build_analysis_prompt(
 
     # Phase 1 Enhancement: Build statutory citation framework section
     statutory_section = _build_statutory_context_section(blueprint)
+
+    # Entity mapping context for party validation
+    entity_context_section = _build_entity_context_section(entity_map)
 
     return f"""Analyze this document for the transaction described below.
 
@@ -278,6 +283,8 @@ DOCUMENT BEING ANALYZED: {document_name} ({doc_type})
 {cot_questions_section}
 ---
 {statutory_section}
+---
+{entity_context_section}
 ---
 
 Conduct a thorough analysis using the Chain-of-Thought methodology. For EACH potential issue:
@@ -880,6 +887,111 @@ def _build_statutory_context_section(blueprint: Optional[Dict]) -> str:
     lines.append("\n" + "=" * 70)
     lines.append("IMPORTANT: For regulatory findings, always populate the statutory_reference block")
     lines.append("with the specific act, section, and penalties from the framework above.")
+    lines.append("=" * 70 + "\n")
+
+    return "\n".join(lines)
+
+
+def _build_entity_context_section(entity_map: Optional[List[Dict]]) -> str:
+    """
+    Build entity context section from the entity map.
+
+    Provides Claude with the known entities and their relationships to the target,
+    enabling validation of parties mentioned in documents against the entity map.
+    """
+    if not entity_map:
+        return ""
+
+    # Filter to entities with known relationships (not 'unknown')
+    known_entities = [e for e in entity_map if e.get("relationship_to_target") != "unknown"]
+    unknown_entities = [e for e in entity_map if e.get("relationship_to_target") == "unknown"]
+
+    if not known_entities and not unknown_entities:
+        return ""
+
+    lines = ["\n", "=" * 70]
+    lines.append("ENTITY MAP - VALIDATE PARTIES AGAINST THIS LIST")
+    lines.append("=" * 70)
+
+    lines.append("""
+When identifying parties in this document:
+1. Match entity names against the list below (consider variations/aliases)
+2. Flag any parties NOT in this list as "unrecognized entity - verify relationship"
+3. Note the relationship type when referencing known entities
+4. For findings involving parties, include their relationship to target
+""")
+
+    # Target entity (should be first with highest confidence)
+    target = next((e for e in entity_map if e.get("relationship_to_target") == "target"), None)
+    if target:
+        lines.append(f"\n**TARGET ENTITY:**")
+        lines.append(f"  Name: {target.get('entity_name', 'Unknown')}")
+        if target.get("registration_number"):
+            lines.append(f"  Registration: {target.get('registration_number')}")
+        if target.get("alternate_names"):
+            lines.append(f"  Also known as: {', '.join(target.get('alternate_names', []))}")
+
+    # Group by relationship type
+    relationship_groups = {
+        "parent": [],
+        "subsidiary": [],
+        "related_party": [],
+        "counterparty": [],
+    }
+
+    for entity in known_entities:
+        rel = entity.get("relationship_to_target", "")
+        if rel in relationship_groups:
+            relationship_groups[rel].append(entity)
+
+    # Parents/Shareholders
+    if relationship_groups["parent"]:
+        lines.append(f"\n**PARENT/HOLDING COMPANIES:**")
+        for e in relationship_groups["parent"][:5]:
+            detail = e.get("relationship_detail", "")
+            lines.append(f"  - {e.get('entity_name', 'Unknown')}")
+            if detail:
+                lines.append(f"    Detail: {detail}")
+
+    # Subsidiaries
+    if relationship_groups["subsidiary"]:
+        lines.append(f"\n**SUBSIDIARIES:**")
+        for e in relationship_groups["subsidiary"][:10]:
+            detail = e.get("relationship_detail", "")
+            lines.append(f"  - {e.get('entity_name', 'Unknown')}")
+            if detail:
+                lines.append(f"    Detail: {detail}")
+
+    # Related Parties
+    if relationship_groups["related_party"]:
+        lines.append(f"\n**RELATED PARTIES:**")
+        for e in relationship_groups["related_party"][:10]:
+            detail = e.get("relationship_detail", "")
+            lines.append(f"  - {e.get('entity_name', 'Unknown')}")
+            if detail:
+                lines.append(f"    Detail: {detail}")
+
+    # Known Counterparties
+    if relationship_groups["counterparty"]:
+        lines.append(f"\n**KNOWN COUNTERPARTIES:**")
+        for e in relationship_groups["counterparty"][:15]:
+            detail = e.get("relationship_detail", "")
+            lines.append(f"  - {e.get('entity_name', 'Unknown')}")
+            if detail:
+                lines.append(f"    Detail: {detail}")
+
+    # Unknown entities requiring confirmation
+    if unknown_entities:
+        lines.append(f"\n**UNCONFIRMED ENTITIES (relationship unclear):**")
+        for e in unknown_entities[:10]:
+            docs = e.get("documents_appearing_in", [])
+            doc_count = len(docs) if isinstance(docs, list) else 0
+            lines.append(f"  - {e.get('entity_name', 'Unknown')} (appears in {doc_count} documents)")
+
+    lines.append("\n" + "=" * 70)
+    lines.append("IMPORTANT: Flag any parties in this document not listed above as")
+    lines.append("'unrecognized entity'. Include their apparent role and any available")
+    lines.append("registration numbers for human verification.")
     lines.append("=" * 70 + "\n")
 
     return "\n".join(lines)

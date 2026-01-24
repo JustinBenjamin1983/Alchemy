@@ -37,17 +37,23 @@ def build_synthesis_prompt(
     pass3_cascade: str,
     pass3_authorization: str,
     pass3_consents: str,
-    transaction_value: str = "undisclosed"
+    transaction_value: str = "undisclosed",
+    validated_context: dict = None
 ) -> str:
     """
     Build the final synthesis prompt.
 
     Consolidates all findings from previous passes into actionable output.
+    Incorporates user-validated corrections from Checkpoint B.
     """
+
+    # Build user corrections section if available
+    corrections_section = _build_corrections_section(validated_context)
 
     return f"""Prepare the final Due Diligence synthesis for this acquisition.
 
 TRANSACTION VALUE: {transaction_value}
+{corrections_section}
 
 ---
 
@@ -464,3 +470,69 @@ Return JSON:
         "breakdown": "Summary of components"
     }}
 }}"""
+
+
+def _build_corrections_section(validated_context: dict) -> str:
+    """
+    Build a section containing user corrections from Checkpoint B.
+
+    Includes:
+    - Transaction understanding corrections (structure, parties, deal type)
+    - Financial corrections (corrected figures)
+    - Manual inputs (user-provided data)
+    """
+    if not validated_context or not validated_context.get("has_validated_context"):
+        return ""
+
+    lines = ["\n", "=" * 70]
+    lines.append("USER-VALIDATED CORRECTIONS (from Checkpoint B)")
+    lines.append("=" * 70)
+    lines.append("""
+IMPORTANT: The following corrections were provided by the user during
+validation. These MUST be incorporated into the synthesis and take
+precedence over AI-extracted information.
+""")
+
+    # Transaction understanding corrections
+    understanding = validated_context.get("transaction_understanding", [])
+    if understanding:
+        lines.append("\n**TRANSACTION UNDERSTANDING CORRECTIONS:**")
+        for item in understanding:
+            question_id = item.get("question_id", "")
+            response = item.get("response", {})
+
+            # Handle different response formats
+            if isinstance(response, dict):
+                status = response.get("status", "")
+                clarification = response.get("clarification", "")
+                if status == "partially_correct" and clarification:
+                    lines.append(f"  - {question_id}: PARTIALLY CORRECT")
+                    lines.append(f"    Clarification: {clarification}")
+                elif status == "incorrect" and clarification:
+                    lines.append(f"  - {question_id}: INCORRECT")
+                    lines.append(f"    Correction: {clarification}")
+            elif isinstance(response, str) and response:
+                lines.append(f"  - {question_id}: {response}")
+
+    # Financial corrections
+    corrections = validated_context.get("financial_corrections", [])
+    if corrections:
+        lines.append("\n**FINANCIAL VALUE CORRECTIONS:**")
+        lines.append("  Use these corrected values instead of AI-extracted values:")
+        for corr in corrections:
+            metric = corr.get("metric", "Unknown")
+            original = corr.get("original_value", "N/A")
+            corrected = corr.get("corrected_value", "N/A")
+            lines.append(f"  - {metric}: {original} → {corrected} (USER CORRECTED)")
+
+    # Manual inputs
+    manual_inputs = validated_context.get("manual_inputs", {})
+    if manual_inputs:
+        lines.append("\n**USER-PROVIDED DATA (not in documents):**")
+        for key, value in manual_inputs.items():
+            if value:  # Only include non-empty values
+                lines.append(f"  - {key}: {value}")
+
+    lines.append("\n" + "=" * 70)
+
+    return "\n".join(lines)

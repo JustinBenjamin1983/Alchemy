@@ -1083,3 +1083,264 @@ cot_questions:
   - What is the likely realization value vs book value?
   - Are there any restrictions on asset disposals?
   - What is the process for asset sales?
+
+# ============================================================================
+# STATUTORY FRAMEWORK
+# Detailed statutory citation framework for restructuring and insolvency findings
+# ============================================================================
+statutory_framework:
+  primary_legislation:
+    - act: "Companies Act 71 of 2008 - Chapter 6"
+      acronym: "Companies Act"
+      regulatory_body: "CIPC / Courts / Master of the High Court"
+      key_sections:
+        - section: "Section 128"
+          description: "Business rescue definitions and application"
+          penalties:
+            administrative: "Proceedings may be set aside"
+          criticality: critical
+        - section: "Section 129"
+          description: "Company resolution to begin business rescue"
+          penalties:
+            administrative: "Filing requirements, notification"
+          criticality: critical
+        - section: "Section 130"
+          description: "Objections to company resolution"
+          penalties:
+            administrative: "Court may set aside resolution"
+          criticality: high
+        - section: "Section 131"
+          description: "Court order to begin business rescue"
+          penalties:
+            administrative: "Court discretion"
+          criticality: critical
+        - section: "Section 133"
+          description: "General moratorium on legal proceedings"
+          penalties:
+            administrative: "Proceedings stayed"
+          criticality: critical
+        - section: "Section 134"
+          description: "Protection of property interests"
+          penalties:
+            civil: "Property rights suspended"
+          criticality: high
+        - section: "Section 135"
+          description: "Post-commencement finance super-priority"
+          penalties:
+            civil: "PCF ranks ahead of all unsecured claims"
+          criticality: critical
+        - section: "Section 136"
+          description: "Effect on employees and contracts"
+          penalties:
+            civil: "Employee contracts continue"
+          criticality: critical
+        - section: "Section 138"
+          description: "Qualification and appointment of BRP"
+          penalties:
+            administrative: "Appointment may be challenged"
+          criticality: critical
+        - section: "Section 141"
+          description: "Investigation of affairs of company"
+          penalties:
+            criminal: "Offence to obstruct"
+          criticality: high
+        - section: "Section 145"
+          description: "Meetings to determine future of company"
+          penalties:
+            administrative: "Procedural requirements"
+          criticality: critical
+        - section: "Section 150"
+          description: "Contents of business rescue plan"
+          penalties:
+            administrative: "Plan must comply or rejected"
+          criticality: critical
+        - section: "Section 152"
+          description: "Approval of business rescue plan"
+          penalties:
+            administrative: "75% voting threshold"
+          criticality: critical
+        - section: "Section 153"
+          description: "Failure to adopt business rescue plan"
+          penalties:
+            administrative: "Liquidation may follow"
+          criticality: critical
+
+    - act: "Insolvency Act 24 of 1936"
+      acronym: "Insolvency Act"
+      regulatory_body: "Master of the High Court"
+      key_sections:
+        - section: "Section 8"
+          description: "Acts of insolvency"
+          penalties:
+            civil: "Sequestration application"
+          criticality: critical
+        - section: "Section 12"
+          description: "Compulsory sequestration"
+          penalties:
+            civil: "Estate vests in Master/Trustee"
+          criticality: critical
+        - section: "Section 26"
+          description: "Voidable dispositions"
+          penalties:
+            civil: "Transaction set aside"
+          criticality: critical
+        - section: "Section 29"
+          description: "Voidable preferences"
+          penalties:
+            civil: "Payment recovered"
+          criticality: critical
+        - section: "Section 30"
+          description: "Undue preference to creditors"
+          penalties:
+            civil: "Preference set aside"
+          criticality: critical
+        - section: "Section 31"
+          description: "Collusive dealings before sequestration"
+          penalties:
+            criminal: "Fine or imprisonment"
+          criticality: critical
+        - section: "Section 89"
+          description: "Ranking of claims"
+          penalties:
+            administrative: "Prescribed order of preference"
+          criticality: critical
+        - section: "Section 96"
+          description: "Preferent claims"
+          penalties:
+            administrative: "Prescribed preferences"
+          criticality: critical
+        - section: "Section 98"
+          description: "Secured creditors"
+          penalties:
+            administrative: "Security enforcement rights"
+          criticality: critical
+
+    - act: "Companies Act 71 of 2008 - Chapter 2"
+      acronym: "Companies Act"
+      regulatory_body: "CIPC / Courts"
+      key_sections:
+        - section: "Section 22"
+          description: "Reckless trading"
+          penalties:
+            civil: "Personal liability of directors"
+          criticality: critical
+        - section: "Section 76"
+          description: "Standards of directors' conduct"
+          penalties:
+            civil: "Personal liability"
+          criticality: critical
+        - section: "Section 77"
+          description: "Liability of directors"
+          penalties:
+            civil: "Personal liability for losses"
+          criticality: critical
+
+    - act: "Labour Relations Act 66 of 1995"
+      acronym: "LRA"
+      regulatory_body: "CCMA / Labour Court"
+      key_sections:
+        - section: "Section 189"
+          description: "Dismissal for operational requirements"
+          penalties:
+            civil: "Compensation up to 12 months"
+          criticality: critical
+        - section: "Section 189A"
+          description: "Large-scale retrenchments (50+)"
+          penalties:
+            civil: "Facilitation, extended consultation"
+          criticality: critical
+        - section: "Section 197"
+          description: "Transfer of contract on business transfer"
+          penalties:
+            civil: "Automatic transfer of employees"
+          criticality: critical
+        - section: "Section 197A"
+          description: "Transfer in insolvency"
+          penalties:
+            civil: "Modified transfer provisions"
+          criticality: high
+
+    - act: "Close Corporations Act 69 of 1984"
+      acronym: "CC Act"
+      regulatory_body: "CIPC / Master"
+      key_sections:
+        - section: "Section 66"
+          description: "Liability of members"
+          penalties:
+            civil: "Personal liability for reckless conduct"
+          criticality: critical
+        - section: "Section 68"
+          description: "Winding up of close corporations"
+          penalties:
+            administrative: "Insolvency Act applies"
+          criticality: high
+
+    - act: "Cross-Border Insolvency Act 42 of 2000"
+      acronym: "CBIA"
+      regulatory_body: "Courts"
+      key_sections:
+        - section: "Section 2"
+          description: "Recognition of foreign proceedings"
+          penalties:
+            administrative: "Recognition discretionary"
+          criticality: high
+        - section: "Section 14"
+          description: "Relief upon recognition"
+          penalties:
+            administrative: "Stay of proceedings, asset protection"
+          criticality: high
+
+  sector_specific:
+    business_rescue:
+      name: "Business Rescue Proceedings"
+      regulatory_body: "CIPC / Courts"
+      key_requirements:
+        - requirement: "BRP registration"
+          description: "Practitioner must be registered with CIPC"
+          consequence: "Appointment invalid if unregistered"
+        - requirement: "Plan publication"
+          description: "Plan within 25 business days (extendable)"
+          consequence: "Proceedings terminate if no plan"
+        - requirement: "Creditor approval"
+          description: "75% of creditors' voting interests"
+          consequence: "Plan rejected if threshold not met"
+
+    liquidation:
+      name: "Liquidation Proceedings"
+      regulatory_body: "Master of the High Court"
+      key_requirements:
+        - requirement: "Liquidation order"
+          description: "Court order for winding up"
+          consequence: "Liquidator appointed"
+        - requirement: "Proof of claims"
+          description: "Creditors must prove claims"
+          consequence: "Unproven claims excluded from dividend"
+        - requirement: "Dividend distribution"
+          description: "Distribution per statutory preference"
+          consequence: "Wrong distribution = personal liability"
+
+  transaction_triggers:
+    business_rescue_commencement:
+      - statute: "Companies Act Section 129"
+        trigger: "Board resolution, financial distress"
+        consequence: "Moratorium, BRP appointed"
+        timeline: "Immediate effect on filing"
+      - statute: "Companies Act Section 131"
+        trigger: "Court application by affected person"
+        consequence: "Court-supervised rescue"
+        timeline: "Urgent application, 10 business days"
+    liquidation:
+      - statute: "Companies Act Section 344"
+        trigger: "Inability to pay debts"
+        consequence: "Final liquidation"
+        timeline: "Court process, 4-12 weeks"
+    section_189_retrenchment:
+      - statute: "LRA Section 189"
+        trigger: "Contemplated dismissals for operational reasons"
+        consequence: "Consultation process mandatory"
+        timeline: "Minimum 30-60 days consultation"
+    voidable_transaction:
+      - statute: "Insolvency Act Section 26-31"
+        trigger: "Disposition within 6 months/2 years of sequestration"
+        consequence: "Transaction may be set aside"
+        timeline: "Lookback period from sequestration

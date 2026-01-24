@@ -1023,3 +1023,205 @@ cot_questions:
   - Is Competition Commission approval required?
   - Are there any exchange control or SARB considerations?
   - Are there any B-BBEE considerations affecting the investment?
+
+# ============================================================================
+# STATUTORY FRAMEWORK
+# Detailed statutory citation framework for private equity and VC findings
+# ============================================================================
+statutory_framework:
+  primary_legislation:
+    - act: "Companies Act 71 of 2008"
+      acronym: "Companies Act"
+      regulatory_body: "Companies and Intellectual Property Commission (CIPC)"
+      key_sections:
+        - section: "Section 48"
+          description: "Company or subsidiary acquiring its own shares"
+          penalties:
+            civil: "Transaction voidable, director liability"
+          criticality: high
+        - section: "Section 44"
+          description: "Financial assistance for acquisition of shares"
+          penalties:
+            civil: "Transaction voidable"
+          criticality: critical
+        - section: "Section 112-115"
+          description: "Fundamental transactions (mergers, schemes)"
+          penalties:
+            administrative: "Transaction invalid without compliance"
+          criticality: critical
+        - section: "Section 122"
+          description: "Rights of securities holders"
+          penalties:
+            civil: "Appraisal rights"
+          criticality: high
+        - section: "Section 158"
+          description: "Business rescue provisions"
+          penalties:
+            administrative: "BRP powers, moratorium"
+          criticality: high
+
+    - act: "Competition Act 89 of 1998"
+      acronym: "Competition Act"
+      regulatory_body: "Competition Commission / Competition Tribunal"
+      key_sections:
+        - section: "Section 11"
+          description: "Merger notification thresholds"
+          penalties:
+            administrative: "Fine up to 10% of turnover"
+          criticality: critical
+        - section: "Section 12A"
+          description: "Merger evaluation criteria"
+          penalties:
+            administrative: "Conditions, prohibition"
+          criticality: critical
+        - section: "Section 13A"
+          description: "Small merger notification"
+          penalties:
+            administrative: "Fine for non-notification"
+          criticality: high
+        - section: "Section 16"
+          description: "Competition Tribunal merger adjudication"
+          penalties:
+            administrative: "Approval, conditions, or prohibition"
+          criticality: critical
+
+    - act: "Exchange Control Regulations"
+      acronym: "Exchange Control"
+      regulatory_body: "South African Reserve Bank (SARB)"
+      key_sections:
+        - section: "Loop Structure Rules"
+          description: "SA residents investing offshore and back"
+          penalties:
+            administrative: "SARB approval required, potential unwinding"
+          criticality: critical
+        - section: "Regulation 10"
+          description: "Acquisition of foreign assets"
+          penalties:
+            administrative: "SARB approval required"
+          criticality: high
+        - section: "Regulation 14"
+          description: "Dividends and profit remittances"
+          penalties:
+            administrative: "Verification requirements"
+          criticality: high
+
+    - act: "Income Tax Act 58 of 1962"
+      acronym: "Income Tax Act"
+      regulatory_body: "South African Revenue Service (SARS)"
+      key_sections:
+        - section: "Section 8C"
+          description: "Taxation of employee equity instruments"
+          penalties:
+            administrative: "PAYE liability, penalties"
+          criticality: critical
+        - section: "Section 22"
+          description: "Trading stock and share dealer provisions"
+          penalties:
+            administrative: "Income vs capital characterization"
+          criticality: high
+        - section: "Section 24B"
+          description: "Anti-avoidance - disposal at undervalue"
+          penalties:
+            administrative: "Deemed consideration adjustments"
+          criticality: high
+        - section: "Eighth Schedule"
+          description: "Capital gains tax"
+          penalties:
+            administrative: "CGT liability"
+          criticality: high
+        - section: "Section 23M"
+          description: "Interest limitation rules"
+          penalties:
+            administrative: "Disallowed interest deductions"
+          criticality: high
+
+    - act: "Securities Transfer Tax Act 25 of 2007"
+      acronym: "STT Act"
+      regulatory_body: "SARS"
+      key_sections:
+        - section: "Section 2"
+          description: "STT on transfer of securities"
+          penalties:
+            administrative: "0.25% STT liability"
+          criticality: medium
+        - section: "Section 8"
+          description: "Exemptions from STT"
+          penalties:
+            administrative: "Incorrect exemption claims"
+          criticality: medium
+
+    - act: "Financial Intelligence Centre Act 38 of 2001"
+      acronym: "FICA"
+      regulatory_body: "Financial Intelligence Centre"
+      key_sections:
+        - section: "Section 21"
+          description: "Customer due diligence"
+          penalties:
+            administrative: "Fine up to R50 million"
+            criminal: "Imprisonment up to 15 years"
+          criticality: critical
+        - section: "Section 29"
+          description: "Suspicious transaction reporting"
+          penalties:
+            criminal: "Fine up to R100 million or imprisonment"
+          criticality: critical
+
+    - act: "Protection of Personal Information Act 4 of 2013"
+      acronym: "POPIA"
+      regulatory_body: "Information Regulator"
+      key_sections:
+        - section: "Section 11"
+          description: "Lawful processing of personal information"
+          penalties:
+            administrative: "Fine up to R10 million"
+            criminal: "Imprisonment up to 10 years"
+          criticality: critical
+        - section: "Section 72"
+          description: "Trans-border information flows"
+          penalties:
+            administrative: "Enforcement notice"
+          criticality: high
+
+  sector_specific:
+    venture_capital:
+      name: "Venture Capital Company Regime"
+      regulatory_body: "SARS"
+      key_requirements:
+        - requirement: "Section 12J registration"
+          description: "VCC registration for investor tax benefits"
+          consequence: "Loss of investor Section 12J deductions if non-compliant"
+        - requirement: "Investment requirements"
+          description: "80% in qualifying companies, 5-year holding period"
+          consequence: "VCC approval revocation"
+
+    fund_regulation:
+      name: "Collective Investment Scheme Regulation"
+      regulatory_body: "FSCA"
+      key_requirements:
+        - requirement: "PE fund exemption"
+          description: "CISCA exemption for PE/VC funds"
+          consequence: "Must structure to avoid CISCA regulation"
+        - requirement: "FAIS licensing"
+          description: "FSP license for fund managers"
+          consequence: "Cannot manage third-party funds without FSP"
+
+  transaction_triggers:
+    merger_notification:
+      - statute: "Competition Act Section 11"
+        trigger: "Acquisition of control or ability to materially influence"
+        consequence: "Notification required if thresholds met"
+        timeline: "Intermediate: 20-60 business days; Large: 40-120 business days"
+      - statute: "Competition Act Section 13A"
+        trigger: "Small merger with potential impact"
+        consequence: "Commission may require notification"
+        timeline: "20 business days if called in"
+    exchange_control:
+      - statute: "Exchange Control Regulations"
+        trigger: "Inbound or outbound investment"
+        consequence: "SARB approval for loop structures"
+        timeline: "4-8 weeks for approval"
+    section_44_approval:
+      - statute: "Companies Act Section 44"
+        trigger: "Target providing financial assistance for own acquisition"
+        consequence: "Board approval, solvency test, shareholder approval if MOI requires"
+        timeline: "Board resolution required before financial close"

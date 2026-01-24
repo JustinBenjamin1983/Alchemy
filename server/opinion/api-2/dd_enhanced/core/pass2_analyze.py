@@ -49,7 +49,8 @@ def analyze_document(
     transaction_context: str = DEFAULT_TRANSACTION_CONTEXT,
     prioritized_questions: Optional[List[Dict]] = None,
     question_loader: Optional[QuestionLoader] = None,
-    return_qa_data: bool = False
+    return_qa_data: bool = False,
+    entity_map: Optional[List[Dict]] = None
 ) -> List[Dict]:
     """
     Analyze a single document for risks and issues.
@@ -63,6 +64,7 @@ def analyze_document(
         prioritized_questions: Tier 1-3 questions from question_prioritizer (optional)
         question_loader: QuestionLoader for folder-specific questions (Phase 3)
         return_qa_data: If True, returns dict with 'findings' and 'questions_answered'
+        entity_map: List of entity dicts for party validation (from entity mapping pass)
 
     Returns:
         List of findings from this document (or dict if return_qa_data=True)
@@ -92,6 +94,7 @@ def analyze_document(
 
     # Build analysis prompt with reference context, blueprint, and prioritized questions
     # Phase 3: Include folder-specific questions when available
+    # Entity map: Include for party validation against known entities
     prompt = build_analysis_prompt(
         document_text=doc.get("text", "")[:40000],  # Limit per-doc text
         document_name=filename,
@@ -101,7 +104,8 @@ def analyze_document(
         blueprint=blueprint,
         prioritized_questions=prioritized_questions,
         folder_category=folder_category,
-        folder_questions=folder_questions
+        folder_questions=folder_questions,
+        entity_map=entity_map
     )
 
     # Get blueprint-aware system prompt
@@ -191,7 +195,8 @@ def run_pass2_analysis(
     client: ClaudeClient,
     transaction_context: str = DEFAULT_TRANSACTION_CONTEXT,
     prioritized_questions: Optional[List[Dict]] = None,
-    verbose: bool = True
+    verbose: bool = True,
+    entity_map: Optional[List[Dict]] = None
 ) -> Dict[str, Any]:
     """
     Run Pass 2: Analyze each document with reference context.
@@ -201,6 +206,7 @@ def run_pass2_analysis(
     - Prioritized questions from question_prioritizer guide the analysis
     - Phase 3: Folder-aware analysis with folder-specific questions
     - Gap tracking: Identifies unanswered questions and generates gap findings
+    - Entity map: Validates parties against known entities
 
     Args:
         documents: List of document dicts (with optional 'folder_category')
@@ -210,6 +216,7 @@ def run_pass2_analysis(
         transaction_context: Context about the transaction
         prioritized_questions: Tier 1-3 questions from question_prioritizer (optional)
         verbose: Print progress
+        entity_map: List of entity dicts for party validation (from entity mapping pass)
 
     Returns:
         Dict with 'findings' list and 'gap_findings' list
@@ -268,6 +275,7 @@ def run_pass2_analysis(
             folder_docs_analyzed[folder_category].append(filename)
 
         # Build analysis prompt with reference context, blueprint, and prioritized questions
+        # Entity map: Include for party validation against known entities
         prompt = build_analysis_prompt(
             document_text=doc["text"][:40000],  # Limit per-doc text
             document_name=filename,
@@ -277,7 +285,8 @@ def run_pass2_analysis(
             blueprint=blueprint,  # Pass blueprint for question injection
             prioritized_questions=prioritized_questions,  # Pass prioritized questions
             folder_category=folder_category,  # Phase 3
-            folder_questions=folder_questions  # Phase 3
+            folder_questions=folder_questions,  # Phase 3
+            entity_map=entity_map  # Entity mapping for party validation
         )
 
         # Get blueprint-aware system prompt

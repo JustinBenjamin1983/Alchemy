@@ -46,7 +46,7 @@ def run_pass4_synthesis(
         client: Claude API client
         transaction_value: Transaction value for context
         verbose: Print progress
-        validated_context: User-validated corrections from Checkpoint B containing:
+        validated_context: User-validated corrections from Checkpoint C containing:
             - transaction_understanding: User corrections to structure, parties, deal type
             - financial_corrections: Corrected financial values
             - manual_inputs: Manually entered data

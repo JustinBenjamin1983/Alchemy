@@ -192,7 +192,7 @@ class ParallelOrchestrator:
             checkpoint_callback: Optional callback(stage, data)
             include_tier3: Whether to include tier 3 questions
             entity_map: Optional list of entity dicts for party validation
-            validated_context: User-validated corrections from Checkpoint B
+            validated_context: User-validated corrections from Checkpoint C (post-analysis)
 
         Returns:
             ProcessingResult with all findings and statistics

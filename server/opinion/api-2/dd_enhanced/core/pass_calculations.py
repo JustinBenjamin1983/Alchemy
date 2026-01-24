@@ -108,7 +108,7 @@ class CalculationOrchestrator:
 
         Args:
             transaction_value: Transaction value for validation (e.g., 850000000 for R850M)
-            validated_context: User-validated context from Checkpoint B containing:
+            validated_context: User-validated context from Checkpoint C containing:
                 - financial_corrections: List of {metric, original_value, corrected_value, source}
                 - manual_inputs: Dict of manually entered data
         """
@@ -162,7 +162,7 @@ class CalculationOrchestrator:
         to findings that have calculable amounts.
 
         If validated_context was provided, financial corrections from
-        Checkpoint B are applied to findings before calculation.
+        Checkpoint C are applied to findings before calculation.
 
         Args:
             findings: List of finding dictionaries from Pass 2
@@ -173,7 +173,7 @@ class CalculationOrchestrator:
         enriched_findings = []
 
         for finding in findings:
-            # Apply user corrections from Checkpoint B before calculating
+            # Apply user corrections from Checkpoint C before calculating
             if self._financial_corrections:
                 finding = self._apply_financial_corrections(finding)
 

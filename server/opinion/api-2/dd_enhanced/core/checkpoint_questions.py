@@ -2,8 +2,9 @@
 Phase 8 & 9: Checkpoint Question Generation
 
 Generates AI-driven questions for human-in-the-loop validation:
-- Checkpoint A: Missing documents validation
-- Checkpoint B: Combined validation (4-step wizard)
+- Checkpoint A: Missing documents validation (after classification)
+- Checkpoint B: Entity confirmation (after entity mapping) - see DDEntityConfirmation
+- Checkpoint C: Combined validation (4-step wizard, after Pass 2)
 
 Key Functions:
 - check_missing_documents: Compare docs against blueprint requirements
@@ -300,14 +301,14 @@ def generate_financial_confirmations(
     return confirmations[:max_items]
 
 
-def generate_checkpoint_b_content(
+def generate_checkpoint_c_content(
     findings: List[Dict[str, Any]],
     pass1_results: Dict[str, Any],
     transaction_context: Dict[str, Any],
     synthesis_preview: str = None
 ) -> Dict[str, Any]:
     """
-    Generate all content for Checkpoint B (4-step wizard).
+    Generate all content for Checkpoint C (4-step post-analysis wizard).
 
     Returns content for all 4 steps:
     1. Confirm Transaction Understanding
@@ -439,7 +440,7 @@ def _generate_preliminary_summary(
     findings: List[Dict[str, Any]],
     transaction_context: Dict[str, Any]
 ) -> str:
-    """Generate a preliminary summary for Checkpoint B Step 1."""
+    """Generate a preliminary summary for Checkpoint C Step 1."""
     critical_count = sum(1 for f in findings if f.get("severity") == "critical")
     high_count = sum(1 for f in findings if f.get("severity") == "high")
     blocker_count = sum(1 for f in findings if f.get("deal_impact") == "deal_blocker")

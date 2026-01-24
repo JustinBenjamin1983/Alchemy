@@ -88,7 +88,7 @@ from dd_enhanced.core.pass5_verify import run_pass5_verification, apply_verifica
 # before DDProcessEnhanced is called. This import is only for loading the results.
 from dd_enhanced.core.entity_mapping import get_entity_map_for_dd
 
-# Checkpoint B: Import for validated context in calculations
+# Checkpoint C: Import for validated context in calculations (post-analysis validation)
 from DDValidationCheckpoint import get_validated_context
 
 DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
@@ -572,11 +572,11 @@ def _run_all_passes(
 
         # ===== ENTITY MAP STATUS =====
         # Entity mapping should be run as a pre-processing step (DDEntityMapping endpoint)
-        # before DDProcessEnhanced is called. If no entity map exists, we log this clearly
-        # so it can be surfaced in Checkpoint B for user to provide entity information.
+        # followed by Checkpoint B (entity confirmation) before DDProcessEnhanced is called.
+        # If no entity map exists, we log this clearly.
         if entity_map is None or len(entity_map) == 0:
-            logging.warning("[DDProcessEnhanced] No entity map found - entity mapping was not run during pre-processing. "
-                          "Party validation will be limited. User should confirm key parties in Checkpoint B.")
+            logging.warning("[DDProcessEnhanced] No entity map found - entity mapping and Checkpoint B "
+                          "(entity confirmation) were not completed during pre-processing.")
             _save_checkpoint_safely(checkpoint_id, {
                 'entity_map_status': 'missing',
                 'entity_map_warning': 'Entity mapping not performed during pre-processing'
@@ -804,7 +804,7 @@ def _run_all_passes(
                 transaction_value = fig.get('amount')
                 break
 
-        # Get validated context from Checkpoint B (user-corrected financial values)
+        # Get validated context from Checkpoint C (user-corrected financial values from post-analysis validation)
         validated_context = None
         try:
             validated_result = get_validated_context(checkpoint_id)

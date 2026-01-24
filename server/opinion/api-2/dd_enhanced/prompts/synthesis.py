@@ -44,7 +44,7 @@ def build_synthesis_prompt(
     Build the final synthesis prompt.
 
     Consolidates all findings from previous passes into actionable output.
-    Incorporates user-validated corrections from Checkpoint B.
+    Incorporates user-validated corrections from Checkpoint C (post-analysis validation).
     """
 
     # Build user corrections section if available
@@ -474,18 +474,19 @@ Return JSON:
 
 def _build_corrections_section(validated_context: dict) -> str:
     """
-    Build a section containing user corrections from Checkpoint B.
+    Build a section containing user corrections from Checkpoint C.
 
     Includes:
     - Transaction understanding corrections (structure, parties, deal type)
     - Financial corrections (corrected figures)
     - Manual inputs (user-provided data)
+    - Entity confirmations (from Checkpoint B, if included)
     """
     if not validated_context or not validated_context.get("has_validated_context"):
         return ""
 
     lines = ["\n", "=" * 70]
-    lines.append("USER-VALIDATED CORRECTIONS (from Checkpoint B)")
+    lines.append("USER-VALIDATED CORRECTIONS (from Checkpoint C)")
     lines.append("=" * 70)
     lines.append("""
 IMPORTANT: The following corrections were provided by the user during

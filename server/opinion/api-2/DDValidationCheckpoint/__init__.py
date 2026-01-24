@@ -4,8 +4,8 @@ Phase 8 & 9: Human-in-the-Loop Validation Checkpoints
 
 Provides endpoints for:
 - Checkpoint A: Missing documents validation (after classification)
-- Checkpoint B: Combined validation wizard (after Pass 2)
-- Entity confirmation checkpoint
+- Checkpoint B: Entity confirmation (after entity mapping) - see DDEntityConfirmation
+- Checkpoint C: Combined validation wizard (after Pass 2, 4-step confirmation)
 
 Endpoints:
 - GET /api/dd-validation-checkpoint/{dd_id} - Get pending checkpoint
@@ -304,8 +304,8 @@ def build_entity_confirmation_content(entity_map: list, dd_id: str = None) -> di
     """
     Build checkpoint content for entity confirmation from entity map.
 
-    This should be called when creating Checkpoint B to include entity
-    confirmations alongside financial and transaction understanding validations.
+    This is used by Checkpoint B (entity confirmation) to present entities
+    for user review. See DDEntityConfirmation for the full loop implementation.
 
     Args:
         entity_map: List of entity dicts from DDEntityMapping

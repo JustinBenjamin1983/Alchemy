@@ -17,15 +17,16 @@
    - 3.3 Checkpoint A: Missing Documents
    - 3.4 Readability Check
    - 3.5 Entity Mapping **(NEW)**
-4. [Processing Phase (8-Pass Pipeline)](#4-processing-phase-8-pass-pipeline)
-   - 4.1 Materiality Filtering **(NEW)**
+4. [Processing Phase (7-Pass Pipeline)](#4-processing-phase-7-pass-pipeline)
+   - 4.1 Materiality Thresholds
    - 4.2 Pass 1: Extract (+ Document Reference Extraction)
    - 4.3 Pass 2: Analyze (+ Blueprint Q&A + Action Categories)
-   - 4.4 Pass 2.5: Calculate
-   - 4.5 Pass 3: Cross-Doc
-   - 4.6 Pass 3.5: Aggregate
-   - 4.7 Pass 4: Synthesize
-   - 4.8 Pass 5: Verify
+   - 4.4 Checkpoint C: Post-Analysis Validation (4-step wizard)
+   - 4.5 Pass 3: Calculate
+   - 4.6 Pass 4: Cross-Doc (Opus ALWAYS)
+   - 4.7 Pass 5: Aggregate
+   - 4.8 Pass 6: Synthesize
+   - 4.9 Pass 7: Verify (Opus ALWAYS)
 5. [Human-in-the-Loop Checkpoints](#5-human-in-the-loop-checkpoints)
 6. [Post-Processing Phase](#6-post-processing-phase)
 7. [Data Models & Storage](#7-data-models--storage)
@@ -52,10 +53,10 @@ The Alchemy DD Pipeline is a multi-pass document analysis system that performs a
 - **Blueprint-driven questions** tailored to transaction types
 
 ### Key Statistics
-- **8 processing passes** (6 AI + 2 Python)
-- **Entity mapping pass** for preventing entity confusion
-- **2 validation checkpoints** for human input
-- **Materiality filtering** based on transaction value
+- **7 processing passes** (5 AI + 2 Python)
+- **Entity mapping** in pre-processing for preventing entity confusion
+- **3 validation checkpoints** (A: Missing docs, B: Entity confirmation, C: Post-analysis)
+- **Materiality thresholds** based on transaction value (classifies, doesn't filter)
 - **Confidence calibration** on all findings
 - **Unlimited refinement cycles** for report iteration
 - **Version-controlled reports** (V1, V2, V3, etc.)
@@ -74,24 +75,25 @@ The Alchemy DD Pipeline is a multi-pass document analysis system that performs a
 │  2. Classification       → AI categorizes documents into folders            │
 │  3. Checkpoint A         → Missing docs validation                          │
 │  4. Readability Check    → Validate docs + convert PPTX/DOCX/XLSX to PDF    │
-│  5. Entity Mapping (NEW) → Map all entities to target, detect confusion     │
+│  5. Entity Mapping       → Map all entities to target, detect confusion     │
+│  6. Checkpoint B         → User confirms/corrects entity relationships      │
 └─────────────────────────────────────────────────────────────────────────────┘
                                       │
                                       ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                           PROCESSING PHASE                                  │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  [Materiality Filter]  → Set thresholds based on transaction value          │
-│  Pass 1: EXTRACT       → Haiku extracts data + document references          │
-│  Pass 2: ANALYZE       → Sonnet analyzes risks + answers Blueprint Q&A      │
+│  [Materiality Thresholds] → Set thresholds based on transaction value       │
+│  Pass 1: EXTRACT         → Haiku extracts data + document references        │
+│  Pass 2: ANALYZE         → Sonnet analyzes risks + answers Blueprint Q&A    │
 │  ────────────────────────────────────────────────────────────────────────── │
-│  Checkpoint B          → Human validates understanding + financials         │
+│  Checkpoint C            → Human validates understanding + financials       │
 │  ────────────────────────────────────────────────────────────────────────── │
-│  Pass 2.5: CALCULATE   → Python computes financial exposures                │
-│  Pass 3: CROSS-DOC     → Opus detects conflicts + missing doc analysis      │
-│  Pass 3.5: AGGREGATE   → Python combines calculations                       │
-│  Pass 4: SYNTHESIZE    → Sonnet generates executive summary + W&I           │
-│  Pass 5: VERIFY        → Opus performs final QC                             │
+│  Pass 3: CALCULATE       → Python computes financial exposures              │
+│  Pass 4: CROSS-DOC       → Opus detects conflicts + missing doc analysis    │
+│  Pass 5: AGGREGATE       → Python combines calculations                     │
+│  Pass 6: SYNTHESIZE      → Sonnet generates executive summary + W&I         │
+│  Pass 7: VERIFY          → Opus performs final QC                           │
 └─────────────────────────────────────────────────────────────────────────────┘
                                       │
                                       ▼
@@ -105,16 +107,19 @@ The Alchemy DD Pipeline is a multi-pass document analysis system that performs a
 
 ### 2.2 Model Usage by Pass
 
-| Pass | Model | Cost Tier | Purpose |
-|------|-------|-----------|---------|
-| Entity Map | Claude Haiku | $ | Entity extraction and relationship mapping |
-| Extract | Claude Haiku | $ | Fast structured data extraction |
-| Analyze | Claude Sonnet | $$ | Detailed risk analysis |
-| Calculate | Python | Free | Mathematical computations |
-| Cross-Doc | Claude Opus | $$$ | Complex cross-document reasoning |
-| Aggregate | Python | Free | Combine and summarize calculations |
-| Synthesize | Claude Sonnet | $$ | Executive summary generation |
-| Verify | Claude Opus | $$$ | Final quality control |
+| Pass | Name | Model | Purpose |
+|------|------|-------|---------|
+| Pre-processing | Entity Map | Claude Haiku | Entity extraction and relationship mapping |
+| Pass 1 | Extract | Claude Haiku | Fast structured data extraction |
+| Pass 2 | Analyze | Claude Sonnet* | Detailed risk analysis |
+| Checkpoint C | Validation | Human | 4-step confirmation wizard |
+| Pass 3 | Calculate | Python | Mathematical computations |
+| Pass 4 | Cross-Doc | **Claude Opus** | Complex cross-document reasoning (ALWAYS Opus) |
+| Pass 5 | Aggregate | Python | Combine and summarize calculations |
+| Pass 6 | Synthesize | Claude Sonnet* | Executive summary generation |
+| Pass 7 | Verify | **Claude Opus** | Final quality control (ALWAYS Opus) |
+
+*Sonnet by default; Opus for HIGH_ACCURACY/MAXIMUM_ACCURACY tiers
 
 ---
 

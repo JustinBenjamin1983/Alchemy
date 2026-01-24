@@ -1,20 +1,23 @@
 """
 Claude API client with cost tracking, model tiering, and rate limiting.
 
-Model Strategy (Default - Cost Optimized):
-- Haiku: Pass 1 extraction (structured data extraction - fast and cheap)
-- Sonnet: Pass 2-4 (analysis requires better reasoning)
+Pass Structure (7 passes):
+- Pass 1: Extract (Haiku) - structured data extraction
+- Pass 2: Analyze (Sonnet) - per-document risk analysis
+- [Checkpoint C] - human validation
+- Pass 3: Calculate (Python) - no AI model
+- Pass 4: Cross-Doc (Opus ALWAYS) - complex cross-document reasoning
+- Pass 5: Aggregate (Python) - no AI model
+- Pass 6: Synthesize (Sonnet) - executive summary generation
+- Pass 7: Verify (Opus) - final quality control
 
-Model Strategy (High Accuracy - Premium):
-- Haiku: Pass 1 extraction
-- Sonnet: Pass 2 per-document analysis
-- Opus: Pass 3 cross-document (complex multi-hop reasoning)
-- Opus: Pass 4 synthesis (comprehensive recommendations)
+Model Tiers (affects Pass 2 and Pass 6 only):
+- COST_OPTIMIZED: Sonnet for analysis/synthesis
+- BALANCED: Sonnet for analysis/synthesis (default)
+- HIGH_ACCURACY: Sonnet for analysis, Opus for synthesis
+- MAXIMUM_ACCURACY: Opus for analysis and synthesis
 
-Cost savings vs accuracy tradeoff:
-- Default (H-S-S-S): ~$3.50/10 docs, ~89% accuracy
-- Premium (H-S-O-O): ~$11.50/10 docs, ~95% accuracy
-- Maximum (H-O-O-O): ~$35/10 docs, ~97% accuracy
+Note: Pass 4 (Cross-Doc) and Pass 7 (Verify) ALWAYS use Opus regardless of tier.
 """
 import anthropic
 import os
@@ -30,11 +33,15 @@ logger = logging.getLogger(__name__)
 
 
 class ModelTier(Enum):
-    """Model tier options for different accuracy/cost tradeoffs."""
-    COST_OPTIMIZED = "cost_optimized"      # H-S-S-S: Default, 89% accuracy
-    BALANCED = "balanced"                   # H-S-O-S: Opus for Pass 3 only, 92% accuracy
-    HIGH_ACCURACY = "high_accuracy"         # H-S-O-O: Opus for Pass 3+4, 95% accuracy
-    MAXIMUM_ACCURACY = "maximum_accuracy"   # H-O-O-O: Opus for Pass 2-4, 97% accuracy
+    """Model tier options for different accuracy/cost tradeoffs.
+
+    Note: Pass 4 (Cross-Doc) and Pass 7 (Verify) ALWAYS use Opus regardless of tier.
+    Tier selection only affects Pass 2 (Analyze) and Pass 6 (Synthesize).
+    """
+    COST_OPTIMIZED = "cost_optimized"      # H-S-O-S-O: Sonnet for analysis/synthesis
+    BALANCED = "balanced"                   # H-S-O-S-O: Default, Sonnet for analysis/synthesis
+    HIGH_ACCURACY = "high_accuracy"         # H-S-O-O-O: Opus for synthesis
+    MAXIMUM_ACCURACY = "maximum_accuracy"   # H-O-O-O-O: Opus for analysis and synthesis
 
 
 @dataclass
@@ -116,11 +123,20 @@ class ClaudeClient:
         - "sonnet": claude-sonnet-4-20250514 (good reasoning, cost effective)
         - "opus": claude-opus-4-20250514 (best reasoning, premium cost)
 
-    Model Tiers:
-        - COST_OPTIMIZED: H-S-S-S (~$3.50/10 docs, ~89% accuracy)
-        - BALANCED: H-S-O-S (~$7.50/10 docs, ~92% accuracy)
-        - HIGH_ACCURACY: H-S-O-O (~$11.50/10 docs, ~95% accuracy)
-        - MAXIMUM_ACCURACY: H-O-O-O (~$35/10 docs, ~97% accuracy)
+    Pass Structure (7 passes):
+        - Pass 1: Extract (Haiku) - structured data extraction
+        - Pass 2: Analyze (tier-dependent) - per-document risk analysis
+        - Pass 3: Calculate (Python) - no AI model
+        - Pass 4: Cross-Doc (Opus ALWAYS) - cross-document reasoning
+        - Pass 5: Aggregate (Python) - no AI model
+        - Pass 6: Synthesize (tier-dependent) - executive summary
+        - Pass 7: Verify (Opus ALWAYS) - final QC
+
+    Model Tiers (only affects Pass 2 and Pass 6):
+        - COST_OPTIMIZED: H-S-O-S-O (~$8/10 docs)
+        - BALANCED: H-S-O-S-O (~$8/10 docs) - default
+        - HIGH_ACCURACY: H-S-O-O-O (~$15/10 docs)
+        - MAXIMUM_ACCURACY: H-O-O-O-O (~$40/10 docs)
     """
 
     # Model aliases for easy switching
@@ -132,30 +148,53 @@ class ClaudeClient:
 
     # Model selection by tier and pass
     # Format: tier -> {pass_name: model_alias}
+    #
+    # New 7-pass structure:
+    # - pass1: Extract (Haiku always)
+    # - pass2: Analyze (tier-dependent)
+    # - pass3: Calculate (Python, no model)
+    # - pass4: Cross-Doc (Opus ALWAYS - complex reasoning)
+    # - pass5: Aggregate (Python, no model)
+    # - pass6: Synthesize (tier-dependent)
+    # - pass7: Verify (Opus ALWAYS - QC)
+    #
+    # Legacy keys (pass3_crossdoc, pass4_synthesis) map to new structure
     TIER_MODELS = {
         ModelTier.COST_OPTIMIZED: {
             "pass1": "haiku",
             "pass2": "sonnet",
-            "pass3": "sonnet",
-            "pass4": "sonnet",
+            "pass3": "opus",    # Cross-Doc: ALWAYS Opus (legacy key)
+            "pass4": "sonnet",  # Synthesis: Sonnet for cost (legacy key)
+            "pass4_crossdoc": "opus",   # New key: Cross-Doc ALWAYS Opus
+            "pass6_synthesize": "sonnet",
+            "pass7_verify": "opus",
         },
         ModelTier.BALANCED: {
             "pass1": "haiku",
             "pass2": "sonnet",
-            "pass3": "opus",    # Opus for cross-doc (highest impact)
-            "pass4": "sonnet",
+            "pass3": "opus",    # Cross-Doc: ALWAYS Opus
+            "pass4": "sonnet",  # Synthesis: Sonnet
+            "pass4_crossdoc": "opus",
+            "pass6_synthesize": "sonnet",
+            "pass7_verify": "opus",
         },
         ModelTier.HIGH_ACCURACY: {
             "pass1": "haiku",
             "pass2": "sonnet",
-            "pass3": "opus",    # Opus for cross-doc
-            "pass4": "opus",    # Opus for synthesis
+            "pass3": "opus",    # Cross-Doc: ALWAYS Opus
+            "pass4": "opus",    # Synthesis: Opus for accuracy
+            "pass4_crossdoc": "opus",
+            "pass6_synthesize": "opus",
+            "pass7_verify": "opus",
         },
         ModelTier.MAXIMUM_ACCURACY: {
-            "pass1": "haiku",   # Haiku still fine for extraction
-            "pass2": "opus",    # Opus for analysis
-            "pass3": "opus",    # Opus for cross-doc
-            "pass4": "opus",    # Opus for synthesis
+            "pass1": "haiku",
+            "pass2": "opus",    # Analysis: Opus for max accuracy
+            "pass3": "opus",    # Cross-Doc: ALWAYS Opus
+            "pass4": "opus",    # Synthesis: Opus
+            "pass4_crossdoc": "opus",
+            "pass6_synthesize": "opus",
+            "pass7_verify": "opus",
         },
     }
 
@@ -383,12 +422,11 @@ class ClaudeClient:
         **kwargs
     ) -> Dict[str, Any]:
         """
-        Pass 3: Cross-document analysis.
+        Pass 4: Cross-document analysis.
 
-        Default: Sonnet
-        BALANCED/HIGH_ACCURACY/MAXIMUM tiers: Opus
+        ALWAYS uses Opus regardless of tier - this is fundamental complex reasoning.
 
-        This is the HIGHEST IMPACT pass for Opus because it requires:
+        This is the HIGHEST IMPACT pass because it requires:
         - Complex multi-document reasoning
         - Identifying subtle conflicts between documents
         - Understanding cascade effects
@@ -396,8 +434,8 @@ class ClaudeClient:
 
         Opus significantly outperforms Sonnet on cross-document conflict detection.
         """
-        model = self.get_model_for_pass("pass3")
-        logger.debug(f"Pass 3 (cross-doc) using model: {model}")
+        model = self.get_model_for_pass("pass3")  # Legacy key, always returns Opus now
+        logger.debug(f"Pass 4 (cross-doc) using model: {model}")
         # Remove json_mode from kwargs if passed to avoid duplicate argument error
         kwargs.pop('json_mode', None)
         return self.complete(
@@ -417,10 +455,11 @@ class ClaudeClient:
         **kwargs
     ) -> Dict[str, Any]:
         """
-        Pass 4: Final synthesis and recommendations.
+        Pass 6: Final synthesis and recommendations.
 
-        Default: Sonnet
-        HIGH_ACCURACY/MAXIMUM tiers: Opus
+        Tier-dependent model selection:
+        - COST_OPTIMIZED/BALANCED: Sonnet
+        - HIGH_ACCURACY/MAXIMUM: Opus
 
         This pass benefits from Opus for:
         - Comprehensive executive summaries
@@ -428,8 +467,8 @@ class ClaudeClient:
         - Prioritizing and connecting findings
         - Generating actionable recommendations
         """
-        model = self.get_model_for_pass("pass4")
-        logger.debug(f"Pass 4 (synthesis) using model: {model}")
+        model = self.get_model_for_pass("pass4")  # Legacy key maps to pass6 behavior
+        logger.debug(f"Pass 6 (synthesis) using model: {model}")
         # Remove json_mode from kwargs if passed to avoid duplicate argument error
         kwargs.pop('json_mode', None)
         return self.complete(
@@ -449,10 +488,9 @@ class ClaudeClient:
         **kwargs
     ) -> Dict[str, Any]:
         """
-        Optional Pass 5: Verification of critical findings.
+        Pass 7: Final verification and quality control.
 
-        Always uses Opus for maximum accuracy on deal-critical issues.
-        Only invoked for findings marked as deal_blocker or critical severity.
+        ALWAYS uses Opus regardless of tier for maximum accuracy.
 
         This pass:
         - Double-checks severity classification
@@ -460,7 +498,7 @@ class ClaudeClient:
         - Confirms cross-document conflict analysis
         - Reduces false positives on critical issues
         """
-        logger.debug("Verification pass using model: opus")
+        logger.debug("Pass 7 (verification) using model: opus")
         # Remove json_mode from kwargs if passed to avoid duplicate argument error
         kwargs.pop('json_mode', None)
         return self.complete(
@@ -539,44 +577,57 @@ class ClaudeClient:
         }
 
     def get_tier_info(self) -> Dict[str, Any]:
-        """Get information about current tier and expected accuracy/cost."""
+        """Get information about current tier and expected accuracy/cost.
+
+        Pass structure:
+        - Pass 1: Extract (Haiku always)
+        - Pass 2: Analyze (tier-dependent)
+        - Pass 3: Calculate (Python)
+        - Pass 4: Cross-Doc (Opus always)
+        - Pass 5: Aggregate (Python)
+        - Pass 6: Synthesize (tier-dependent)
+        - Pass 7: Verify (Opus always)
+        """
         tier_info = {
             ModelTier.COST_OPTIMIZED: {
                 "name": "Cost Optimized",
-                "models": "Haiku → Sonnet → Sonnet → Sonnet",
-                "expected_accuracy": "~89%",
-                "expected_cost_10_docs": "$3.50",
-                "description": "Best for routine DD with budget constraints"
+                "models": "Haiku → Sonnet → [Python] → Opus → [Python] → Sonnet → Opus",
+                "expected_accuracy": "~92%",
+                "expected_cost_10_docs": "$8.00",
+                "description": "Sonnet for analysis/synthesis, Opus for cross-doc/verify"
             },
             ModelTier.BALANCED: {
                 "name": "Balanced",
-                "models": "Haiku → Sonnet → Opus → Sonnet",
+                "models": "Haiku → Sonnet → [Python] → Opus → [Python] → Sonnet → Opus",
                 "expected_accuracy": "~92%",
-                "expected_cost_10_docs": "$7.50",
-                "description": "Opus for cross-document analysis (highest impact)"
+                "expected_cost_10_docs": "$8.00",
+                "description": "Default tier - Sonnet for analysis/synthesis, Opus for cross-doc/verify"
             },
             ModelTier.HIGH_ACCURACY: {
                 "name": "High Accuracy",
-                "models": "Haiku → Sonnet → Opus → Opus",
+                "models": "Haiku → Sonnet → [Python] → Opus → [Python] → Opus → Opus",
                 "expected_accuracy": "~95%",
-                "expected_cost_10_docs": "$11.50",
-                "description": "Recommended for complex or high-value transactions"
+                "expected_cost_10_docs": "$15.00",
+                "description": "Opus for synthesis - recommended for complex transactions"
             },
             ModelTier.MAXIMUM_ACCURACY: {
                 "name": "Maximum Accuracy",
-                "models": "Haiku → Opus → Opus → Opus",
+                "models": "Haiku → Opus → [Python] → Opus → [Python] → Opus → Opus",
                 "expected_accuracy": "~97%",
-                "expected_cost_10_docs": "$35.00",
-                "description": "Premium tier for critical transactions"
+                "expected_cost_10_docs": "$40.00",
+                "description": "Opus for analysis - premium tier for critical transactions"
             },
         }
 
         info = tier_info.get(self.model_tier, tier_info[ModelTier.COST_OPTIMIZED])
         info["current_tier"] = self.model_tier.value
         info["pass_models"] = {
-            "pass1_extraction": self.get_model_for_pass("pass1"),
-            "pass2_analysis": self.get_model_for_pass("pass2"),
-            "pass3_crossdoc": self.get_model_for_pass("pass3"),
-            "pass4_synthesis": self.get_model_for_pass("pass4"),
+            "pass1_extract": self.get_model_for_pass("pass1"),
+            "pass2_analyze": self.get_model_for_pass("pass2"),
+            "pass3_calculate": "python",
+            "pass4_crossdoc": self.get_model_for_pass("pass3"),  # Legacy key, always Opus
+            "pass5_aggregate": "python",
+            "pass6_synthesize": self.get_model_for_pass("pass4"),
+            "pass7_verify": "opus",
         }
         return info

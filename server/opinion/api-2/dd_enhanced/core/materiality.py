@@ -1,9 +1,10 @@
 """
-Phase 2: Materiality Filtering
+Materiality Thresholds
 
 Calculates materiality thresholds based on transaction value and applies
-classifications to findings. Enables filtering/prioritization based on
-financial significance.
+classifications to findings. Enables prioritization based on financial
+significance. Note: ALL findings are included in the report - this module
+classifies them, it does NOT filter/exclude documents or findings.
 
 Thresholds (with transaction value):
 - Material: >= 5% of transaction value

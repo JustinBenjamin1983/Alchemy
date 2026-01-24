@@ -24,7 +24,7 @@ from shared.session import transactional_session
 from shared.models import (
     Document, DueDiligence, DueDiligenceMember, Folder,
     PerspectiveRisk, PerspectiveRiskFinding, Perspective, DDWizardDraft,
-    DDProcessingCheckpoint, DDAnalysisRun
+    DDProcessingCheckpoint, DDAnalysisRun, DDReportVersion
 )
 from shared.audit import log_audit_event, AuditEventType
 
@@ -524,6 +524,13 @@ def _run_processing_in_background(
             'synthesis_data': synthesis_data
         })
 
+        # Create initial report version (V1) for the refinement loop
+        try:
+            _create_initial_report_version(run_id, synthesis_data, owned_by)
+            logging.info(f"[BackgroundProcessor] Created V1 report version for Run: {run_id}")
+        except Exception as e:
+            logging.warning(f"[BackgroundProcessor] Failed to create V1 report version (non-fatal): {e}")
+
         logging.info(f"[BackgroundProcessor] Processing complete for Run: {run_id}")
 
     except Exception as e:
@@ -559,6 +566,42 @@ def _update_checkpoint(checkpoint_id: str, updates: Dict[str, Any]):
                 session.commit()
     except Exception as e:
         logging.warning(f"[BackgroundProcessor] Failed to update checkpoint: {e}")
+
+
+def _create_initial_report_version(run_id: str, synthesis_data: Dict[str, Any], created_by: str):
+    """
+    Create the initial V1 report version when analysis completes.
+
+    This enables the Ask AI refinement loop - users can iterate on V1 to create V2, V3, etc.
+    """
+    run_uuid = uuid_module.UUID(run_id) if isinstance(run_id, str) else run_id
+
+    with transactional_session() as session:
+        # Check if V1 already exists
+        existing = session.query(DDReportVersion).filter(
+            DDReportVersion.run_id == run_uuid,
+            DDReportVersion.version == 1
+        ).first()
+
+        if existing:
+            logging.info(f"[BackgroundProcessor] V1 already exists for run {run_id}")
+            return
+
+        # Create V1
+        version = DDReportVersion(
+            id=uuid_module.uuid4(),
+            run_id=run_uuid,
+            version=1,
+            content=synthesis_data,
+            refinement_prompt=None,  # V1 is the initial version, no refinement
+            changes=None,
+            is_current=True,
+            change_summary="Initial report generated from DD analysis",
+            created_at=datetime.datetime.utcnow(),
+            created_by=created_by
+        )
+        session.add(version)
+        session.commit()
 
 
 def _check_should_stop(checkpoint_id: str) -> tuple[bool, str]:

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ChevronLeft, ChevronRight, Check, Loader2, Save, Cloud, CloudOff } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Loader2, Save, Cloud, CloudOff, CheckCircle2 } from "lucide-react";
 import { DDProjectSetup, DEFAULT_PROJECT_SETUP } from "./types";
 import { Step1TransactionBasics } from "./Step1TransactionBasics";
 import { Step2DealContext } from "./Step2DealContext";
@@ -272,37 +272,37 @@ export function DDProjectWizard({ onComplete, onCancel, initialDraft }: DDProjec
 
   const progressValue = (currentStep / STEPS.length) * 100;
 
-  // Save status indicator
+  // Save status indicator with enhanced visual feedback
   const SaveStatusIndicator = () => {
     if (saveStatus === "saving") {
       return (
-        <span className="flex items-center text-xs text-muted-foreground">
-          <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+        <span className="flex items-center text-sm px-3 py-1.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200 transition-all duration-300">
+          <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
           Saving...
         </span>
       );
     }
     if (saveStatus === "saved") {
       return (
-        <span className="flex items-center text-xs text-green-600">
-          <Cloud className="h-3 w-3 mr-1" />
-          Saved
+        <span className="flex items-center text-sm px-3 py-1.5 rounded-full bg-green-50 text-green-700 border border-green-300 transition-all duration-300 animate-pulse">
+          <CheckCircle2 className="h-4 w-4 mr-1.5" />
+          Saved successfully
         </span>
       );
     }
     if (saveStatus === "error") {
       return (
-        <span className="flex items-center text-xs text-red-600">
-          <CloudOff className="h-3 w-3 mr-1" />
-          Save failed
+        <span className="flex items-center text-sm px-3 py-1.5 rounded-full bg-red-50 text-red-600 border border-red-200 transition-all duration-300">
+          <CloudOff className="h-4 w-4 mr-1.5" />
+          Save failed - click to retry
         </span>
       );
     }
     if (draftId && lastSaved) {
       return (
-        <span className="flex items-center text-xs text-muted-foreground">
+        <span className="flex items-center text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600 transition-all duration-300">
           <Cloud className="h-3 w-3 mr-1" />
-          Draft saved
+          Draft auto-saved
         </span>
       );
     }
@@ -396,15 +396,37 @@ export function DDProjectWizard({ onComplete, onCancel, initialDraft }: DDProjec
               Cancel
             </Button>
           )}
-          {/* Manual save button */}
+          {/* Manual save button - Green with hover effects */}
           <Button
             variant="outline"
             onClick={handleManualSave}
             disabled={saveStatus === "saving"}
-            className="text-muted-foreground"
+            className={`
+              transition-all duration-200
+              ${saveStatus === "saved"
+                ? "bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 shadow-md"
+                : saveStatus === "saving"
+                ? "bg-green-100 text-green-700 border-green-300"
+                : "bg-green-50 text-green-700 border-green-300 hover:bg-green-600 hover:text-white hover:border-green-600 hover:shadow-md hover:scale-105"
+              }
+            `}
           >
-            <Save className="h-4 w-4 mr-1" />
-            Save Draft
+            {saveStatus === "saving" ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+                Saving...
+              </>
+            ) : saveStatus === "saved" ? (
+              <>
+                <CheckCircle2 className="h-4 w-4 mr-1.5" />
+                Saved!
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4 mr-1.5" />
+                Save Draft
+              </>
+            )}
           </Button>
         </div>
 

@@ -26,7 +26,8 @@ export type ScreenState =
   | "Questions"
   | "DocumentChanges"
   | "ShowReport"
-  | "MissingDocs";
+  | "MissingDocs"
+  | "CheckpointA";
 
 interface DDTopProps {
   ddId: string;

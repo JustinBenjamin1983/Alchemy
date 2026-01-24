@@ -225,51 +225,223 @@ Known Deal Breakers: Unresolved environmental litigation
 
 ---
 
-### 3.3 Checkpoint A: Missing Documents (NEW)
+### 3.3 Checkpoint A: Document Classification & Completeness Review
 
-**Purpose:** Compare classified documents against blueprint requirements and prompt user for missing documents.
+**Purpose:** Ensure all documents are correctly classified and all required documents (per blueprint) are present before proceeding to readability check.
 
-**Trigger:** After classification completes, before readability check.
+**Trigger:** Automatically after user clicks "Create DD Project" in the wizard.
 
-**UI Component:** `ValidationWizardModal` (modal wizard)
+**UI Flow:** Two-phase overlay system followed by in-console review.
 
-#### Process
-1. Load blueprint for transaction type (e.g., `mining_acquisition.yaml`)
-2. Extract list of expected document types from blueprint
-3. Compare against classified documents
-4. Generate missing docs list with importance ratings
+---
 
-#### Missing Docs Display
+#### Phase 1: Classification In Progress (Auto-displayed Modal)
+
+After clicking "Create DD Project", user is navigated to the **Console tab** with a dark overlay and modal:
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ Document Completeness Check                        [Skip All]   │
+│                    Document Classification                       │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│ Based on your Mining Acquisition transaction, we expected       │
-│ these documents but didn't find them:                           │
+│                         ⟳ (spinner)                             │
 │                                                                 │
-│ ⚠️ CRITICAL                                                     │
-│ ┌─────────────────────────────────────────────────────────────┐ │
-│ │ Mining Rights Certificate                                   │ │
-│ │ Expected in: 04_Regulatory                                  │ │
-│ │ [Upload Now] [Don't Have It] [Not Applicable]               │ │
-│ └─────────────────────────────────────────────────────────────┘ │
+│     Please wait while your documents are automatically          │
+│     classified into their category folders.                     │
 │                                                                 │
-│ ⚠️ HIGH                                                         │
-│ ┌─────────────────────────────────────────────────────────────┐ │
-│ │ Environmental Impact Assessment                             │ │
-│ │ Expected in: 04_Regulatory                                  │ │
-│ │ [Upload Now] [Don't Have It] [Not Applicable]               │ │
-│ └─────────────────────────────────────────────────────────────┘ │
+│     This process typically takes 1-2 minutes depending          │
+│     on the number of documents.                                 │
 │                                                                 │
-│ [Submit & Continue]                                             │
+│     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━                   │
+│     Classifying: 12 of 47 documents...                          │
+│                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-#### If User Uploads Documents
-1. New documents are classified
-2. Merged with existing document set
-3. Continue to readability check
+---
+
+#### Phase 2: Classification Complete (Auto-displayed Modal)
+
+When classification finishes, the same modal transforms to show results:
+
+**Scenario A: Issues Found (Missing docs or classification failures)**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                  Classification Complete                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ✓ 45 documents successfully classified                        │
+│                                                                 │
+│  ─────────────────────────────────────────────────────────────  │
+│                                                                 │
+│  ⚠️ ACTION REQUIRED                                             │
+│                                                                 │
+│  Missing Documents (3)                                          │
+│  The following documents are typically required for a           │
+│  Mining Acquisition but were not found:                         │
+│  • Mining Rights Certificate (Critical)                         │
+│  • Environmental Impact Assessment (High)                       │
+│  • Water Use License (Medium)                                   │
+│                                                                 │
+│  Unclassified Documents (2)                                     │
+│  These documents require manual classification:                 │
+│  • Board_Minutes_2024.pdf                                       │
+│  • Unknown_Agreement.docx                                       │
+│                                                                 │
+│  ─────────────────────────────────────────────────────────────  │
+│                                                                 │
+│  Please resolve these issues in the Documents panel before      │
+│  proceeding to the Readability Check.                           │
+│                                                                 │
+│                              [Review Documents]                  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Scenario B: No Issues (All docs classified, no missing critical docs)**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                  Classification Complete                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ✓ All 47 documents successfully classified                    │
+│                                                                 │
+│  ─────────────────────────────────────────────────────────────  │
+│                                                                 │
+│  Your documents have been organised into the following          │
+│  category folders:                                              │
+│                                                                 │
+│  📁 01_Corporate .............. 8 documents                     │
+│  📁 02_Commercial ............. 12 documents                    │
+│  📁 03_Financial .............. 9 documents                     │
+│  📁 04_Regulatory ............. 7 documents                     │
+│  📁 05_Employment ............. 4 documents                     │
+│  📁 06_Property ............... 3 documents                     │
+│  📁 07_Insurance .............. 2 documents                     │
+│  📁 09_Tax .................... 2 documents                     │
+│                                                                 │
+│  ─────────────────────────────────────────────────────────────  │
+│                                                                 │
+│  Please review the folder structure and confirm documents       │
+│  are correctly categorised. You can manually move any           │
+│  mis-classified documents by dragging them to the correct       │
+│  folder.                                                        │
+│                                                                 │
+│  When ready, click the Readability Check button to validate     │
+│  document formats and proceed to the next stage.                │
+│                                                                 │
+│                              [Continue to Review]                │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+#### Phase 3: In-Console Document Review
+
+After clicking "Review Documents" or "Continue to Review", the modal closes and user works directly in the **Documents Container** within the Console tab.
+
+##### Folder Structure with Blueprint Requirements
+
+Each folder displays **inline expected documents** based on the transaction-type blueprint:
+
+```
+📁 04_Regulatory (7 documents)
+├─────────────────────────────────────────────────────────────────
+│ Expected for Mining Acquisition:
+│ ✓ Mining Rights Certificate
+│ ✓ Environmental Authorisation
+│ ⚠ Environmental Impact Assessment (MISSING - drag file here)
+│ ⚠ Water Use License (MISSING - drag file here)
+│ ✓ BEE Certificate
+├─────────────────────────────────────────────────────────────────
+│ Documents:
+│ 📄 Mining_Right_Certificate_2021.pdf          [92% confidence]
+│ 📄 Environmental_Auth_EA123.pdf               [88% confidence]
+│ 📄 BEE_Level2_Certificate.pdf                 [95% confidence]
+│ 📄 SARB_Approval_Letter.pdf                   [76% confidence]
+│ ... 3 more
+└─────────────────────────────────────────────────────────────────
+
+📁 99_Needs_Review (2 documents) ⚠️
+├─────────────────────────────────────────────────────────────────
+│ These documents require manual classification:
+├─────────────────────────────────────────────────────────────────
+│ 📄 Board_Minutes_2024.pdf
+│     [Move to: ▼ Select folder...]  [Re-classify with AI]
+│
+│ 📄 Unknown_Agreement.docx
+│     [Move to: ▼ Select folder...]  [Re-classify with AI]
+└─────────────────────────────────────────────────────────────────
+```
+
+##### User Actions in Console
+
+| Action | Description |
+|--------|-------------|
+| **Drag & Drop to Missing Slot** | User drags a file into a "MISSING" placeholder. File is automatically assigned to that folder/category. No re-classification needed. |
+| **Upload New Document** | User clicks "Upload" or drags external file into a missing slot. File is saved and assigned to that category. |
+| **Move Unclassified Document** | User selects target folder from dropdown for docs in 99_Needs_Review. Document moves to selected folder. |
+| **Re-classify with AI** | User clicks to request AI re-classification for a single document or batch. |
+| **Re-classify All Unclassified** | Button to re-run AI classification on all 99_Needs_Review documents. |
+
+##### Blocking Condition
+
+**The Readability Check button remains DISABLED until:**
+1. All documents in `99_Needs_Review` folder have been moved to appropriate folders (folder is empty)
+2. User has reviewed the classification (implicit acknowledgment by clicking Continue)
+
+##### Progress Persistence
+
+Checkpoint A state is automatically saved to the database:
+- Which missing documents user has acknowledged
+- User responses for each missing doc (uploaded, not applicable, will provide later)
+- Documents moved from 99_Needs_Review
+- Timestamp of last interaction
+
+If user closes browser and returns, the checkpoint state is restored.
+
+---
+
+#### Data Model: Checkpoint A State
+
+Stored in `dd_validation_checkpoint` table:
+
+```json
+{
+  "checkpoint_type": "missing_docs",
+  "status": "awaiting_user_input",
+  "missing_docs": [
+    {
+      "doc_type": "Mining Rights Certificate",
+      "category": "04_Regulatory",
+      "importance": "critical",
+      "user_response": "uploaded",
+      "uploaded_doc_id": "uuid-xxx"
+    },
+    {
+      "doc_type": "Environmental Impact Assessment",
+      "category": "04_Regulatory",
+      "importance": "high",
+      "user_response": "not_applicable",
+      "reason": "Not required for this transaction type"
+    }
+  ],
+  "unclassified_resolved": true,
+  "completed_at": null
+}
+```
+
+---
+
+#### Transition to Readability Check
+
+Once Checkpoint A is complete:
+1. `99_Needs_Review` folder is empty
+2. User clicks **"Run Readability Check"** button (now enabled)
+3. System proceeds to Section 3.4: Readability Check
 
 ---
 

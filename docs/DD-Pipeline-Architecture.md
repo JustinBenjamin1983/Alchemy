@@ -492,12 +492,12 @@ The entity map is passed to all subsequent processing passes:
 
 - **Pass 1 (Extract):** Validates extracted parties against entity map
 - **Pass 2 (Analyze):** Uses entity relationships for conflict detection
-- **Pass 3 (Cross-Doc):** Ensures cross-document analysis considers group structure
-- **Pass 4 (Synthesize):** Executive summary references correct entity hierarchy
+- **Pass 4 (Cross-Doc):** Ensures cross-document analysis considers group structure
+- **Pass 6 (Synthesize):** Executive summary references correct entity hierarchy
 
 ---
 
-## 4. Processing Phase (8-Pass Pipeline)
+## 4. Processing Phase (7-Pass Pipeline)
 
 ### 4.1 Materiality Filtering (NEW)
 
@@ -904,11 +904,11 @@ A finding can be:
 
 ---
 
-### 4.3 Checkpoint B: Combined Validation (NEW)
+### 4.4 Checkpoint C: Post-Analysis Validation
 
 **Purpose:** Human validation of AI's understanding before proceeding with calculations and synthesis.
 
-**Trigger:** After Pass 2 (Analyze) completes, before Pass 2.5 (Calculate).
+**Trigger:** After Pass 2 (Analyze) completes, before Pass 3 (Calculate).
 
 **UI Component:** `ValidationWizardModal` (4-step modal wizard)
 
@@ -1061,7 +1061,7 @@ User responses stored in:
 
 ---
 
-### 4.4 Pass 2.5: CALCULATE
+### 4.5 Pass 3: CALCULATE
 
 **Purpose:** Compute financial exposures using validated data.
 
@@ -1071,7 +1071,7 @@ User responses stored in:
 #### Input
 - Pass 1 extracted financial figures
 - Pass 2 findings with financial exposure estimates
-- User-validated financial data from Checkpoint B
+- User-validated financial data from Checkpoint C
 
 #### Calculations Performed
 | Calculation | Formula | Source |
@@ -1104,7 +1104,7 @@ User responses stored in:
 
 ---
 
-### 4.5 Pass 3: CROSS-DOC
+### 4.6 Pass 4: CROSS-DOC
 
 **Purpose:** Detect conflicts, cascades, and dependencies across documents.
 
@@ -1183,7 +1183,7 @@ Map all required consents:
 
 ---
 
-### 4.6 Pass 3.5: AGGREGATE
+### 4.7 Pass 5: AGGREGATE
 
 **Purpose:** Combine calculations and findings across all documents.
 
@@ -1229,7 +1229,7 @@ Map all required consents:
 
 ---
 
-### 4.7 Pass 4: SYNTHESIZE
+### 4.8 Pass 6: SYNTHESIZE
 
 **Purpose:** Generate executive summary, recommendations, and structured outputs.
 
@@ -1239,9 +1239,9 @@ Map all required consents:
 
 #### Input
 - All findings from Pass 2
-- Cross-document analysis from Pass 3
-- Aggregated calculations from Pass 3.5
-- Validated transaction context from Checkpoint B
+- Cross-document analysis from Pass 4
+- Aggregated calculations from Pass 5
+- Validated transaction context from Checkpoint C
 
 #### Output Components
 
@@ -1379,7 +1379,7 @@ Based on Financial DD Checklist:
 
 ---
 
-### 4.8 Pass 5: VERIFY
+### 4.9 Pass 7: VERIFY
 
 **Purpose:** Final quality control - skeptical review of all outputs.
 
@@ -1424,23 +1424,23 @@ Based on Financial DD Checklist:
 ### 5.1 Checkpoint Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    CHECKPOINT SYSTEM                            │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌───────────────┐     ┌───────────────┐     ┌───────────────┐  │
-│  │ Checkpoint A  │     │ Checkpoint B  │     │ Refinement    │  │
-│  │ Missing Docs  │     │ Combined      │     │ Loop          │  │
-│  │               │     │ Validation    │     │               │  │
-│  │ After:        │     │ After:        │     │ After:        │  │
-│  │ Classification│     │ Pass 2        │     │ Pass 5        │  │
-│  │               │     │               │     │               │  │
-│  │ Purpose:      │     │ Purpose:      │     │ Purpose:      │  │
-│  │ Doc coverage  │     │ Validate      │     │ Refine report │  │
-│  │               │     │ understanding │     │ iteratively   │  │
-│  └───────────────┘     └───────────────┘     └───────────────┘  │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────────────────┐
+│                              CHECKPOINT SYSTEM                                            │
+├──────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                          │
+│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐             │
+│  │ Checkpoint A  │  │ Checkpoint B  │  │ Checkpoint C  │  │ Refinement    │             │
+│  │ Missing Docs  │  │ Entity        │  │ Post-Analysis │  │ Loop          │             │
+│  │               │  │ Confirmation  │  │ Validation    │  │               │             │
+│  │ After:        │  │ After:        │  │ After:        │  │ After:        │             │
+│  │ Classification│  │ Entity Mapping│  │ Pass 2        │  │ Pass 7        │             │
+│  │               │  │               │  │               │  │               │             │
+│  │ Purpose:      │  │ Purpose:      │  │ Purpose:      │  │ Purpose:      │             │
+│  │ Doc coverage  │  │ Verify entity │  │ Validate AI   │  │ Refine report │             │
+│  │               │  │ relationships │  │ understanding │  │ iteratively   │             │
+│  └───────────────┘  └───────────────┘  └───────────────┘  └───────────────┘             │
+│                                                                                          │
+└──────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### 5.2 Checkpoint State Machine
@@ -1621,7 +1621,7 @@ class DDValidationCheckpoint(BaseModel):
 }
 ```
 
-#### validated_context (from Checkpoint B)
+#### validated_context (from Checkpoint C)
 ```json
 {
   "transaction_understanding": [
@@ -2149,7 +2149,7 @@ checkpoint_data = {
 | API timeout | Retry with exponential backoff |
 | Rate limit | Queue and retry after delay |
 | Document parse error | Skip document, flag for review |
-| Checkpoint B timeout | Save state, allow async resume |
+| Checkpoint timeout | Save state, allow async resume |
 
 ### 12.3 Audit Trail
 
@@ -2173,10 +2173,10 @@ log_audit_event(
 | `DDProcessEnhancedStart/__init__.py` | Main processing orchestrator |
 | `dd_enhanced/core/pass1_extract.py` | Pass 1 implementation |
 | `dd_enhanced/core/pass2_analyze.py` | Pass 2 implementation |
-| `dd_enhanced/core/pass_calculations.py` | Pass 2.5 & 3.5 calculations |
-| `dd_enhanced/core/pass3_clustered.py` | Pass 3 cross-doc analysis |
-| `dd_enhanced/core/pass4_synthesize.py` | Pass 4 synthesis |
-| `dd_enhanced/core/pass5_verify.py` | Pass 5 verification |
+| `dd_enhanced/core/pass_calculations.py` | Pass 3 & 5 calculations |
+| `dd_enhanced/core/pass3_clustered.py` | Pass 4 cross-doc analysis |
+| `dd_enhanced/core/pass4_synthesize.py` | Pass 6 synthesis |
+| `dd_enhanced/core/pass5_verify.py` | Pass 7 verification |
 | `dd_enhanced/prompts/*.py` | All Claude prompts |
 | `dd_enhanced/config/blueprints/*.yaml` | Transaction blueprints |
 
@@ -2567,7 +2567,7 @@ Be thorough - a good lawyer would rather flag something unnecessary than miss so
 
 ---
 
-### C.3 Pass 3: CROSS-DOCUMENT Prompts
+### C.3 Pass 4: CROSS-DOCUMENT Prompts
 
 **File:** `dd_enhanced/prompts/crossdoc.py`
 
@@ -2893,7 +2893,7 @@ COMMON MISSING DOCUMENTS TO CHECK FOR:
 
 ---
 
-### C.4 Pass 4: SYNTHESIS Prompts
+### C.4 Pass 6: SYNTHESIS Prompts
 
 **File:** `dd_enhanced/prompts/synthesis.py`
 
@@ -2938,23 +2938,23 @@ FINDINGS FROM DOCUMENT ANALYSIS (Pass 2):
 
 ---
 
-CROSS-DOCUMENT CONFLICTS IDENTIFIED (Pass 3):
-{pass3_conflicts}
+CROSS-DOCUMENT CONFLICTS IDENTIFIED (Pass 4):
+{pass4_conflicts}
 
 ---
 
-CHANGE OF CONTROL CASCADE ANALYSIS (Pass 3):
-{pass3_cascade}
+CHANGE OF CONTROL CASCADE ANALYSIS (Pass 4):
+{pass4_cascade}
 
 ---
 
-AUTHORIZATION CHECK (Pass 3):
-{pass3_authorization}
+AUTHORIZATION CHECK (Pass 4):
+{pass4_authorization}
 
 ---
 
-CONSENT MATRIX (Pass 3):
-{pass3_consents}
+CONSENT MATRIX (Pass 4):
+{pass4_consents}
 
 ---
 
@@ -3296,7 +3296,7 @@ INDEMNITIES (indemnities_register):
 
 ---
 
-### C.5 Pass 5: VERIFICATION Prompts
+### C.5 Pass 7: VERIFICATION Prompts
 
 **File:** `dd_enhanced/prompts/verification.py`
 

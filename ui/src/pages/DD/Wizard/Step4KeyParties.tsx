@@ -89,14 +89,17 @@ function getFieldValue(data: DDProjectSetup, fieldId: string): FieldData {
     case "fundingProviders":
       return { lenders: data.keyLenders };
 
-    // Counterparty fields (name + description + exposure)
+    // Contractor fields (name + description + exposure) - use keyContractors
     case "contractors":
-    case "offtakers":
-    case "tenants":
     case "epcContractor":
     case "omProvider":
     case "constructionContractor":
     case "facilitiesManager":
+      return { counterparties: data.keyContractors };
+
+    // Customer/Offtaker fields (name + description + exposure) - use keyCustomers
+    case "offtakers":
+    case "tenants":
     case "existingShareholders":
     case "cornerstoneInvestors":
     case "coInvestors":
@@ -856,7 +859,13 @@ function DynamicField({ field, data, onChange }: DynamicFieldProps) {
   const handleCounterpartiesChange = (
     counterparties: Array<{ name: string; description: string; exposure: string }>
   ) => {
-    onChange({ keyCustomers: counterparties });
+    // Determine if this is a contractor field or customer field
+    const contractorFields = ["contractors", "epcContractor", "omProvider", "constructionContractor", "facilitiesManager"];
+    if (contractorFields.includes(field.id)) {
+      onChange({ keyContractors: counterparties });
+    } else {
+      onChange({ keyCustomers: counterparties });
+    }
   };
 
   const handleBEEPartnersChange = (partners: BEEPartnerEntry[]) => {
@@ -903,10 +912,13 @@ function DynamicField({ field, data, onChange }: DynamicFieldProps) {
       );
 
     case "counterparty":
+      // Use keyContractors for contractor fields, keyCustomers for others
+      const contractorFieldIds = ["contractors", "epcContractor", "omProvider", "constructionContractor", "facilitiesManager"];
+      const counterpartyData = contractorFieldIds.includes(field.id) ? data.keyContractors : data.keyCustomers;
       return (
         <CounterpartyInput
           field={field}
-          counterparties={data.keyCustomers}
+          counterparties={counterpartyData}
           onChange={handleCounterpartiesChange}
         />
       );

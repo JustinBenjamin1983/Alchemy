@@ -86,6 +86,7 @@ export interface DDProjectSetup {
   keyIndividuals: string[];
   keySuppliers: string[];
   keyCustomers: CounterpartyStakeholder[];
+  keyContractors: CounterpartyStakeholder[];  // Separate storage for contractors
   keyLenders: LenderStakeholder[];
   keyRegulators: string[];
   keyOther: OtherStakeholder[];
@@ -131,6 +132,7 @@ export const DEFAULT_PROJECT_SETUP: DDProjectSetup = {
   keyIndividuals: [],
   keySuppliers: [],
   keyCustomers: [],
+  keyContractors: [],
   keyLenders: [],
   keyRegulators: [],
   keyOther: [],

@@ -64,6 +64,12 @@ function draftToProjectSetup(draft: WizardDraftData): DDProjectSetup {
       // New format: already a CounterpartyStakeholder object
       return { ...item, description: item.description || '', exposure: item.exposure || '' };
     }),
+    keyContractors: (((draft as any).keyContractors || []) as any[]).map((item: any) => {
+      if (typeof item === 'string') {
+        return { name: item, description: '', exposure: '' };
+      }
+      return { ...item, description: item.description || '', exposure: item.exposure || '' };
+    }),
     keyLenders: ((draft.keyLenders || []) as any[]).map((item: any) => {
       if (typeof item === 'string') {
         // Old format: convert string to LenderStakeholder

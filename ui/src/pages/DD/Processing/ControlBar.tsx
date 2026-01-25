@@ -41,6 +41,9 @@ interface ControlBarProps {
   readabilityComplete: boolean;
   readyCount: number;
   failedCount: number;
+  // Checkpoint A blocking condition
+  canRunReadability?: boolean;
+  needsReviewCount?: number;
   selectedTier: ModelTier;
   onTierChange: (tier: ModelTier) => void;
   onRunDD: () => void;
@@ -74,6 +77,8 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   readabilityComplete,
   readyCount,
   failedCount,
+  canRunReadability = true,
+  needsReviewCount = 0,
   selectedTier,
   onTierChange,
   onRunDD,
@@ -174,36 +179,48 @@ export const ControlBar: React.FC<ControlBarProps> = ({
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={onRunReadability}
-                  disabled={disabled || isCheckingReadability}
-                  className={cn(
-                    "h-9 w-32 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md",
-                    readabilityComplete && failedCount === 0 && "border-green-400 bg-green-50 text-green-700 hover:bg-green-100"
-                  )}
-                >
-                  {isCheckingReadability ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : readabilityComplete && failedCount === 0 ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <ScanText className="h-4 w-4 text-blue-500" />
-                  )}
-                  Readability
-                  {readabilityComplete && (
-                    <span className={cn(
-                      "text-xs font-semibold",
-                      failedCount > 0 ? "text-amber-600" : "text-green-600"
-                    )}>
-                      {readyCount}{failedCount > 0 && `/${failedCount}`}
-                    </span>
-                  )}
-                </Button>
+                <span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={onRunReadability}
+                    disabled={disabled || isCheckingReadability || !canRunReadability}
+                    className={cn(
+                      "h-9 w-32 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md",
+                      readabilityComplete && failedCount === 0 && canRunReadability && "border-green-400 bg-green-50 text-green-700 hover:bg-green-100",
+                      !canRunReadability && "border-amber-300 bg-amber-50 text-amber-700"
+                    )}
+                  >
+                    {isCheckingReadability ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : !canRunReadability ? (
+                      <span className="h-4 w-4 text-amber-500 text-xs font-bold">{needsReviewCount}</span>
+                    ) : readabilityComplete && failedCount === 0 ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <ScanText className="h-4 w-4 text-blue-500" />
+                    )}
+                    Readability
+                    {readabilityComplete && canRunReadability && (
+                      <span className={cn(
+                        "text-xs font-semibold",
+                        failedCount > 0 ? "text-amber-600" : "text-green-600"
+                      )}>
+                        {readyCount}{failedCount > 0 && `/${failedCount}`}
+                      </span>
+                    )}
+                  </Button>
+                </span>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2">
-                <p className="text-sm text-white">Click to check document readability before performing a DD run</p>
+              <TooltipContent side="bottom" className="bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2 max-w-xs">
+                {!canRunReadability ? (
+                  <div>
+                    <p className="text-sm font-semibold text-amber-300">Classification Required</p>
+                    <p className="text-sm text-white">{needsReviewCount} document{needsReviewCount !== 1 ? 's' : ''} in "Needs Review" must be assigned to folders before running readability check.</p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-white">Click to check document readability before performing a DD run</p>
+                )}
               </TooltipContent>
             </Tooltip>
           </div>

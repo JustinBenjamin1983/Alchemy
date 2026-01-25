@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import {
   useOrganisationProgress,
+  useCancelOrganisation,
   OrganisationProgress,
 } from "@/hooks/useOrganisationProgress";
 import {
@@ -43,9 +44,10 @@ interface ClassificationProgressModalProps {
   transactionType: string | undefined;
   onComplete: () => void;
   onReviewDocuments: () => void;
+  onCancel?: () => void;
 }
 
-type ModalPhase = "classifying" | "complete" | "issues";
+type ModalPhase = "classifying" | "complete" | "issues" | "cancelled";
 
 export function ClassificationProgressModal({
   open,
@@ -53,8 +55,10 @@ export function ClassificationProgressModal({
   transactionType,
   onComplete,
   onReviewDocuments,
+  onCancel,
 }: ClassificationProgressModalProps) {
   const [phase, setPhase] = useState<ModalPhase>("classifying");
+  const cancelOrganisation = useCancelOrganisation();
 
   // Poll organisation progress
   const { data: progress, isLoading: progressLoading } = useOrganisationProgress(
@@ -75,6 +79,8 @@ export function ClassificationProgressModal({
 
     if (progress.status === "classifying" || progress.status === "pending") {
       setPhase("classifying");
+    } else if (progress.status === "cancelled") {
+      setPhase("cancelled");
     } else if (
       progress.status === "classified" ||
       progress.status === "organised" ||
@@ -92,6 +98,17 @@ export function ClassificationProgressModal({
     }
   }, [progress, requirements]);
 
+  // Handle cancel
+  const handleCancel = () => {
+    if (ddId) {
+      cancelOrganisation.mutate(ddId, {
+        onSuccess: () => {
+          onCancel?.();
+        },
+      });
+    }
+  };
+
   if (!open || !ddId) return null;
 
   return (
@@ -102,7 +119,15 @@ export function ClassificationProgressModal({
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         {phase === "classifying" && (
-          <ClassifyingPhase progress={progress} isLoading={progressLoading} />
+          <ClassifyingPhase
+            progress={progress}
+            isLoading={progressLoading}
+            onCancel={handleCancel}
+            isCancelling={cancelOrganisation.isPending}
+          />
+        )}
+        {phase === "cancelled" && (
+          <CancelledPhase onClose={onCancel} />
         )}
         {phase === "complete" && (
           <CompletePhase
@@ -127,9 +152,13 @@ export function ClassificationProgressModal({
 function ClassifyingPhase({
   progress,
   isLoading,
+  onCancel,
+  isCancelling,
 }: {
   progress: OrganisationProgress | undefined;
   isLoading: boolean;
+  onCancel?: () => void;
+  isCancelling?: boolean;
 }) {
   const percent = progress?.percentComplete || 0;
   const classified = progress?.classifiedCount || 0;
@@ -165,6 +194,57 @@ function ClassifyingPhase({
           This process typically takes 1-2 minutes depending on the number of
           documents.
         </p>
+
+        {onCancel && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onCancel}
+            disabled={isCancelling}
+            className="text-red-600 border-red-300 hover:bg-red-50"
+          >
+            {isCancelling ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Cancelling...
+              </>
+            ) : (
+              "Cancel Classification"
+            )}
+          </Button>
+        )}
+      </div>
+    </>
+  );
+}
+
+// Phase: Classification Cancelled
+function CancelledPhase({ onClose }: { onClose?: () => void }) {
+  return (
+    <>
+      <DialogHeader>
+        <DialogTitle className="flex items-center gap-2">
+          <XCircle className="h-6 w-6 text-amber-500" />
+          Classification Cancelled
+        </DialogTitle>
+      </DialogHeader>
+
+      <div className="space-y-6 py-4">
+        <div className="flex items-center gap-2 text-amber-700 bg-amber-50 p-3 rounded-lg">
+          <AlertTriangle className="h-5 w-5" />
+          <span>Document classification was cancelled.</span>
+        </div>
+
+        <p className="text-sm text-muted-foreground">
+          You can restart classification at any time using the Classify button
+          in the control bar.
+        </p>
+
+        <div className="flex justify-end">
+          <Button onClick={onClose} variant="outline">
+            Close
+          </Button>
+        </div>
       </div>
     </>
   );

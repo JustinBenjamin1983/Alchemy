@@ -44,6 +44,7 @@ import { useCheckReadability } from "@/hooks/useCheckReadability";
 import { useGetDD } from "@/hooks/useGetDD";
 import { useCreateAnalysisRun, useAnalysisRunsList } from "@/hooks/useAnalysisRuns";
 import { useOrganisationProgress, useClassifyDocuments, useOrganiseFolders, useDocumentReassign, useCancelOrganisation } from "@/hooks/useOrganisationProgress";
+import { useBlueprintRequirements } from "@/hooks/useBlueprintRequirements";
 import { CategoryCount, CategoryDocument } from "./FileTree/FileTree";
 import { Button } from "@/components/ui/button";
 import {
@@ -222,6 +223,13 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   const organiseFolders = useOrganiseFolders();
   const documentReassign = useDocumentReassign();
   const cancelOrganisation = useCancelOrganisation();
+
+  // Blueprint requirements for Checkpoint A - fetch after classification is done
+  const { data: blueprintRequirements, refetch: refetchBlueprint } = useBlueprintRequirements(
+    ddData?.transaction_type,
+    ddId,
+    organisationProgress?.status === "classified" || organisationProgress?.status === "organised"
+  );
 
   // Auto-select the most recent completed run if none selected (for returning visitors)
   useEffect(() => {
@@ -1253,6 +1261,19 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     organisationProgress?.status === "completed" ||
     organisationProgress?.status === undefined;
 
+  // Count documents in 99_Needs_Review folder - blocks readability check until resolved
+  const needsReviewCount = useMemo(() => {
+    // First try from blueprint requirements (more accurate)
+    if (blueprintRequirements?.requirements?.["99_Needs_Review"]?.document_count) {
+      return blueprintRequirements.requirements["99_Needs_Review"].document_count;
+    }
+    // Fall back to documentsByCategory
+    return documentsByCategory["99_Needs_Review"]?.length || 0;
+  }, [blueprintRequirements, documentsByCategory]);
+
+  // Readability check is blocked until 99_Needs_Review is empty
+  const canRunReadabilityCheck = needsReviewCount === 0 && !isClassificationInProgress;
+
   // Get all documents from documentsByCategory for readability check
   const allCategoryDocs = useMemo(() => {
     return Object.values(documentsByCategory).flat();
@@ -1347,6 +1368,9 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         readabilityComplete={readabilityChecked}
         readyCount={readabilitySummary.ready}
         failedCount={readabilitySummary.failed}
+        // Checkpoint A blocking condition
+        canRunReadability={canRunReadabilityCheck}
+        needsReviewCount={needsReviewCount}
         // Configure
         selectedTier={selectedModelTier}
         onTierChange={setSelectedModelTier}
@@ -1442,6 +1466,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
             }}
             isClassifying={classifyDocuments.isPending || organisationProgress?.status === "classifying"}
             hideHeaderActions
+            blueprintRequirements={blueprintRequirements}
           />
 
           {/* Process Log - below documents */}
@@ -1482,55 +1507,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
             {/* Content */}
             <div className="p-4">
 
-            {/* Classification progress (during classifying phase) */}
-            {currentPhase === "classifying" && organisationProgress && (
-              <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                    AI Document Classification
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-blue-600 dark:text-blue-400">
-                      {organisationProgress.classifiedCount} / {organisationProgress.totalDocuments}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if (ddId) {
-                          cancelOrganisation.mutate(ddId, {
-                            onSuccess: () => {
-                              addLogEntry("warning", "Classification cancelled by user");
-                              refetchOrganisation();
-                            },
-                            onError: (err) => {
-                              addLogEntry("error", `Failed to cancel: ${err.message}`);
-                            }
-                          });
-                        }
-                      }}
-                      disabled={cancelOrganisation.isPending}
-                      className="text-xs h-7 px-2 text-red-600 border-red-300 hover:bg-red-50 dark:text-red-400 dark:border-red-700 dark:hover:bg-red-900/20 transition-all duration-200 hover:scale-105"
-                    >
-                      {cancelOrganisation.isPending ? "Cancelling..." : "Cancel"}
-                    </Button>
-                  </div>
-                </div>
-                <div className="h-2 bg-blue-200 dark:bg-blue-800 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-blue-600 dark:bg-blue-400 rounded-full"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${organisationProgress.percentComplete}%` }}
-                    transition={{ type: "spring", stiffness: 50, damping: 20 }}
-                  />
-                </div>
-                {organisationProgress.lowConfidenceCount > 0 && (
-                  <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
-                    {organisationProgress.lowConfidenceCount} document(s) need manual review
-                  </p>
-                )}
-              </div>
-            )}
+            {/* Classification progress moved to ClassificationProgressModal */}
 
             {/* Cancelled state - show restart option */}
             {currentPhase === "cancelled" && (

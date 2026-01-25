@@ -22,6 +22,9 @@ import {
   MoreHorizontal,
   ExternalLink,
   Download,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -64,6 +67,7 @@ import { useMutateDDFolderDelete } from "@/hooks/useMutateDDFolderDelete";
 import { useMutateDDFileMove } from "@/hooks/useMutateDDFileMove";
 import { useMutateDDFileRename } from "@/hooks/useMutateDDFileRename";
 import { useMutateGetLink } from "@/hooks/useMutateGetLink";
+import { BlueprintRequirements, CategoryRequirements } from "@/hooks/useBlueprintRequirements";
 
 // Local components
 import { FileTreeProvider } from "./FileTreeContext";
@@ -95,6 +99,82 @@ export interface CategoryDocument {
   confidence?: number;
   subcategory?: string;
   readabilityStatus?: "pending" | "checking" | "ready" | "failed";
+}
+
+// ============================================================================
+// Blueprint Requirements Section Component
+// ============================================================================
+
+interface BlueprintRequirementsSectionProps {
+  requirements: CategoryRequirements;
+  transactionType: string;
+  categoryDistribution?: CategoryCount[];
+  onMoveDocument?: (docId: string, fromCategory: string, toCategory: string) => void;
+  onUploadFiles?: (files: File[], targetFolderId?: string) => void;
+}
+
+function BlueprintRequirementsSection({
+  requirements,
+  transactionType,
+  categoryDistribution,
+  onMoveDocument,
+  onUploadFiles,
+}: BlueprintRequirementsSectionProps) {
+  // Only show if there are expected documents
+  if (!requirements.expected_documents || requirements.expected_documents.length === 0) {
+    return null;
+  }
+
+  const hasMissing = requirements.missing_documents.length > 0;
+
+  return (
+    <div className={cn(
+      "rounded-lg p-2 mb-2 border",
+      hasMissing
+        ? "bg-amber-50/50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800/50"
+        : "bg-gray-50/50 dark:bg-gray-800/30 border-gray-200 dark:border-gray-700"
+    )}>
+      <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+        Expected for {transactionType.replace(/_/g, " ")}:
+      </p>
+      <div className="space-y-1">
+        {requirements.expected_documents.map((docType) => {
+          const isFound = requirements.found_documents.some(
+            (d) => d.matched_type === docType
+          );
+          const isMissing = requirements.missing_documents.includes(docType);
+
+          return (
+            <div
+              key={docType}
+              className={cn(
+                "flex items-center gap-2 text-xs py-0.5",
+                isFound && "text-green-700 dark:text-green-400",
+                isMissing && "text-amber-700 dark:text-amber-400"
+              )}
+            >
+              {isFound ? (
+                <CheckCircle2 className="w-3.5 h-3.5 text-green-600 dark:text-green-400 flex-shrink-0" />
+              ) : (
+                <XCircle className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 flex-shrink-0" />
+              )}
+              <span className="flex-1">{docType}</span>
+              {isMissing && (
+                <span className="text-[10px] text-amber-600 dark:text-amber-400 italic">
+                  MISSING
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      {hasMissing && (
+        <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-2 italic">
+          Upload missing documents or drag files here to assign to this folder
+        </p>
+      )}
+    </div>
+  );
 }
 
 // ============================================================================
@@ -131,6 +211,9 @@ interface FileTreeProps {
 
   // Hide header action buttons (when using external ControlBar)
   hideHeaderActions?: boolean;
+
+  // Blueprint requirements for Checkpoint A
+  blueprintRequirements?: BlueprintRequirements;
 }
 
 // ============================================================================
@@ -164,6 +247,8 @@ export function FileTree({
   isClassifying = false,
   // Hide header actions
   hideHeaderActions = false,
+  // Blueprint requirements
+  blueprintRequirements,
 }: FileTreeProps) {
   // Toast for error notifications
   const { toast } = useToast();
@@ -718,14 +803,19 @@ export function FileTree({
                 const isExpanded = expandedCategories.has(cat.category);
                 const docs = getDocsForCategory(cat.category);
 
+                const isNeedsReview = cat.category === "99_Needs_Review";
+                const hasNeedsReviewDocs = isNeedsReview && cat.count > 0;
+
                 return (
                   <div key={cat.category} className="rounded-lg overflow-hidden">
                     {/* Category Row */}
                     <div
                       className={cn(
                         "flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors group/row",
-                        "bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-700",
-                        "border border-gray-300 dark:border-gray-600 rounded-lg"
+                        hasNeedsReviewDocs
+                          ? "bg-amber-50 dark:bg-amber-900/20 hover:bg-amber-100 dark:hover:bg-amber-900/30 border-amber-300 dark:border-amber-700"
+                          : "bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600",
+                        "border rounded-lg"
                       )}
                       onClick={() => toggleCategory(cat.category)}
                     >
@@ -749,11 +839,24 @@ export function FileTree({
                       ) : (
                         <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
                       )}
-                      <Folder className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                      <span className="flex-1 text-sm font-medium text-gray-700 dark:text-gray-200 truncate">
+                      {hasNeedsReviewDocs ? (
+                        <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                      ) : (
+                        <Folder className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      )}
+                      <span className={cn(
+                        "flex-1 text-sm font-medium truncate",
+                        hasNeedsReviewDocs ? "text-amber-700 dark:text-amber-400" : "text-gray-700 dark:text-gray-200"
+                      )}>
                         {cat.displayName}
                       </span>
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge
+                        variant="secondary"
+                        className={cn(
+                          "text-xs",
+                          hasNeedsReviewDocs && "bg-amber-200 text-amber-800 dark:bg-amber-800 dark:text-amber-200"
+                        )}
+                      >
                         {cat.count}
                       </Badge>
                       {/* Folder readability status indicator */}
@@ -859,7 +962,7 @@ export function FileTree({
 
                     {/* Expanded Documents */}
                     <AnimatePresence>
-                      {isExpanded && docs.length > 0 && (
+                      {isExpanded && (
                         <motion.div
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
@@ -867,8 +970,40 @@ export function FileTree({
                           transition={{ duration: 0.15 }}
                           className="overflow-hidden"
                         >
-                          <div className="ml-6 mt-1 space-y-0.5 pb-2">
-                            {docs.map((doc) => (
+                          <div className="ml-6 mt-1 space-y-2 pb-2">
+                            {/* Blueprint Expected Documents Section */}
+                            {blueprintRequirements?.requirements?.[cat.category] && !isNeedsReview && (
+                              <BlueprintRequirementsSection
+                                requirements={blueprintRequirements.requirements[cat.category]}
+                                transactionType={blueprintRequirements.transaction_name || transactionType || ""}
+                                categoryDistribution={categoryDistribution}
+                                onMoveDocument={onMoveDocument}
+                                onUploadFiles={onUploadFiles}
+                              />
+                            )}
+
+                            {/* Special banner for 99_Needs_Review folder */}
+                            {hasNeedsReviewDocs && (
+                              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-3 mb-2">
+                                <div className="flex items-start gap-2">
+                                  <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                                  <div className="text-xs">
+                                    <p className="font-medium text-amber-800 dark:text-amber-300">
+                                      These documents require manual classification
+                                    </p>
+                                    <p className="text-amber-700 dark:text-amber-400 mt-1">
+                                      Use the "Move to folder" option in each document's menu to assign it to the correct category folder.
+                                      Readability check is blocked until all documents are classified.
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Documents List */}
+                            {docs.length > 0 && (
+                              <div className="space-y-0.5">
+                                {docs.map((doc) => (
                               <div
                                 key={doc.id}
                                 className={cn(
@@ -1018,7 +1153,17 @@ export function FileTree({
                                   </DropdownMenuContent>
                                 </DropdownMenu>
                               </div>
-                            ))}
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Empty state when no docs and no expected docs */}
+                            {docs.length === 0 && !blueprintRequirements?.requirements?.[cat.category]?.expected_documents?.length && (
+                              <div className="text-center py-3 text-gray-500 text-xs">
+                                <FileText className="w-5 h-5 mx-auto mb-1 opacity-50" />
+                                <p>No documents in this folder</p>
+                              </div>
+                            )}
                           </div>
                         </motion.div>
                       )}

@@ -13,7 +13,7 @@ import { useEffect } from "react";
 import { useMsal } from "@azure/msal-react";
 import { loginRequest, DEV_MODE, DEV_USER } from "./authConfig.ts";
 import { useMutateUser } from "./hooks/useMutateUser.tsx";
-import { DDMain } from "./pages/DD/DDMain.tsx";
+import { DDMainEnhanced } from "./pages/DD/DDMainEnhanced.tsx";
 import { AgreementMain } from "./pages/Agreement/AgreementMain.tsx";
 import { DocumentViewerTest } from "./pages/DD/FindingsExplorer/DocumentViewerTest.tsx";
 
@@ -100,7 +100,7 @@ function App() {
     },
     {
       path: "/dd",
-      element: <DDMain />,
+      element: <DDMainEnhanced />,
     },
     {
       path: "/agreement",

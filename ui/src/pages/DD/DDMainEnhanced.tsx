@@ -552,6 +552,10 @@ export function DDMainEnhanced() {
             // Classification complete with issues - go to CheckpointA review
             setShowClassificationModal(false);
           }}
+          onCancel={() => {
+            // Classification cancelled - close modal
+            setShowClassificationModal(false);
+          }}
         />
 
         <ChatbotUI folders={dd?.folders} dd_id={selectedDDID} />

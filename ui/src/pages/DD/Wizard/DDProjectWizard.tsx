@@ -83,6 +83,11 @@ function draftToProjectSetup(draft: WizardDraftData): DDProjectSetup {
     shareholderEntityName: (draft as any).shareholderEntityName || "",
     shareholders: (draft as any).shareholders || [],
     uploadedFile: null, // Files can't be restored from draft
+    // Phase 1 Enhancement fields
+    targetRegistrationNumber: (draft as any).targetRegistrationNumber || "",
+    knownSubsidiaries: (draft as any).knownSubsidiaries || [],
+    holdingCompany: (draft as any).holdingCompany || null,
+    expectedCounterparties: (draft as any).expectedCounterparties || [],
   };
 }
 
@@ -113,6 +118,11 @@ function projectSetupToDraft(setup: DDProjectSetup, currentStep: number): Partia
     keyOther: setup.keyOther as any, // OtherStakeholder[] stored as JSON
     shareholderEntityName: setup.shareholderEntityName,
     shareholders: setup.shareholders as any, // Shareholder[] stored as JSON
+    // Phase 1 Enhancement fields
+    targetRegistrationNumber: setup.targetRegistrationNumber,
+    knownSubsidiaries: setup.knownSubsidiaries as any,
+    holdingCompany: setup.holdingCompany as any,
+    expectedCounterparties: setup.expectedCounterparties,
   } as Partial<WizardDraftData>;
 }
 

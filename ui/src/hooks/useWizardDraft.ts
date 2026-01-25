@@ -25,11 +25,17 @@ export interface WizardDraftData {
   keyIndividuals: string[];
   keySuppliers: string[];
   keyCustomers: any[];  // CounterpartyStakeholder[]
+  keyContractors: any[];  // CounterpartyStakeholder[] - separate from customers
   keyLenders: any[];    // LenderStakeholder[]
   keyRegulators: string[];
   keyOther: any[];      // OtherStakeholder[]
   shareholderEntityName: string;
   shareholders: any[];  // Shareholder[]
+  // Phase 1 Enhancement fields
+  targetRegistrationNumber?: string;
+  knownSubsidiaries?: any[];  // KnownSubsidiary[]
+  holdingCompany?: any | null;  // HoldingCompany | null
+  expectedCounterparties?: string[];
   createdAt?: string;
   updatedAt?: string;
 }

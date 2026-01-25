@@ -107,6 +107,7 @@ function projectSetupToDraft(setup: DDProjectSetup, currentStep: number): Partia
     keyIndividuals: setup.keyIndividuals,
     keySuppliers: setup.keySuppliers,
     keyCustomers: setup.keyCustomers as any, // CounterpartyStakeholder[] stored as JSON
+    keyContractors: setup.keyContractors as any, // CounterpartyStakeholder[] stored as JSON
     keyLenders: setup.keyLenders as any, // LenderStakeholder[] stored as JSON
     keyRegulators: setup.keyRegulators,
     keyOther: setup.keyOther as any, // OtherStakeholder[] stored as JSON

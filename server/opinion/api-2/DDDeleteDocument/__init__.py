@@ -42,9 +42,12 @@ def delete_documents(dd_id: str, document_ids: list[str], requesting_user_email:
     deleted_count = 0
     errors = []
 
+    # Convert dd_id to UUID
+    dd_uuid = uuid.UUID(dd_id) if isinstance(dd_id, str) else dd_id
+
     with transactional_session() as session:
         # Verify DD exists and user has access
-        dd = session.query(DueDiligence).filter(DueDiligence.id == dd_id).first()
+        dd = session.query(DueDiligence).filter(DueDiligence.id == dd_uuid).first()
         if not dd:
             raise ValueError("Due diligence not found")
 
@@ -52,7 +55,7 @@ def delete_documents(dd_id: str, document_ids: list[str], requesting_user_email:
             raise ValueError("Access denied")
 
         # Get folder IDs for this DD
-        folder_ids = [f.id for f in session.query(Folder).filter(Folder.dd_id == dd_id).all()]
+        folder_ids = [f.id for f in session.query(Folder).filter(Folder.dd_id == dd_uuid).all()]
 
         for doc_id_str in document_ids:
             try:

@@ -30,7 +30,7 @@ import { AppSidebar } from "../OpinionWriter/AppSideBar";
 import { Loader2, AlertCircle } from "lucide-react";
 import { useMutateDDJoin } from "@/hooks/useMutateDDJoin";
 import { useDevFileUpload } from "@/hooks/useDevFileUpload";
-import { DocListing } from "./Files/DocListing";
+// DocListing removed - using DDProcessingDashboard instead
 import Questions from "./Questions";
 import { Search } from "./Search";
 import { useGetDDDocsHistory } from "@/hooks/useGetDDDocsHistory";
@@ -54,7 +54,7 @@ import { useGetWizardDrafts, WizardDraftData } from "@/hooks/useWizardDraft";
 
 // Import Checkpoint A components
 import { ClassificationProgressModal } from "./Processing/ClassificationProgressModal";
-import { CheckpointADocListing } from "./Processing/CheckpointADocListing";
+import { DDProcessingDashboard } from "./Processing";
 import { useClassifyDocuments } from "@/hooks/useOrganisationProgress";
 
 export function DDMainEnhanced() {
@@ -130,7 +130,8 @@ export function DDMainEnhanced() {
     if (!id) return;
 
     setSelectedDDID(id);
-    setScreenState("Documents");
+    // Use CheckpointA to show the new Console view with classification/processing dashboard
+    setScreenState("CheckpointA");
   }, [location.search]);
 
   const handleDeleteDD = (ddId: string) => {
@@ -179,7 +180,7 @@ export function DDMainEnhanced() {
 
   useEffect(() => {
     if (!mutateDDJoin.isSuccess) return;
-    setScreenState("Documents");
+    setScreenState("CheckpointA");
   }, [mutateDDJoin.isSuccess]);
 
   const [screenState, setScreenState] = useState<ScreenState>("Wizard-Enhanced");
@@ -255,7 +256,7 @@ export function DDMainEnhanced() {
         // Start document classification in background
         classifyDocuments.mutate({ ddId: newDdId });
       } else {
-        setScreenState("Documents");
+        setScreenState("CheckpointA");
       }
     } catch (error: any) {
       console.error("Failed to create DD project:", error);
@@ -300,7 +301,7 @@ export function DDMainEnhanced() {
           open={screenState === "Wizard-Enhanced"}
           onOpenChange={(open) => {
             if (!open && !isUploading) {
-              setScreenState("Documents");
+              setScreenState("CheckpointA");
               setSelectedDraft(null);
             }
           }}
@@ -379,7 +380,7 @@ export function DDMainEnhanced() {
               <DDProjectWizard
                 onComplete={handleWizardComplete}
                 onCancel={() => {
-                  setScreenState("Documents");
+                  setScreenState("CheckpointA");
                   setSelectedDraft(null);
                 }}
                 initialDraft={selectedDraft}
@@ -391,7 +392,7 @@ export function DDMainEnhanced() {
         {/* Open Existing Project Dialog */}
         <Dialog
           open={screenState === "Wizard-JoinProject"}
-          onOpenChange={(open) => (!open ? setScreenState("Documents") : null)}
+          onOpenChange={(open) => (!open ? setScreenState("CheckpointA") : null)}
         >
           <DialogContent className="w-[90vw] max-w-[600px] max-h-[80vh] overflow-y-auto">
             <DialogHeader>
@@ -413,7 +414,7 @@ export function DDMainEnhanced() {
                     className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
                     onClick={() => {
                       setSelectedDDID(project.id);
-                      setScreenState("Documents");
+                      setScreenState("CheckpointA");
                     }}
                   >
                     <div className="flex-1 min-w-0">
@@ -428,7 +429,7 @@ export function DDMainEnhanced() {
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedDDID(project.id);
-                        setScreenState("Documents");
+                        setScreenState("CheckpointA");
                       }}
                     >
                       Open
@@ -493,7 +494,6 @@ export function DDMainEnhanced() {
         {dd && (
           <div className="text-xl flex flex-1 flex-col gap-4 p-4 pt-4">
             <div className="text-2xl font-bold">
-              {screenState === "Documents" && "Documents"}
               {screenState === "DocumentErrors" && "Document Errors"}
               {screenState === "DocumentChanges" && "Document Changes"}
               {screenState === "Search" && "Search"}
@@ -501,12 +501,9 @@ export function DDMainEnhanced() {
               {screenState === "Questions" && "Questions"}
               {screenState === "ShowReport" && "Generate Report"}
               {screenState === "MissingDocs" && "Document Status"}
-              {screenState === "CheckpointA" && "Document Classification Review"}
+              {screenState === "CheckpointA" && "Console"}
             </div>
             <div>
-              {screenState === "Documents" && (
-                <DocListing folders={dd?.folders} dd_id={selectedDDID} />
-              )}
               {screenState === "DocumentChanges" && (
                 <DocumentChanges dd_id={selectedDDID} />
               )}
@@ -525,14 +522,11 @@ export function DDMainEnhanced() {
                   uploadedDocuments={uploadedDocuments}
                 />
               )}
-              {screenState === "CheckpointA" && currentTransactionType && selectedDDID && (
-                <CheckpointADocListing
+              {screenState === "CheckpointA" && selectedDDID && (
+                <DDProcessingDashboard
                   ddId={selectedDDID}
-                  transactionType={currentTransactionType}
-                  onReadabilityCheck={() => {
-                    // TODO: Trigger readability check and move to next stage
-                    setScreenState("Documents");
-                  }}
+                  onBack={() => setScreenState("CheckpointA")}
+                  onViewResults={() => setScreenState("Analysis")}
                 />
               )}
             </div>

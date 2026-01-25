@@ -209,6 +209,10 @@ interface FileTreeProps {
   onClassifyDocuments?: (reset: boolean) => void;
   isClassifying?: boolean;
 
+  // Document deletion
+  onDeleteDocuments?: (documentIds: string[]) => void;
+  isDeletingDocuments?: boolean;
+
   // Hide header action buttons (when using external ControlBar)
   hideHeaderActions?: boolean;
 
@@ -245,6 +249,9 @@ export function FileTree({
   // Classification action props
   onClassifyDocuments,
   isClassifying = false,
+  // Document deletion
+  onDeleteDocuments,
+  isDeletingDocuments = false,
   // Hide header actions
   hideHeaderActions = false,
   // Blueprint requirements
@@ -343,19 +350,18 @@ export function FileTree({
   };
 
   const handleDeleteFile = () => {
-    if (fileToDelete) {
-      // For classification mode, we can move to a "Deleted" category or just remove
-      console.log("Delete file:", fileToDelete.docId, "from", fileToDelete.category);
+    if (fileToDelete && onDeleteDocuments) {
+      onDeleteDocuments([fileToDelete.docId]);
       setFileToDelete(null);
     }
   };
 
   const handleBulkDelete = () => {
-    // Delete all selected documents
-    classificationSelectedDocs.forEach(({ docId, category }) => {
-      console.log("Delete file:", docId, "from", category);
-    });
-    setClassificationSelectedDocs(new Map());
+    if (onDeleteDocuments && classificationSelectedDocs.size > 0) {
+      const docIds = Array.from(classificationSelectedDocs.keys());
+      onDeleteDocuments(docIds);
+      setClassificationSelectedDocs(new Map());
+    }
     setShowBulkDeleteConfirm(false);
   };
 

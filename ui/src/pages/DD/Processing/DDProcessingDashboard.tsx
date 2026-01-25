@@ -45,6 +45,7 @@ import { useGetDD } from "@/hooks/useGetDD";
 import { useCreateAnalysisRun, useAnalysisRunsList } from "@/hooks/useAnalysisRuns";
 import { useOrganisationProgress, useClassifyDocuments, useOrganiseFolders, useDocumentReassign, useCancelOrganisation } from "@/hooks/useOrganisationProgress";
 import { useBlueprintRequirements } from "@/hooks/useBlueprintRequirements";
+import { useDeleteDocument } from "@/hooks/useDeleteDocument";
 import { CategoryCount, CategoryDocument } from "./FileTree/FileTree";
 import { Button } from "@/components/ui/button";
 import {
@@ -225,12 +226,16 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   const organiseFolders = useOrganiseFolders();
   const documentReassign = useDocumentReassign();
   const cancelOrganisation = useCancelOrganisation();
+  const deleteDocument = useDeleteDocument();
 
   // Blueprint requirements for Checkpoint A - fetch after classification is done
+  // Enable when status is past classification (not pending/classifying/cancelled/failed)
+  const classificationComplete = organisationProgress?.status &&
+    !["pending", "classifying", "cancelled", "failed"].includes(organisationProgress.status);
   const { data: blueprintRequirements, refetch: refetchBlueprint } = useBlueprintRequirements(
     ddData?.transaction_type,
     ddId,
-    organisationProgress?.status === "classified" || organisationProgress?.status === "organised"
+    !!classificationComplete
   );
 
   // Auto-select the most recent completed run if none selected (for returning visitors)
@@ -1474,6 +1479,22 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
             isClassifying={classifyDocuments.isPending || organisationProgress?.status === "classifying"}
             hideHeaderActions
             blueprintRequirements={blueprintRequirements}
+            onDeleteDocuments={(documentIds) => {
+              if (ddId) {
+                addLogEntry("info", `Deleting ${documentIds.length} document(s)...`);
+                deleteDocument.mutate({ ddId, documentIds }, {
+                  onSuccess: (result) => {
+                    addLogEntry("success", `Deleted ${result.deleted_count} document(s)`);
+                    refetchDD();
+                    refetchOrganisation();
+                  },
+                  onError: (err) => {
+                    addLogEntry("error", `Failed to delete: ${err.message}`);
+                  }
+                });
+              }
+            }}
+            isDeletingDocuments={deleteDocument.isPending}
           />
 
           {/* Process Log - below documents */}

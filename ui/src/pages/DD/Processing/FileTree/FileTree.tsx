@@ -126,51 +126,64 @@ function BlueprintRequirementsSection({
   }
 
   const hasMissing = requirements.missing_documents.length > 0;
+  const foundCount = requirements.found_documents.filter(d => d.matched_type).length;
+  const totalExpected = requirements.expected_documents.length;
 
   return (
-    <div className={cn(
-      "rounded-lg p-2 mb-2 border",
-      hasMissing
-        ? "bg-amber-50/50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800/50"
-        : "bg-gray-50/50 dark:bg-gray-800/30 border-gray-200 dark:border-gray-700"
-    )}>
-      <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
-        Expected for {transactionType.replace(/_/g, " ")}:
-      </p>
-      <div className="space-y-1">
+    <div className="mb-3">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-xs font-medium text-gray-600 dark:text-gray-400">
+          Expected Documents ({foundCount}/{totalExpected})
+        </p>
+        {hasMissing && (
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+            {requirements.missing_documents.length} missing
+          </span>
+        )}
+      </div>
+      <div className="space-y-1.5">
         {requirements.expected_documents.map((docType) => {
-          const isFound = requirements.found_documents.some(
+          const foundDoc = requirements.found_documents.find(
             (d) => d.matched_type === docType
           );
+          const isFound = !!foundDoc;
           const isMissing = requirements.missing_documents.includes(docType);
 
+          if (isFound) {
+            // Show found document with green checkmark
+            return (
+              <div
+                key={docType}
+                className="flex items-center gap-2 text-xs py-1.5 px-2 rounded bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                <span className="flex-1 text-green-700 dark:text-green-400 font-medium">{docType}</span>
+                <span className="text-[10px] text-green-600 dark:text-green-500">Found</span>
+              </div>
+            );
+          }
+
+          // Show missing document as dotted placeholder
           return (
             <div
               key={docType}
-              className={cn(
-                "flex items-center gap-2 text-xs py-0.5",
-                isFound && "text-green-700 dark:text-green-400",
-                isMissing && "text-amber-700 dark:text-amber-400"
-              )}
+              className="flex items-center gap-2 text-xs py-2 px-2 rounded border-2 border-dashed border-amber-300 dark:border-amber-700 bg-amber-50/50 dark:bg-amber-900/10 hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-colors cursor-pointer"
+              title={`Drop or upload "${docType}" document here`}
             >
-              {isFound ? (
-                <CheckCircle2 className="w-3.5 h-3.5 text-green-600 dark:text-green-400 flex-shrink-0" />
-              ) : (
-                <XCircle className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 flex-shrink-0" />
-              )}
-              <span className="flex-1">{docType}</span>
-              {isMissing && (
-                <span className="text-[10px] text-amber-600 dark:text-amber-400 italic">
-                  MISSING
-                </span>
-              )}
+              <div className="w-6 h-6 rounded border border-dashed border-amber-400 dark:border-amber-600 flex items-center justify-center flex-shrink-0">
+                <FileText className="w-3.5 h-3.5 text-amber-400 dark:text-amber-500" />
+              </div>
+              <span className="flex-1 text-amber-700 dark:text-amber-400">{docType}</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-200/50 text-amber-700 dark:bg-amber-800/50 dark:text-amber-400">
+                MISSING
+              </span>
             </div>
           );
         })}
       </div>
       {hasMissing && (
-        <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-2 italic">
-          Upload missing documents or drag files here to assign to this folder
+        <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-2 italic text-center">
+          Drag documents here or upload to fill missing slots
         </p>
       )}
     </div>

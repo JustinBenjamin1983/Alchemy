@@ -72,6 +72,7 @@ interface DDProcessingDashboardProps {
   documents?: DocumentItem[];
   onBack?: () => void;
   onViewResults?: () => void;
+  onReclassify?: () => void;
 }
 
 type DashboardPhase = "classifying" | "classified" | "organising" | "organised" | "readability" | "ready" | "processing" | "completed" | "failed" | "cancelled";
@@ -81,6 +82,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   documents: propDocuments = [],
   onBack,
   onViewResults,
+  onReclassify,
 }) => {
   const params = useParams<{ ddId: string }>();
   const navigate = useNavigate();
@@ -1341,6 +1343,8 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         // Organize actions
         onClassifyDocs={() => {
           if (ddId) {
+            // Show the classification progress modal
+            onReclassify?.();
             addLogEntry("info", "Reclassifying all documents...");
             classifyDocuments.mutate({ ddId, reset: true }, {
               onSuccess: () => {

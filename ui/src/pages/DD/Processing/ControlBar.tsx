@@ -162,18 +162,18 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                   size="sm"
                   onClick={onClassifyDocs}
                   disabled={disabled || isClassifying}
-                  className="h-9 w-32 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md"
+                  className="h-9 w-36 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md"
                 >
                   {isClassifying ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <FolderCog className="h-4 w-4 text-purple-500" />
                   )}
-                  Classify
+                  Reclassify Files
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2">
-                <p className="text-sm text-white">AI document folder auto-classification</p>
+                <p className="text-sm text-white">Re-run AI classification on all documents</p>
               </TooltipContent>
             </Tooltip>
 

@@ -527,6 +527,7 @@ export function DDMainEnhanced() {
                   ddId={selectedDDID}
                   onBack={() => setScreenState("CheckpointA")}
                   onViewResults={() => setScreenState("Analysis")}
+                  onReclassify={() => setShowClassificationModal(true)}
                 />
               )}
             </div>

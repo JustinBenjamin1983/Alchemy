@@ -443,16 +443,19 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
 
     // Get all documents from ddData.folders
     // Use readability_status from ddData (persisted) or readabilityMap (real-time) - prefer real-time if available
+    // Filter out converted documents - only show original uploaded files during classification/organization
     const allDocs = ddData?.folders?.flatMap((folder: any) =>
-      folder.documents?.map((doc: any) => ({
-        id: doc.document_id,
-        name: doc.original_file_name,
-        type: doc.type,
-        confidence: doc.ai_confidence,
-        subcategory: doc.ai_subcategory,
-        category: doc.ai_category || "99_Needs_Review",
-        readabilityStatus: readabilityMap.get(doc.document_id) || doc.readability_status || "pending",
-      })) || []
+      folder.documents
+        ?.filter((doc: any) => !doc.converted_from_id) // Exclude converted docs
+        ?.map((doc: any) => ({
+          id: doc.document_id,
+          name: doc.original_file_name,
+          type: doc.type,
+          confidence: doc.ai_confidence,
+          subcategory: doc.ai_subcategory,
+          category: doc.ai_category || "99_Needs_Review",
+          readabilityStatus: readabilityMap.get(doc.document_id) || doc.readability_status || "pending",
+        })) || []
     ) || [];
 
     // Group by ai_category

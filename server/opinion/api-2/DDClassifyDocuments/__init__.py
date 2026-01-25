@@ -302,7 +302,8 @@ def classify_documents_for_dd(dd_id: str, reset: bool = False) -> dict:
                 session.query(Document)
                 .filter(
                     Document.folder_id.in_(folder_ids),
-                    Document.is_original == False
+                    Document.is_original == False,
+                    Document.converted_from_id == None  # Exclude converted docs
                 )
                 .all()
             )
@@ -318,13 +319,14 @@ def classify_documents_for_dd(dd_id: str, reset: bool = False) -> dict:
             session.commit()
             logging.info(f"[DDClassifyDocuments] Reset {len(all_docs)} documents to pending")
 
-        # Get documents that need classification (pending status, not the original ZIP)
+        # Get documents that need classification (pending status, not the original ZIP, not converted docs)
         pending_docs = (
             session.query(Document)
             .filter(
                 Document.folder_id.in_(folder_ids),
                 Document.classification_status == "pending",
-                Document.is_original == False
+                Document.is_original == False,
+                Document.converted_from_id == None  # Exclude converted docs - only classify originals
             )
             .all()
         )
@@ -333,12 +335,13 @@ def classify_documents_for_dd(dd_id: str, reset: bool = False) -> dict:
         logging.info(f"[DDClassifyDocuments] Found {total_documents} documents to classify")
 
         if total_documents == 0:
-            # Check if there are any classified documents already
+            # Check if there are any classified documents already (excluding converted docs)
             all_docs = (
                 session.query(Document)
                 .filter(
                     Document.folder_id.in_(folder_ids),
-                    Document.is_original == False
+                    Document.is_original == False,
+                    Document.converted_from_id == None  # Exclude converted docs
                 )
                 .all()
             )

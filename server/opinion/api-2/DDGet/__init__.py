@@ -101,7 +101,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                             "ai_subcategory": doc.ai_subcategory,
                             "ai_document_type": doc.ai_document_type,
                             "ai_confidence": doc.ai_confidence,
-                            "classification_status": doc.classification_status
+                            "classification_status": doc.classification_status,
+                            # Conversion fields (for DOCX/XLSX/PPTX to PDF)
+                            "converted_doc_id": str(doc.converted_doc_id) if doc.converted_doc_id else None,
+                            "conversion_status": doc.conversion_status,
+                            "converted_from_id": str(doc.converted_from_id) if doc.converted_from_id else None,
                         }
                         for doc in folder.documents
                     ]

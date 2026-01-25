@@ -7,6 +7,9 @@ import {
   XCircle,
   AlertTriangle,
   Circle,
+  FileText,
+  FileType,
+  ArrowRightLeft,
 } from "lucide-react";
 
 import { formatDistance } from "date-fns";
@@ -27,6 +30,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useMutateGetLink } from "@/hooks/useMutateGetLink";
@@ -245,14 +249,21 @@ export default function FileLister({
                 </TableHeader>
                 <TableBody>
                   {files
-                    ?.filter((f) =>
-                      searchText
-                        ? f.original_file_name
-                            .toLowerCase()
-                            .indexOf(searchText.toLowerCase()) != -1
-                        : true
-                    )
+                    ?.filter((f) => {
+                      // Hide converted PDFs - they're accessed via the original document
+                      if (f.converted_from_id) return false;
+                      // Apply search filter
+                      if (searchText) {
+                        return f.original_file_name
+                          .toLowerCase()
+                          .indexOf(searchText.toLowerCase()) !== -1;
+                      }
+                      return true;
+                    })
                     ?.map((f) => {
+                      const hasConvertedPdf = !!f.converted_doc_id;
+                      const isConvertible = /\.(docx|xlsx|pptx)$/i.test(f.original_file_name);
+
                       return (
                         <TableRow
                           key={f.document_id}
@@ -263,32 +274,64 @@ export default function FileLister({
                         >
                           <TableCell className="break-words">
                             <div className="max-w-full overflow-hidden">
-                              {!searchText && (
-                                <span className="break-all">
-                                  {f.original_file_name}
-                                </span>
-                              )}
-                              {searchText && (
-                                <div className="break-all">
-                                  {f.original_file_name
-                                    .split(new RegExp(`(${searchText})`, "gi"))
-                                    .map((part, index) =>
-                                      part
-                                        .toLowerCase()
-                                        .indexOf(searchText.toLowerCase()) !=
-                                      -1 ? (
-                                        <span
-                                          key={index}
-                                          className="bg-yellow-300"
-                                        >
-                                          {part}
-                                        </span>
-                                      ) : (
-                                        <span key={index}>{part}</span>
-                                      )
-                                    )}
+                              <div className="flex items-start gap-2">
+                                <FileText className="h-4 w-4 mt-0.5 text-gray-400 flex-shrink-0" />
+                                <div className="flex-1 min-w-0">
+                                  {!searchText && (
+                                    <span className="break-all">
+                                      {f.original_file_name}
+                                    </span>
+                                  )}
+                                  {searchText && (
+                                    <div className="break-all">
+                                      {f.original_file_name
+                                        .split(new RegExp(`(${searchText})`, "gi"))
+                                        .map((part, index) =>
+                                          part
+                                            .toLowerCase()
+                                            .indexOf(searchText.toLowerCase()) !==
+                                          -1 ? (
+                                            <span
+                                              key={index}
+                                              className="bg-yellow-300"
+                                            >
+                                              {part}
+                                            </span>
+                                          ) : (
+                                            <span key={index}>{part}</span>
+                                          )
+                                        )}
+                                    </div>
+                                  )}
+                                  {/* PDF Converted Badge */}
+                                  {hasConvertedPdf && (
+                                    <div className="flex items-center gap-1 mt-1">
+                                      <ArrowRightLeft className="h-3 w-3 text-green-600" />
+                                      <span className="text-xs text-green-700 font-medium">
+                                        PDF Converted
+                                      </span>
+                                    </div>
+                                  )}
+                                  {/* Conversion pending/in-progress indicator */}
+                                  {isConvertible && !hasConvertedPdf && f.conversion_status === "converting" && (
+                                    <div className="flex items-center gap-1 mt-1">
+                                      <Clock className="h-3 w-3 text-blue-500 animate-pulse" />
+                                      <span className="text-xs text-blue-600">
+                                        Converting to PDF...
+                                      </span>
+                                    </div>
+                                  )}
+                                  {/* Conversion failed indicator */}
+                                  {isConvertible && f.conversion_status === "failed" && (
+                                    <div className="flex items-center gap-1 mt-1">
+                                      <AlertTriangle className="h-3 w-3 text-amber-500" />
+                                      <span className="text-xs text-amber-600">
+                                        PDF conversion failed
+                                      </span>
+                                    </div>
+                                  )}
                                 </div>
-                              )}
+                              </div>
                             </div>
                           </TableCell>
                           <TableCell className="whitespace-nowrap">
@@ -360,6 +403,31 @@ export default function FileLister({
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                {/* View options - show version selector if converted */}
+                                {hasConvertedPdf ? (
+                                  <>
+                                    <DropdownMenuItem
+                                      onClick={() => viewFile(f.converted_doc_id)}
+                                      className="text-green-700"
+                                    >
+                                      <FileType className="h-4 w-4 mr-2" />
+                                      View PDF (Converted)
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={() => viewFile(f.document_id)}
+                                    >
+                                      <FileText className="h-4 w-4 mr-2" />
+                                      View Original
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                  </>
+                                ) : (
+                                  <DropdownMenuItem
+                                    onClick={() => viewFile(f.document_id)}
+                                  >
+                                    View
+                                  </DropdownMenuItem>
+                                )}
                                 <DropdownMenuItem
                                   onClick={() => {
                                     moveDoc(
@@ -383,11 +451,6 @@ export default function FileLister({
                                   }}
                                 >
                                   Rename
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() => viewFile(f.document_id)}
-                                >
-                                  View
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => copyInfo(f)}>
                                   Copy Info

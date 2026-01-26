@@ -511,7 +511,7 @@ export function EntityMappingModal({
                 </div>
 
                 {/* Main content area */}
-                <div className="flex-1 overflow-hidden">
+                <div className="flex-1 overflow-hidden" style={{ minHeight: "500px" }}>
                   {activeTab === "organogram" ? (
                     <EntityOrganogram
                       data={organogramData}
@@ -521,7 +521,7 @@ export function EntityMappingModal({
                         }
                       }}
                       onResolveConflict={handleResolveConflict}
-                      className="h-full"
+                      className="h-full w-full"
                     />
                   ) : (
                     <div className="p-6 h-full overflow-auto">

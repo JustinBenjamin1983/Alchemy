@@ -761,7 +761,7 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
   }, [onEntityClick]);
 
   return (
-    <div className={cn("relative w-full h-[600px] bg-gray-50 rounded-lg overflow-hidden", className)}>
+    <div className={cn("relative w-full bg-gray-50 rounded-lg overflow-hidden", className)} style={{ height: "500px", minHeight: "500px" }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}

@@ -354,6 +354,14 @@ def handle_get(req: func.HttpRequest, email: str) -> func.HttpResponse:
             # Get entity map
             entity_map = get_entity_map_for_dd(dd_id, session)
 
+            # Calculate total documents from all entities' documents_appearing_in
+            all_doc_ids = set()
+            for entity in entity_map:
+                doc_ids = entity.get("documents_appearing_in", [])
+                if isinstance(doc_ids, list):
+                    all_doc_ids.update(doc_ids)
+            total_documents_processed = len(all_doc_ids)
+
             # Calculate summary
             summary = {
                 "total_unique_entities": len(entity_map),
@@ -370,7 +378,8 @@ def handle_get(req: func.HttpRequest, email: str) -> func.HttpResponse:
                     "dd_id": dd_id,
                     "status": "success",
                     "entity_map": entity_map,
-                    "summary": summary
+                    "summary": summary,
+                    "total_documents_processed": total_documents_processed
                 }, default=str),
                 status_code=200,
                 mimetype="application/json"

@@ -376,6 +376,8 @@ def store_entity_map(
     """
     Store entity map to database.
 
+    Clears existing entities for this DD before storing new ones to prevent duplicates.
+
     Args:
         dd_id: Due diligence ID
         run_id: Analysis run ID (optional)
@@ -392,6 +394,16 @@ def store_entity_map(
 
     dd_uuid = uuid.UUID(dd_id) if isinstance(dd_id, str) else dd_id
     run_uuid = uuid.UUID(run_id) if run_id and isinstance(run_id, str) else run_id
+
+    # Clear existing entities for this DD to prevent duplicates on re-run
+    try:
+        deleted_count = session.query(DDEntityMap).filter(
+            DDEntityMap.dd_id == dd_uuid
+        ).delete()
+        logger.info(f"Cleared {deleted_count} existing entities for DD {dd_id}")
+    except Exception as e:
+        logger.warning(f"Failed to clear existing entities: {e}")
+        errors.append(f"Failed to clear existing entities: {str(e)}")
 
     for entity in entity_map:
         try:

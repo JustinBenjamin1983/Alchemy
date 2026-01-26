@@ -3,10 +3,11 @@
  *
  * Shows:
  * 1. Progress while entity mapping is running
- * 2. Results after completion (entity map, relationships, summary)
- * 3. Human confirmation section for unknown entities (Checkpoint A.5)
+ * 2. Interactive organogram after completion
+ * 3. Summary statistics
+ * 4. Conflict resolution for entities needing confirmation
  */
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Dialog,
@@ -22,41 +23,38 @@ import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Network,
   Building2,
-  Users,
   AlertTriangle,
-  CheckCircle2,
   Loader2,
-  ChevronDown,
-  ChevronRight,
-  FileText,
-  HelpCircle,
+  List,
+  GitBranch,
+  CheckCircle2,
   X,
-  Building,
-  Briefcase,
-  UserCheck,
-  Link2,
+  ChevronRight,
+  ChevronDown,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { EntityOrganogram, OrganogramEntity, OrganogramData } from "./EntityOrganogram";
 
 // Types based on backend response
 export interface EntityMapEntry {
+  id?: string;
   entity_name: string;
   registration_number?: string;
   relationship_to_target: string;
   relationship_detail?: string;
+  ownership_percentage?: number;
   confidence: number;
   documents_appearing_in: string[];
   evidence?: string;
   requires_human_confirmation?: boolean;
+  human_confirmed?: boolean;
+  has_conflict?: boolean;
+  conflict_details?: string;
 }
 
 export interface EntityMappingSummary {
@@ -79,6 +77,7 @@ export interface EntityMappingResult {
   target_entity?: {
     name: string;
     registration_number?: string;
+    transaction_type?: string;
   };
   cost?: {
     total_cost: number;
@@ -97,228 +96,256 @@ interface EntityMappingModalProps {
 
 // Relationship type options for human confirmation
 const RELATIONSHIP_OPTIONS = [
-  { value: "related_party", label: "Related Party", description: "Supplier, customer, or other related entity" },
   { value: "subsidiary", label: "Subsidiary", description: "Owned by the target company" },
   { value: "parent", label: "Parent/Holding", description: "Owns shares in the target company" },
+  { value: "shareholder", label: "Shareholder", description: "Holds equity in the target" },
   { value: "counterparty", label: "Counterparty", description: "Contractual partner (not related)" },
-  { value: "exclude", label: "Exclude", description: "Documents uploaded in error" },
+  { value: "financier", label: "Financier/Lender", description: "Provides financing" },
+  { value: "supplier", label: "Supplier", description: "Provides goods/services" },
+  { value: "customer", label: "Customer", description: "Purchases goods/services" },
+  { value: "related_party", label: "Related Party", description: "Other related entity" },
+  { value: "exclude", label: "Exclude", description: "Not relevant, exclude from map" },
 ];
 
-// Get icon for relationship type
-function getRelationshipIcon(relationship: string) {
-  switch (relationship) {
-    case "target":
-      return <Building2 className="w-4 h-4 text-blue-600" />;
-    case "parent":
-      return <Building className="w-4 h-4 text-purple-600" />;
-    case "subsidiary":
-      return <Briefcase className="w-4 h-4 text-green-600" />;
-    case "related_party":
-      return <Link2 className="w-4 h-4 text-amber-600" />;
-    case "counterparty":
-      return <Users className="w-4 h-4 text-cyan-600" />;
-    case "shareholder":
-      return <UserCheck className="w-4 h-4 text-indigo-600" />;
-    case "unknown":
-      return <HelpCircle className="w-4 h-4 text-red-500" />;
-    default:
-      return <Building2 className="w-4 h-4 text-gray-500" />;
-  }
+// Conflict Resolution Dialog
+interface ConflictResolutionDialogProps {
+  entity: OrganogramEntity | null;
+  onClose: () => void;
+  onConfirm: (entityId: string, relationship: string, details?: string) => void;
 }
 
-// Get badge color for relationship type
-function getRelationshipBadgeClass(relationship: string): string {
-  switch (relationship) {
-    case "target":
-      return "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300";
-    case "parent":
-      return "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300";
-    case "subsidiary":
-      return "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300";
-    case "related_party":
-      return "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300";
-    case "counterparty":
-      return "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/40 dark:text-cyan-300";
-    case "shareholder":
-      return "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300";
-    case "unknown":
-      return "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300";
-    default:
-      return "bg-gray-100 text-gray-800 dark:bg-gray-900/40 dark:text-gray-300";
-  }
-}
-
-// Format relationship type for display
-function formatRelationship(relationship: string): string {
-  return relationship
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-// Entity card component for results
-function EntityCard({
+const ConflictResolutionDialog: React.FC<ConflictResolutionDialogProps> = ({
   entity,
-  isExpanded,
-  onToggle,
-  needsConfirmation,
-  selectedRelationship,
-  onRelationshipChange,
-  customRelationship,
-  onCustomRelationshipChange,
-}: {
-  entity: EntityMapEntry;
-  isExpanded: boolean;
-  onToggle: () => void;
-  needsConfirmation?: boolean;
-  selectedRelationship?: string;
-  onRelationshipChange?: (value: string) => void;
-  customRelationship?: string;
-  onCustomRelationshipChange?: (value: string) => void;
-}) {
-  const confidenceColor =
-    entity.confidence >= 0.8
-      ? "text-green-600"
-      : entity.confidence >= 0.5
-      ? "text-amber-600"
-      : "text-red-600";
+  onClose,
+  onConfirm,
+}) => {
+  const [selectedRelationship, setSelectedRelationship] = useState<string>("");
+  const [customDetails, setCustomDetails] = useState<string>("");
+
+  if (!entity) return null;
+
+  const handleConfirm = () => {
+    if (selectedRelationship) {
+      onConfirm(entity.id, selectedRelationship, customDetails);
+      onClose();
+    }
+  };
 
   return (
-    <div
-      className={cn(
-        "border rounded-lg overflow-hidden transition-all",
-        needsConfirmation
-          ? "border-amber-300 bg-amber-50/50 dark:border-amber-700 dark:bg-amber-900/10"
-          : "border-gray-200 dark:border-gray-700"
-      )}
-    >
-      {/* Header */}
-      <div
-        className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50"
-        onClick={onToggle}
-      >
-        <div className="flex items-center gap-3">
-          {getRelationshipIcon(entity.relationship_to_target)}
-          <div>
-            <div className="font-medium text-sm">{entity.entity_name}</div>
+    <Dialog open={!!entity} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-amber-500" />
+            Resolve Conflict
+          </DialogTitle>
+          <DialogDescription>
+            Please confirm the relationship for this entity
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="py-4 space-y-4">
+          {/* Entity info */}
+          <div className="p-3 bg-gray-50 rounded-lg">
+            <div className="font-semibold text-gray-900">{entity.entity_name}</div>
             {entity.registration_number && (
-              <div className="text-xs text-gray-500">{entity.registration_number}</div>
+              <div className="text-sm text-gray-500">{entity.registration_number}</div>
+            )}
+            {entity.conflict_details && (
+              <div className="mt-2 text-sm text-amber-700 bg-amber-50 p-2 rounded">
+                {entity.conflict_details}
+              </div>
             )}
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge className={cn("text-xs", getRelationshipBadgeClass(entity.relationship_to_target))}>
-            {formatRelationship(entity.relationship_to_target)}
-          </Badge>
-          <span className={cn("text-xs font-medium", confidenceColor)}>
-            {Math.round(entity.confidence * 100)}%
-          </span>
-          <Badge variant="secondary" className="text-xs">
-            {entity.documents_appearing_in.length} docs
-          </Badge>
-          {isExpanded ? (
-            <ChevronDown className="w-4 h-4 text-gray-400" />
-          ) : (
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-          )}
-        </div>
-      </div>
 
-      {/* Expanded content */}
-      <AnimatePresence>
-        {isExpanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="border-t border-gray-200 dark:border-gray-700"
-          >
-            <div className="p-3 space-y-3">
-              {/* Relationship detail */}
-              {entity.relationship_detail && (
-                <div>
-                  <div className="text-xs font-medium text-gray-500 mb-1">Relationship Detail</div>
-                  <div className="text-sm">{entity.relationship_detail}</div>
-                </div>
-              )}
-
-              {/* Evidence */}
-              {entity.evidence && (
-                <div>
-                  <div className="text-xs font-medium text-gray-500 mb-1">Evidence</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 italic">
-                    "{entity.evidence}"
-                  </div>
-                </div>
-              )}
-
-              {/* Documents */}
-              <div>
-                <div className="text-xs font-medium text-gray-500 mb-1">
-                  Appears in {entity.documents_appearing_in.length} document(s)
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {entity.documents_appearing_in.slice(0, 5).map((doc, i) => (
-                    <Badge key={i} variant="outline" className="text-xs">
-                      <FileText className="w-3 h-3 mr-1" />
-                      {doc.length > 30 ? doc.slice(0, 30) + "..." : doc}
-                    </Badge>
-                  ))}
-                  {entity.documents_appearing_in.length > 5 && (
-                    <Badge variant="outline" className="text-xs">
-                      +{entity.documents_appearing_in.length - 5} more
-                    </Badge>
+          {/* Relationship options */}
+          <RadioGroup value={selectedRelationship} onValueChange={setSelectedRelationship}>
+            <div className="space-y-2">
+              {RELATIONSHIP_OPTIONS.map((option) => (
+                <div
+                  key={option.value}
+                  className={cn(
+                    "flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors",
+                    selectedRelationship === option.value
+                      ? "border-indigo-300 bg-indigo-50"
+                      : "border-gray-200 hover:bg-gray-50"
                   )}
-                </div>
-              </div>
-
-              {/* Human confirmation section */}
-              {needsConfirmation && onRelationshipChange && (
-                <div className="pt-3 border-t border-amber-200 dark:border-amber-800">
-                  <div className="text-xs font-medium text-amber-700 dark:text-amber-300 mb-2">
-                    Please confirm the relationship:
+                  onClick={() => setSelectedRelationship(option.value)}
+                >
+                  <RadioGroupItem value={option.value} id={option.value} className="mt-0.5" />
+                  <div>
+                    <Label htmlFor={option.value} className="font-medium cursor-pointer">
+                      {option.label}
+                    </Label>
+                    <p className="text-xs text-gray-500">{option.description}</p>
                   </div>
-                  <RadioGroup
-                    value={selectedRelationship}
-                    onValueChange={onRelationshipChange}
-                    className="space-y-2"
-                  >
-                    {RELATIONSHIP_OPTIONS.map((option) => (
-                      <div key={option.value} className="flex items-center space-x-2">
-                        <RadioGroupItem value={option.value} id={`${entity.entity_name}-${option.value}`} />
-                        <Label
-                          htmlFor={`${entity.entity_name}-${option.value}`}
-                          className="text-sm cursor-pointer"
-                        >
-                          {option.label}
-                          <span className="text-xs text-gray-500 ml-1">({option.description})</span>
-                        </Label>
-                      </div>
-                    ))}
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="other" id={`${entity.entity_name}-other`} />
-                      <Label htmlFor={`${entity.entity_name}-other`} className="text-sm cursor-pointer">
-                        Other:
-                      </Label>
-                      <Input
-                        placeholder="Specify relationship..."
-                        value={customRelationship}
-                        onChange={(e) => onCustomRelationshipChange?.(e.target.value)}
-                        className="h-7 text-sm flex-1"
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    </div>
-                  </RadioGroup>
                 </div>
-              )}
+              ))}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+          </RadioGroup>
+
+          {/* Additional details */}
+          <div>
+            <Label htmlFor="details" className="text-sm">
+              Additional Details (optional)
+            </Label>
+            <Input
+              id="details"
+              placeholder="e.g., ownership percentage, specific relationship..."
+              value={customDetails}
+              onChange={(e) => setCustomDetails(e.target.value)}
+              className="mt-1"
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>Cancel</Button>
+          <Button onClick={handleConfirm} disabled={!selectedRelationship}>
+            Confirm Relationship
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
+};
+
+// List view component for entities
+interface EntityListViewProps {
+  entities: EntityMapEntry[];
+  onEntityClick: (entity: EntityMapEntry) => void;
 }
 
+const EntityListView: React.FC<EntityListViewProps> = ({ entities, onEntityClick }) => {
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const groupedEntities = useMemo(() => {
+    const groups: Record<string, EntityMapEntry[]> = {};
+    entities.forEach((entity) => {
+      const key = entity.relationship_to_target || "unknown";
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(entity);
+    });
+    return groups;
+  }, [entities]);
+
+  const relationshipLabels: Record<string, string> = {
+    parent: "Parent/Holding Companies",
+    holding_company: "Holding Companies",
+    subsidiary: "Subsidiaries",
+    shareholder: "Shareholders",
+    counterparty: "Counterparties",
+    financier: "Financiers/Lenders",
+    lender: "Lenders",
+    supplier: "Suppliers",
+    customer: "Customers",
+    related_party: "Related Parties",
+    unknown: "Unclassified",
+  };
+
+  return (
+    <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+      {Object.entries(groupedEntities).map(([relationship, groupEntities]) => (
+        <div key={relationship}>
+          <h4 className="text-sm font-medium text-gray-700 mb-2 sticky top-0 bg-white py-1">
+            {relationshipLabels[relationship] || relationship} ({groupEntities.length})
+          </h4>
+          <div className="space-y-1">
+            {groupEntities.map((entity, idx) => (
+              <div
+                key={entity.id || `${entity.entity_name}-${idx}`}
+                className={cn(
+                  "p-3 rounded-lg border cursor-pointer transition-all",
+                  entity.requires_human_confirmation
+                    ? "border-amber-200 bg-amber-50/50 hover:bg-amber-50"
+                    : "border-gray-200 hover:bg-gray-50",
+                  expandedId === (entity.id || entity.entity_name) && "ring-2 ring-indigo-300"
+                )}
+                onClick={() => {
+                  setExpandedId(expandedId === (entity.id || entity.entity_name) ? null : (entity.id || entity.entity_name));
+                  onEntityClick(entity);
+                }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {entity.requires_human_confirmation && (
+                      <AlertTriangle className="w-4 h-4 text-amber-500" />
+                    )}
+                    <span className="font-medium text-sm">{entity.entity_name}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={cn(
+                      "text-xs font-medium",
+                      entity.confidence >= 0.8 ? "text-green-600" :
+                      entity.confidence >= 0.5 ? "text-amber-600" : "text-red-600"
+                    )}>
+                      {Math.round(entity.confidence * 100)}%
+                    </span>
+                    <Badge variant="secondary" className="text-xs">
+                      {entity.documents_appearing_in?.length || 0} docs
+                    </Badge>
+                    {expandedId === (entity.id || entity.entity_name) ? (
+                      <ChevronDown className="w-4 h-4 text-gray-400" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                    )}
+                  </div>
+                </div>
+
+                {expandedId === (entity.id || entity.entity_name) && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    className="mt-3 pt-3 border-t border-gray-200 space-y-2"
+                  >
+                    {entity.registration_number && (
+                      <div className="text-xs">
+                        <span className="text-gray-500">Registration:</span>{" "}
+                        <span className="font-medium">{entity.registration_number}</span>
+                      </div>
+                    )}
+                    {entity.ownership_percentage && (
+                      <div className="text-xs">
+                        <span className="text-gray-500">Ownership:</span>{" "}
+                        <span className="font-medium">{entity.ownership_percentage}%</span>
+                      </div>
+                    )}
+                    {entity.evidence && (
+                      <div className="text-xs">
+                        <span className="text-gray-500">Evidence:</span>{" "}
+                        <span className="text-gray-700">{entity.evidence}</span>
+                      </div>
+                    )}
+                    {entity.documents_appearing_in && entity.documents_appearing_in.length > 0 && (
+                      <div className="text-xs">
+                        <span className="text-gray-500">Documents:</span>
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {entity.documents_appearing_in.slice(0, 3).map((doc, i) => (
+                            <Badge key={i} variant="outline" className="text-[10px]">
+                              <FileText className="w-3 h-3 mr-1" />
+                              {typeof doc === 'string' ? doc.slice(0, 20) : 'doc'}...
+                            </Badge>
+                          ))}
+                          {entity.documents_appearing_in.length > 3 && (
+                            <Badge variant="outline" className="text-[10px]">
+                              +{entity.documents_appearing_in.length - 3} more
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// Main modal component
 export function EntityMappingModal({
   isOpen,
   onClose,
@@ -327,254 +354,228 @@ export function EntityMappingModal({
   result,
   onConfirmEntities,
 }: EntityMappingModalProps) {
-  const [expandedEntities, setExpandedEntities] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState<"organogram" | "list">("organogram");
+  const [conflictEntity, setConflictEntity] = useState<OrganogramEntity | null>(null);
   const [confirmations, setConfirmations] = useState<Record<string, string>>({});
-  const [customRelationships, setCustomRelationships] = useState<Record<string, string>>({});
-  const [showAllEntities, setShowAllEntities] = useState(false);
 
-  // Get entities needing confirmation
-  const entitiesNeedingConfirmation = result?.entity_map.filter(
-    (e) => e.requires_human_confirmation || e.relationship_to_target === "unknown"
-  ) || [];
+  // Convert result to organogram data
+  const organogramData: OrganogramData | null = useMemo(() => {
+    if (!result) return null;
 
-  // Get confirmed entities
-  const confirmedEntities = result?.entity_map.filter(
-    (e) => !e.requires_human_confirmation && e.relationship_to_target !== "unknown"
-  ) || [];
+    // Convert EntityMapEntry to OrganogramEntity
+    const entities: OrganogramEntity[] = result.entity_map.map((entry, idx) => ({
+      id: entry.id || `entity-${idx}`,
+      entity_name: entry.entity_name,
+      registration_number: entry.registration_number,
+      relationship_to_target: entry.relationship_to_target,
+      relationship_detail: entry.relationship_detail,
+      ownership_percentage: entry.ownership_percentage,
+      confidence: entry.confidence,
+      documents_appearing_in: entry.documents_appearing_in || [],
+      evidence: entry.evidence,
+      requires_human_confirmation: entry.requires_human_confirmation,
+      human_confirmed: entry.human_confirmed,
+      has_conflict: entry.has_conflict || entry.requires_human_confirmation,
+      conflict_details: entry.conflict_details,
+      is_individual: entry.relationship_to_target === "key_individual" ||
+                     entry.relationship_to_target === "director" ||
+                     entry.relationship_to_target === "officer",
+    }));
 
-  const toggleEntity = (entityName: string) => {
-    const newExpanded = new Set(expandedEntities);
-    if (newExpanded.has(entityName)) {
-      newExpanded.delete(entityName);
-    } else {
-      newExpanded.add(entityName);
+    return {
+      target_entity: {
+        name: result.target_entity?.name || "Target Entity",
+        registration_number: result.target_entity?.registration_number,
+        transaction_type: result.target_entity?.transaction_type,
+      },
+      entities,
+    };
+  }, [result]);
+
+  const handleResolveConflict = (entityId: string) => {
+    const entity = organogramData?.entities.find(e => e.id === entityId);
+    if (entity) {
+      setConflictEntity(entity);
     }
-    setExpandedEntities(newExpanded);
   };
 
-  const handleConfirmationChange = (entityName: string, value: string) => {
-    setConfirmations((prev) => ({ ...prev, [entityName]: value }));
+  const handleConfirmConflict = (entityId: string, relationship: string, details?: string) => {
+    setConfirmations(prev => ({
+      ...prev,
+      [entityId]: relationship,
+    }));
+    // TODO: Send confirmation to backend
   };
 
-  const handleCustomRelationshipChange = (entityName: string, value: string) => {
-    setCustomRelationships((prev) => ({ ...prev, [entityName]: value }));
-  };
-
-  const handleConfirmAll = () => {
-    if (onConfirmEntities) {
-      const finalConfirmations: Record<string, string> = {};
-      for (const entity of entitiesNeedingConfirmation) {
-        const selected = confirmations[entity.entity_name];
-        if (selected === "other") {
-          finalConfirmations[entity.entity_name] = customRelationships[entity.entity_name] || "unknown";
-        } else if (selected) {
-          finalConfirmations[entity.entity_name] = selected;
-        }
-      }
-      onConfirmEntities(finalConfirmations);
+  const handleDone = () => {
+    if (Object.keys(confirmations).length > 0 && onConfirmEntities) {
+      onConfirmEntities(confirmations);
     }
     onClose();
   };
 
-  const allConfirmed = entitiesNeedingConfirmation.every(
-    (e) => confirmations[e.entity_name] && confirmations[e.entity_name] !== ""
-  );
+  // Count entities needing confirmation
+  const needsConfirmationCount = result?.entity_map.filter(
+    e => e.requires_human_confirmation && !confirmations[e.id || e.entity_name]
+  ).length || 0;
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden flex flex-col">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Network className="w-5 h-5 text-indigo-600" />
-            Entity Mapping
-          </DialogTitle>
-          <DialogDescription>
-            {isRunning
-              ? "Analyzing documents to map entities and their relationships..."
-              : result
-              ? `Found ${result.entity_map.length} entities across ${result.total_documents_processed} documents`
-              : "Map entities across documents to identify relationships"}
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col p-0">
+          {/* Header */}
+          <div className="px-6 py-4 border-b">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Network className="w-5 h-5 text-indigo-600" />
+                Entity Mapping
+              </DialogTitle>
+              <DialogDescription>
+                {isRunning
+                  ? "Analyzing documents to map entities and their relationships..."
+                  : result
+                  ? `Found ${result.entity_map.length} entities across ${result.total_documents_processed} documents`
+                  : "Map entities across documents to identify relationships"}
+              </DialogDescription>
+            </DialogHeader>
+          </div>
 
-        <div className="flex-1 overflow-y-auto py-4 space-y-4">
-          {/* Progress state */}
-          {isRunning && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-center py-8">
+          {/* Content */}
+          <div className="flex-1 overflow-hidden">
+            {/* Progress state */}
+            {isRunning && (
+              <div className="h-full flex items-center justify-center p-8">
                 <div className="text-center">
                   <Loader2 className="w-12 h-12 animate-spin text-indigo-600 mx-auto mb-4" />
                   <div className="text-lg font-medium mb-2">Mapping Entities...</div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-gray-500 mb-4">
                     Extracting and matching entities across documents
                   </div>
-                </div>
-              </div>
-              {progress > 0 && (
-                <div className="px-4">
-                  <Progress value={progress} className="h-2" />
-                  <div className="text-xs text-gray-500 text-center mt-1">{progress}% complete</div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Results state */}
-          {!isRunning && result && (
-            <>
-              {/* Summary cards */}
-              <div className="grid grid-cols-4 gap-3">
-                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 text-center">
-                  <div className="text-2xl font-bold text-blue-600">{result.summary.total_unique_entities}</div>
-                  <div className="text-xs text-blue-600/80">Total Entities</div>
-                </div>
-                <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 text-center">
-                  <div className="text-2xl font-bold text-green-600">{result.summary.target_subsidiaries}</div>
-                  <div className="text-xs text-green-600/80">Subsidiaries</div>
-                </div>
-                <div className="bg-cyan-50 dark:bg-cyan-900/20 rounded-lg p-3 text-center">
-                  <div className="text-2xl font-bold text-cyan-600">{result.summary.counterparties}</div>
-                  <div className="text-xs text-cyan-600/80">Counterparties</div>
-                </div>
-                <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-3 text-center">
-                  <div className="text-2xl font-bold text-amber-600">{result.summary.entities_needing_confirmation}</div>
-                  <div className="text-xs text-amber-600/80">Need Review</div>
-                </div>
-              </div>
-
-              {/* Target entity info */}
-              {result.target_entity && (
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Building2 className="w-4 h-4 text-blue-600" />
-                    <span className="text-sm font-medium text-blue-800 dark:text-blue-200">Target Entity</span>
-                  </div>
-                  <div className="text-lg font-semibold">{result.target_entity.name}</div>
-                  {result.target_entity.registration_number && (
-                    <div className="text-sm text-gray-600">Reg: {result.target_entity.registration_number}</div>
+                  {progress > 0 && (
+                    <div className="w-64 mx-auto">
+                      <Progress value={progress} className="h-2" />
+                      <div className="text-xs text-gray-500 text-center mt-1">{progress}% complete</div>
+                    </div>
                   )}
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* Checkpoint warning */}
-              {result.checkpoint_recommended && (
-                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <div className="font-medium text-amber-800 dark:text-amber-200">
-                        Human Confirmation Required
+            {/* Results state */}
+            {!isRunning && result && organogramData && (
+              <div className="h-full flex flex-col">
+                {/* Summary bar */}
+                <div className="px-6 py-3 bg-gray-50 border-b flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                        <span className="text-sm font-bold text-blue-600">{result.summary.total_unique_entities}</span>
                       </div>
-                      <div className="text-sm text-amber-700 dark:text-amber-300 mt-1">
-                        {result.checkpoint_reason ||
-                          `${entitiesNeedingConfirmation.length} entities couldn't be confidently linked to the target company. Please review and confirm their relationships.`}
-                      </div>
+                      <span className="text-sm text-gray-600">Entities</span>
                     </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                        <span className="text-sm font-bold text-green-600">{result.summary.target_subsidiaries}</span>
+                      </div>
+                      <span className="text-sm text-gray-600">Subsidiaries</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center">
+                        <span className="text-sm font-bold text-amber-600">{result.summary.counterparties}</span>
+                      </div>
+                      <span className="text-sm text-gray-600">Counterparties</span>
+                    </div>
+                    {needsConfirmationCount > 0 && (
+                      <div className="flex items-center gap-2 ml-4 pl-4 border-l">
+                        <AlertTriangle className="w-4 h-4 text-amber-500" />
+                        <span className="text-sm text-amber-600 font-medium">
+                          {needsConfirmationCount} need review
+                        </span>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
 
-              {/* Entities needing confirmation */}
-              {entitiesNeedingConfirmation.length > 0 && (
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-medium text-amber-700 dark:text-amber-300 flex items-center gap-2">
-                      <AlertTriangle className="w-4 h-4" />
-                      Entities Requiring Review ({entitiesNeedingConfirmation.length})
-                    </h3>
-                  </div>
-                  <div className="space-y-2">
-                    {entitiesNeedingConfirmation.map((entity) => (
-                      <EntityCard
-                        key={entity.entity_name}
-                        entity={entity}
-                        isExpanded={expandedEntities.has(entity.entity_name)}
-                        onToggle={() => toggleEntity(entity.entity_name)}
-                        needsConfirmation
-                        selectedRelationship={confirmations[entity.entity_name]}
-                        onRelationshipChange={(value) => handleConfirmationChange(entity.entity_name, value)}
-                        customRelationship={customRelationships[entity.entity_name]}
-                        onCustomRelationshipChange={(value) => handleCustomRelationshipChange(entity.entity_name, value)}
+                  {/* View toggle */}
+                  <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "organogram" | "list")}>
+                    <TabsList className="h-8">
+                      <TabsTrigger value="organogram" className="text-xs px-3 h-7">
+                        <GitBranch className="w-3 h-3 mr-1" />
+                        Organogram
+                      </TabsTrigger>
+                      <TabsTrigger value="list" className="text-xs px-3 h-7">
+                        <List className="w-3 h-3 mr-1" />
+                        List
+                      </TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                </div>
+
+                {/* Main content area */}
+                <div className="flex-1 overflow-hidden">
+                  {activeTab === "organogram" ? (
+                    <EntityOrganogram
+                      data={organogramData}
+                      onEntityClick={(entity) => {
+                        if (entity.has_conflict) {
+                          setConflictEntity(entity);
+                        }
+                      }}
+                      onResolveConflict={handleResolveConflict}
+                      className="h-full"
+                    />
+                  ) : (
+                    <div className="p-6 h-full overflow-auto">
+                      <EntityListView
+                        entities={result.entity_map}
+                        onEntityClick={(entity) => {
+                          if (entity.requires_human_confirmation) {
+                            const orgEntity = organogramData.entities.find(e => e.entity_name === entity.entity_name);
+                            if (orgEntity) setConflictEntity(orgEntity);
+                          }
+                        }}
                       />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Confirmed entities */}
-              {confirmedEntities.length > 0 && (
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-medium text-green-700 dark:text-green-300 flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4" />
-                      Confirmed Entities ({confirmedEntities.length})
-                    </h3>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowAllEntities(!showAllEntities)}
-                      className="text-xs"
-                    >
-                      {showAllEntities ? "Hide" : "Show All"}
-                    </Button>
-                  </div>
-                  {showAllEntities && (
-                    <div className="space-y-2">
-                      {confirmedEntities.map((entity) => (
-                        <EntityCard
-                          key={entity.entity_name}
-                          entity={entity}
-                          isExpanded={expandedEntities.has(entity.entity_name)}
-                          onToggle={() => toggleEntity(entity.entity_name)}
-                        />
-                      ))}
-                    </div>
-                  )}
-                  {!showAllEntities && (
-                    <div className="text-sm text-gray-500 italic">
-                      {confirmedEntities.length} entities automatically mapped. Click "Show All" to view.
                     </div>
                   )}
                 </div>
-              )}
+              </div>
+            )}
+          </div>
 
-              {/* Cost info */}
-              {result.cost && (
-                <div className="text-xs text-gray-500 text-right">
-                  Cost: R{result.cost.total_cost.toFixed(2)} | {result.cost.total_tokens.toLocaleString()} tokens
+          {/* Footer */}
+          {!isRunning && result && (
+            <DialogFooter className="px-6 py-4 border-t bg-gray-50">
+              <div className="flex items-center justify-between w-full">
+                <div className="text-xs text-gray-500">
+                  {result.total_documents_processed} documents processed
                 </div>
-              )}
-            </>
+                <div className="flex items-center gap-2">
+                  {needsConfirmationCount > 0 && (
+                    <span className="text-sm text-amber-600">
+                      {needsConfirmationCount} entities need confirmation
+                    </span>
+                  )}
+                  <Button variant="outline" onClick={onClose}>
+                    Close
+                  </Button>
+                  <Button onClick={handleDone} className="bg-indigo-600 hover:bg-indigo-700">
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    Done
+                  </Button>
+                </div>
+              </div>
+            </DialogFooter>
           )}
-        </div>
+        </DialogContent>
+      </Dialog>
 
-        <DialogFooter className="border-t pt-4">
-          {isRunning ? (
-            <Button variant="outline" onClick={onClose}>
-              Run in Background
-            </Button>
-          ) : result && entitiesNeedingConfirmation.length > 0 ? (
-            <>
-              <Button variant="outline" onClick={onClose}>
-                Skip Review
-              </Button>
-              <Button
-                onClick={handleConfirmAll}
-                disabled={!allConfirmed}
-                className="bg-indigo-600 hover:bg-indigo-700"
-              >
-                <CheckCircle2 className="w-4 h-4 mr-2" />
-                Confirm & Continue
-              </Button>
-            </>
-          ) : (
-            <Button onClick={onClose}>
-              <CheckCircle2 className="w-4 h-4 mr-2" />
-              Done
-            </Button>
-          )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      {/* Conflict resolution dialog */}
+      <ConflictResolutionDialog
+        entity={conflictEntity}
+        onClose={() => setConflictEntity(null)}
+        onConfirm={handleConfirmConflict}
+      />
+    </>
   );
 }
+
+export default EntityMappingModal;

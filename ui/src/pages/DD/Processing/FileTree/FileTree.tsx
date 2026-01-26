@@ -1107,8 +1107,9 @@ export function FileTree({
                                   <TooltipProvider>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
-                                        <span className="text-[9px] px-1 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 font-medium cursor-help">
-                                          PDF
+                                        <span className="inline-flex items-center gap-0.5 text-[9px] px-1 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 font-medium cursor-help">
+                                          <Check className="w-2.5 h-2.5" />
+                                          PDF Converted
                                         </span>
                                       </TooltipTrigger>
                                       <TooltipContent side="left" className="bg-alchemyPrimaryNavyBlue text-white border-alchemyPrimaryNavyBlue">

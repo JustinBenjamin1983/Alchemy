@@ -68,6 +68,7 @@ import { AccuracyTierSelector, ModelTier } from "./AccuracyTierSelector";
 import { ControlBar } from "./ControlBar";
 import { useValidationCheckpoint } from "@/hooks/useValidationCheckpoint";
 import { ValidationWizardModal } from "../ValidationWizardModal";
+import { EntityMappingModal, EntityMappingResult } from "./EntityMappingModal";
 
 interface DDProcessingDashboardProps {
   ddId?: string;
@@ -233,6 +234,8 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   // Entity mapping state
   const [entityMappingComplete, setEntityMappingComplete] = useState(false);
   const [entityCount, setEntityCount] = useState(0);
+  const [showEntityMappingModal, setShowEntityMappingModal] = useState(false);
+  const [entityMappingResult, setEntityMappingResult] = useState<EntityMappingResult | null>(null);
 
   // Blueprint requirements for Checkpoint A - fetch after classification is done
   // Enable when status is past classification (not pending/classifying/cancelled/failed)
@@ -1398,11 +1401,15 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         // Entity Mapping
         onRunEntityMapping={() => {
           if (ddId) {
+            // Show the modal immediately
+            setShowEntityMappingModal(true);
+            setEntityMappingResult(null);
             addLogEntry("info", "Running entity mapping...");
             entityMapping.mutate({ ddId }, {
               onSuccess: (data) => {
                 setEntityMappingComplete(true);
                 setEntityCount(data.summary?.total_unique_entities || 0);
+                setEntityMappingResult(data as EntityMappingResult);
                 addLogEntry("success", `Entity mapping complete: ${data.summary?.total_unique_entities || 0} entities found`);
                 if (data.checkpoint_recommended) {
                   addLogEntry("warning", `Entity checkpoint recommended: ${data.checkpoint_reason}`);
@@ -1410,6 +1417,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
               },
               onError: (err) => {
                 addLogEntry("error", `Entity mapping failed: ${err.message}`);
+                setShowEntityMappingModal(false);
               }
             });
           }
@@ -1805,6 +1813,18 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
           }}
         />
       )}
+
+      {/* Entity Mapping Modal - Checkpoint A.5 */}
+      <EntityMappingModal
+        isOpen={showEntityMappingModal}
+        onClose={() => setShowEntityMappingModal(false)}
+        isRunning={entityMapping.isPending}
+        result={entityMappingResult}
+        onConfirmEntities={(confirmations) => {
+          // TODO: Send confirmations to backend
+          addLogEntry("success", `Entity relationships confirmed for ${Object.keys(confirmations).length} entities`);
+        }}
+      />
 
       {/* Completion celebration */}
       <AnimatePresence>

@@ -1454,7 +1454,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         }}
         isRunningEntityMapping={entityMapping.isPending}
         entityMappingComplete={entityMappingComplete}
-        canRunEntityMapping={readabilityChecked && readabilitySummary.failed === 0}
+        canRunEntityMapping={(readabilityChecked || areDocsReadyForDD) && readabilitySummary.failed === 0}
         entityCount={entityCount}
         // View Entity Map
         onViewEntityMap={() => setShowEntityMappingModal(true)}

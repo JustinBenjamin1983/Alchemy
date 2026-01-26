@@ -113,25 +113,80 @@ def run_entity_mapping(dd_id: str, run_id: str = None, max_docs: int = None) -> 
 
         if draft:
             target_entity["name"] = draft.target_entity_name or dd.name
-            if hasattr(draft, 'target_registration_number'):
+
+            # Get registration number
+            if draft.target_registration_number:
                 target_entity["registration_number"] = draft.target_registration_number
-            if hasattr(draft, 'expected_counterparties'):
-                target_entity["expected_counterparties"] = draft.expected_counterparties or []
+
+            # Get expected counterparties (stored as JSON text)
+            if draft.expected_counterparties:
+                try:
+                    target_entity["expected_counterparties"] = json.loads(draft.expected_counterparties)
+                except (json.JSONDecodeError, TypeError):
+                    target_entity["expected_counterparties"] = []
 
         # Load known entities from wizard (subsidiaries, holding company)
         known_entities = []
         if draft:
-            if hasattr(draft, 'known_subsidiaries') and draft.known_subsidiaries:
-                for sub in draft.known_subsidiaries:
-                    known_entities.append({
-                        "entity_name": sub.get("name", ""),
-                        "relationship_to_target": sub.get("relationship", "subsidiary")
-                    })
-            if hasattr(draft, 'holding_company') and draft.holding_company:
-                known_entities.append({
-                    "entity_name": draft.holding_company.get("name", ""),
-                    "relationship_to_target": "parent"
-                })
+            # Parse known_subsidiaries (stored as JSON text)
+            if draft.known_subsidiaries:
+                try:
+                    subsidiaries = json.loads(draft.known_subsidiaries)
+                    for sub in subsidiaries:
+                        if isinstance(sub, dict):
+                            known_entities.append({
+                                "entity_name": sub.get("name", ""),
+                                "relationship_to_target": sub.get("relationship", "subsidiary")
+                            })
+                except (json.JSONDecodeError, TypeError):
+                    pass
+
+            # Parse holding_company (stored as JSON text)
+            if draft.holding_company:
+                try:
+                    holding = json.loads(draft.holding_company)
+                    if isinstance(holding, dict) and holding.get("name"):
+                        known_entities.append({
+                            "entity_name": holding.get("name", ""),
+                            "relationship_to_target": "parent"
+                        })
+                except (json.JSONDecodeError, TypeError):
+                    pass
+
+            # Also add shareholders as known entities
+            if draft.shareholders:
+                try:
+                    shareholders = json.loads(draft.shareholders)
+                    for sh in shareholders:
+                        if isinstance(sh, dict) and sh.get("name"):
+                            known_entities.append({
+                                "entity_name": sh.get("name", ""),
+                                "relationship_to_target": "shareholder"
+                            })
+                except (json.JSONDecodeError, TypeError):
+                    pass
+
+            # Add counterparties/customers as known entities
+            if draft.counterparties:
+                try:
+                    counterparties = json.loads(draft.counterparties)
+                    for cp in counterparties:
+                        if isinstance(cp, dict) and cp.get("name"):
+                            known_entities.append({
+                                "entity_name": cp.get("name", ""),
+                                "relationship_to_target": "counterparty"
+                            })
+                        elif isinstance(cp, str) and cp:
+                            known_entities.append({
+                                "entity_name": cp,
+                                "relationship_to_target": "counterparty"
+                            })
+                except (json.JSONDecodeError, TypeError):
+                    pass
+
+        logging.info(f"[DDEntityMapping] Target entity: {target_entity['name']}, "
+                     f"Registration: {target_entity['registration_number']}, "
+                     f"Known entities from wizard: {len(known_entities)}")
 
         # Get all classified documents
         folders = session.query(Folder).filter(Folder.dd_id == dd_uuid).all()

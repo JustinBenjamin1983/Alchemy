@@ -127,6 +127,12 @@ def handle_post(req: func.HttpRequest, email: str) -> func.HttpResponse:
         key_other=json.dumps(req_body.get("keyOther", [])),
         shareholder_entity_name=req_body.get("shareholderEntityName", ""),
         shareholders=json.dumps(req_body.get("shareholders", [])),
+        # Phase 1 Enhancement: Entity Mapping Context
+        key_contractors=json.dumps(req_body.get("keyContractors", [])),
+        target_registration_number=req_body.get("targetRegistrationNumber", ""),
+        known_subsidiaries=json.dumps(req_body.get("knownSubsidiaries", [])),
+        holding_company=json.dumps(req_body.get("holdingCompany")) if req_body.get("holdingCompany") else None,
+        expected_counterparties=json.dumps(req_body.get("expectedCounterparties", [])),
         created_at=datetime.datetime.utcnow(),
         updated_at=datetime.datetime.utcnow()
     )
@@ -219,6 +225,17 @@ def handle_put(req: func.HttpRequest, email: str) -> func.HttpResponse:
             draft.shareholder_entity_name = req_body["shareholderEntityName"]
         if "shareholders" in req_body:
             draft.shareholders = json.dumps(req_body["shareholders"])
+        # Phase 1 Enhancement: Entity Mapping Context
+        if "keyContractors" in req_body:
+            draft.key_contractors = json.dumps(req_body["keyContractors"])
+        if "targetRegistrationNumber" in req_body:
+            draft.target_registration_number = req_body["targetRegistrationNumber"]
+        if "knownSubsidiaries" in req_body:
+            draft.known_subsidiaries = json.dumps(req_body["knownSubsidiaries"])
+        if "holdingCompany" in req_body:
+            draft.holding_company = json.dumps(req_body["holdingCompany"]) if req_body["holdingCompany"] else None
+        if "expectedCounterparties" in req_body:
+            draft.expected_counterparties = json.dumps(req_body["expectedCounterparties"])
 
         draft.updated_at = datetime.datetime.utcnow()
         session.commit()
@@ -302,6 +319,12 @@ def draft_to_dict(draft: DDWizardDraft) -> dict:
         "keyOther": json.loads(draft.key_other) if draft.key_other else [],
         "shareholderEntityName": draft.shareholder_entity_name or "",
         "shareholders": json.loads(draft.shareholders) if draft.shareholders else [],
+        # Phase 1 Enhancement: Entity Mapping Context
+        "keyContractors": json.loads(draft.key_contractors) if draft.key_contractors else [],
+        "targetRegistrationNumber": draft.target_registration_number or "",
+        "knownSubsidiaries": json.loads(draft.known_subsidiaries) if draft.known_subsidiaries else [],
+        "holdingCompany": json.loads(draft.holding_company) if draft.holding_company else None,
+        "expectedCounterparties": json.loads(draft.expected_counterparties) if draft.expected_counterparties else [],
         "createdAt": draft.created_at.isoformat() if draft.created_at else None,
         "updatedAt": draft.updated_at.isoformat() if draft.updated_at else None,
     }

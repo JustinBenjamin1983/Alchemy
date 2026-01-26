@@ -432,11 +432,18 @@ class DDWizardDraft(BaseModel):
     key_persons = Column(Text)  # JSON array stored as text (keyIndividuals)
     key_suppliers = Column(Text)  # JSON array stored as text (keySuppliers)
     counterparties = Column(Text)  # JSON array stored as text (keyCustomers)
+    key_contractors = Column(Text)  # JSON array stored as text (keyContractors)
     key_lenders = Column(Text)  # JSON array stored as text
     key_regulators = Column(Text)  # JSON array stored as text
     key_other = Column(Text)  # JSON array stored as text (keyOther)
     shareholder_entity_name = Column(Text)
     shareholders = Column(Text)  # JSON array stored as text
+
+    # Phase 1 Enhancement: Entity Mapping Context
+    target_registration_number = Column(Text)  # Company registration number for entity matching
+    known_subsidiaries = Column(Text)  # JSON array: [{name, relationship}]
+    holding_company = Column(Text)  # JSON object: {name, percentage}
+    expected_counterparties = Column(Text)  # JSON array of counterparty names to watch for
 
     # Metadata
     created_at = Column(DateTime, default=datetime.datetime.utcnow)

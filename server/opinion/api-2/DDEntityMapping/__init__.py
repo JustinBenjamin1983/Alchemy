@@ -363,10 +363,35 @@ def handle_get(req: func.HttpRequest, email: str) -> func.HttpResponse:
             total_documents_processed = len(all_doc_names)
 
             # Get wizard data for target entity, shareholders, and client info
+            # Try multiple matching strategies since wizard field names may vary
             draft = session.query(DDWizardDraft).filter(
                 DDWizardDraft.owned_by == dd.owned_by,
                 DDWizardDraft.transaction_name == dd.name
             ).first()
+
+            # If not found by transaction_name, try target_entity_name
+            if not draft:
+                draft = session.query(DDWizardDraft).filter(
+                    DDWizardDraft.owned_by == dd.owned_by,
+                    DDWizardDraft.target_entity_name == dd.name
+                ).first()
+                logging.info(f"[DDEntityMapping GET] Draft found by target_entity_name: {draft is not None}")
+
+            # If still not found, get the most recent draft for this user
+            if not draft:
+                draft = session.query(DDWizardDraft).filter(
+                    DDWizardDraft.owned_by == dd.owned_by
+                ).order_by(DDWizardDraft.updated_at.desc()).first()
+                logging.info(f"[DDEntityMapping GET] Draft found by most recent: {draft is not None}")
+
+            logging.info(f"[DDEntityMapping GET] Looking for draft - DD name: '{dd.name}', owner: '{dd.owned_by}'")
+            if draft:
+                logging.info(f"[DDEntityMapping GET] Found draft - transaction_name: '{draft.transaction_name}', "
+                           f"target_entity_name: '{draft.target_entity_name}', "
+                           f"client_name: '{draft.client_name}', "
+                           f"shareholders: '{draft.shareholders[:100] if draft.shareholders else None}...'")
+            else:
+                logging.warning(f"[DDEntityMapping GET] No draft found for DD '{dd.name}'")
 
             # Build target entity info
             target_entity = {

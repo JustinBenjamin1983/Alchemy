@@ -63,5 +63,10 @@ export function useAxiosWithAuth() {
     return client.delete(url, config);
   };
 
+  call.patch = async (url: string, data?: any, config?: AxiosRequestConfig) => {
+    const client = await createClient();
+    return client.patch(url, data, config);
+  };
+
   return call;
 }

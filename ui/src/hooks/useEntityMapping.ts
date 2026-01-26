@@ -7,12 +7,15 @@ interface EntityMapEntry {
   registration_number?: string;
   relationship_to_target: string;
   relationship_detail?: string;
+  ownership_percentage?: number;
   confidence: number;
   documents_appearing_in: string[];
   evidence?: string;
-  requires_human_confirmation: boolean;
+  requires_human_confirmation?: boolean;
   human_confirmed?: boolean;
   human_confirmation_value?: string;
+  has_conflict?: boolean;
+  conflict_details?: string;
 }
 
 interface EntityMappingSummary {
@@ -23,6 +26,24 @@ interface EntityMappingSummary {
   target_subsidiaries: number;
   counterparties: number;
   unknown_relationships?: number;
+}
+
+interface TargetEntityInfo {
+  name: string;
+  registration_number?: string;
+  transaction_type?: string;
+  deal_structure?: string;
+}
+
+interface ClientEntityInfo {
+  name: string;
+  role?: string;
+  deal_structure?: string;
+}
+
+interface ShareholderInfo {
+  name: string;
+  ownership_percentage?: number;
 }
 
 interface EntityMappingResponse {
@@ -39,6 +60,10 @@ interface EntityMappingResponse {
     total_cost: number;
     total_tokens: number;
   };
+  // Wizard data for organogram display
+  target_entity?: TargetEntityInfo;
+  client_entity?: ClientEntityInfo;
+  shareholders?: ShareholderInfo[];
 }
 
 interface EntityMappingParams {
@@ -92,4 +117,80 @@ export function useGetEntityMap(ddId: string | undefined, enabled: boolean = tru
   });
 }
 
-export type { EntityMappingResponse, EntityMapEntry, EntityMappingSummary };
+interface ModifyEntityMapParams {
+  ddId: string;
+  instruction: string;
+  currentEntityMap?: EntityMapEntry[];
+}
+
+interface ModifyEntityMapResponse {
+  success: boolean;
+  entity_map: EntityMapEntry[];
+  changes_made: Array<{
+    entity_name: string;
+    change_type: string;
+    description: string;
+  }>;
+  explanation: string;
+  error?: string;
+}
+
+/**
+ * Hook to modify entity map using AI (PUT)
+ */
+export function useModifyEntityMap() {
+  const axios = useAxiosWithAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ ddId, instruction, currentEntityMap }: ModifyEntityMapParams): Promise<ModifyEntityMapResponse> => {
+      const response = await axios.put("/dd-entity-mapping", {
+        dd_id: ddId,
+        instruction,
+        current_entity_map: currentEntityMap,
+      });
+      return response.data;
+    },
+    onSuccess: (data, variables) => {
+      // Don't invalidate immediately - let the user decide to confirm
+      console.log("[useModifyEntityMap] AI modification complete:", data.explanation);
+    },
+  });
+}
+
+interface ConfirmEntityMapParams {
+  ddId: string;
+  entityMap: EntityMapEntry[];
+}
+
+interface ConfirmEntityMapResponse {
+  success: boolean;
+  confirmed_count: number;
+  message: string;
+  errors?: string[];
+}
+
+/**
+ * Hook to confirm and save the final entity map (PATCH)
+ */
+export function useConfirmEntityMap() {
+  const axios = useAxiosWithAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ ddId, entityMap }: ConfirmEntityMapParams): Promise<ConfirmEntityMapResponse> => {
+      const response = await axios.patch("/dd-entity-mapping", {
+        dd_id: ddId,
+        entity_map: entityMap,
+      });
+      return response.data;
+    },
+    onSuccess: (data, variables) => {
+      // Invalidate entity map query to refetch confirmed state
+      queryClient.invalidateQueries({ queryKey: ["entity-map", variables.ddId] });
+      console.log("[useConfirmEntityMap] Entity map confirmed:", data.message);
+    },
+  });
+}
+
+export type { EntityMappingResponse, EntityMapEntry, EntityMappingSummary, ModifyEntityMapResponse, ConfirmEntityMapResponse };

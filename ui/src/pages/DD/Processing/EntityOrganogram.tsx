@@ -14,20 +14,20 @@
  * - Ownership percentages on edges
  * - Minimalist, professional design
  */
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import {
   ReactFlow,
   Node,
   Edge,
   Background,
   Controls,
-  MiniMap,
   useNodesState,
   useEdgesState,
   Position,
   MarkerType,
   Handle,
   NodeProps,
+  ReactFlowInstance,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { motion, AnimatePresence } from "framer-motion";
@@ -57,6 +57,8 @@ export interface OrganogramEntity {
   id: string;
   entity_name: string;
   registration_number?: string;
+  id_number?: string;
+  address?: string;
   relationship_to_target: string;
   relationship_detail?: string;
   ownership_percentage?: number;
@@ -98,6 +100,20 @@ interface EntityOrganogramProps {
   onEntityClick?: (entity: OrganogramEntity) => void;
   onResolveConflict?: (entityId: string) => void;
   className?: string;
+  isFullscreen?: boolean;
+}
+
+// Entity node data interface for React Flow
+interface EntityNodeData {
+  label: string;
+  relationship: string;
+  confidence?: number;
+  docsCount?: number;
+  registrationNumber?: string;
+  ownershipPercentage?: number;
+  dealStructure?: string;
+  hasConflict?: boolean;
+  onClick?: () => void;
 }
 
 // Relationship type to visual config mapping
@@ -123,16 +139,16 @@ const RELATIONSHIP_CONFIG: Record<string, {
     label: "Holding",
   },
   target: {
-    color: "text-orange-700",
-    bgColor: "bg-orange-50",
-    borderColor: "border-orange-400",
+    color: "text-green-700",
+    bgColor: "bg-green-50",
+    borderColor: "border-green-500",
     icon: Target,
     label: "Target",
   },
   subsidiary: {
-    color: "text-green-700",
-    bgColor: "bg-green-50",
-    borderColor: "border-green-300",
+    color: "text-yellow-700",
+    bgColor: "bg-yellow-50",
+    borderColor: "border-yellow-400",
     icon: Building,
     label: "Subsidiary",
   },
@@ -192,6 +208,27 @@ const RELATIONSHIP_CONFIG: Record<string, {
     icon: Link2,
     label: "Related",
   },
+  key_individual: {
+    color: "text-gray-700",
+    bgColor: "bg-white",
+    borderColor: "border-gray-800",
+    icon: Users,
+    label: "Key Individual",
+  },
+  director: {
+    color: "text-gray-700",
+    bgColor: "bg-white",
+    borderColor: "border-gray-800",
+    icon: Users,
+    label: "Director",
+  },
+  officer: {
+    color: "text-gray-700",
+    bgColor: "bg-white",
+    borderColor: "border-gray-800",
+    icon: Users,
+    label: "Officer",
+  },
   unknown: {
     color: "text-gray-500",
     bgColor: "bg-gray-50",
@@ -202,100 +239,138 @@ const RELATIONSHIP_CONFIG: Record<string, {
 };
 
 // Custom node component for entities
-const EntityNode: React.FC<NodeProps> = ({ data }) => {
+const EntityNode: React.FC<NodeProps> = ({ data: rawData }) => {
+  const data = rawData as unknown as EntityNodeData;
   const config = RELATIONSHIP_CONFIG[data.relationship] || RELATIONSHIP_CONFIG.unknown;
   const Icon = config.icon;
   const isTarget = data.relationship === "target";
   const isClient = data.relationship === "client";
+  const isShareholder = data.relationship === "shareholder";
+  const isCompact = ["counterparty", "financier", "lender", "supplier", "customer", "related_party", "unknown", "key_individual", "director", "officer"].includes(data.relationship);
 
+  // Compact node for counterparties/related parties
+  if (isCompact) {
+    return (
+      <div
+        className={cn(
+          "relative px-2 py-1.5 rounded border shadow-sm transition-all duration-200",
+          "hover:shadow-md cursor-pointer w-[150px]",
+          config.bgColor,
+          config.borderColor
+        )}
+        onClick={data.onClick}
+      >
+        <Handle type="target" position={Position.Top} className="!bg-gray-400 !w-1.5 !h-1.5" />
+        <Handle type="source" position={Position.Bottom} className="!bg-gray-400 !w-1.5 !h-1.5" />
+        <Handle type="target" position={Position.Left} id="left" className="!bg-gray-400 !w-1.5 !h-1.5" />
+        <Handle type="source" position={Position.Right} id="right" className="!bg-gray-400 !w-1.5 !h-1.5" />
+
+        {data.hasConflict && (
+          <div className="absolute -top-1.5 -right-1.5 p-0.5 bg-amber-100 rounded-full border border-amber-400">
+            <AlertTriangle className="w-2 h-2 text-amber-600" />
+          </div>
+        )}
+
+        <div className="flex items-center gap-1 mb-0.5">
+          <Icon className={cn("w-3 h-3", config.color)} />
+          <span className={cn("text-[9px] font-medium", config.color)}>{config.label}</span>
+          {data.docsCount > 0 && (
+            <span className="text-[8px] text-gray-400 ml-auto">{data.docsCount}d</span>
+          )}
+        </div>
+        <div className="font-medium text-[10px] text-gray-900 leading-tight truncate" title={data.label}>
+          {data.label}
+        </div>
+        {data.confidence !== undefined && data.confidence < 1 && (
+          <div className="mt-1 flex items-center gap-1">
+            <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className={cn(
+                  "h-full rounded-full",
+                  data.confidence >= 0.8 ? "bg-green-500" : data.confidence >= 0.5 ? "bg-amber-500" : "bg-red-500"
+                )}
+                style={{ width: `${data.confidence * 100}%` }}
+              />
+            </div>
+            <span className="text-[8px] text-gray-400">{Math.round(data.confidence * 100)}%</span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Compact shareholder node - just entity name, fixed size
+  if (isShareholder) {
+    return (
+      <div
+        className={cn(
+          "relative px-3 py-2 rounded-lg border-2 shadow-sm transition-all duration-200",
+          "hover:shadow-md cursor-pointer w-[175px]",
+          config.bgColor,
+          config.borderColor
+        )}
+        onClick={data.onClick}
+      >
+        <Handle type="target" position={Position.Top} className="!bg-gray-400 !w-2 !h-2" />
+        <Handle type="source" position={Position.Bottom} className="!bg-gray-400 !w-2 !h-2" />
+
+        <div className="flex items-center gap-1.5 mb-1">
+          <Icon className={cn("w-3 h-3", config.color)} />
+          <span className={cn("text-[10px] font-medium", config.color)}>{config.label}</span>
+        </div>
+        <div className="font-semibold text-xs text-gray-900 leading-tight truncate" title={data.label}>
+          {data.label}
+        </div>
+      </div>
+    );
+  }
+
+  // Standard node for Target and Client
   return (
     <div
       className={cn(
         "relative px-4 py-3 rounded-lg border-2 shadow-sm transition-all duration-200",
-        "hover:shadow-md cursor-pointer min-w-[160px] max-w-[200px]",
+        "hover:shadow-md cursor-pointer",
         config.bgColor,
         config.borderColor,
-        isTarget && "ring-2 ring-orange-400 ring-offset-2 min-w-[200px]",
-        isClient && "border-dashed border-indigo-400 bg-indigo-50/50"
+        isTarget && "ring-2 ring-green-500 ring-offset-2 w-[225px]",
+        isClient && "border-dashed border-indigo-400 bg-indigo-50/50 w-[200px]"
       )}
       onClick={data.onClick}
     >
-      {/* Handles for connections */}
       <Handle type="target" position={Position.Top} className="!bg-gray-400 !w-2 !h-2" />
       <Handle type="source" position={Position.Bottom} className="!bg-gray-400 !w-2 !h-2" />
       <Handle type="target" position={Position.Left} id="left" className="!bg-gray-400 !w-2 !h-2" />
       <Handle type="source" position={Position.Right} id="right" className="!bg-gray-400 !w-2 !h-2" />
 
-      {/* Conflict indicator */}
       {data.hasConflict && (
         <div className="absolute -top-2 -right-2 p-1 bg-amber-100 rounded-full border border-amber-400">
           <AlertTriangle className="w-3 h-3 text-amber-600" />
         </div>
       )}
 
-      {/* Future owner badge for client */}
       {isClient && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-indigo-100 border border-indigo-300 rounded text-[10px] font-medium text-indigo-700 whitespace-nowrap">
           Future Owner
         </div>
       )}
 
-      {/* Header with icon and type */}
       <div className="flex items-center gap-2 mb-1">
         <Icon className={cn("w-4 h-4", config.color)} />
-        <span className={cn("text-xs font-medium", config.color)}>
-          {config.label}
-        </span>
-        {data.docsCount > 0 && (
-          <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 ml-auto">
-            {data.docsCount} docs
-          </Badge>
-        )}
+        <span className={cn("text-xs font-medium", config.color)}>{config.label}</span>
       </div>
 
-      {/* Entity name */}
       <div className="font-semibold text-sm text-gray-900 leading-tight" title={data.label}>
         {data.label}
       </div>
 
-      {/* Registration number */}
       {data.registrationNumber && (
-        <div className="text-xs text-gray-500 truncate mt-0.5">
-          {data.registrationNumber}
-        </div>
+        <div className="text-xs text-gray-500 truncate mt-0.5">{data.registrationNumber}</div>
       )}
 
-      {/* Ownership percentage */}
-      {data.ownershipPercentage && (
-        <div className="mt-1.5 text-xs font-medium text-gray-600">
-          {data.ownershipPercentage}% ownership
-        </div>
-      )}
-
-      {/* Transaction type for client */}
       {data.dealStructure && (
         <div className="mt-1.5 px-2 py-1 bg-indigo-100 rounded text-xs text-indigo-700 font-medium">
           {data.dealStructure}
-        </div>
-      )}
-
-      {/* Confidence indicator - only for non-target/non-shareholder/non-client */}
-      {data.confidence !== undefined && data.confidence < 1 && (
-        <div className="mt-2">
-          <div className="flex items-center gap-1">
-            <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className={cn(
-                  "h-full rounded-full",
-                  data.confidence >= 0.8 ? "bg-green-500" :
-                  data.confidence >= 0.5 ? "bg-amber-500" : "bg-red-500"
-                )}
-                style={{ width: `${data.confidence * 100}%` }}
-              />
-            </div>
-            <span className="text-[10px] text-gray-500">{Math.round(data.confidence * 100)}%</span>
-          </div>
-          <div className="text-[9px] text-gray-400 mt-0.5">Confidence</div>
         </div>
       )}
     </div>
@@ -352,7 +427,22 @@ const EntityDetailsPanel: React.FC<EntityDetailsPanelProps> = ({
         <div>
           <h3 className="font-semibold text-gray-900 text-lg">{entity.entity_name}</h3>
           {entity.registration_number && (
-            <p className="text-sm text-gray-500">{entity.registration_number}</p>
+            <div className="mt-1">
+              <p className="text-xs text-gray-500 uppercase tracking-wide">Registration Number</p>
+              <p className="text-sm text-gray-700">{entity.registration_number}</p>
+            </div>
+          )}
+          {entity.id_number && (
+            <div className="mt-1">
+              <p className="text-xs text-gray-500 uppercase tracking-wide">ID Number</p>
+              <p className="text-sm text-gray-700">{entity.id_number}</p>
+            </div>
+          )}
+          {entity.address && (
+            <div className="mt-2">
+              <p className="text-xs text-gray-500 uppercase tracking-wide">Address</p>
+              <p className="text-sm text-gray-700">{entity.address}</p>
+            </div>
           )}
         </div>
 
@@ -460,7 +550,7 @@ const KeyIndividualsSection: React.FC<KeyIndividualsSectionProps> = ({
   if (individuals.length === 0) return null;
 
   return (
-    <div className="absolute bottom-4 left-4 w-64 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-10">
+    <div className="absolute bottom-4 left-4 w-80 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-10">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full px-4 py-3 flex items-center justify-between bg-gray-50 border-b hover:bg-gray-100 transition-colors"
@@ -484,26 +574,28 @@ const KeyIndividualsSection: React.FC<KeyIndividualsSectionProps> = ({
             exit={{ height: 0 }}
             className="overflow-hidden"
           >
-            <div className="p-2 space-y-1 max-h-48 overflow-y-auto">
-              {individuals.map((person) => (
-                <button
-                  key={person.id}
-                  onClick={() => onIndividualClick(person)}
-                  className="w-full p-2 text-left rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-900 truncate">
-                      {person.entity_name}
+            <div className="p-2 max-h-48 overflow-y-auto">
+              <div className="grid grid-cols-3 gap-1">
+                {individuals.map((person) => (
+                  <button
+                    key={person.id}
+                    onClick={() => onIndividualClick(person)}
+                    className="p-1.5 text-left rounded hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-1">
+                      <span className="text-[10px] font-medium text-gray-900 truncate">
+                        {person.entity_name}
+                      </span>
+                      {person.has_conflict && (
+                        <AlertTriangle className="w-2 h-2 text-amber-500 flex-shrink-0" />
+                      )}
+                    </div>
+                    <span className="text-[8px] text-gray-500 truncate block">
+                      {person.relationship_detail || person.relationship_to_target}
                     </span>
-                    {person.has_conflict && (
-                      <AlertTriangle className="w-3 h-3 text-amber-500 flex-shrink-0" />
-                    )}
-                  </div>
-                  <span className="text-xs text-gray-500">
-                    {person.relationship_detail || person.relationship_to_target}
-                  </span>
-                </button>
-              ))}
+                  </button>
+                ))}
+              </div>
             </div>
           </motion.div>
         )}
@@ -517,12 +609,12 @@ const Legend: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const legendItems = [
+    { key: "client", label: "Transaction Counterparty" },
     { key: "shareholder", label: "Shareholder" },
-    { key: "client", label: "Acquirer (Future)" },
     { key: "target", label: "Target Entity" },
     { key: "subsidiary", label: "Subsidiary" },
-    { key: "counterparty", label: "Counterparty" },
-    { key: "financier", label: "Financier" },
+    { key: "key_individual", label: "Key Individual" },
+    { key: "counterparty", label: "Related Stakeholder" },
   ];
 
   return (
@@ -577,6 +669,7 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
   onEntityClick,
   onResolveConflict,
   className,
+  isFullscreen = false,
 }) => {
   const [selectedEntity, setSelectedEntity] = useState<OrganogramEntity | null>(null);
 
@@ -586,10 +679,21 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
     const indivs: OrganogramEntity[] = [];
 
     data.entities.forEach((entity) => {
-      if (entity.is_individual ||
+      // Check if this is an individual by relationship type or name pattern
+      const isIndividualByType = entity.is_individual ||
           entity.relationship_to_target === "key_individual" ||
           entity.relationship_to_target === "director" ||
-          entity.relationship_to_target === "officer") {
+          entity.relationship_to_target === "officer";
+
+      // Check if name looks like a person (has first + last name pattern, or title)
+      const nameParts = entity.entity_name.trim().split(/\s+/);
+      const hasTitle = /^(Mr|Mrs|Ms|Dr|Prof|Adv)\.?\s/i.test(entity.entity_name);
+      const looksLikePersonName = nameParts.length >= 2 &&
+        nameParts.length <= 4 &&
+        !entity.entity_name.match(/\b(Ltd|Pty|Inc|LLC|Corp|Company|Bank|Trust|Holdings|Group|SA|NPC)\b/i) &&
+        nameParts.every(part => part.length > 1 && /^[A-Z][a-z]/.test(part));
+
+      if (isIndividualByType || hasTitle || looksLikePersonName) {
         indivs.push(entity);
       } else {
         corps.push(entity);
@@ -599,263 +703,385 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
     return { corporateEntities: corps, individuals: indivs };
   }, [data.entities]);
 
-  // Convert entities to React Flow nodes and edges
+  // Convert entities to React Flow nodes and edges using grid-based layout
   const { nodes: initialNodes, edges: initialEdges } = useMemo(() => {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
 
-    // Layout constants
-    const centerX = 450;
-    const centerY = 280;
-    const verticalGap = 140;
-    const horizontalGap = 220;
+    // Layout constants - all positions relative to target center
+    const nodeWidth = 175;        // 140 * 1.25
+    const nodeHeight = 60;
+    const horizontalSpacing = 200; // Space between nodes horizontally (increased for wider nodes)
+    const verticalSpacing = 120;   // Space between rows
+    const smallNodeWidth = 163;    // 130 * 1.25
+    const smallNodeHeight = 55;
 
-    // Group entities by relationship type
+    // Group entities by their grid position
+    // Row 1 (Top): Transaction counterparties (client + financiers, suppliers, customers from wizard)
+    const transactionCounterparties = corporateEntities.filter(e =>
+      ["financier", "lender", "supplier", "customer"].includes(e.relationship_to_target)
+    );
+
+    // Row 2: Shareholders from wizard data
+    const shareholders = data.shareholders || [];
+
+    // Row 3 Left: Key individuals (already separated in `individuals`)
+    // Row 3 Right: Related stakeholders (counterparties, related parties, unknown)
+    const relatedStakeholders = corporateEntities.filter(e =>
+      ["counterparty", "related_party", "unknown"].includes(e.relationship_to_target)
+    );
+
+    // Row 4 (Bottom): Subsidiaries
     const subsidiaries = corporateEntities.filter(e =>
       e.relationship_to_target === "subsidiary"
     );
-    const leftEntities = corporateEntities.filter(e =>
-      ["supplier", "customer", "related_party"].includes(e.relationship_to_target)
-    );
-    const rightEntities = corporateEntities.filter(e =>
-      ["counterparty", "financier", "lender", "unknown"].includes(e.relationship_to_target)
-    );
 
-    // Use shareholders from wizard data
-    const shareholders = data.shareholders || [];
+    // Calculate dynamic center based on max width needed
+    const maxTopRowItems = Math.max(1, (data.client_entity ? 1 : 0) + transactionCounterparties.length);
+    const maxShareholderItems = Math.max(1, shareholders.length);
+    const maxSubsidiaryItems = Math.max(1, subsidiaries.length);
+    const maxMiddleRowSideItems = Math.max(individuals.length, relatedStakeholders.length);
 
-    // Add target entity node (center)
-    const targetNode: Node = {
+    const maxHorizontalItems = Math.max(maxTopRowItems, maxShareholderItems, maxSubsidiaryItems);
+    const totalWidth = maxHorizontalItems * horizontalSpacing;
+
+    // Calculate dynamic center - more room at top for transaction parties and shareholders
+    const centerX = Math.max(500, totalWidth / 2 + 150);
+    const centerY = 320;
+
+    // === ROW 3: Target Entity (CENTER) ===
+    // Create a pseudo-entity for target so it can be clicked for details
+    const targetEntity: OrganogramEntity = {
+      id: "target",
+      entity_name: data.target_entity.name,
+      registration_number: data.target_entity.registration_number,
+      relationship_to_target: "target",
+      confidence: 1,
+      documents_appearing_in: [],
+    };
+
+    nodes.push({
       id: "target",
       type: "entity",
-      position: { x: centerX, y: centerY },
+      position: { x: centerX - nodeWidth / 2, y: centerY - nodeHeight / 2 },
       data: {
         label: data.target_entity.name,
         registrationNumber: data.target_entity.registration_number,
         relationship: "target",
         confidence: 1,
         docsCount: 0,
-        onClick: () => {},
-      },
-    };
-    nodes.push(targetNode);
-
-    // Add client/acquirer node (future owner - top left, dotted)
-    if (data.client_entity) {
-      const clientNode: Node = {
-        id: "client",
-        type: "entity",
-        position: { x: centerX - horizontalGap * 1.2, y: centerY - verticalGap },
-        data: {
-          label: data.client_entity.name,
-          relationship: "client",
-          confidence: 1,
-          docsCount: 0,
-          dealStructure: data.client_entity.deal_structure,
-          onClick: () => {},
+        onClick: () => {
+          setSelectedEntity(targetEntity);
+          onEntityClick?.(targetEntity);
         },
-      };
-      nodes.push(clientNode);
+      },
+    });
 
-      // Edge from client to target (dashed, showing future acquisition)
-      edges.push({
-        id: "client-target",
-        source: "client",
-        target: "target",
-        type: "smoothstep",
-        animated: true,
-        style: { stroke: "#6366f1", strokeWidth: 2, strokeDasharray: "8,4" },
-        markerEnd: { type: MarkerType.ArrowClosed, color: "#6366f1" },
-        label: data.client_entity.deal_structure || "Acquisition",
-        labelStyle: { fontSize: 10, fill: "#4338ca", fontWeight: 600 },
-        labelBgStyle: { fill: "#e0e7ff", fillOpacity: 0.9 },
+    // === ROW 1: Transaction Counterparties (Top, centered) ===
+    const row1Y = centerY - verticalSpacing * 2;
+
+    // Build array of transaction parties: client first, then other counterparties
+    type TransactionParty = { id: string; name: string; isClient: boolean; dealStructure?: string; entity?: OrganogramEntity };
+    const allTransactionParties: TransactionParty[] = [];
+
+    // Create pseudo-entity for client
+    let clientEntity: OrganogramEntity | null = null;
+    if (data.client_entity) {
+      clientEntity = {
+        id: "client",
+        entity_name: data.client_entity.name,
+        relationship_to_target: "client",
+        relationship_detail: data.client_entity.role || "Acquirer/Purchaser",
+        confidence: 1,
+        documents_appearing_in: [],
+      };
+      allTransactionParties.push({
+        id: "client",
+        name: data.client_entity.name,
+        isClient: true,
+        dealStructure: data.client_entity.deal_structure,
       });
     }
 
-    // Add shareholder nodes (above target)
-    shareholders.forEach((sh, idx) => {
-      const totalShareholders = shareholders.length + (data.client_entity ? 0 : 0);
-      const startX = centerX - ((totalShareholders - 1) * horizontalGap * 0.5) / 2;
-      const xOffset = data.client_entity ? horizontalGap * 0.6 : 0; // Shift right if client exists
+    transactionCounterparties.forEach(e => {
+      allTransactionParties.push({
+        id: e.id,
+        name: e.entity_name,
+        isClient: false,
+        entity: e,
+      });
+    });
 
-      nodes.push({
-        id: `shareholder-${idx}`,
-        type: "entity",
-        position: {
-          x: startX + idx * horizontalGap * 0.9 + xOffset,
-          y: centerY - verticalGap
-        },
-        data: {
-          label: sh.name,
-          relationship: "shareholder",
+    if (allTransactionParties.length > 0) {
+      const totalTopWidth = allTransactionParties.length * horizontalSpacing;
+      const startTopX = centerX - totalTopWidth / 2 + horizontalSpacing / 2 - nodeWidth / 2;
+
+      allTransactionParties.forEach((party, idx) => {
+        nodes.push({
+          id: party.id,
+          type: "entity",
+          position: { x: startTopX + idx * horizontalSpacing, y: row1Y },
+          data: {
+            label: party.name,
+            relationship: party.isClient ? "client" : party.entity?.relationship_to_target || "counterparty",
+            confidence: party.isClient ? 1 : party.entity?.confidence || 0.5,
+            docsCount: party.isClient ? 0 : party.entity?.documents_appearing_in.length || 0,
+            dealStructure: party.dealStructure,
+            hasConflict: party.isClient ? false : party.entity?.has_conflict || false,
+            onClick: () => {
+              if (party.isClient && clientEntity) {
+                setSelectedEntity(clientEntity);
+                onEntityClick?.(clientEntity);
+              } else if (party.entity) {
+                setSelectedEntity(party.entity);
+                onEntityClick?.(party.entity);
+              }
+            },
+          },
+        });
+
+        // Edge to target
+        edges.push({
+          id: `${party.id}-target`,
+          source: party.id,
+          target: "target",
+          type: "smoothstep",
+          animated: party.isClient,
+          style: {
+            stroke: party.isClient ? "#6366f1" : "#f59e0b",
+            strokeWidth: 2,
+            strokeDasharray: party.isClient ? "8,4" : undefined
+          },
+          markerEnd: { type: MarkerType.ArrowClosed, color: party.isClient ? "#6366f1" : "#f59e0b" },
+          label: party.isClient ? (party.dealStructure || "Acquisition") : undefined,
+          labelStyle: { fontSize: 10, fill: "#4338ca", fontWeight: 600 },
+          labelBgStyle: { fill: "#e0e7ff", fillOpacity: 0.9 },
+        });
+      });
+    }
+
+    // === ROW 2: Shareholders (centered, expand left/right from center) ===
+    const row2Y = centerY - verticalSpacing;
+    if (shareholders.length > 0) {
+      const totalShareholderWidth = shareholders.length * horizontalSpacing;
+      const startShareholderX = centerX - totalShareholderWidth / 2 + horizontalSpacing / 2 - nodeWidth / 2;
+
+      shareholders.forEach((sh, idx) => {
+        // Create pseudo-entity for shareholder so it can be clicked for details
+        const shareholderEntity: OrganogramEntity = {
+          id: `shareholder-${idx}`,
+          entity_name: sh.name,
+          relationship_to_target: "shareholder",
+          relationship_detail: sh.ownership_percentage ? `${sh.ownership_percentage}% ownership stake` : "Shareholder",
+          ownership_percentage: sh.ownership_percentage,
           confidence: 1,
-          docsCount: 0,
-          ownershipPercentage: sh.ownership_percentage,
-          onClick: () => {},
-        },
-      });
+          documents_appearing_in: [],
+        };
 
-      // Edge from shareholder to target
-      edges.push({
-        id: `shareholder-${idx}-target`,
-        source: `shareholder-${idx}`,
-        target: "target",
-        type: "smoothstep",
-        style: { stroke: "#a855f7", strokeWidth: 2 },
-        markerEnd: { type: MarkerType.ArrowClosed, color: "#a855f7" },
-        label: sh.ownership_percentage ? `${sh.ownership_percentage}%` : undefined,
-        labelStyle: { fontSize: 11, fontWeight: 600, fill: "#7c3aed" },
-        labelBgStyle: { fill: "white", fillOpacity: 0.9 },
-      });
-    });
-
-    // Add subsidiary nodes (below target)
-    subsidiaries.forEach((entity, idx) => {
-      const xOffset = (idx - (subsidiaries.length - 1) / 2) * (horizontalGap * 0.8);
-      nodes.push({
-        id: entity.id,
-        type: "entity",
-        position: { x: centerX + xOffset, y: centerY + verticalGap },
-        data: {
-          label: entity.entity_name,
-          registrationNumber: entity.registration_number,
-          relationship: entity.relationship_to_target,
-          confidence: entity.confidence,
-          docsCount: entity.documents_appearing_in.length,
-          ownershipPercentage: entity.ownership_percentage,
-          hasConflict: entity.has_conflict,
-          onClick: () => {
-            setSelectedEntity(entity);
-            onEntityClick?.(entity);
+        nodes.push({
+          id: `shareholder-${idx}`,
+          type: "entity",
+          position: { x: startShareholderX + idx * horizontalSpacing, y: row2Y },
+          data: {
+            label: sh.name,
+            relationship: "shareholder",
+            confidence: 1,
+            docsCount: 0,
+            onClick: () => {
+              setSelectedEntity(shareholderEntity);
+              onEntityClick?.(shareholderEntity);
+            },
           },
-        },
-      });
+        });
 
-      // Edge from target to subsidiary
-      edges.push({
-        id: `target-${entity.id}`,
-        source: "target",
-        target: entity.id,
-        type: "smoothstep",
-        style: { stroke: "#22c55e", strokeWidth: 2 },
-        markerEnd: { type: MarkerType.ArrowClosed, color: "#22c55e" },
-        label: entity.ownership_percentage ? `${entity.ownership_percentage}%` : undefined,
-        labelStyle: { fontSize: 11, fontWeight: 500 },
-        labelBgStyle: { fill: "white", fillOpacity: 0.8 },
+        // Edge from shareholder to target with ownership percentage
+        edges.push({
+          id: `shareholder-${idx}-target`,
+          source: `shareholder-${idx}`,
+          target: "target",
+          type: "smoothstep",
+          style: { stroke: "#a855f7", strokeWidth: 2 },
+          markerEnd: { type: MarkerType.ArrowClosed, color: "#a855f7" },
+          label: sh.ownership_percentage ? `${sh.ownership_percentage}%` : undefined,
+          labelStyle: { fontSize: 11, fontWeight: 600, fill: "#7c3aed" },
+          labelBgStyle: { fill: "white", fillOpacity: 0.9 },
+        });
       });
-    });
+    }
 
-    // Add left side entities (suppliers, customers, related)
-    leftEntities.forEach((entity, idx) => {
-      nodes.push({
-        id: entity.id,
-        type: "entity",
-        position: { x: centerX - horizontalGap * 1.6, y: centerY + (idx - (leftEntities.length - 1) / 2) * 90 },
-        data: {
-          label: entity.entity_name,
-          registrationNumber: entity.registration_number,
-          relationship: entity.relationship_to_target,
-          confidence: entity.confidence,
-          docsCount: entity.documents_appearing_in.length,
-          hasConflict: entity.has_conflict,
-          onClick: () => {
-            setSelectedEntity(entity);
-            onEntityClick?.(entity);
+    // === ROW 3 LEFT: Key Individuals (vertically aligned with target center) ===
+    const leftColumnX = centerX - horizontalSpacing * 2.2;
+    const verticalItemSpacing = smallNodeHeight + 20; // Space between stacked items
+    if (individuals.length > 0) {
+      const totalLeftHeight = individuals.length * verticalItemSpacing;
+      const startLeftY = centerY - totalLeftHeight / 2 + smallNodeHeight / 2;
+
+      individuals.forEach((person, idx) => {
+        nodes.push({
+          id: person.id,
+          type: "entity",
+          position: { x: leftColumnX - smallNodeWidth / 2, y: startLeftY + idx * verticalItemSpacing },
+          data: {
+            label: person.entity_name,
+            relationship: "key_individual",
+            confidence: person.confidence,
+            docsCount: person.documents_appearing_in.length,
+            hasConflict: person.has_conflict,
+            onClick: () => {
+              setSelectedEntity(person);
+              onEntityClick?.(person);
+            },
           },
-        },
-      });
+        });
 
-      // Edge to target
-      edges.push({
-        id: `${entity.id}-target`,
-        source: entity.id,
-        sourceHandle: "right",
-        target: "target",
-        targetHandle: "left",
-        type: "smoothstep",
-        style: { stroke: "#9ca3af", strokeWidth: 1, strokeDasharray: "3,3" },
+        // Edge from individual to target
+        edges.push({
+          id: `${person.id}-target`,
+          source: person.id,
+          sourceHandle: "right",
+          target: "target",
+          targetHandle: "left",
+          type: "smoothstep",
+          style: { stroke: "#6b7280", strokeWidth: 1.5 },
+        });
       });
-    });
+    }
 
-    // Add right side entities (counterparties, financiers)
-    rightEntities.forEach((entity, idx) => {
-      nodes.push({
-        id: entity.id,
-        type: "entity",
-        position: { x: centerX + horizontalGap * 1.6, y: centerY + (idx - (rightEntities.length - 1) / 2) * 90 },
-        data: {
-          label: entity.entity_name,
-          registrationNumber: entity.registration_number,
-          relationship: entity.relationship_to_target,
-          confidence: entity.confidence,
-          docsCount: entity.documents_appearing_in.length,
-          hasConflict: entity.has_conflict,
-          onClick: () => {
-            setSelectedEntity(entity);
-            onEntityClick?.(entity);
+    // === ROW 3 RIGHT: Related Stakeholders (vertically aligned with target center) ===
+    const rightColumnX = centerX + horizontalSpacing * 2.2;
+    if (relatedStakeholders.length > 0) {
+      const totalRightHeight = relatedStakeholders.length * verticalItemSpacing;
+      const startRightY = centerY - totalRightHeight / 2 + smallNodeHeight / 2;
+
+      relatedStakeholders.forEach((entity, idx) => {
+        nodes.push({
+          id: entity.id,
+          type: "entity",
+          position: { x: rightColumnX - smallNodeWidth / 2, y: startRightY + idx * verticalItemSpacing },
+          data: {
+            label: entity.entity_name,
+            relationship: entity.relationship_to_target,
+            confidence: entity.confidence,
+            docsCount: entity.documents_appearing_in.length,
+            hasConflict: entity.has_conflict,
+            onClick: () => {
+              setSelectedEntity(entity);
+              onEntityClick?.(entity);
+            },
           },
-        },
-      });
+        });
 
-      // Edge to target
-      edges.push({
-        id: `target-${entity.id}`,
-        source: "target",
-        sourceHandle: "right",
-        target: entity.id,
-        targetHandle: "left",
-        type: "smoothstep",
-        style: {
-          stroke: entity.relationship_to_target === "financier" || entity.relationship_to_target === "lender"
-            ? "#10b981" : "#f59e0b",
-          strokeWidth: 1.5,
-        },
+        // Edge from target to stakeholder
+        edges.push({
+          id: `target-${entity.id}`,
+          source: "target",
+          sourceHandle: "right",
+          target: entity.id,
+          targetHandle: "left",
+          type: "smoothstep",
+          style: { stroke: "#f59e0b", strokeWidth: 1.5 },
+        });
       });
-    });
+    }
+
+    // === ROW 4: Subsidiaries (Bottom, centered) ===
+    const row4Y = centerY + verticalSpacing;
+    if (subsidiaries.length > 0) {
+      const totalSubsidiaryWidth = subsidiaries.length * horizontalSpacing;
+      const startSubsidiaryX = centerX - totalSubsidiaryWidth / 2 + horizontalSpacing / 2 - nodeWidth / 2;
+
+      subsidiaries.forEach((entity, idx) => {
+        nodes.push({
+          id: entity.id,
+          type: "entity",
+          position: { x: startSubsidiaryX + idx * horizontalSpacing, y: row4Y },
+          data: {
+            label: entity.entity_name,
+            registrationNumber: entity.registration_number,
+            relationship: entity.relationship_to_target,
+            confidence: entity.confidence,
+            docsCount: entity.documents_appearing_in.length,
+            ownershipPercentage: entity.ownership_percentage,
+            hasConflict: entity.has_conflict,
+            onClick: () => {
+              setSelectedEntity(entity);
+              onEntityClick?.(entity);
+            },
+          },
+        });
+
+        // Edge from target to subsidiary with ownership percentage
+        edges.push({
+          id: `target-${entity.id}`,
+          source: "target",
+          target: entity.id,
+          type: "smoothstep",
+          style: { stroke: "#eab308", strokeWidth: 2 },
+          markerEnd: { type: MarkerType.ArrowClosed, color: "#eab308" },
+          label: entity.ownership_percentage ? `${entity.ownership_percentage}%` : undefined,
+          labelStyle: { fontSize: 11, fontWeight: 500, fill: "#a16207" },
+          labelBgStyle: { fill: "white", fillOpacity: 0.8 },
+        });
+      });
+    }
 
     return { nodes, edges };
-  }, [corporateEntities, data.target_entity, data.client_entity, data.shareholders, onEntityClick]);
+  }, [corporateEntities, individuals, data.target_entity, data.client_entity, data.shareholders, onEntityClick]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const reactFlowInstance = useRef<ReactFlowInstance | null>(null);
 
   const handleEntityClick = useCallback((entity: OrganogramEntity) => {
     setSelectedEntity(entity);
     onEntityClick?.(entity);
   }, [onEntityClick]);
 
+  // Re-fit view when fullscreen mode changes
+  useEffect(() => {
+    if (reactFlowInstance.current) {
+      // Small delay to allow container to resize
+      setTimeout(() => {
+        reactFlowInstance.current?.fitView({
+          padding: isFullscreen ? 0.2 : 0.15,
+          minZoom: isFullscreen ? 0.9 : 0.5,
+          maxZoom: isFullscreen ? 1.2 : 1.5,
+          duration: 300,
+        });
+      }, 100);
+    }
+  }, [isFullscreen]);
+
+  const onInit = useCallback((instance: ReactFlowInstance) => {
+    reactFlowInstance.current = instance;
+  }, []);
+
   return (
-    <div className={cn("relative w-full bg-gray-50 rounded-lg overflow-hidden", className)} style={{ height: "500px", minHeight: "500px" }}>
+    <div
+      className={cn("relative w-full bg-gray-50 rounded-lg overflow-hidden", className)}
+      style={{ height: isFullscreen ? "100%" : "500px", width: "100%" }}
+    >
       <ReactFlow
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
+        onInit={onInit}
         fitView
-        fitViewOptions={{ padding: 0.15 }}
-        minZoom={0.3}
-        maxZoom={1.5}
-        defaultViewport={{ x: 0, y: 0, zoom: 0.85 }}
+        fitViewOptions={{
+          padding: isFullscreen ? 0.2 : 0.15,
+          minZoom: isFullscreen ? 0.9 : 0.5,
+          maxZoom: isFullscreen ? 1.2 : 1.5,
+        }}
+        minZoom={isFullscreen ? 0.5 : 0.3}
+        maxZoom={isFullscreen ? 2 : 1.5}
+        defaultViewport={{ x: 0, y: 0, zoom: isFullscreen ? 1 : 0.85 }}
       >
         <Background color="#e5e7eb" gap={20} />
         <Controls
           className="!bg-white !border-gray-200 !shadow-md"
           showInteractive={false}
-        />
-        <MiniMap
-          className="!bg-white !border-gray-200"
-          nodeColor={(node) => {
-            const rel = node.data?.relationship;
-            if (rel === "target") return "#fb923c";
-            if (rel === "client") return "#818cf8";
-            if (rel === "shareholder") return "#c084fc";
-            if (rel === "subsidiary") return "#4ade80";
-            if (rel === "counterparty") return "#fbbf24";
-            if (rel === "financier" || rel === "lender") return "#34d399";
-            return "#9ca3af";
-          }}
-          maskColor="rgba(0,0,0,0.1)"
         />
       </ReactFlow>
 
@@ -869,12 +1095,6 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
           />
         )}
       </AnimatePresence>
-
-      {/* Key Individuals section */}
-      <KeyIndividualsSection
-        individuals={individuals}
-        onIndividualClick={handleEntityClick}
-      />
 
       {/* Collapsible Legend - bottom right */}
       <Legend />

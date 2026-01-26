@@ -46,7 +46,7 @@ import { useCreateAnalysisRun, useAnalysisRunsList } from "@/hooks/useAnalysisRu
 import { useOrganisationProgress, useClassifyDocuments, useOrganiseFolders, useDocumentReassign, useCancelOrganisation } from "@/hooks/useOrganisationProgress";
 import { useBlueprintRequirements } from "@/hooks/useBlueprintRequirements";
 import { useDeleteDocument } from "@/hooks/useDeleteDocument";
-import useEntityMapping, { useGetEntityMap } from "@/hooks/useEntityMapping";
+import useEntityMapping, { useGetEntityMap, useModifyEntityMap, useConfirmEntityMap } from "@/hooks/useEntityMapping";
 import { CategoryCount, CategoryDocument } from "./FileTree/FileTree";
 import { Button } from "@/components/ui/button";
 import {
@@ -68,7 +68,7 @@ import { AccuracyTierSelector, ModelTier } from "./AccuracyTierSelector";
 import { ControlBar } from "./ControlBar";
 import { useValidationCheckpoint } from "@/hooks/useValidationCheckpoint";
 import { ValidationWizardModal } from "../ValidationWizardModal";
-import { EntityMappingModal, EntityMappingResult } from "./EntityMappingModal";
+import { EntityMappingModal, EntityMappingResult, EntityMapEntry } from "./EntityMappingModal";
 
 interface DDProcessingDashboardProps {
   ddId?: string;
@@ -230,6 +230,8 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   const cancelOrganisation = useCancelOrganisation();
   const deleteDocument = useDeleteDocument();
   const entityMapping = useEntityMapping();
+  const modifyEntityMap = useModifyEntityMap();
+  const confirmEntityMap = useConfirmEntityMap();
 
   // Entity mapping state
   const [entityMappingComplete, setEntityMappingComplete] = useState(false);
@@ -237,10 +239,11 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   const [showEntityMappingModal, setShowEntityMappingModal] = useState(false);
   const [entityMappingResult, setEntityMappingResult] = useState<EntityMappingResult | null>(null);
 
-  // Fetch stored entity map on page load (enable after readability is checked or if we have existing data)
+  // Fetch stored entity map on page load - always enabled if we have a ddId
+  // This ensures previously saved entity maps are loaded even after browser refresh
   const { data: storedEntityMap, isLoading: isLoadingEntityMap } = useGetEntityMap(
     ddId || undefined,
-    readabilityChecked || entityMappingComplete
+    true // Always try to fetch - the hook handles empty responses gracefully
   );
 
   // Update entity mapping state when stored data is loaded
@@ -249,6 +252,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
       setEntityMappingComplete(true);
       setEntityCount(storedEntityMap.summary?.total_unique_entities || storedEntityMap.entity_map.length);
       // Set result for viewing in modal - provide defaults for required fields
+      // Include wizard data (target_entity, client_entity, shareholders) from GET response
       setEntityMappingResult({
         dd_id: storedEntityMap.dd_id,
         status: storedEntityMap.status || "completed",
@@ -263,6 +267,10 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         checkpoint_recommended: storedEntityMap.checkpoint_recommended || false,
         checkpoint_reason: storedEntityMap.checkpoint_reason,
         stored_count: storedEntityMap.entity_map.length,
+        // Include wizard data for organogram display
+        target_entity: storedEntityMap.target_entity,
+        client_entity: storedEntityMap.client_entity,
+        shareholders: storedEntityMap.shareholders,
       });
     }
   }, [storedEntityMap]);
@@ -526,6 +534,11 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
 
     return categories.sort((a, b) => a.category.localeCompare(b.category));
   }, [organisationProgress?.categoryCounts, customCategories, deletedCategories, documentsByCategory]);
+
+  // Total document count excluding converted docs (for consistent display with folder counts)
+  const totalOriginalDocuments = useMemo(() => {
+    return Object.values(documentsByCategory).reduce((total, docs) => total + docs.length, 0);
+  }, [documentsByCategory]);
 
   // Handle approve organisation - triggers folder creation
   const handleApproveOrganisation = useCallback(() => {
@@ -1533,7 +1546,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
             categoryDistribution={categoryDistribution}
             documentsByCategory={documentsByCategory}
             classifiedCount={organisationProgress?.classifiedCount || 0}
-            totalDocuments={organisationProgress?.totalDocuments || documents.length}
+            totalDocuments={totalOriginalDocuments}
             isMovingDocument={documentReassign.isPending}
             onMoveDocument={handleMoveDocument}
             onAddCategory={handleAddCategory}
@@ -1853,9 +1866,34 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         onClose={() => setShowEntityMappingModal(false)}
         isRunning={entityMapping.isPending}
         result={entityMappingResult}
+        ddId={ddId}
         onConfirmEntities={(confirmations) => {
-          // TODO: Send confirmations to backend
           addLogEntry("success", `Entity relationships confirmed for ${Object.keys(confirmations).length} entities`);
+        }}
+        onModifyWithAI={async (instruction, currentEntityMap) => {
+          if (!ddId) throw new Error("No DD ID");
+          const result = await modifyEntityMap.mutateAsync({
+            ddId,
+            instruction,
+            currentEntityMap,
+          });
+          if (result.success) {
+            addLogEntry("success", `AI modified entity map: ${result.explanation}`);
+          }
+          return result;
+        }}
+        onConfirmEntityMap={async (entityMap) => {
+          if (!ddId) throw new Error("No DD ID");
+          const result = await confirmEntityMap.mutateAsync({
+            ddId,
+            entityMap,
+          });
+          if (result.success) {
+            addLogEntry("success", `Entity map confirmed and saved (${result.confirmed_count} entities)`);
+            setEntityMappingComplete(true);
+            setEntityCount(result.confirmed_count);
+          }
+          return result;
         }}
       />
 

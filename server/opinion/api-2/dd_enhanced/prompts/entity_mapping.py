@@ -21,6 +21,12 @@ Your task is to:
 3. Match entities to known entities from the transaction context
 4. Flag entities with unclear relationships for human confirmation
 
+CRITICAL - ONLY EXTRACT LEGAL ENTITIES:
+- Companies, trusts, partnerships, and other legal entities
+- Individual persons ONLY if they have a personal stake (e.g., individual shareholder, personal guarantor)
+- DO NOT extract signatories, representatives, witnesses, or employees acting on behalf of companies
+- If "John Smith, CEO" signs for "ABC Bank Ltd", extract "ABC Bank Ltd" NOT "John Smith"
+
 RELATIONSHIP TYPES:
 - target: The company being acquired/invested in
 - parent: Parent/holding company of the target
@@ -94,7 +100,15 @@ DOCUMENT: {document_name}
 
 ---
 
-Extract all entities (companies, trusts, persons acting in representative capacity) and their relationships to the target.
+Extract all entities (companies, trusts, partnerships) and their relationships to the target.
+
+IMPORTANT - DO NOT EXTRACT:
+- Individual signatories/representatives who sign on behalf of a company (extract the company instead)
+- Witnesses to signatures
+- Notaries public
+- Individual employees unless they have a personal stake (e.g., individual shareholder, director with personal guarantee)
+
+For example, if "John Smith signs as CEO of ABC Bank", extract "ABC Bank" NOT "John Smith".
 
 Return JSON:
 {{

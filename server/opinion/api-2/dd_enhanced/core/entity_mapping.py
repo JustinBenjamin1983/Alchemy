@@ -443,6 +443,261 @@ def store_entity_map(
     }
 
 
+def modify_entity_map_with_ai(
+    current_entity_map: List[Dict[str, Any]],
+    user_instruction: str,
+    target_entity: Dict[str, Any],
+    client: Any,  # ClaudeClient
+) -> Dict[str, Any]:
+    """
+    Use AI to modify the entity map based on user instructions.
+
+    Args:
+        current_entity_map: Current list of entities
+        user_instruction: User's natural language instruction for changes
+        target_entity: Dict with target entity info
+        client: Claude API client
+
+    Returns:
+        Dict with modified entity_map and explanation of changes
+    """
+    target_name = target_entity.get("name", "Unknown Target")
+
+    # Format current entities for the prompt
+    entities_summary = []
+    for entity in current_entity_map[:50]:  # Limit to 50 entities
+        entities_summary.append({
+            "id": entity.get("id"),
+            "entity_name": entity.get("entity_name"),
+            "registration_number": entity.get("registration_number"),
+            "relationship_to_target": entity.get("relationship_to_target"),
+            "relationship_detail": entity.get("relationship_detail"),
+            "confidence": entity.get("confidence"),
+        })
+
+    import json
+    entities_json = json.dumps(entities_summary, indent=2)
+
+    system_prompt = """You are an entity mapping assistant helping to refine corporate structure maps for M&A due diligence.
+
+You will be given:
+1. The current entity map with entities and their relationships to the target company
+2. A user instruction describing changes they want to make
+
+Your task is to:
+1. Understand the user's requested changes
+2. Apply those changes to the entity map
+3. Return the modified entity map
+
+RELATIONSHIP TYPES:
+- target: The company being acquired/invested in
+- parent: Parent/holding company of the target
+- subsidiary: Subsidiary of the target
+- shareholder: Shareholder of the target
+- related_party: Sister company, affiliate, or related party
+- counterparty: Contract counterparty (general)
+- financier/lender: Financial institution providing funding
+- supplier: Provides goods/services to target
+- customer: Purchases from target
+- key_individual: Director, officer, or key person
+- unknown: Relationship cannot be determined
+
+You can:
+- Change an entity's relationship_to_target
+- Update relationship_detail
+- Remove entities (set action: "remove")
+- Add new entities (set action: "add")
+- Merge duplicate entities (set action: "merge", merge_into: "entity_id")
+
+Be precise and only make the changes the user requests."""
+
+    prompt = f"""TARGET ENTITY: {target_name}
+
+CURRENT ENTITY MAP:
+{entities_json}
+
+USER INSTRUCTION:
+{user_instruction}
+
+---
+
+Apply the user's requested changes and return the modified entity map.
+
+Return JSON:
+{{
+    "changes_made": [
+        {{
+            "entity_name": "Name of entity changed",
+            "change_type": "modified|removed|added|merged",
+            "description": "Brief description of change"
+        }}
+    ],
+    "modified_entities": [
+        {{
+            "id": "original id or 'new' for new entities",
+            "entity_name": "Entity name",
+            "registration_number": "Registration number if known",
+            "relationship_to_target": "relationship type",
+            "relationship_detail": "Specific description",
+            "confidence": 0.0-1.0,
+            "action": "keep|remove|add|merge",
+            "merge_into": "entity_id if merging"
+        }}
+    ],
+    "explanation": "Brief explanation of all changes made"
+}}
+
+If the user's instruction is unclear or cannot be applied, explain why in the explanation field and return the entities unchanged."""
+
+    response = client.complete(
+        prompt=prompt,
+        system=system_prompt,
+        json_mode=True,
+        max_tokens=8192,
+        temperature=0.1
+    )
+
+    if "error" in response:
+        return {
+            "success": False,
+            "error": response.get("error"),
+            "entity_map": current_entity_map,
+            "changes_made": [],
+            "explanation": f"AI modification failed: {response.get('error')}"
+        }
+
+    # Apply the modifications
+    modified_map = []
+    changes_made = response.get("changes_made", [])
+    explanation = response.get("explanation", "")
+
+    # Build lookup of original entities by ID
+    original_by_id = {e.get("id"): e for e in current_entity_map if e.get("id")}
+
+    for mod_entity in response.get("modified_entities", []):
+        action = mod_entity.get("action", "keep")
+
+        if action == "remove":
+            # Skip this entity (don't add to modified_map)
+            continue
+        elif action == "merge":
+            # Skip - will be merged into another entity
+            continue
+        elif action == "add":
+            # New entity
+            modified_map.append({
+                "id": None,  # Will get new ID when stored
+                "entity_name": mod_entity.get("entity_name"),
+                "registration_number": mod_entity.get("registration_number"),
+                "relationship_to_target": mod_entity.get("relationship_to_target", "unknown"),
+                "relationship_detail": mod_entity.get("relationship_detail"),
+                "confidence": mod_entity.get("confidence", 0.8),
+                "documents_appearing_in": [],
+                "evidence": "Added manually via AI assistant",
+                "requires_human_confirmation": False,
+                "human_confirmed": True,
+            })
+        else:
+            # Keep or modify existing entity
+            original_id = mod_entity.get("id")
+            original = original_by_id.get(original_id, {})
+
+            modified_map.append({
+                **original,  # Keep original fields
+                "entity_name": mod_entity.get("entity_name", original.get("entity_name")),
+                "registration_number": mod_entity.get("registration_number", original.get("registration_number")),
+                "relationship_to_target": mod_entity.get("relationship_to_target", original.get("relationship_to_target")),
+                "relationship_detail": mod_entity.get("relationship_detail", original.get("relationship_detail")),
+                "confidence": mod_entity.get("confidence", original.get("confidence", 0.5)),
+            })
+
+    return {
+        "success": True,
+        "entity_map": modified_map,
+        "changes_made": changes_made,
+        "explanation": explanation
+    }
+
+
+def confirm_entity_map(
+    dd_id: str,
+    entity_map: List[Dict[str, Any]],
+    session: Any
+) -> Dict[str, Any]:
+    """
+    Confirm and save the final entity map.
+
+    This marks all entities as human_confirmed, stores them, and resolves
+    any pending entity_confirmation checkpoint (Checkpoint B).
+
+    Args:
+        dd_id: Due diligence ID
+        entity_map: Final entity map to save
+        session: Database session
+
+    Returns:
+        Dict with confirmation status
+    """
+    from shared.models import DDValidationCheckpoint
+    import datetime
+
+    # Mark all entities as confirmed
+    for entity in entity_map:
+        entity["human_confirmed"] = True
+        entity["requires_human_confirmation"] = False
+
+    # Store the confirmed map
+    result = store_entity_map(
+        dd_id=dd_id,
+        run_id=None,
+        entity_map=entity_map,
+        session=session
+    )
+
+    dd_uuid = uuid.UUID(dd_id) if isinstance(dd_id, str) else dd_id
+
+    # Also resolve any pending entity_confirmation checkpoint (Checkpoint B)
+    checkpoint_resolved = False
+    try:
+        pending_checkpoint = session.query(DDValidationCheckpoint).filter(
+            DDValidationCheckpoint.dd_id == dd_uuid,
+            DDValidationCheckpoint.checkpoint_type == "entity_confirmation",
+            DDValidationCheckpoint.status.in_(["pending", "awaiting_user_input"])
+        ).first()
+
+        if pending_checkpoint:
+            # Build responses from the confirmed entity map
+            responses = {
+                "confirmed_via": "entity_mapping_modal",
+                "confirmed_at": datetime.datetime.utcnow().isoformat(),
+                "entity_count": len(entity_map),
+            }
+
+            # Add each entity's confirmation
+            for entity in entity_map:
+                entity_key = f"entity_{entity.get('entity_name', '').replace(' ', '_').lower()}"
+                responses[entity_key] = {
+                    "relationship": entity.get("relationship_to_target", "unknown"),
+                    "human_confirmed": True,
+                }
+
+            pending_checkpoint.user_responses = responses
+            pending_checkpoint.status = "completed"
+            pending_checkpoint.completed_at = datetime.datetime.utcnow()
+            checkpoint_resolved = True
+            logger.info(f"Resolved entity_confirmation checkpoint {pending_checkpoint.id} for DD {dd_id}")
+
+    except Exception as e:
+        logger.warning(f"Failed to resolve entity_confirmation checkpoint: {e}")
+
+    return {
+        "success": len(result.get("errors", [])) == 0,
+        "confirmed_count": result.get("stored_count", 0),
+        "errors": result.get("errors", []),
+        "checkpoint_resolved": checkpoint_resolved
+    }
+
+
 def get_entity_map_for_dd(dd_id: str, session: Any) -> List[Dict[str, Any]]:
     """
     Retrieve entity map for a DD project.

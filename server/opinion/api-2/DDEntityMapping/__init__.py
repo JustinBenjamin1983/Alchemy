@@ -100,19 +100,45 @@ def run_entity_mapping(dd_id: str, run_id: str = None, max_docs: int = None) -> 
             return {"error": f"Due diligence {dd_id} not found", "status": "failed"}
 
         # Get target entity information from wizard draft
+        # Try multiple matching strategies since wizard field names may vary
         draft = session.query(DDWizardDraft).filter(
             DDWizardDraft.owned_by == dd.owned_by,
             DDWizardDraft.transaction_name == dd.name
         ).first()
 
+        # If not found by transaction_name, try target_entity_name
+        if not draft:
+            draft = session.query(DDWizardDraft).filter(
+                DDWizardDraft.owned_by == dd.owned_by,
+                DDWizardDraft.target_entity_name == dd.name
+            ).first()
+
+        # If still not found, get the most recent draft for this user
+        if not draft:
+            draft = session.query(DDWizardDraft).filter(
+                DDWizardDraft.owned_by == dd.owned_by
+            ).order_by(DDWizardDraft.updated_at.desc()).first()
+
+        logging.info(f"[DDEntityMapping] Looking for draft - DD name: '{dd.name}', owner: '{dd.owned_by}', found: {draft is not None}")
+
         target_entity = {
             "name": dd.name,
             "registration_number": None,
+            "transaction_type": None,
+            "deal_structure": None,
             "expected_counterparties": []
         }
 
+        # Client entity (the acquirer/buyer in the transaction)
+        client_entity = None
+
+        # Shareholders list for display
+        shareholders_list = []
+
         if draft:
             target_entity["name"] = draft.target_entity_name or dd.name
+            target_entity["transaction_type"] = draft.transaction_type
+            target_entity["deal_structure"] = draft.deal_structure
 
             # Get registration number
             if draft.target_registration_number:
@@ -124,6 +150,29 @@ def run_entity_mapping(dd_id: str, run_id: str = None, max_docs: int = None) -> 
                     target_entity["expected_counterparties"] = json.loads(draft.expected_counterparties)
                 except (json.JSONDecodeError, TypeError):
                     target_entity["expected_counterparties"] = []
+
+            # Build client entity from draft
+            if draft.client_name:
+                client_entity = {
+                    "name": draft.client_name,
+                    "role": draft.client_role,
+                    "deal_structure": draft.deal_structure,
+                }
+
+            # Build shareholders list from draft
+            if draft.shareholders:
+                try:
+                    sh_data = json.loads(draft.shareholders)
+                    for sh in sh_data:
+                        if isinstance(sh, dict) and sh.get("name"):
+                            shareholders_list.append({
+                                "name": sh.get("name"),
+                                "ownership_percentage": sh.get("percentage") or sh.get("ownership_percentage"),
+                            })
+                        elif isinstance(sh, str) and sh:
+                            shareholders_list.append({"name": sh, "ownership_percentage": None})
+                except (json.JSONDecodeError, TypeError):
+                    pass
 
         # Load known entities from wizard (subsidiaries, holding company)
         known_entities = []
@@ -299,7 +348,16 @@ def run_entity_mapping(dd_id: str, run_id: str = None, max_docs: int = None) -> 
             "checkpoint_recommended": checkpoint_recommended,
             "checkpoint_reason": checkpoint_reason,
             "stored_count": store_result.get("stored_count", 0),
-            "cost": cost_summary
+            "cost": cost_summary,
+            # Include wizard data for organogram display
+            "target_entity": {
+                "name": target_entity["name"],
+                "registration_number": target_entity.get("registration_number"),
+                "transaction_type": target_entity.get("transaction_type"),
+                "deal_structure": target_entity.get("deal_structure"),
+            },
+            "client_entity": client_entity,
+            "shareholders": shareholders_list,
         }
 
         logging.info(f"[DDEntityMapping] Completed: {summary.get('total_unique_entities', 0)} entities, "
@@ -485,6 +543,230 @@ def handle_get(req: func.HttpRequest, email: str) -> func.HttpResponse:
         )
 
 
+def handle_put(req: func.HttpRequest, email: str) -> func.HttpResponse:
+    """
+    Modify entity map using AI based on user instructions.
+
+    PUT /api/dd-entity-mapping
+    Body: {
+        "dd_id": "uuid",
+        "instruction": "Remove G. Pietersen and change Standard Bank to lender",
+        "current_entity_map": [...] (optional - if not provided, fetches from DB)
+    }
+
+    Returns: {
+        "success": true,
+        "entity_map": [...],  // Modified entity map
+        "changes_made": [...],
+        "explanation": "Removed G. Pietersen as they are a signatory..."
+    }
+    """
+    from dd_enhanced.core.entity_mapping import modify_entity_map_with_ai, get_entity_map_for_dd
+
+    try:
+        req_body = req.get_json()
+    except ValueError:
+        return func.HttpResponse(
+            json.dumps({"error": "Invalid JSON body"}),
+            status_code=400,
+            mimetype="application/json"
+        )
+
+    dd_id = req_body.get("dd_id")
+    instruction = req_body.get("instruction")
+    current_entity_map = req_body.get("current_entity_map")
+
+    if not dd_id:
+        return func.HttpResponse(
+            json.dumps({"error": "dd_id is required"}),
+            status_code=400,
+            mimetype="application/json"
+        )
+
+    if not instruction:
+        return func.HttpResponse(
+            json.dumps({"error": "instruction is required"}),
+            status_code=400,
+            mimetype="application/json"
+        )
+
+    try:
+        dd_uuid = uuid_module.UUID(dd_id)
+
+        with transactional_session() as session:
+            # Verify user owns this DD
+            dd = session.query(DueDiligence).filter(DueDiligence.id == dd_uuid).first()
+
+            if not dd:
+                return func.HttpResponse(
+                    json.dumps({"error": f"Due diligence {dd_id} not found"}),
+                    status_code=404,
+                    mimetype="application/json"
+                )
+
+            if dd.owned_by != email and not DEV_MODE:
+                return func.HttpResponse(
+                    json.dumps({"error": "Unauthorized"}),
+                    status_code=403,
+                    mimetype="application/json"
+                )
+
+            # Get current entity map if not provided
+            if not current_entity_map:
+                current_entity_map = get_entity_map_for_dd(dd_id, session)
+
+            # Get target entity info
+            target_entity = {"name": dd.name}
+
+            # Get wizard draft for more target info
+            draft = session.query(DDWizardDraft).filter(
+                DDWizardDraft.owned_by == dd.owned_by,
+                DDWizardDraft.target_entity_name == dd.name
+            ).first()
+
+            if not draft:
+                draft = session.query(DDWizardDraft).filter(
+                    DDWizardDraft.owned_by == dd.owned_by
+                ).order_by(DDWizardDraft.updated_at.desc()).first()
+
+            if draft:
+                target_entity["name"] = draft.target_entity_name or dd.name
+                target_entity["registration_number"] = draft.target_registration_number
+
+            # Initialize Claude client
+            client = get_claude_client()
+
+            # Modify entity map with AI
+            result = modify_entity_map_with_ai(
+                current_entity_map=current_entity_map,
+                user_instruction=instruction,
+                target_entity=target_entity,
+                client=client
+            )
+
+            logging.info(f"[DDEntityMapping PUT] AI modification: {len(result.get('changes_made', []))} changes made")
+
+            return func.HttpResponse(
+                json.dumps(result, default=str),
+                status_code=200,
+                mimetype="application/json"
+            )
+
+    except ValueError as e:
+        return func.HttpResponse(
+            json.dumps({"error": f"Invalid dd_id format: {str(e)}"}),
+            status_code=400,
+            mimetype="application/json"
+        )
+    except Exception as e:
+        logging.error(f"[DDEntityMapping PUT] Error: {str(e)}")
+        logging.exception("Full traceback:")
+        return func.HttpResponse(
+            json.dumps({"error": str(e)}),
+            status_code=500,
+            mimetype="application/json"
+        )
+
+
+def handle_patch(req: func.HttpRequest, email: str) -> func.HttpResponse:
+    """
+    Confirm and save the final entity map.
+
+    PATCH /api/dd-entity-mapping
+    Body: {
+        "dd_id": "uuid",
+        "entity_map": [...]  // Final entity map to save
+    }
+
+    Returns: {
+        "success": true,
+        "confirmed_count": 25,
+        "message": "Entity map confirmed and saved"
+    }
+    """
+    from dd_enhanced.core.entity_mapping import confirm_entity_map
+
+    try:
+        req_body = req.get_json()
+    except ValueError:
+        return func.HttpResponse(
+            json.dumps({"error": "Invalid JSON body"}),
+            status_code=400,
+            mimetype="application/json"
+        )
+
+    dd_id = req_body.get("dd_id")
+    entity_map = req_body.get("entity_map")
+
+    if not dd_id:
+        return func.HttpResponse(
+            json.dumps({"error": "dd_id is required"}),
+            status_code=400,
+            mimetype="application/json"
+        )
+
+    if not entity_map:
+        return func.HttpResponse(
+            json.dumps({"error": "entity_map is required"}),
+            status_code=400,
+            mimetype="application/json"
+        )
+
+    try:
+        dd_uuid = uuid_module.UUID(dd_id)
+
+        with transactional_session() as session:
+            # Verify user owns this DD
+            dd = session.query(DueDiligence).filter(DueDiligence.id == dd_uuid).first()
+
+            if not dd:
+                return func.HttpResponse(
+                    json.dumps({"error": f"Due diligence {dd_id} not found"}),
+                    status_code=404,
+                    mimetype="application/json"
+                )
+
+            if dd.owned_by != email and not DEV_MODE:
+                return func.HttpResponse(
+                    json.dumps({"error": "Unauthorized"}),
+                    status_code=403,
+                    mimetype="application/json"
+                )
+
+            # Confirm and save entity map
+            result = confirm_entity_map(
+                dd_id=dd_id,
+                entity_map=entity_map,
+                session=session
+            )
+
+            logging.info(f"[DDEntityMapping PATCH] Entity map confirmed: {result.get('confirmed_count', 0)} entities")
+
+            return func.HttpResponse(
+                json.dumps({
+                    **result,
+                    "message": "Entity map confirmed and saved" if result.get("success") else "Failed to save entity map"
+                }, default=str),
+                status_code=200 if result.get("success") else 500,
+                mimetype="application/json"
+            )
+
+    except ValueError as e:
+        return func.HttpResponse(
+            json.dumps({"error": f"Invalid dd_id format: {str(e)}"}),
+            status_code=400,
+            mimetype="application/json"
+        )
+    except Exception as e:
+        logging.error(f"[DDEntityMapping PATCH] Error: {str(e)}")
+        logging.exception("Full traceback:")
+        return func.HttpResponse(
+            json.dumps({"error": str(e)}),
+            status_code=500,
+            mimetype="application/json"
+        )
+
+
 def main(req: func.HttpRequest) -> func.HttpResponse:
     """
     Entity mapping endpoint.
@@ -498,6 +780,21 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             "dd_id": "uuid",
             "run_id": "uuid" (optional),
             "max_docs": 50 (optional, for testing)
+        }
+
+    PUT /api/dd-entity-mapping
+        Modify entity map using AI based on user instructions.
+        Body: {
+            "dd_id": "uuid",
+            "instruction": "Remove G. Pietersen - they are just a signatory",
+            "current_entity_map": [...] (optional)
+        }
+
+    PATCH /api/dd-entity-mapping
+        Confirm and save the final entity map.
+        Body: {
+            "dd_id": "uuid",
+            "entity_map": [...]
         }
 
     Returns: {
@@ -536,6 +833,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         # Handle GET request
         if req.method.upper() == "GET":
             return handle_get(req, email)
+
+        # Handle PUT request (AI-assisted modification)
+        if req.method.upper() == "PUT":
+            return handle_put(req, email)
+
+        # Handle PATCH request (confirm and save)
+        if req.method.upper() == "PATCH":
+            return handle_patch(req, email)
 
         # Parse request body for POST
         try:

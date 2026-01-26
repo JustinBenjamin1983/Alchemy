@@ -196,7 +196,8 @@ def run_pass2_analysis(
     transaction_context: str = DEFAULT_TRANSACTION_CONTEXT,
     prioritized_questions: Optional[List[Dict]] = None,
     verbose: bool = True,
-    entity_map: Optional[List[Dict]] = None
+    entity_map: Optional[List[Dict]] = None,
+    progress_callback: Optional[callable] = None
 ) -> Dict[str, Any]:
     """
     Run Pass 2: Analyze each document with reference context.
@@ -217,6 +218,7 @@ def run_pass2_analysis(
         prioritized_questions: Tier 1-3 questions from question_prioritizer (optional)
         verbose: Print progress
         entity_map: List of entity dicts for party validation (from entity mapping pass)
+        progress_callback: Optional callback(current, total, message) for progress updates
 
     Returns:
         Dict with 'findings' list and 'gap_findings' list
@@ -261,6 +263,10 @@ def run_pass2_analysis(
         if verbose:
             folder_info = f" [{folder_category}]" if folder_category else ""
             print(f"  [{i}/{len(documents)}] Analyzing {filename}{folder_info}...")
+
+        # Report per-document progress
+        if progress_callback:
+            progress_callback(i, len(documents), f"Pass 2: Analyzing {filename} ({i}/{len(documents)})")
 
         # Phase 3: Get folder-specific questions
         folder_questions = None

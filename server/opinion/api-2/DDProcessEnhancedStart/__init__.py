@@ -28,6 +28,10 @@ from shared.models import (
 )
 from shared.audit import log_audit_event, AuditEventType
 
+# Checkpoint C imports
+from DDValidationCheckpoint import get_validated_context, create_checkpoint
+from dd_enhanced.core.checkpoint_questions import generate_checkpoint_c_content
+
 DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
 
 # Global dict to track running processes (for dev mode)
@@ -396,6 +400,54 @@ def _run_processing_in_background(
         if should_stop and reason in ('cancelled', 'failed'):
             logging.info(f"[BackgroundProcessor] Stopped after Pass 2: {reason}")
             return
+
+        # ===== CHECKPOINT C: Post-Analysis Validation =====
+        # Create Checkpoint C for user to validate understanding + financials
+        # Processing PAUSES here until user confirms via DDValidationCheckpoint endpoint
+        logging.info(f"[BackgroundProcessor] Checking Checkpoint C for run {run_id}")
+
+        checkpoint_c_created = _create_checkpoint_c_if_needed(
+            dd_id=dd_id,
+            run_id=run_id,
+            pass1_results=pass1_results,
+            pass2_findings=pass2_findings,
+            transaction_context=transaction_context,
+            checkpoint_id=checkpoint_id
+        )
+
+        if checkpoint_c_created:
+            # Check if Checkpoint C is already completed (resume scenario)
+            validated_result = get_validated_context(run_id)
+            if not validated_result.get("has_validated_context"):
+                # Checkpoint C not yet completed - pause processing and wait
+                logging.info("[BackgroundProcessor] Checkpoint C created - pausing for user validation")
+                _update_checkpoint(checkpoint_id, {
+                    'current_stage': 'waiting_for_checkpoint_c',
+                    'status': 'waiting_for_validation',
+                    'pass2_progress': 100
+                })
+
+                # Save intermediate results for resume
+                _save_intermediate_results(checkpoint_id, {
+                    'pass1_extractions': pass1_results,
+                    'pass2_findings': pass2_findings,
+                    'blueprint_qa': blueprint_qa
+                })
+
+                # Wait for validation (up to 2 hours)
+                wait_result = _wait_for_checkpoint_c(checkpoint_id, run_id, max_wait_seconds=7200)
+                if wait_result == 'validated':
+                    logging.info(f"[BackgroundProcessor] Checkpoint C validated, resuming processing")
+                    # Reload validated context for Pass 3+
+                    validated_result = get_validated_context(run_id)
+                elif wait_result == 'timeout':
+                    logging.info(f"[BackgroundProcessor] Checkpoint C wait timeout - thread exiting (state saved)")
+                    return
+                elif wait_result == 'cancelled':
+                    logging.info(f"[BackgroundProcessor] Processing cancelled while waiting for Checkpoint C")
+                    return
+            else:
+                logging.info(f"[BackgroundProcessor] Checkpoint C already validated, continuing")
 
         # ===== PASS 3: Cross-document analysis =====
         _update_checkpoint(checkpoint_id, {
@@ -1434,3 +1486,134 @@ def _map_priority(deal_impact: str) -> str:
         "post_closing": "low"
     }
     return mapping.get(deal_impact, "medium")
+
+
+def _create_checkpoint_c_if_needed(
+    dd_id: str,
+    run_id: str,
+    pass1_results: Dict[str, Any],
+    pass2_findings: Any,
+    transaction_context: Dict[str, Any],
+    checkpoint_id: str
+) -> bool:
+    """
+    Create Checkpoint C (post-analysis validation) if not already exists.
+
+    Checkpoint C is the 4-step validation wizard where users:
+    1. Confirm transaction understanding
+    2. Validate financial figures
+    3. Identify missing documents
+    4. Review and confirm before proceeding
+
+    Returns True if checkpoint was created (or already exists), False on error.
+    """
+    logging.info(f"[BackgroundProcessor] _create_checkpoint_c_if_needed called with dd_id={dd_id}, run_id={run_id}")
+
+    try:
+        # Check if Checkpoint C already exists for this run
+        validated_result = get_validated_context(run_id)
+        logging.info(f"[BackgroundProcessor] Validated context check: {validated_result.get('has_validated_context', False)}")
+        if validated_result.get("has_validated_context"):
+            logging.info(f"[BackgroundProcessor] Checkpoint C already completed for run {run_id}")
+            return True
+
+        # Check if a pending checkpoint already exists
+        with transactional_session() as session:
+            from shared.models import DDValidationCheckpoint as CheckpointModel
+            existing = session.query(CheckpointModel).filter(
+                CheckpointModel.run_id == run_id,
+                CheckpointModel.checkpoint_type == "post_analysis",
+                CheckpointModel.status.in_(["pending", "awaiting_user_input"])
+            ).first()
+
+            if existing:
+                logging.info(f"[BackgroundProcessor] Checkpoint C already pending for run {run_id}: {existing.id}")
+                return True
+
+        logging.info(f"[BackgroundProcessor] No existing Checkpoint C found, creating new one...")
+
+        # Generate Checkpoint C content
+        findings_list = pass2_findings if isinstance(pass2_findings, list) else pass2_findings.get('findings', [])
+        logging.info(f"[BackgroundProcessor] Generating checkpoint content from {len(findings_list)} findings")
+
+        checkpoint_content = generate_checkpoint_c_content(
+            findings=findings_list,
+            pass1_results=pass1_results,
+            transaction_context=transaction_context,
+            synthesis_preview=None  # Not available yet
+        )
+
+        # Create the checkpoint
+        result = create_checkpoint(
+            dd_id=dd_id,
+            run_id=run_id,
+            checkpoint_type="post_analysis",
+            content={
+                "preliminary_summary": checkpoint_content.get("step_1_understanding", {}).get("preliminary_summary", ""),
+                "questions": checkpoint_content.get("step_1_understanding", {}).get("questions", []),
+                "financial_confirmations": checkpoint_content.get("step_2_financials", {}).get("confirmations", []),
+                "missing_docs": checkpoint_content.get("step_3_missing", {}).get("missing_from_analysis", [])
+            }
+        )
+
+        if result.get("checkpoint_id"):
+            logging.info(f"[BackgroundProcessor] Created Checkpoint C: {result['checkpoint_id']}")
+            return True
+        else:
+            logging.warning(f"[BackgroundProcessor] Failed to create Checkpoint C: {result}")
+            return False
+
+    except Exception as e:
+        logging.exception(f"[BackgroundProcessor] Error creating Checkpoint C: {e}")
+        return False
+
+
+def _wait_for_checkpoint_c(checkpoint_id: str, run_id: str, max_wait_seconds: int = 7200) -> str:
+    """
+    Wait for Checkpoint C validation to complete.
+
+    Args:
+        checkpoint_id: The processing checkpoint ID
+        run_id: The analysis run ID
+        max_wait_seconds: Maximum wait time (default 2 hours)
+
+    Returns:
+        'validated' - User completed validation, continue processing
+        'cancelled' - Processing was cancelled
+        'timeout' - Waited too long, thread should exit (state is saved)
+    """
+    import time
+    wait_interval = 15  # Check every 15 seconds
+    total_waited = 0
+
+    while total_waited < max_wait_seconds:
+        # Check if processing was cancelled
+        should_stop, reason = _check_should_stop(checkpoint_id)
+        if should_stop and reason in ('cancelled', 'failed'):
+            return 'cancelled'
+
+        # Check if Checkpoint C has been completed
+        validated_result = get_validated_context(run_id)
+        if validated_result.get("has_validated_context"):
+            # User completed validation
+            logging.info(f"[BackgroundProcessor] Checkpoint C validation detected for run {run_id}")
+
+            # Update checkpoint status back to processing
+            _update_checkpoint(checkpoint_id, {
+                'status': 'processing',
+                'current_stage': 'resuming_after_checkpoint_c'
+            })
+
+            return 'validated'
+
+        # Still waiting, sleep
+        time.sleep(wait_interval)
+        total_waited += wait_interval
+
+        # Log every 5 minutes
+        if total_waited % 300 == 0:
+            logging.info(f"[BackgroundProcessor] Waiting for Checkpoint C validation... ({total_waited // 60} min)")
+
+    # Timed out - thread will exit but state is saved for later resume
+    logging.info(f"[BackgroundProcessor] Checkpoint C wait timeout after {max_wait_seconds}s")
+    return 'timeout'

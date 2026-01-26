@@ -27,10 +27,10 @@ class ProcessingMode(Enum):
 class OrchestratorConfig:
     """Configuration for the parallel orchestrator."""
     # Processing thresholds
-    parallel_threshold: int = 100  # Switch to parallel for 100+ docs
+    parallel_threshold: int = 20  # Switch to parallel for 20+ docs (lowered from 100)
 
     # Worker configuration
-    max_workers: int = 10
+    max_workers: int = 20  # Increased from 10 for better throughput
 
     # Rate limiting
     requests_per_minute: int = 50
@@ -386,7 +386,8 @@ class ParallelOrchestrator:
             transaction_context=transaction_context,
             prioritized_questions=prioritized_questions,
             verbose=False,
-            entity_map=entity_map
+            entity_map=entity_map,
+            progress_callback=progress_callback  # Per-document progress updates
         )
         result.pass2_findings = pass2_findings
 
@@ -666,11 +667,11 @@ class ParallelOrchestrator:
                         'error': str(e)
                     })
 
-                # Update progress
+                # Update progress more frequently (every 5 docs)
                 total = len(documents_to_process)
                 current = processed_count + len(failed_docs)
-                if progress_callback and current % 10 == 0:
-                    progress_callback(1, 5, f"Pass 2: {current}/{total} documents processed")
+                if progress_callback and (current % 5 == 0 or current == total):
+                    progress_callback(1, 6, f"Pass 2: {current}/{total} documents analyzed")
 
         # Merge cached Pass 2 findings
         for doc_id, cached_findings in cached_pass2.items():

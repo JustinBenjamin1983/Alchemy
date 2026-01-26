@@ -1366,18 +1366,19 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     return allCategoryDocs.filter((doc) => doc.readabilityStatus === "ready").length;
   }, [selectedDocIds, allCategoryDocs]);
 
-  // Allow re-running after completion - the button is available when:
-  // - Readability check has been completed OR previous run is completed (docs already validated)
-  // - Not currently processing or organising
-  // - All docs to be processed are readable (selected docs if any, or all docs)
+  // Allow running DD when:
+  // - Entity mapping is confirmed (implies classification + readability completed)
+  // - OR readability check completed OR previous run completed OR all docs already ready
+  // - AND not currently processing or organising
+  // Flow: Classification → Readability → Entity Mapping → Run DD
+  // If entity mapping is confirmed, all prior steps must have completed successfully
   const hasCompletedRun = progress?.status === "completed";
   const canStartDD =
-    (readabilityChecked || hasCompletedRun) &&
+    (entityMappingComplete || readabilityChecked || hasCompletedRun || areDocsReadyForDD) &&
     !isReadabilityInProgress &&
     !isClassificationInProgress &&
     !isOrganisationInProgress &&
-    !isProcessingInProgress &&
-    areDocsReadyForDD;
+    !isProcessingInProgress;
 
   // Tooltip message explaining why button is disabled
   const runDDTooltip = useMemo(() => {
@@ -1386,9 +1387,29 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         ? `Analyse ${selectedDocIds.size} selected document(s)`
         : `Analyse all ${docsToProcessCount} document(s)`;
     }
-    // All disabled states show the same message
+    // Specific messages for different disabled states
+    if (isProcessingInProgress) {
+      return "Processing is already in progress";
+    }
+    if (isClassificationInProgress || isOrganisationInProgress) {
+      return "Wait for classification/organisation to complete";
+    }
+    if (isReadabilityInProgress) {
+      return "Wait for readability check to complete";
+    }
+    if (!areDocsReadyForDD) {
+      const pendingCount = allCategoryDocs.filter((doc) => doc.readabilityStatus === "pending").length;
+      const failedCount = allCategoryDocs.filter((doc) => doc.readabilityStatus === "failed").length;
+      if (failedCount > 0) {
+        return `${failedCount} document(s) failed readability check`;
+      }
+      if (pendingCount > 0) {
+        return `Run Readability check first (${pendingCount} pending)`;
+      }
+      return "No documents ready for analysis";
+    }
     return "Complete Doc Readability before performing Due Diligence analysis";
-  }, [canStartDD, selectedDocIds.size, docsToProcessCount]);
+  }, [canStartDD, selectedDocIds.size, docsToProcessCount, isProcessingInProgress, isClassificationInProgress, isOrganisationInProgress, isReadabilityInProgress, areDocsReadyForDD, allCategoryDocs]);
 
   return (
     <div className="min-h-[600px] bg-gray-200 dark:from-gray-900 dark:to-gray-950 p-6 space-y-6">

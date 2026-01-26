@@ -793,6 +793,9 @@ def _run_all_passes(
         # ===== CHECKPOINT C: Post-Analysis Validation =====
         # Create Checkpoint C for user to validate understanding + financials
         # Processing PAUSES here until user confirms via DDValidationCheckpoint endpoint
+        logging.info(f"[DDProcessEnhanced] Attempting to create Checkpoint C for run {checkpoint_id}")
+        logging.info(f"[DDProcessEnhanced] Pass 2 findings type: {type(pass2_findings)}, count: {len(pass2_findings) if isinstance(pass2_findings, list) else len(pass2_findings.get('findings', []))}")
+
         checkpoint_c_created = _create_checkpoint_c_if_needed(
             dd_id=dd_id,
             run_id=checkpoint_id,
@@ -801,6 +804,8 @@ def _run_all_passes(
             transaction_context=transaction_context,
             checkpoint_id=checkpoint_id
         )
+
+        logging.info(f"[DDProcessEnhanced] Checkpoint C creation result: {checkpoint_c_created}")
 
         if checkpoint_c_created:
             # Check if Checkpoint C is already completed (resume scenario)
@@ -1421,9 +1426,12 @@ def _create_checkpoint_c_if_needed(
 
     Returns True if checkpoint was created (or already exists), False on error.
     """
+    logging.info(f"[DDProcessEnhanced] _create_checkpoint_c_if_needed called with dd_id={dd_id}, run_id={run_id}")
+
     try:
         # Check if Checkpoint C already exists for this run
         validated_result = get_validated_context(run_id)
+        logging.info(f"[DDProcessEnhanced] Validated context check: {validated_result.get('has_validated_context', False)}")
         if validated_result.get("has_validated_context"):
             logging.info(f"[DDProcessEnhanced] Checkpoint C already completed for run {run_id}")
             return True
@@ -1438,11 +1446,14 @@ def _create_checkpoint_c_if_needed(
             ).first()
 
             if existing:
-                logging.info(f"[DDProcessEnhanced] Checkpoint C already pending for run {run_id}")
+                logging.info(f"[DDProcessEnhanced] Checkpoint C already pending for run {run_id}: {existing.id}")
                 return True
+
+        logging.info(f"[DDProcessEnhanced] No existing Checkpoint C found, creating new one...")
 
         # Generate Checkpoint C content
         findings_list = pass2_findings if isinstance(pass2_findings, list) else pass2_findings.get('findings', [])
+        logging.info(f"[DDProcessEnhanced] Generating checkpoint content from {len(findings_list)} findings")
 
         checkpoint_content = generate_checkpoint_c_content(
             findings=findings_list,

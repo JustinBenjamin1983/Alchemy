@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import useAxiosWithAuth from "./useAxiosWithAuth";
+import { useAxiosWithAuth } from "./useAxiosWithAuth";
 
 interface EntityMapEntry {
   entity_name: string;

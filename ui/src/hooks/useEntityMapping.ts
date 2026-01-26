@@ -38,7 +38,7 @@ interface EntityMappingParams {
   maxDocs?: number;
 }
 
-export function useEntityMapping() {
+export default function useEntityMapping() {
   const axios = useAxiosWithAuth();
   const queryClient = useQueryClient();
 

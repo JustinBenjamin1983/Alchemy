@@ -46,7 +46,7 @@ import { useCreateAnalysisRun, useAnalysisRunsList } from "@/hooks/useAnalysisRu
 import { useOrganisationProgress, useClassifyDocuments, useOrganiseFolders, useDocumentReassign, useCancelOrganisation } from "@/hooks/useOrganisationProgress";
 import { useBlueprintRequirements } from "@/hooks/useBlueprintRequirements";
 import { useDeleteDocument } from "@/hooks/useDeleteDocument";
-import { useEntityMapping } from "@/hooks/useEntityMapping";
+import useEntityMapping from "@/hooks/useEntityMapping";
 import { CategoryCount, CategoryDocument } from "./FileTree/FileTree";
 import { Button } from "@/components/ui/button";
 import {

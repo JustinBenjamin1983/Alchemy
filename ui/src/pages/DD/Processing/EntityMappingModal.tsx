@@ -64,6 +64,17 @@ export interface EntityMappingSummary {
   counterparties: number;
 }
 
+export interface ClientEntityInfo {
+  name: string;
+  role?: string;
+  deal_structure?: string;
+}
+
+export interface ShareholderInfo {
+  name: string;
+  ownership_percentage?: number;
+}
+
 export interface EntityMappingResult {
   dd_id: string;
   run_id?: string;
@@ -78,7 +89,10 @@ export interface EntityMappingResult {
     name: string;
     registration_number?: string;
     transaction_type?: string;
+    deal_structure?: string;
   };
+  client_entity?: ClientEntityInfo;
+  shareholders?: ShareholderInfo[];
   cost?: {
     total_cost: number;
     total_tokens: number;
@@ -387,7 +401,10 @@ export function EntityMappingModal({
         name: result.target_entity?.name || "Target Entity",
         registration_number: result.target_entity?.registration_number,
         transaction_type: result.target_entity?.transaction_type,
+        deal_structure: result.target_entity?.deal_structure,
       },
+      client_entity: result.client_entity,
+      shareholders: result.shareholders,
       entities,
     };
   }, [result]);

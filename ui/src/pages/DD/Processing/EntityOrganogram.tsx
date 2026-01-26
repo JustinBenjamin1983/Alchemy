@@ -2,8 +2,9 @@
  * Entity Organogram - Interactive corporate structure visualization
  *
  * Layout:
- * - Center: Corporate structure (parent → target → subsidiaries)
- * - Target entity highlighted with transaction type
+ * - Top level: Shareholders (current owners) + Client/Acquirer (future owner in dotted container)
+ * - Center: Target entity (highlighted)
+ * - Bottom: Subsidiaries
  * - Around edges: Counterparties, suppliers, customers, financiers
  * - Separate "Key Individuals" section
  *
@@ -42,8 +43,10 @@ import {
   FileText,
   X,
   ChevronRight,
+  ChevronDown,
   Target,
   Link2,
+  UserPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -67,13 +70,26 @@ export interface OrganogramEntity {
   is_individual?: boolean;
 }
 
+export interface ShareholderInfo {
+  name: string;
+  ownership_percentage?: number;
+}
+
+export interface ClientEntityInfo {
+  name: string;
+  role?: string;
+  deal_structure?: string;
+}
+
 export interface OrganogramData {
   target_entity: {
     name: string;
     registration_number?: string;
     transaction_type?: string;
-    transaction_counterparty?: string;
+    deal_structure?: string;
   };
+  client_entity?: ClientEntityInfo;
+  shareholders?: ShareholderInfo[];
   entities: OrganogramEntity[];
 }
 
@@ -91,7 +107,6 @@ const RELATIONSHIP_CONFIG: Record<string, {
   borderColor: string;
   icon: React.ElementType;
   label: string;
-  position: "top" | "bottom" | "left" | "right";
 }> = {
   parent: {
     color: "text-blue-700",
@@ -99,7 +114,6 @@ const RELATIONSHIP_CONFIG: Record<string, {
     borderColor: "border-blue-300",
     icon: Building2,
     label: "Parent",
-    position: "top"
   },
   holding_company: {
     color: "text-blue-700",
@@ -107,7 +121,6 @@ const RELATIONSHIP_CONFIG: Record<string, {
     borderColor: "border-blue-300",
     icon: Building2,
     label: "Holding",
-    position: "top"
   },
   target: {
     color: "text-orange-700",
@@ -115,7 +128,6 @@ const RELATIONSHIP_CONFIG: Record<string, {
     borderColor: "border-orange-400",
     icon: Target,
     label: "Target",
-    position: "top"
   },
   subsidiary: {
     color: "text-green-700",
@@ -123,7 +135,6 @@ const RELATIONSHIP_CONFIG: Record<string, {
     borderColor: "border-green-300",
     icon: Building,
     label: "Subsidiary",
-    position: "bottom"
   },
   shareholder: {
     color: "text-purple-700",
@@ -131,7 +142,13 @@ const RELATIONSHIP_CONFIG: Record<string, {
     borderColor: "border-purple-300",
     icon: Users,
     label: "Shareholder",
-    position: "top"
+  },
+  client: {
+    color: "text-indigo-700",
+    bgColor: "bg-indigo-50",
+    borderColor: "border-indigo-400",
+    icon: UserPlus,
+    label: "Acquirer",
   },
   counterparty: {
     color: "text-amber-700",
@@ -139,7 +156,6 @@ const RELATIONSHIP_CONFIG: Record<string, {
     borderColor: "border-amber-300",
     icon: Briefcase,
     label: "Counterparty",
-    position: "right"
   },
   financier: {
     color: "text-emerald-700",
@@ -147,7 +163,6 @@ const RELATIONSHIP_CONFIG: Record<string, {
     borderColor: "border-emerald-300",
     icon: Landmark,
     label: "Financier",
-    position: "right"
   },
   lender: {
     color: "text-emerald-700",
@@ -155,7 +170,6 @@ const RELATIONSHIP_CONFIG: Record<string, {
     borderColor: "border-emerald-300",
     icon: Landmark,
     label: "Lender",
-    position: "right"
   },
   supplier: {
     color: "text-cyan-700",
@@ -163,7 +177,6 @@ const RELATIONSHIP_CONFIG: Record<string, {
     borderColor: "border-cyan-300",
     icon: Truck,
     label: "Supplier",
-    position: "left"
   },
   customer: {
     color: "text-pink-700",
@@ -171,7 +184,6 @@ const RELATIONSHIP_CONFIG: Record<string, {
     borderColor: "border-pink-300",
     icon: ShoppingCart,
     label: "Customer",
-    position: "left"
   },
   related_party: {
     color: "text-gray-700",
@@ -179,7 +191,6 @@ const RELATIONSHIP_CONFIG: Record<string, {
     borderColor: "border-gray-300",
     icon: Link2,
     label: "Related",
-    position: "left"
   },
   unknown: {
     color: "text-gray-500",
@@ -187,7 +198,6 @@ const RELATIONSHIP_CONFIG: Record<string, {
     borderColor: "border-gray-200",
     icon: Building,
     label: "Unknown",
-    position: "right"
   },
 };
 
@@ -196,15 +206,17 @@ const EntityNode: React.FC<NodeProps> = ({ data }) => {
   const config = RELATIONSHIP_CONFIG[data.relationship] || RELATIONSHIP_CONFIG.unknown;
   const Icon = config.icon;
   const isTarget = data.relationship === "target";
+  const isClient = data.relationship === "client";
 
   return (
     <div
       className={cn(
         "relative px-4 py-3 rounded-lg border-2 shadow-sm transition-all duration-200",
-        "hover:shadow-md hover:scale-105 cursor-pointer min-w-[180px] max-w-[220px]",
+        "hover:shadow-md cursor-pointer min-w-[160px] max-w-[200px]",
         config.bgColor,
         config.borderColor,
-        isTarget && "ring-2 ring-orange-400 ring-offset-2"
+        isTarget && "ring-2 ring-orange-400 ring-offset-2 min-w-[200px]",
+        isClient && "border-dashed border-indigo-400 bg-indigo-50/50"
       )}
       onClick={data.onClick}
     >
@@ -218,6 +230,13 @@ const EntityNode: React.FC<NodeProps> = ({ data }) => {
       {data.hasConflict && (
         <div className="absolute -top-2 -right-2 p-1 bg-amber-100 rounded-full border border-amber-400">
           <AlertTriangle className="w-3 h-3 text-amber-600" />
+        </div>
+      )}
+
+      {/* Future owner badge for client */}
+      {isClient && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-indigo-100 border border-indigo-300 rounded text-[10px] font-medium text-indigo-700 whitespace-nowrap">
+          Future Owner
         </div>
       )}
 
@@ -235,7 +254,7 @@ const EntityNode: React.FC<NodeProps> = ({ data }) => {
       </div>
 
       {/* Entity name */}
-      <div className="font-semibold text-sm text-gray-900 truncate" title={data.label}>
+      <div className="font-semibold text-sm text-gray-900 leading-tight" title={data.label}>
         {data.label}
       </div>
 
@@ -253,27 +272,32 @@ const EntityNode: React.FC<NodeProps> = ({ data }) => {
         </div>
       )}
 
-      {/* Transaction type for counterparties linked to target */}
-      {data.transactionType && (
-        <div className="mt-1.5 px-2 py-1 bg-orange-100 rounded text-xs text-orange-700 font-medium">
-          {data.transactionType}
+      {/* Transaction type for client */}
+      {data.dealStructure && (
+        <div className="mt-1.5 px-2 py-1 bg-indigo-100 rounded text-xs text-indigo-700 font-medium">
+          {data.dealStructure}
         </div>
       )}
 
-      {/* Confidence indicator */}
-      <div className="mt-2 flex items-center gap-1">
-        <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
-          <div
-            className={cn(
-              "h-full rounded-full",
-              data.confidence >= 0.8 ? "bg-green-500" :
-              data.confidence >= 0.5 ? "bg-amber-500" : "bg-red-500"
-            )}
-            style={{ width: `${data.confidence * 100}%` }}
-          />
+      {/* Confidence indicator - only for non-target/non-shareholder/non-client */}
+      {data.confidence !== undefined && data.confidence < 1 && (
+        <div className="mt-2">
+          <div className="flex items-center gap-1">
+            <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className={cn(
+                  "h-full rounded-full",
+                  data.confidence >= 0.8 ? "bg-green-500" :
+                  data.confidence >= 0.5 ? "bg-amber-500" : "bg-red-500"
+                )}
+                style={{ width: `${data.confidence * 100}%` }}
+              />
+            </div>
+            <span className="text-[10px] text-gray-500">{Math.round(data.confidence * 100)}%</span>
+          </div>
+          <div className="text-[9px] text-gray-400 mt-0.5">Confidence</div>
         </div>
-        <span className="text-[10px] text-gray-500">{Math.round(data.confidence * 100)}%</span>
-      </div>
+      )}
     </div>
   );
 };
@@ -385,10 +409,10 @@ const EntityDetailsPanel: React.FC<EntityDetailsPanelProps> = ({
             Found in {entity.documents_appearing_in.length} document(s)
           </p>
           <div className="space-y-1 max-h-32 overflow-y-auto">
-            {entity.documents_appearing_in.slice(0, 5).map((docId, idx) => (
+            {entity.documents_appearing_in.slice(0, 5).map((docName, idx) => (
               <div key={idx} className="flex items-center gap-2 text-sm text-gray-600">
-                <FileText className="w-3 h-3" />
-                <span className="truncate">{docId}</span>
+                <FileText className="w-3 h-3 flex-shrink-0" />
+                <span className="truncate">{docName}</span>
               </div>
             ))}
             {entity.documents_appearing_in.length > 5 && (
@@ -488,6 +512,65 @@ const KeyIndividualsSection: React.FC<KeyIndividualsSectionProps> = ({
   );
 };
 
+// Collapsible Legend
+const Legend: React.FC = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const legendItems = [
+    { key: "shareholder", label: "Shareholder" },
+    { key: "client", label: "Acquirer (Future)" },
+    { key: "target", label: "Target Entity" },
+    { key: "subsidiary", label: "Subsidiary" },
+    { key: "counterparty", label: "Counterparty" },
+    { key: "financier", label: "Financier" },
+  ];
+
+  return (
+    <div className="absolute bottom-4 right-4 bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden z-10">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full px-3 py-2 flex items-center justify-between hover:bg-gray-50 transition-colors"
+      >
+        <span className="text-xs font-medium text-gray-500">Legend</span>
+        {isExpanded ? (
+          <ChevronDown className="w-3 h-3 text-gray-400" />
+        ) : (
+          <ChevronRight className="w-3 h-3 text-gray-400" />
+        )}
+      </button>
+
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0 }}
+            animate={{ height: "auto" }}
+            exit={{ height: 0 }}
+            className="overflow-hidden border-t"
+          >
+            <div className="p-2 space-y-1">
+              {legendItems.map(({ key, label }) => {
+                const config = RELATIONSHIP_CONFIG[key];
+                if (!config) return null;
+                return (
+                  <div key={key} className="flex items-center gap-2">
+                    <div className={cn(
+                      "w-4 h-3 rounded border",
+                      config.bgColor,
+                      config.borderColor,
+                      key === "client" && "border-dashed"
+                    )} />
+                    <span className="text-xs text-gray-600">{label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 // Main component
 export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
   data,
@@ -522,20 +605,14 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
     const edges: Edge[] = [];
 
     // Layout constants
-    const centerX = 400;
-    const centerY = 300;
-    const verticalGap = 120;
-    const horizontalGap = 250;
+    const centerX = 450;
+    const centerY = 280;
+    const verticalGap = 140;
+    const horizontalGap = 220;
 
     // Group entities by relationship type
-    const parents = corporateEntities.filter(e =>
-      e.relationship_to_target === "parent" || e.relationship_to_target === "holding_company"
-    );
     const subsidiaries = corporateEntities.filter(e =>
       e.relationship_to_target === "subsidiary"
-    );
-    const shareholders = corporateEntities.filter(e =>
-      e.relationship_to_target === "shareholder"
     );
     const leftEntities = corporateEntities.filter(e =>
       ["supplier", "customer", "related_party"].includes(e.relationship_to_target)
@@ -543,6 +620,9 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
     const rightEntities = corporateEntities.filter(e =>
       ["counterparty", "financier", "lender", "unknown"].includes(e.relationship_to_target)
     );
+
+    // Use shareholders from wizard data
+    const shareholders = data.shareholders || [];
 
     // Add target entity node (center)
     const targetNode: Node = {
@@ -555,86 +635,77 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
         relationship: "target",
         confidence: 1,
         docsCount: 0,
-        transactionType: data.target_entity.transaction_type,
         onClick: () => {},
       },
     };
     nodes.push(targetNode);
 
-    // Add parent/holding company nodes (above target)
-    parents.forEach((entity, idx) => {
-      const xOffset = (idx - (parents.length - 1) / 2) * horizontalGap;
-      nodes.push({
-        id: entity.id,
+    // Add client/acquirer node (future owner - top left, dotted)
+    if (data.client_entity) {
+      const clientNode: Node = {
+        id: "client",
         type: "entity",
-        position: { x: centerX + xOffset, y: centerY - verticalGap },
+        position: { x: centerX - horizontalGap * 1.2, y: centerY - verticalGap },
         data: {
-          label: entity.entity_name,
-          registrationNumber: entity.registration_number,
-          relationship: entity.relationship_to_target,
-          confidence: entity.confidence,
-          docsCount: entity.documents_appearing_in.length,
-          ownershipPercentage: entity.ownership_percentage,
-          hasConflict: entity.has_conflict,
-          onClick: () => {
-            setSelectedEntity(entity);
-            onEntityClick?.(entity);
-          },
+          label: data.client_entity.name,
+          relationship: "client",
+          confidence: 1,
+          docsCount: 0,
+          dealStructure: data.client_entity.deal_structure,
+          onClick: () => {},
         },
-      });
+      };
+      nodes.push(clientNode);
 
-      // Edge from parent to target
+      // Edge from client to target (dashed, showing future acquisition)
       edges.push({
-        id: `${entity.id}-target`,
-        source: entity.id,
+        id: "client-target",
+        source: "client",
         target: "target",
         type: "smoothstep",
-        animated: false,
-        style: { stroke: "#9ca3af", strokeWidth: 2 },
-        markerEnd: { type: MarkerType.ArrowClosed, color: "#9ca3af" },
-        label: entity.ownership_percentage ? `${entity.ownership_percentage}%` : undefined,
-        labelStyle: { fontSize: 11, fontWeight: 500 },
-        labelBgStyle: { fill: "white", fillOpacity: 0.8 },
+        animated: true,
+        style: { stroke: "#6366f1", strokeWidth: 2, strokeDasharray: "8,4" },
+        markerEnd: { type: MarkerType.ArrowClosed, color: "#6366f1" },
+        label: data.client_entity.deal_structure || "Acquisition",
+        labelStyle: { fontSize: 10, fill: "#4338ca", fontWeight: 600 },
+        labelBgStyle: { fill: "#e0e7ff", fillOpacity: 0.9 },
       });
-    });
+    }
 
-    // Add shareholder nodes (above and to sides)
-    shareholders.forEach((entity, idx) => {
-      const angle = (idx / shareholders.length) * Math.PI - Math.PI / 2;
-      const radius = 180;
-      const xPos = centerX + Math.cos(angle) * radius * 1.5;
-      const yPos = centerY - verticalGap - 40 + Math.sin(angle) * 60;
+    // Add shareholder nodes (above target)
+    shareholders.forEach((sh, idx) => {
+      const totalShareholders = shareholders.length + (data.client_entity ? 0 : 0);
+      const startX = centerX - ((totalShareholders - 1) * horizontalGap * 0.5) / 2;
+      const xOffset = data.client_entity ? horizontalGap * 0.6 : 0; // Shift right if client exists
 
       nodes.push({
-        id: entity.id,
+        id: `shareholder-${idx}`,
         type: "entity",
-        position: { x: xPos, y: yPos },
+        position: {
+          x: startX + idx * horizontalGap * 0.9 + xOffset,
+          y: centerY - verticalGap
+        },
         data: {
-          label: entity.entity_name,
-          registrationNumber: entity.registration_number,
-          relationship: entity.relationship_to_target,
-          confidence: entity.confidence,
-          docsCount: entity.documents_appearing_in.length,
-          ownershipPercentage: entity.ownership_percentage,
-          hasConflict: entity.has_conflict,
-          onClick: () => {
-            setSelectedEntity(entity);
-            onEntityClick?.(entity);
-          },
+          label: sh.name,
+          relationship: "shareholder",
+          confidence: 1,
+          docsCount: 0,
+          ownershipPercentage: sh.ownership_percentage,
+          onClick: () => {},
         },
       });
 
-      // Edge from shareholder to target (or to parent if parent exists)
-      const targetId = parents.length > 0 ? parents[0].id : "target";
+      // Edge from shareholder to target
       edges.push({
-        id: `${entity.id}-${targetId}`,
-        source: entity.id,
-        target: targetId,
+        id: `shareholder-${idx}-target`,
+        source: `shareholder-${idx}`,
+        target: "target",
         type: "smoothstep",
-        style: { stroke: "#a855f7", strokeWidth: 1.5, strokeDasharray: "5,5" },
-        label: entity.ownership_percentage ? `${entity.ownership_percentage}%` : undefined,
-        labelStyle: { fontSize: 10, fill: "#7c3aed" },
-        labelBgStyle: { fill: "white", fillOpacity: 0.8 },
+        style: { stroke: "#a855f7", strokeWidth: 2 },
+        markerEnd: { type: MarkerType.ArrowClosed, color: "#a855f7" },
+        label: sh.ownership_percentage ? `${sh.ownership_percentage}%` : undefined,
+        labelStyle: { fontSize: 11, fontWeight: 600, fill: "#7c3aed" },
+        labelBgStyle: { fill: "white", fillOpacity: 0.9 },
       });
     });
 
@@ -679,7 +750,7 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
       nodes.push({
         id: entity.id,
         type: "entity",
-        position: { x: centerX - horizontalGap * 1.5, y: centerY - 60 + idx * 100 },
+        position: { x: centerX - horizontalGap * 1.6, y: centerY + (idx - (leftEntities.length - 1) / 2) * 90 },
         data: {
           label: entity.entity_name,
           registrationNumber: entity.registration_number,
@@ -708,11 +779,10 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
 
     // Add right side entities (counterparties, financiers)
     rightEntities.forEach((entity, idx) => {
-      const isCounterparty = entity.relationship_to_target === "counterparty";
       nodes.push({
         id: entity.id,
         type: "entity",
-        position: { x: centerX + horizontalGap * 1.5, y: centerY - 60 + idx * 100 },
+        position: { x: centerX + horizontalGap * 1.6, y: centerY + (idx - (rightEntities.length - 1) / 2) * 90 },
         data: {
           label: entity.entity_name,
           registrationNumber: entity.registration_number,
@@ -720,7 +790,6 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
           confidence: entity.confidence,
           docsCount: entity.documents_appearing_in.length,
           hasConflict: entity.has_conflict,
-          transactionType: isCounterparty ? data.target_entity.transaction_type : undefined,
           onClick: () => {
             setSelectedEntity(entity);
             onEntityClick?.(entity);
@@ -728,7 +797,7 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
         },
       });
 
-      // Edge to target with transaction type
+      // Edge to target
       edges.push({
         id: `target-${entity.id}`,
         source: "target",
@@ -737,20 +806,15 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
         targetHandle: "left",
         type: "smoothstep",
         style: {
-          stroke: isCounterparty ? "#f59e0b" : "#9ca3af",
-          strokeWidth: isCounterparty ? 2 : 1,
+          stroke: entity.relationship_to_target === "financier" || entity.relationship_to_target === "lender"
+            ? "#10b981" : "#f59e0b",
+          strokeWidth: 1.5,
         },
-        markerEnd: isCounterparty ? { type: MarkerType.ArrowClosed, color: "#f59e0b" } : undefined,
-        label: isCounterparty && data.target_entity.transaction_type
-          ? data.target_entity.transaction_type
-          : undefined,
-        labelStyle: { fontSize: 10, fill: "#b45309", fontWeight: 500 },
-        labelBgStyle: { fill: "#fef3c7", fillOpacity: 0.9 },
       });
     });
 
     return { nodes, edges };
-  }, [corporateEntities, data.target_entity, onEntityClick]);
+  }, [corporateEntities, data.target_entity, data.client_entity, data.shareholders, onEntityClick]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -769,10 +833,10 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
         onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
         fitView
-        fitViewOptions={{ padding: 0.2 }}
+        fitViewOptions={{ padding: 0.15 }}
         minZoom={0.3}
         maxZoom={1.5}
-        defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
+        defaultViewport={{ x: 0, y: 0, zoom: 0.85 }}
       >
         <Background color="#e5e7eb" gap={20} />
         <Controls
@@ -782,9 +846,16 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
         <MiniMap
           className="!bg-white !border-gray-200"
           nodeColor={(node) => {
-            const config = RELATIONSHIP_CONFIG[node.data?.relationship] || RELATIONSHIP_CONFIG.unknown;
-            return config.borderColor.replace("border-", "").replace("-300", "-400").replace("-400", "-500");
+            const rel = node.data?.relationship;
+            if (rel === "target") return "#fb923c";
+            if (rel === "client") return "#818cf8";
+            if (rel === "shareholder") return "#c084fc";
+            if (rel === "subsidiary") return "#4ade80";
+            if (rel === "counterparty") return "#fbbf24";
+            if (rel === "financier" || rel === "lender") return "#34d399";
+            return "#9ca3af";
           }}
+          maskColor="rgba(0,0,0,0.1)"
         />
       </ReactFlow>
 
@@ -805,28 +876,8 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
         onIndividualClick={handleEntityClick}
       />
 
-      {/* Legend */}
-      <div className="absolute top-4 left-4 bg-white rounded-lg shadow-md border border-gray-200 p-3 z-10">
-        <p className="text-xs font-medium text-gray-500 mb-2">Legend</p>
-        <div className="space-y-1">
-          {[
-            { key: "parent", label: "Parent/Holding" },
-            { key: "target", label: "Target Entity" },
-            { key: "subsidiary", label: "Subsidiary" },
-            { key: "counterparty", label: "Counterparty" },
-            { key: "financier", label: "Financier" },
-          ].map(({ key, label }) => {
-            const config = RELATIONSHIP_CONFIG[key];
-            const Icon = config.icon;
-            return (
-              <div key={key} className="flex items-center gap-2">
-                <div className={cn("w-3 h-3 rounded", config.bgColor, config.borderColor, "border")} />
-                <span className="text-xs text-gray-600">{label}</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      {/* Collapsible Legend - bottom right */}
+      <Legend />
     </div>
   );
 };

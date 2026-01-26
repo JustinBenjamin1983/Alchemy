@@ -452,15 +452,47 @@ def get_entity_map_for_dd(dd_id: str, session: Any) -> List[Dict[str, Any]]:
         session: Database session
 
     Returns:
-        List of entity dicts
+        List of entity dicts with document names resolved
     """
-    from shared.models import DDEntityMap
+    from shared.models import DDEntityMap, Document
 
     dd_uuid = uuid.UUID(dd_id) if isinstance(dd_id, str) else dd_id
 
     entities = session.query(DDEntityMap).filter(
         DDEntityMap.dd_id == dd_uuid
     ).order_by(DDEntityMap.confidence.desc()).all()
+
+    # Build a lookup of document IDs to filenames
+    all_doc_ids = set()
+    for entity in entities:
+        if entity.documents_appearing_in:
+            for doc_id in entity.documents_appearing_in:
+                if doc_id:
+                    try:
+                        all_doc_ids.add(uuid.UUID(doc_id) if isinstance(doc_id, str) else doc_id)
+                    except (ValueError, TypeError):
+                        pass
+
+    doc_name_lookup = {}
+    if all_doc_ids:
+        docs = session.query(Document.id, Document.original_file_name).filter(
+            Document.id.in_(list(all_doc_ids))
+        ).all()
+        doc_name_lookup = {str(doc.id): doc.original_file_name for doc in docs}
+
+    def resolve_doc_names(doc_ids):
+        """Convert document IDs to filenames."""
+        if not doc_ids:
+            return []
+        result = []
+        for doc_id in doc_ids:
+            doc_id_str = str(doc_id) if doc_id else None
+            if doc_id_str and doc_id_str in doc_name_lookup:
+                result.append(doc_name_lookup[doc_id_str])
+            elif doc_id_str:
+                # Fallback to ID if name not found
+                result.append(doc_id_str)
+        return result
 
     return [
         {
@@ -470,7 +502,7 @@ def get_entity_map_for_dd(dd_id: str, session: Any) -> List[Dict[str, Any]]:
             "relationship_to_target": entity.relationship_to_target,
             "relationship_detail": entity.relationship_detail,
             "confidence": entity.confidence,
-            "documents_appearing_in": entity.documents_appearing_in,
+            "documents_appearing_in": resolve_doc_names(entity.documents_appearing_in),
             "evidence": entity.evidence,
             "requires_human_confirmation": entity.requires_human_confirmation,
             "human_confirmed": entity.human_confirmed,

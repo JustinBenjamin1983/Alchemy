@@ -355,12 +355,64 @@ def handle_get(req: func.HttpRequest, email: str) -> func.HttpResponse:
             entity_map = get_entity_map_for_dd(dd_id, session)
 
             # Calculate total documents from all entities' documents_appearing_in
-            all_doc_ids = set()
+            all_doc_names = set()
             for entity in entity_map:
-                doc_ids = entity.get("documents_appearing_in", [])
-                if isinstance(doc_ids, list):
-                    all_doc_ids.update(doc_ids)
-            total_documents_processed = len(all_doc_ids)
+                doc_names = entity.get("documents_appearing_in", [])
+                if isinstance(doc_names, list):
+                    all_doc_names.update(doc_names)
+            total_documents_processed = len(all_doc_names)
+
+            # Get wizard data for target entity, shareholders, and client info
+            draft = session.query(DDWizardDraft).filter(
+                DDWizardDraft.owned_by == dd.owned_by,
+                DDWizardDraft.transaction_name == dd.name
+            ).first()
+
+            # Build target entity info
+            target_entity = {
+                "name": dd.name,
+                "registration_number": None,
+                "transaction_type": None,
+                "deal_structure": None,
+            }
+
+            # Build client/acquirer info
+            client_entity = None
+
+            # Build shareholders list
+            shareholders = []
+
+            if draft:
+                # Target entity details
+                target_entity["name"] = draft.target_entity_name or dd.name
+                target_entity["registration_number"] = draft.target_registration_number
+
+                # Transaction details
+                target_entity["transaction_type"] = draft.transaction_type
+                target_entity["deal_structure"] = draft.deal_structure
+
+                # Client entity (the acquirer/counterparty to the transaction)
+                if draft.client_name:
+                    client_entity = {
+                        "name": draft.client_name,
+                        "role": draft.client_role,  # e.g., "Acquirer / Purchaser"
+                        "deal_structure": draft.deal_structure,  # e.g., "Share Purchase"
+                    }
+
+                # Parse shareholders from wizard data
+                if draft.shareholders:
+                    try:
+                        sh_data = json.loads(draft.shareholders)
+                        for sh in sh_data:
+                            if isinstance(sh, dict) and sh.get("name"):
+                                shareholders.append({
+                                    "name": sh.get("name"),
+                                    "ownership_percentage": sh.get("percentage") or sh.get("ownership_percentage"),
+                                })
+                            elif isinstance(sh, str) and sh:
+                                shareholders.append({"name": sh, "ownership_percentage": None})
+                    except (json.JSONDecodeError, TypeError):
+                        pass
 
             # Calculate summary
             summary = {
@@ -379,7 +431,10 @@ def handle_get(req: func.HttpRequest, email: str) -> func.HttpResponse:
                     "status": "success",
                     "entity_map": entity_map,
                     "summary": summary,
-                    "total_documents_processed": total_documents_processed
+                    "total_documents_processed": total_documents_processed,
+                    "target_entity": target_entity,
+                    "client_entity": client_entity,
+                    "shareholders": shareholders,
                 }, default=str),
                 status_code=200,
                 mimetype="application/json"

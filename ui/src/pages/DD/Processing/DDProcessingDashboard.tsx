@@ -46,7 +46,7 @@ import { useCreateAnalysisRun, useAnalysisRunsList } from "@/hooks/useAnalysisRu
 import { useOrganisationProgress, useClassifyDocuments, useOrganiseFolders, useDocumentReassign, useCancelOrganisation } from "@/hooks/useOrganisationProgress";
 import { useBlueprintRequirements } from "@/hooks/useBlueprintRequirements";
 import { useDeleteDocument } from "@/hooks/useDeleteDocument";
-import useEntityMapping from "@/hooks/useEntityMapping";
+import useEntityMapping, { useGetEntityMap } from "@/hooks/useEntityMapping";
 import { CategoryCount, CategoryDocument } from "./FileTree/FileTree";
 import { Button } from "@/components/ui/button";
 import {
@@ -236,6 +236,36 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   const [entityCount, setEntityCount] = useState(0);
   const [showEntityMappingModal, setShowEntityMappingModal] = useState(false);
   const [entityMappingResult, setEntityMappingResult] = useState<EntityMappingResult | null>(null);
+
+  // Fetch stored entity map on page load (enable after readability is checked or if we have existing data)
+  const { data: storedEntityMap, isLoading: isLoadingEntityMap } = useGetEntityMap(
+    ddId || undefined,
+    readabilityChecked || entityMappingComplete
+  );
+
+  // Update entity mapping state when stored data is loaded
+  useEffect(() => {
+    if (storedEntityMap?.entity_map && storedEntityMap.entity_map.length > 0) {
+      setEntityMappingComplete(true);
+      setEntityCount(storedEntityMap.summary?.total_unique_entities || storedEntityMap.entity_map.length);
+      // Set result for viewing in modal - provide defaults for required fields
+      setEntityMappingResult({
+        dd_id: storedEntityMap.dd_id,
+        status: storedEntityMap.status || "completed",
+        total_documents_processed: storedEntityMap.total_documents_processed || 0,
+        entity_map: storedEntityMap.entity_map,
+        summary: storedEntityMap.summary || {
+          total_unique_entities: storedEntityMap.entity_map.length,
+          entities_needing_confirmation: storedEntityMap.entity_map.filter((e: any) => e.requires_human_confirmation).length,
+          target_subsidiaries: storedEntityMap.entity_map.filter((e: any) => e.relationship_to_target === "subsidiary").length,
+          counterparties: storedEntityMap.entity_map.filter((e: any) => e.relationship_to_target === "counterparty").length,
+        },
+        checkpoint_recommended: storedEntityMap.checkpoint_recommended || false,
+        checkpoint_reason: storedEntityMap.checkpoint_reason,
+        stored_count: storedEntityMap.entity_map.length,
+      });
+    }
+  }, [storedEntityMap]);
 
   // Blueprint requirements for Checkpoint A - fetch after classification is done
   // Enable when status is past classification (not pending/classifying/cancelled/failed)
@@ -1426,6 +1456,9 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         entityMappingComplete={entityMappingComplete}
         canRunEntityMapping={readabilityChecked && readabilitySummary.failed === 0}
         entityCount={entityCount}
+        // View Entity Map
+        onViewEntityMap={() => setShowEntityMappingModal(true)}
+        hasEntityMap={entityMappingComplete && entityMappingResult !== null}
         // Configure
         selectedTier={selectedModelTier}
         onTierChange={setSelectedModelTier}

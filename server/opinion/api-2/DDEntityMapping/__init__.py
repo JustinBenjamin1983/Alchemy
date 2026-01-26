@@ -308,16 +308,104 @@ def run_entity_mapping(dd_id: str, run_id: str = None, max_docs: int = None) -> 
         return response
 
 
+def handle_get(req: func.HttpRequest, email: str) -> func.HttpResponse:
+    """
+    Get stored entity map for a DD project.
+
+    GET /api/dd-entity-mapping?dd_id=uuid
+
+    Returns: {
+        "dd_id": "uuid",
+        "status": "success",
+        "entity_map": [...],
+        "summary": {...}
+    }
+    """
+    from dd_enhanced.core.entity_mapping import get_entity_map_for_dd
+
+    dd_id = req.params.get("dd_id")
+    if not dd_id:
+        return func.HttpResponse(
+            json.dumps({"error": "dd_id query parameter is required"}),
+            status_code=400,
+            mimetype="application/json"
+        )
+
+    try:
+        with transactional_session() as session:
+            # Verify user owns this DD
+            dd_uuid = uuid_module.UUID(dd_id)
+            dd = session.query(DueDiligence).filter(DueDiligence.id == dd_uuid).first()
+
+            if not dd:
+                return func.HttpResponse(
+                    json.dumps({"error": f"Due diligence {dd_id} not found"}),
+                    status_code=404,
+                    mimetype="application/json"
+                )
+
+            if dd.owned_by != email and not DEV_MODE:
+                return func.HttpResponse(
+                    json.dumps({"error": "Unauthorized"}),
+                    status_code=403,
+                    mimetype="application/json"
+                )
+
+            # Get entity map
+            entity_map = get_entity_map_for_dd(dd_id, session)
+
+            # Calculate summary
+            summary = {
+                "total_unique_entities": len(entity_map),
+                "entities_needing_confirmation": sum(1 for e in entity_map if e.get("requires_human_confirmation") and not e.get("human_confirmed")),
+                "entities_confirmed": sum(1 for e in entity_map if e.get("human_confirmed")),
+                "high_confidence_entities": sum(1 for e in entity_map if e.get("confidence", 0) >= 0.7),
+                "target_subsidiaries": sum(1 for e in entity_map if e.get("relationship_to_target") == "subsidiary"),
+                "counterparties": sum(1 for e in entity_map if e.get("relationship_to_target") == "counterparty"),
+                "unknown_relationships": sum(1 for e in entity_map if e.get("relationship_to_target") == "unknown"),
+            }
+
+            return func.HttpResponse(
+                json.dumps({
+                    "dd_id": dd_id,
+                    "status": "success",
+                    "entity_map": entity_map,
+                    "summary": summary
+                }, default=str),
+                status_code=200,
+                mimetype="application/json"
+            )
+
+    except ValueError as e:
+        return func.HttpResponse(
+            json.dumps({"error": f"Invalid dd_id format: {str(e)}"}),
+            status_code=400,
+            mimetype="application/json"
+        )
+    except Exception as e:
+        logging.error(f"[DDEntityMapping GET] Error: {str(e)}")
+        logging.exception("Full traceback:")
+        return func.HttpResponse(
+            json.dumps({"error": str(e)}),
+            status_code=500,
+            mimetype="application/json"
+        )
+
+
 def main(req: func.HttpRequest) -> func.HttpResponse:
     """
-    Run entity mapping for a DD project.
+    Entity mapping endpoint.
+
+    GET /api/dd-entity-mapping?dd_id=uuid
+        Get stored entity map for a DD project.
 
     POST /api/dd-entity-mapping
-    Body: {
-        "dd_id": "uuid",
-        "run_id": "uuid" (optional),
-        "max_docs": 50 (optional, for testing)
-    }
+        Run entity mapping for a DD project.
+        Body: {
+            "dd_id": "uuid",
+            "run_id": "uuid" (optional),
+            "max_docs": 50 (optional, for testing)
+        }
 
     Returns: {
         "dd_id": "uuid",
@@ -352,7 +440,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         if err:
             return err
 
-        # Parse request body
+        # Handle GET request
+        if req.method.upper() == "GET":
+            return handle_get(req, email)
+
+        # Parse request body for POST
         try:
             req_body = req.get_json()
         except ValueError:

@@ -21,6 +21,7 @@ import {
   Crown,
   Check,
   Network,
+  Eye,
 } from "lucide-react";
 // Note: FolderPlus removed as Add Folder button is not in this component
 import { Button } from "@/components/ui/button";
@@ -51,6 +52,9 @@ interface ControlBarProps {
   entityMappingComplete: boolean;
   canRunEntityMapping?: boolean;
   entityCount?: number;
+  // View Entity Map
+  onViewEntityMap: () => void;
+  hasEntityMap: boolean;
   selectedTier: ModelTier;
   onTierChange: (tier: ModelTier) => void;
   onRunDD: () => void;
@@ -91,6 +95,8 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   entityMappingComplete,
   canRunEntityMapping = false,
   entityCount = 0,
+  onViewEntityMap,
+  hasEntityMap,
   selectedTier,
   onTierChange,
   onRunDD,
@@ -276,6 +282,39 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                   <div>
                     <p className="text-sm text-white">Map entities across documents to identify relationships with the target company.</p>
                     <p className="text-sm text-indigo-300 mt-1">Identifies subsidiaries, counterparties, and related parties.</p>
+                  </div>
+                )}
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={onViewEntityMap}
+                    disabled={disabled || !hasEntityMap}
+                    className={cn(
+                      "h-9 w-40 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md",
+                      hasEntityMap && "border-indigo-400 bg-indigo-50 text-indigo-700 hover:bg-indigo-100",
+                      !hasEntityMap && "border-gray-200 bg-gray-50 text-gray-400"
+                    )}
+                  >
+                    <Eye className={cn("h-4 w-4", hasEntityMap ? "text-indigo-500" : "text-gray-400")} />
+                    View Entity Map
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2 max-w-xs">
+                {!hasEntityMap ? (
+                  <div>
+                    <p className="text-sm font-semibold text-gray-300">No Entity Map</p>
+                    <p className="text-sm text-white">Run entity mapping first to generate the corporate organogram.</p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-sm text-white">View the entity map showing corporate structure and relationships.</p>
                   </div>
                 )}
               </TooltipContent>

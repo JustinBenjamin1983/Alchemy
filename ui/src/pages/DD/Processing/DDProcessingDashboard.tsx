@@ -46,6 +46,7 @@ import { useCreateAnalysisRun, useAnalysisRunsList } from "@/hooks/useAnalysisRu
 import { useOrganisationProgress, useClassifyDocuments, useOrganiseFolders, useDocumentReassign, useCancelOrganisation } from "@/hooks/useOrganisationProgress";
 import { useBlueprintRequirements } from "@/hooks/useBlueprintRequirements";
 import { useDeleteDocument } from "@/hooks/useDeleteDocument";
+import { useEntityMapping } from "@/hooks/useEntityMapping";
 import { CategoryCount, CategoryDocument } from "./FileTree/FileTree";
 import { Button } from "@/components/ui/button";
 import {
@@ -227,6 +228,11 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   const documentReassign = useDocumentReassign();
   const cancelOrganisation = useCancelOrganisation();
   const deleteDocument = useDeleteDocument();
+  const entityMapping = useEntityMapping();
+
+  // Entity mapping state
+  const [entityMappingComplete, setEntityMappingComplete] = useState(false);
+  const [entityCount, setEntityCount] = useState(0);
 
   // Blueprint requirements for Checkpoint A - fetch after classification is done
   // Enable when status is past classification (not pending/classifying/cancelled/failed)
@@ -1389,6 +1395,29 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         // Checkpoint A blocking condition
         canRunReadability={canRunReadabilityCheck}
         needsReviewCount={needsReviewCount}
+        // Entity Mapping
+        onRunEntityMapping={() => {
+          if (ddId) {
+            addLogEntry("info", "Running entity mapping...");
+            entityMapping.mutate({ ddId }, {
+              onSuccess: (data) => {
+                setEntityMappingComplete(true);
+                setEntityCount(data.summary?.total_unique_entities || 0);
+                addLogEntry("success", `Entity mapping complete: ${data.summary?.total_unique_entities || 0} entities found`);
+                if (data.checkpoint_recommended) {
+                  addLogEntry("warning", `Entity checkpoint recommended: ${data.checkpoint_reason}`);
+                }
+              },
+              onError: (err) => {
+                addLogEntry("error", `Entity mapping failed: ${err.message}`);
+              }
+            });
+          }
+        }}
+        isRunningEntityMapping={entityMapping.isPending}
+        entityMappingComplete={entityMappingComplete}
+        canRunEntityMapping={readabilityChecked && readabilitySummary.failed === 0}
+        entityCount={entityCount}
         // Configure
         selectedTier={selectedModelTier}
         onTierChange={setSelectedModelTier}

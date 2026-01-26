@@ -20,6 +20,7 @@ import {
   Target,
   Crown,
   Check,
+  Network,
 } from "lucide-react";
 // Note: FolderPlus removed as Add Folder button is not in this component
 import { Button } from "@/components/ui/button";
@@ -44,6 +45,12 @@ interface ControlBarProps {
   // Checkpoint A blocking condition
   canRunReadability?: boolean;
   needsReviewCount?: number;
+  // Entity Mapping
+  onRunEntityMapping: () => void;
+  isRunningEntityMapping: boolean;
+  entityMappingComplete: boolean;
+  canRunEntityMapping?: boolean;
+  entityCount?: number;
   selectedTier: ModelTier;
   onTierChange: (tier: ModelTier) => void;
   onRunDD: () => void;
@@ -79,6 +86,11 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   failedCount,
   canRunReadability = true,
   needsReviewCount = 0,
+  onRunEntityMapping,
+  isRunningEntityMapping,
+  entityMappingComplete,
+  canRunEntityMapping = false,
+  entityCount = 0,
   selectedTier,
   onTierChange,
   onRunDD,
@@ -220,6 +232,51 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                   </div>
                 ) : (
                   <p className="text-sm text-white">Click to check document readability before performing a DD run</p>
+                )}
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={onRunEntityMapping}
+                    disabled={disabled || isRunningEntityMapping || !canRunEntityMapping}
+                    className={cn(
+                      "h-9 w-36 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md",
+                      entityMappingComplete && canRunEntityMapping && "border-green-400 bg-green-50 text-green-700 hover:bg-green-100",
+                      !canRunEntityMapping && "border-gray-200 bg-gray-50 text-gray-400"
+                    )}
+                  >
+                    {isRunningEntityMapping ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : entityMappingComplete ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <Network className="h-4 w-4 text-indigo-500" />
+                    )}
+                    Entity Map
+                    {entityMappingComplete && entityCount > 0 && (
+                      <span className="text-xs font-semibold text-green-600">
+                        {entityCount}
+                      </span>
+                    )}
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2 max-w-xs">
+                {!canRunEntityMapping ? (
+                  <div>
+                    <p className="text-sm font-semibold text-gray-300">Readability Required</p>
+                    <p className="text-sm text-white">Complete readability check before running entity mapping.</p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-sm text-white">Map entities across documents to identify relationships with the target company.</p>
+                    <p className="text-sm text-indigo-300 mt-1">Identifies subsidiaries, counterparties, and related parties.</p>
+                  </div>
                 )}
               </TooltipContent>
             </Tooltip>

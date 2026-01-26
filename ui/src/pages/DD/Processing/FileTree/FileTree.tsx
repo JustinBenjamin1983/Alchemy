@@ -99,6 +99,7 @@ export interface CategoryDocument {
   confidence?: number;
   subcategory?: string;
   readabilityStatus?: "pending" | "checking" | "ready" | "failed";
+  conversionStatus?: "pending" | "converting" | "converted" | "failed" | null;
 }
 
 // ============================================================================
@@ -1096,6 +1097,22 @@ export function FileTree({
                                       </TooltipTrigger>
                                       <TooltipContent side="left" className="bg-alchemyPrimaryNavyBlue text-white border-alchemyPrimaryNavyBlue">
                                         <p className="text-xs">AI classification confidence</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                )}
+
+                                {/* Conversion indicator - shows when doc was converted to PDF */}
+                                {doc.conversionStatus === "converted" && (
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <span className="text-[9px] px-1 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 font-medium cursor-help">
+                                          PDF
+                                        </span>
+                                      </TooltipTrigger>
+                                      <TooltipContent side="left" className="bg-alchemyPrimaryNavyBlue text-white border-alchemyPrimaryNavyBlue">
+                                        <p className="text-xs">Converted to PDF for analysis</p>
                                       </TooltipContent>
                                     </Tooltip>
                                   </TooltipProvider>

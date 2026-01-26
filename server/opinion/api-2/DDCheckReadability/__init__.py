@@ -760,13 +760,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 )
 
             # Get documents to check
-            # Explicitly specify the join condition since Document has multiple FKs to Folder
+            # Check ORIGINAL uploaded documents (is_original=True), not converted ones
+            # Also exclude documents that are themselves conversions (converted_from_id is set)
             docs_query = (
                 session.query(Document)
                 .join(Folder, Document.folder_id == Folder.id)
                 .filter(
                     Folder.dd_id == dd_id,
-                    Document.is_original == False
+                    Document.is_original == True,
+                    Document.converted_from_id == None  # Exclude converted documents
                 )
             )
 

@@ -407,6 +407,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
           subcategory: doc.ai_subcategory,
           category: doc.ai_category || "99_Needs_Review",
           readabilityStatus: readabilityMap.get(doc.document_id) || doc.readability_status || "pending",
+          conversionStatus: doc.conversion_status,
         })) || []
     ) || [];
 
@@ -423,6 +424,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         confidence: doc.confidence,
         subcategory: doc.subcategory,
         readabilityStatus: doc.readabilityStatus as "pending" | "checking" | "ready" | "failed",
+        conversionStatus: doc.conversionStatus,
       });
     }
 

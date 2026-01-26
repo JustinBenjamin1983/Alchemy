@@ -382,61 +382,8 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     [progress]
   );
 
-  // Category distribution for OrganisationReview
-  const categoryDistribution: CategoryCount[] = useMemo(() => {
-    const counts = organisationProgress?.categoryCounts || {};
-    const relevanceMap: Record<string, "critical" | "high" | "medium" | "low" | "n/a"> = {
-      "01_Corporate": "high",
-      "01_Corporate_Governance": "high",
-      "02_Commercial": "critical",
-      "03_Financial": "critical",
-      "04_Regulatory": "critical",
-      "05_Employment": "high",
-      "06_Property": "medium",
-      "07_Insurance": "low",
-      "08_Litigation": "high",
-      "09_Tax": "medium",
-      "99_Needs_Review": "n/a",
-    };
-
-    // Display name overrides for better readability
-    const displayNameMap: Record<string, string> = {
-      "01_Corporate": "Corporate Governance",
-      "01_Corporate_Governance": "Corporate Governance",
-    };
-
-    // Helper to get display name
-    const getDisplayName = (category: string): string => {
-      if (displayNameMap[category]) return displayNameMap[category];
-      return category.replace(/^\d+_/, "").replace(/_/g, " ");
-    };
-
-    // Start with backend categories, excluding deleted ones
-    const categories = Object.entries(counts)
-      .filter(([category]) => !deletedCategories.has(category))
-      .map(([category, count]) => ({
-        category,
-        displayName: getDisplayName(category),
-        count: count as number,
-        relevance: relevanceMap[category] || "medium",
-      }));
-
-    // Add custom categories (empty, for user to move docs into)
-    for (const customCat of customCategories) {
-      if (!categories.find(c => c.category === customCat)) {
-        categories.push({
-          category: customCat,
-          displayName: getDisplayName(customCat),
-          count: 0,
-          relevance: "medium",
-        });
-      }
-    }
-
-    return categories.sort((a, b) => a.category.localeCompare(b.category));
-  }, [organisationProgress?.categoryCounts, customCategories, deletedCategories]);
-
   // Documents grouped by category for classification review
+  // NOTE: This must come BEFORE categoryDistribution to be used for accurate counts
   const documentsByCategory: Record<string, CategoryDocument[]> = useMemo(() => {
     const result: Record<string, CategoryDocument[]> = {};
 
@@ -481,6 +428,63 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
 
     return result;
   }, [ddData?.folders, documents]);
+
+  // Category distribution for OrganisationReview
+  // Uses counts from filtered documentsByCategory to exclude converted docs
+  const categoryDistribution: CategoryCount[] = useMemo(() => {
+    const backendCounts = organisationProgress?.categoryCounts || {};
+    const relevanceMap: Record<string, "critical" | "high" | "medium" | "low" | "n/a"> = {
+      "01_Corporate": "high",
+      "01_Corporate_Governance": "high",
+      "02_Commercial": "critical",
+      "03_Financial": "critical",
+      "04_Regulatory": "critical",
+      "05_Employment": "high",
+      "06_Property": "medium",
+      "07_Insurance": "low",
+      "08_Litigation": "high",
+      "09_Tax": "medium",
+      "99_Needs_Review": "n/a",
+    };
+
+    // Display name overrides for better readability
+    const displayNameMap: Record<string, string> = {
+      "01_Corporate": "Corporate Governance",
+      "01_Corporate_Governance": "Corporate Governance",
+    };
+
+    // Helper to get display name
+    const getDisplayName = (category: string): string => {
+      if (displayNameMap[category]) return displayNameMap[category];
+      return category.replace(/^\d+_/, "").replace(/_/g, " ");
+    };
+
+    // Start with backend categories, excluding deleted ones
+    // Use actual document counts from documentsByCategory (excludes converted docs)
+    const categories = Object.keys(backendCounts)
+      .filter((category) => !deletedCategories.has(category))
+      .map((category) => ({
+        category,
+        displayName: getDisplayName(category),
+        // Use filtered count from documentsByCategory instead of raw backend count
+        count: documentsByCategory[category]?.length || 0,
+        relevance: relevanceMap[category] || "medium",
+      }));
+
+    // Add custom categories (empty, for user to move docs into)
+    for (const customCat of customCategories) {
+      if (!categories.find(c => c.category === customCat)) {
+        categories.push({
+          category: customCat,
+          displayName: getDisplayName(customCat),
+          count: documentsByCategory[customCat]?.length || 0,
+          relevance: "medium",
+        });
+      }
+    }
+
+    return categories.sort((a, b) => a.category.localeCompare(b.category));
+  }, [organisationProgress?.categoryCounts, customCategories, deletedCategories, documentsByCategory]);
 
   // Handle approve organisation - triggers folder creation
   const handleApproveOrganisation = useCallback(() => {

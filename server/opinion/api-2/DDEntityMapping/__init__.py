@@ -428,6 +428,7 @@ def handle_get(req: func.HttpRequest, email: str) -> func.HttpResponse:
                 if draft.shareholders:
                     try:
                         sh_data = json.loads(draft.shareholders)
+                        logging.info(f"[DDEntityMapping GET] Raw shareholders data: {sh_data}")
                         for sh in sh_data:
                             if isinstance(sh, dict) and sh.get("name"):
                                 shareholders.append({
@@ -436,8 +437,11 @@ def handle_get(req: func.HttpRequest, email: str) -> func.HttpResponse:
                                 })
                             elif isinstance(sh, str) and sh:
                                 shareholders.append({"name": sh, "ownership_percentage": None})
-                    except (json.JSONDecodeError, TypeError):
-                        pass
+                        logging.info(f"[DDEntityMapping GET] Parsed shareholders: {shareholders}")
+                    except (json.JSONDecodeError, TypeError) as e:
+                        logging.error(f"[DDEntityMapping GET] Failed to parse shareholders: {e}")
+                else:
+                    logging.info(f"[DDEntityMapping GET] No shareholders data in draft")
 
             # Calculate summary
             summary = {

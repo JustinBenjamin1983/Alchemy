@@ -97,12 +97,12 @@ export function DDTop({
               <div className="flex gap-4">
                 <Button
                   className={`transition-all duration-200 hover:scale-105 hover:shadow-md ${
-                    screenState === "Processing"
+                    screenState === "CheckpointA"
                       ? "bg-alchemyPrimaryOrange text-white hover:bg-alchemyPrimaryOrange/90"
                       : "hover:border-gray-400"
                   }`}
                   variant="outline"
-                  onClick={() => setScreenState("Processing")}
+                  onClick={() => setScreenState("CheckpointA")}
                 >
                   Console
                 </Button>

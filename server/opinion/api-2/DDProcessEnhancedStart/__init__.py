@@ -157,7 +157,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             # Delete existing checkpoint for this run if any
             existing = session.query(DDProcessingCheckpoint).filter(
-                DDProcessingCheckpoint.run_id == run_id
+                DDProcessingCheckpoint.run_id == run_uuid
             ).first()
             if existing:
                 session.delete(existing)
@@ -607,9 +607,10 @@ def _run_processing_in_background(
 def _update_checkpoint(checkpoint_id: str, updates: Dict[str, Any]):
     """Update checkpoint with fresh database session."""
     try:
+        checkpoint_uuid = uuid_module.UUID(checkpoint_id) if isinstance(checkpoint_id, str) else checkpoint_id
         with transactional_session() as session:
             checkpoint = session.query(DDProcessingCheckpoint).filter(
-                DDProcessingCheckpoint.id == checkpoint_id
+                DDProcessingCheckpoint.id == checkpoint_uuid
             ).first()
             if checkpoint:
                 for key, value in updates.items():
@@ -662,9 +663,10 @@ def _check_should_stop(checkpoint_id: str) -> tuple[bool, str]:
     Returns (should_stop, reason).
     """
     try:
+        checkpoint_uuid = uuid_module.UUID(checkpoint_id) if isinstance(checkpoint_id, str) else checkpoint_id
         with transactional_session() as session:
             checkpoint = session.query(DDProcessingCheckpoint).filter(
-                DDProcessingCheckpoint.id == checkpoint_id
+                DDProcessingCheckpoint.id == checkpoint_uuid
             ).first()
             if checkpoint:
                 if checkpoint.status == 'failed':
@@ -717,9 +719,10 @@ def _wait_while_paused(checkpoint_id: str, run_id: str, max_wait_seconds: int = 
 def _save_intermediate_results(checkpoint_id: str, results: Dict[str, Any]):
     """Save intermediate processing results to checkpoint for resume capability."""
     try:
+        checkpoint_uuid = uuid_module.UUID(checkpoint_id) if isinstance(checkpoint_id, str) else checkpoint_id
         with transactional_session() as session:
             checkpoint = session.query(DDProcessingCheckpoint).filter(
-                DDProcessingCheckpoint.id == checkpoint_id
+                DDProcessingCheckpoint.id == checkpoint_uuid
             ).first()
             if checkpoint:
                 # Store results that can be used to resume
@@ -1520,8 +1523,9 @@ def _create_checkpoint_c_if_needed(
         # Check if a pending checkpoint already exists
         with transactional_session() as session:
             from shared.models import DDValidationCheckpoint as CheckpointModel
+            run_uuid = uuid_module.UUID(run_id) if isinstance(run_id, str) else run_id
             existing = session.query(CheckpointModel).filter(
-                CheckpointModel.run_id == run_id,
+                CheckpointModel.run_id == run_uuid,
                 CheckpointModel.checkpoint_type == "post_analysis",
                 CheckpointModel.status.in_(["pending", "awaiting_user_input"])
             ).first()

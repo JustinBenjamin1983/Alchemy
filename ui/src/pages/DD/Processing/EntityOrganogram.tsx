@@ -1032,6 +1032,12 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const reactFlowInstance = useRef<ReactFlowInstance | null>(null);
 
+  // Sync nodes and edges when data changes (e.g., after AI modification)
+  useEffect(() => {
+    setNodes(initialNodes);
+    setEdges(initialEdges);
+  }, [initialNodes, initialEdges, setNodes, setEdges]);
+
   const handleEntityClick = useCallback((entity: OrganogramEntity) => {
     setSelectedEntity(entity);
     onEntityClick?.(entity);

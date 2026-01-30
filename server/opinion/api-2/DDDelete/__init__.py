@@ -7,8 +7,10 @@ from shared.utils import auth_get_email
 from shared.models import (
     DueDiligence, DueDiligenceMember, Folder, Document, DocumentHistory,
     Perspective, PerspectiveRisk, PerspectiveRiskFinding,
-    DDQuestion, DDQuestionReferencedDoc
+    DDQuestion, DDQuestionReferencedDoc,
+    DDProcessingCheckpoint, DDEntityMap, DDAnalysisRun
 )
+from sqlalchemy import text
 from shared.session import transactional_session
 from shared.uploader import delete_from_blob_storage
 from sqlalchemy.orm import joinedload
@@ -101,7 +103,7 @@ def delete_due_diligence(dd_id: str, requesting_user_email: str):
         
         # Get all document blob keys
         documents = (session.query(Document)
-                    .join(Folder)
+                    .join(Folder, Document.folder_id == Folder.id)
                     .filter(Folder.dd_id == dd_id)
                     .all())
         
@@ -135,9 +137,55 @@ def delete_due_diligence(dd_id: str, requesting_user_email: str):
             for ref_doc in question.referenced_documents:
                 session.delete(ref_doc)
             session.delete(question)
-        
+
         session.flush()  # Ensure FK constraint deletes are committed
-        
+
+        # Delete processing checkpoints
+        checkpoints = session.query(DDProcessingCheckpoint).filter(
+            DDProcessingCheckpoint.dd_id == dd_id
+        ).all()
+        logging.info(f"Deleting {len(checkpoints)} processing checkpoints")
+        for checkpoint in checkpoints:
+            session.delete(checkpoint)
+
+        # Delete entity maps
+        entity_maps = session.query(DDEntityMap).filter(
+            DDEntityMap.dd_id == dd_id
+        ).all()
+        logging.info(f"Deleting {len(entity_maps)} entity maps")
+        for entity_map in entity_maps:
+            session.delete(entity_map)
+
+        # Delete analysis runs (this should cascade to findings with run_id)
+        analysis_runs = session.query(DDAnalysisRun).filter(
+            DDAnalysisRun.dd_id == dd_id
+        ).all()
+        logging.info(f"Deleting {len(analysis_runs)} analysis runs")
+        for run in analysis_runs:
+            session.delete(run)
+
+        # Delete organisation status (using raw SQL as model may not exist)
+        try:
+            session.execute(
+                text("DELETE FROM dd_organisation_status WHERE dd_id = :dd_id"),
+                {"dd_id": dd_id}
+            )
+            logging.info("Deleted organisation status records")
+        except Exception as e:
+            logging.warning(f"Could not delete organisation status (may not exist): {e}")
+
+        # Delete validation checkpoints (using raw SQL as model may not exist)
+        try:
+            session.execute(
+                text("DELETE FROM dd_validation_checkpoint WHERE dd_id = :dd_id"),
+                {"dd_id": dd_id}
+            )
+            logging.info("Deleted validation checkpoint records")
+        except Exception as e:
+            logging.warning(f"Could not delete validation checkpoints (may not exist): {e}")
+
+        session.flush()
+
         # 4. Delete main DueDiligence record (CASCADE will handle the rest)
         logging.info("Deleting main DueDiligence record")
         session.delete(dd)

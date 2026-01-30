@@ -15,7 +15,8 @@ import azure.functions as func
 import json
 from datetime import datetime
 from shared.session import transactional_session
-from shared.models import DueDiligence
+from shared.models import DueDiligence, Folder
+from shared.document_selector import get_processable_documents
 from sqlalchemy import text
 
 
@@ -180,47 +181,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 # 2. Finding counts from perspective_risk_finding
                 # This makes the dashboard work with DDProcessAllDev processed data
 
-                # Get document statuses including readability info
-                doc_query = text("""
-                    SELECT
-                        d.id::text,
-                        d.original_file_name as filename,
-                        d.type as doc_type,
-                        d.processing_status,
-                        d.readability_status,
-                        d.readability_error,
-                        CASE
-                            WHEN d.processing_status IN ('completed', 'processed') THEN 'completed'
-                            WHEN d.processing_status = 'processing' THEN 'processing'
-                            WHEN d.processing_status = 'error' THEN 'error'
-                            ELSE 'queued'
-                        END as status
-                    FROM document d
-                    JOIN folder f ON d.folder_id = f.id
-                    WHERE f.dd_id = :dd_id
-                    AND d.is_original = false
-                    ORDER BY d.uploaded_at
-                """)
-                doc_results = session.execute(doc_query, {"dd_id": dd_id}).fetchall()
-
-                documents = []
-                docs_completed = 0
-                total_docs = 0
-                for doc in doc_results:
-                    total_docs += 1
-                    doc_status = doc.status
-                    if doc_status == 'completed':
-                        docs_completed += 1
-                    documents.append({
-                        "id": doc.id,
-                        "filename": doc.filename,
-                        "original_file_name": doc.filename,
-                        "doc_type": doc.doc_type or "other",
-                        "type": doc.doc_type or "other",
-                        "status": doc_status,
-                        "readability_status": doc.readability_status or "pending",
-                        "readability_error": doc.readability_error
-                    })
+                # Get document statuses using smart selection (avoids counting duplicates)
+                documents = _get_processable_documents_for_progress(session, dd_id)
+                total_docs = len(documents)
+                docs_completed = sum(1 for d in documents if d['status'] == 'completed')
 
                 # Get finding counts - MUST match RiskSummary.tsx severity mapping exactly:
                 #   - critical: action_priority = 'critical'
@@ -552,40 +516,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 "indemnities": indemnities_count
             }
 
-            # Get document statuses from the document table via folder
-            doc_query = text("""
-                SELECT
-                    d.id::text,
-                    d.original_file_name as filename,
-                    d.type as doc_type,
-                    d.readability_status,
-                    d.readability_error,
-                    CASE
-                        WHEN d.processing_status = 'completed' THEN 'completed'
-                        WHEN d.processing_status = 'processing' THEN 'processing'
-                        WHEN d.processing_status = 'error' THEN 'error'
-                        ELSE 'queued'
-                    END as status
-                FROM document d
-                JOIN folder f ON d.folder_id = f.id
-                WHERE f.dd_id = :dd_id
-                AND d.is_original = false
-                ORDER BY d.uploaded_at
-            """)
-
-            doc_results = session.execute(doc_query, {"dd_id": dd_id}).fetchall()
-            documents = []
-            for doc in doc_results:
-                documents.append({
-                    "id": doc.id,
-                    "filename": doc.filename,
-                    "original_file_name": doc.filename,
-                    "doc_type": doc.doc_type or "other",
-                    "type": doc.doc_type or "other",
-                    "status": doc.status,
-                    "readability_status": doc.readability_status or "pending",
-                    "readability_error": doc.readability_error
-                })
+            # Get document statuses using smart selection (avoids counting duplicates)
+            documents = _get_processable_documents_for_progress(session, dd_id)
 
             # Use checkpoint finding counts ONLY during active processing (real-time updates)
             # For completed runs, always use the authoritative database query
@@ -852,3 +784,55 @@ def _get_organisation_progress(session, dd_id: str) -> dict:
     except Exception as e:
         # Table may not exist or other error - return None
         return None
+
+
+def _get_processable_documents_for_progress(session, dd_id: str) -> list:
+    """
+    Get processable documents for progress display using smart selection.
+
+    Returns documents in the same format as the original SQL query but uses
+    smart document selection to avoid duplicates (original vs converted).
+
+    Args:
+        session: SQLAlchemy session
+        dd_id: Due diligence UUID string
+
+    Returns:
+        List of document dicts with: id, filename, doc_type, status,
+        readability_status, readability_error
+    """
+    # Get folders for this DD
+    folders = session.query(Folder).filter(Folder.dd_id == dd_id).all()
+    folder_ids = [str(f.id) for f in folders]
+
+    if not folder_ids:
+        return []
+
+    # Use smart document selection
+    processable_docs = get_processable_documents(session, folder_ids)
+
+    # Build result list in same format as SQL query
+    documents = []
+    for doc in processable_docs:
+        # Determine status
+        if doc.processing_status in ('completed', 'processed'):
+            status = 'completed'
+        elif doc.processing_status == 'processing':
+            status = 'processing'
+        elif doc.processing_status == 'error':
+            status = 'error'
+        else:
+            status = 'queued'
+
+        documents.append({
+            "id": str(doc.id),
+            "filename": doc.original_file_name,
+            "original_file_name": doc.original_file_name,
+            "doc_type": doc.type or "other",
+            "type": doc.type or "other",
+            "status": status,
+            "readability_status": doc.readability_status or "pending",
+            "readability_error": doc.readability_error
+        })
+
+    return documents

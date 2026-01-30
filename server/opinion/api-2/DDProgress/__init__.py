@@ -1,8 +1,18 @@
-# dd_progress/__init__.py  (new Function)
-import json, uuid
+# dd_progress/__init__.py
+"""
+DD Progress Endpoint
+
+Returns document processing progress for a DD project.
+Uses smart document selection to count only processable documents
+(avoiding duplicates between originals and converted versions).
+"""
+import json
+import uuid
 import azure.functions as func
 from shared.session import transactional_session
-from shared.models import Document
+from shared.models import Document, Folder
+from shared.document_selector import get_processable_documents
+
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     dd_id = req.route_params.get("dd_id")
@@ -12,17 +22,30 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     dd_id = uuid.UUID(dd_id)
 
     with transactional_session() as session:
-        total_docs = session.query(Document)\
-            .filter(Document.folder.has(dd_id=dd_id),
-                    Document.is_original == False).count()
+        # Get folders for this DD
+        folders = session.query(Folder).filter(Folder.dd_id == dd_id).all()
+        folder_ids = [str(f.id) for f in folders]
 
-        complete = session.query(Document)\
-            .filter(Document.folder.has(dd_id=dd_id),
-                    Document.processing_status == "Complete").count()
+        if not folder_ids:
+            return func.HttpResponse(
+                json.dumps({
+                    "total": 0,
+                    "complete": 0,
+                    "unsupported": 0,
+                    "in_progress": 0,
+                    "percent": 0
+                }),
+                mimetype="application/json",
+                status_code=200
+            )
 
-        unsupported = session.query(Document)\
-            .filter(Document.folder.has(dd_id=dd_id),
-                    Document.processing_status == "Unsupported").count()
+        # Use smart document selection to get actual processable documents
+        # This avoids counting both original AND converted versions
+        processable_docs = get_processable_documents(session, folder_ids)
+
+        total_docs = len(processable_docs)
+        complete = sum(1 for doc in processable_docs if doc.processing_status == "Complete")
+        unsupported = sum(1 for doc in processable_docs if doc.processing_status == "Unsupported")
 
     in_progress = total_docs - complete - unsupported
     pct = round(100 * complete / total_docs, 1) if total_docs else 0

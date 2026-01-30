@@ -29,6 +29,7 @@ from shared.models import (
     DDProcessingCheckpoint
 )
 from shared.dev_adapters.dev_config import get_dev_config
+from shared.document_selector import get_processable_documents, get_original_document_id
 
 # Add dd_enhanced to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'dd_enhanced'))
@@ -456,12 +457,13 @@ def _load_dd_data(dd_id: str, resume_from_checkpoint: bool) -> Dict[str, Any]:
 
             # Get all documents for this DD
             folders = session.query(Folder).filter(Folder.dd_id == dd_id).all()
-            folder_ids = [f.id for f in folders]
+            folder_ids = [str(f.id) for f in folders]
             folder_lookup = {str(f.id): f for f in folders}
 
-            documents = session.query(Document).filter(
-                Document.folder_id.in_(folder_ids)
-            ).all()
+            # Use smart document selection to get best version of each document
+            # This prevents processing both original AND converted versions
+            documents = get_processable_documents(session, folder_ids)
+            logging.info(f"[DDProcessEnhanced] Smart selection returned {len(documents)} processable documents")
 
             if not documents:
                 checkpoint.status = 'failed'
@@ -484,8 +486,12 @@ def _load_dd_data(dd_id: str, resume_from_checkpoint: bool) -> Dict[str, Any]:
                 content = _extract_document_content(doc)
                 if content:
                     folder = folder_lookup.get(str(doc.folder_id))
+                    # Get original document ID for finding linkage
+                    # If this is a converted doc, link findings to the original
+                    original_doc_id = get_original_document_id(doc)
                     doc_dict = {
                         "id": str(doc.id),
+                        "original_document_id": original_doc_id,  # For finding linkage
                         "filename": doc.original_file_name,
                         "text": content,
                         "doc_type": _classify_document_type(doc.original_file_name, folder),
@@ -1725,10 +1731,14 @@ def _store_findings(
 
             risk = risk_cache[category]
 
-            # Get document ID
+            # Get document ID - link to original if this is a converted document
             source_doc = finding.get("source_document", "")
             doc = doc_lookup.get(source_doc)
-            doc_id = doc.id if doc else None
+            if doc:
+                # If processing a converted doc, link finding to the original
+                doc_id = doc.converted_from_id if doc.converted_from_id else doc.id
+            else:
+                doc_id = None
 
             # Map severity to status
             severity = finding.get("severity", "medium")

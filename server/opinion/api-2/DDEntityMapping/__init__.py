@@ -21,6 +21,7 @@ import uuid as uuid_module
 from shared.utils import auth_get_email
 from shared.session import transactional_session
 from shared.models import Document, Folder, DueDiligence, DDWizardDraft, DDEntityMap, DDAnalysisRun
+from shared.document_selector import get_processable_documents
 
 DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
 LOCAL_STORAGE_PATH = os.environ.get("LOCAL_STORAGE_PATH", "")
@@ -237,19 +238,21 @@ def run_entity_mapping(dd_id: str, run_id: str = None, max_docs: int = None) -> 
                      f"Registration: {target_entity['registration_number']}, "
                      f"Known entities from wizard: {len(known_entities)}")
 
-        # Get all classified documents
+        # Get all classified documents using smart selection
+        # This ensures we process converted PDFs instead of originals when both exist
         folders = session.query(Folder).filter(Folder.dd_id == dd_uuid).all()
-        folder_ids = [f.id for f in folders]
+        folder_ids = [str(f.id) for f in folders]
 
-        documents = (
-            session.query(Document)
-            .filter(
-                Document.folder_id.in_(folder_ids),
-                Document.classification_status == "classified",
-                Document.is_original == False
-            )
-            .all()
-        )
+        # Use smart document selection to avoid processing duplicates
+        all_processable = get_processable_documents(session, folder_ids)
+
+        # Filter to only classified documents
+        documents = [
+            doc for doc in all_processable
+            if doc.classification_status == "classified"
+        ]
+
+        logging.info(f"[DDEntityMapping] Smart selection: {len(all_processable)} processable → {len(documents)} classified")
 
         if max_docs:
             documents = documents[:max_docs]

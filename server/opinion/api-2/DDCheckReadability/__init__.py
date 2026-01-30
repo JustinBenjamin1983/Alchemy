@@ -784,6 +784,28 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 file_type_lower = doc.type.lower()
                 is_convertible = file_type_lower in CONVERTIBLE_TYPES
 
+                # Skip if already has a valid converted version
+                if doc.converted_doc_id and doc.conversion_status == "converted":
+                    logging.info(f"Skipping readability check - already converted: {doc.original_file_name}")
+                    summary["ready"] += 1
+                    results.append({
+                        "doc_id": str(doc.id),
+                        "filename": doc.original_file_name,
+                        "file_type": doc.type,
+                        "status": "ready",
+                        "error": None,
+                        "converted_doc_id": str(doc.converted_doc_id),
+                        "conversion_status": "converted",
+                        "skipped": True,
+                        "skip_reason": "already_converted"
+                    })
+                    continue
+
+                # Skip if this document IS a converted version (shouldn't be in query, but safety check)
+                if doc.converted_from_id:
+                    logging.info(f"Skipping - this is a converted document: {doc.original_file_name}")
+                    continue
+
                 # Update status to checking
                 doc.readability_status = "checking"
                 doc.conversion_status = "pending" if is_convertible else None

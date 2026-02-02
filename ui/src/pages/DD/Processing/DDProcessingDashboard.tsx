@@ -33,6 +33,8 @@ import {
   useElapsedTime,
   useReducedMotion,
   useStartProcessing,
+  useAnalyzeDocuments,
+  useGenerateReport,
 } from "./hooks";
 import { PipelineRings } from "./PipelineRings";
 import { RiskSummaryCounters } from "./FindingsFeed";
@@ -188,6 +190,10 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   const { startProcessing, isStarting, error: startError } = useStartProcessing();
   const createRun = useCreateAnalysisRun();
 
+  // Analyze Documents (Pass 1-2) and Generate Report (Pass 3-7) hooks
+  const { analyzeDocuments, isAnalyzing, error: analyzeError } = useAnalyzeDocuments();
+  const { generateReport, isGenerating, error: generateError } = useGenerateReport();
+
   // Validation checkpoint hook - polls for pending checkpoints during processing
   const { data: checkpointData, refetch: refetchCheckpoint } = useValidationCheckpoint(ddId || undefined);
   const [showValidationWizard, setShowValidationWizard] = useState(false);
@@ -238,6 +244,9 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   const [entityCount, setEntityCount] = useState(0);
   const [showEntityMappingModal, setShowEntityMappingModal] = useState(false);
   const [entityMappingResult, setEntityMappingResult] = useState<EntityMappingResult | null>(null);
+
+  // Analyze stage state (Pass 1-2)
+  const [analyzeComplete, setAnalyzeComplete] = useState(false);
 
   // Fetch stored entity map on page load - always enabled if we have a ddId
   // This ensures previously saved entity maps are loaded even after browser refresh
@@ -895,6 +904,92 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     }
   };
 
+  // Handle Analyze button click - creates run if needed, runs Pass 1-2 and creates Checkpoint C
+  const handleAnalyzeClick = async () => {
+    if (!ddId) {
+      addLogEntry("error", "No DD project selected.");
+      return;
+    }
+
+    // Get documents to process
+    const docsToProcess = selectedDocIds.size > 0
+      ? Array.from(selectedDocIds)
+      : allCategoryDocs.filter((doc: any) => doc.readabilityStatus === "ready").map((doc: any) => doc.id);
+
+    if (docsToProcess.length === 0) {
+      addLogEntry("error", "No documents ready for analysis.");
+      return;
+    }
+
+    addLogEntry("info", `Starting document analysis for ${docsToProcess.length} documents...`);
+
+    try {
+      let runId = currentRunId;
+
+      // Create a new run if one doesn't exist
+      if (!runId) {
+        addLogEntry("info", `Creating analysis run...`);
+        const runResult = await createRun.mutateAsync({
+          ddId,
+          selectedDocumentIds: docsToProcess,
+        });
+        runId = runResult.run_id;
+        setCurrentRunId(runId);
+        addLogEntry("info", `Run "${runResult.name}" created`);
+      }
+
+      // Start analysis (Pass 1-2)
+      const result = await analyzeDocuments(runId, {
+        modelTier: selectedModelTier,
+      });
+
+      const tierLabel = selectedModelTier === "cost_optimized" ? "Economy" :
+                       selectedModelTier === "balanced" ? "Balanced" :
+                       selectedModelTier === "high_accuracy" ? "High Accuracy" : "Maximum";
+      addLogEntry("success", `Analysis started for ${result.totalDocuments} documents`, `Using ${tierLabel} accuracy`);
+
+      // The analysis runs in background, progress polling will update the UI
+      // When Pass 1-2 complete, the backend will create Checkpoint C
+      // and set status to 'paused' with current_stage='waiting_for_checkpoint_c'
+
+      // Trigger a refetch to start showing progress
+      refetch();
+    } catch (err) {
+      const friendlyError = getAttorneyFriendlyError(err);
+      addLogEntry("error", `Analysis failed: ${friendlyError.message}`);
+    }
+  };
+
+  // Handle Generate Report button click - runs Pass 3-7 (requires analysis to be complete)
+  const handleGenerateReportClick = async () => {
+    if (!currentRunId) {
+      addLogEntry("error", "No analysis run found. Please run document analysis first.");
+      return;
+    }
+
+    addLogEntry("info", "Starting report generation (Pass 3-7: cross-document analysis, synthesis, verification)...");
+
+    try {
+      const result = await generateReport(currentRunId, {
+        modelTier: selectedModelTier,
+        useClusteredPass3: true,
+      });
+
+      const tierLabel = selectedModelTier === "cost_optimized" ? "Economy" :
+                       selectedModelTier === "balanced" ? "Balanced" :
+                       selectedModelTier === "high_accuracy" ? "High Accuracy" : "Maximum";
+      addLogEntry("success", `Report generation started`, `Using ${tierLabel} accuracy for ${result.totalDocuments} documents`);
+
+      // The report generation runs in background, progress polling will update the UI
+
+      // Trigger a refetch to start showing progress
+      refetch();
+    } catch (err) {
+      const friendlyError = getAttorneyFriendlyError(err);
+      addLogEntry("error", `Report generation failed: ${friendlyError.message}`);
+    }
+  };
+
   // Helper to convert technical errors to attorney-friendly messages
   const getAttorneyFriendlyError = (error: any): { message: string; details: string; isFixable: boolean } => {
     const errorMsg = error?.message?.toLowerCase() || "";
@@ -988,6 +1083,13 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     const docsToProcess = selectedDocIds.size > 0
       ? Array.from(selectedDocIds)
       : allCategoryDocs.filter((doc) => doc.readabilityStatus === "ready").map((doc) => doc.id);
+
+    // Validate that we have documents to process
+    if (docsToProcess.length === 0) {
+      addLogEntry("error", "No documents available for analysis",
+        "Please ensure documents have passed the readability check before running Due Diligence. Check that documents are classified and folders are organised.");
+      return;
+    }
 
     addLogEntry("info", `Creating analysis run for ${docsToProcess.length} documents...`);
 
@@ -1193,7 +1295,10 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         break;
       case "failed":
         if (isUnexpectedFailure) {
-          addLogEntry("warning", "Analysis was interrupted", "Click 'Restart from Checkpoint' to continue");
+          const errorDetail = progress?.lastError
+            ? `Error: ${progress.lastError}. Click 'Restart from Checkpoint' to continue`
+            : "Click 'Restart from Checkpoint' to continue";
+          addLogEntry("error", "Analysis failed", errorDetail);
         } else {
           addLogEntry("info", "Analysis was cancelled");
         }
@@ -1202,7 +1307,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         addLogEntry("warning", "Classification cancelled", "Restart classification or proceed without folder organisation");
         break;
     }
-  }, [currentPhase, selectedDocIds.size, isUnexpectedFailure, addLogEntry]);
+  }, [currentPhase, selectedDocIds.size, isUnexpectedFailure, addLogEntry, progress?.lastError]);
 
   // Log when processing appears stuck
   useEffect(() => {
@@ -1292,6 +1397,28 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     };
   }, [progress?.currentPass, progress?.currentDocumentName, progress?.passProgress, progress?.status, addLogEntry]);
 
+  // Track when analysis (Pass 1-2) completes and restore state on page return
+  // Analysis is complete when:
+  // 1. currentStage is 'waiting_for_checkpoint_c', OR
+  // 2. Pass 2 (analyze) is completed, OR
+  // 3. Any pass beyond analyze (calculate, crossdoc, etc.) has started/completed
+  useEffect(() => {
+    const analyzePassComplete = progress?.passProgress?.analyze?.status === 'completed';
+    const beyondAnalyze = progress?.passProgress?.calculate?.status !== 'pending' ||
+                          progress?.passProgress?.crossdoc?.status !== 'pending';
+    const waitingForCheckpoint = progress?.currentStage === 'waiting_for_checkpoint_c';
+
+    if (waitingForCheckpoint || analyzePassComplete || beyondAnalyze) {
+      if (!analyzeComplete) {
+        setAnalyzeComplete(true);
+        // Refetch checkpoint to show Checkpoint C (if in waiting state)
+        if (waitingForCheckpoint) {
+          refetchCheckpoint();
+        }
+      }
+    }
+  }, [progress?.currentStage, progress?.passProgress?.analyze?.status, progress?.passProgress?.calculate?.status, progress?.passProgress?.crossdoc?.status, analyzeComplete, refetchCheckpoint]);
+
   // Navigation handlers - use callbacks if provided, otherwise use router
   const handleBack = () => {
     if (onBack) {
@@ -1369,27 +1496,62 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   // Allow running DD when:
   // - Entity mapping is confirmed (implies classification + readability completed)
   // - OR readability check completed OR previous run completed OR all docs already ready
+  // - AND there are actually documents ready to process (docsToProcessCount > 0)
   // - AND not currently processing or organising
-  // Flow: Classification → Readability → Entity Mapping → Run DD
+  // Flow: Classification → Readability → Entity Mapping → Analyze → Generate Report
   // If entity mapping is confirmed, all prior steps must have completed successfully
   const hasCompletedRun = progress?.status === "completed";
-  const canStartDD =
-    (entityMappingComplete || readabilityChecked || hasCompletedRun || areDocsReadyForDD) &&
+
+  // Can run Analyze (Pass 1-2): requires entity mapping complete
+  const canAnalyze =
+    entityMappingComplete &&
+    docsToProcessCount > 0 &&
     !isReadabilityInProgress &&
     !isClassificationInProgress &&
     !isOrganisationInProgress &&
-    !isProcessingInProgress;
+    !isProcessingInProgress &&
+    !isAnalyzing &&
+    !analyzeComplete; // Don't allow re-analyze if already done
 
-  // Tooltip message explaining why button is disabled
-  const runDDTooltip = useMemo(() => {
-    if (canStartDD) {
+  // Check if waiting for Checkpoint C validation (analysis done, waiting for user validation)
+  // Checkpoint C is the 'post_analysis' checkpoint type
+  const isWaitingForCheckpointC = progress?.currentStage === 'waiting_for_checkpoint_c' ||
+    (checkpointData?.has_checkpoint && checkpointData.checkpoint?.checkpoint_type === 'post_analysis' &&
+     checkpointData.checkpoint?.status === 'awaiting_user_input');
+
+  // Check if Checkpoint C has been validated (completed or skipped)
+  const checkpointCValidated = checkpointData?.checkpoint?.checkpoint_type === 'post_analysis' &&
+    (checkpointData.checkpoint?.status === 'completed' || checkpointData.checkpoint?.status === 'skipped');
+
+  // Can run Generate Report (Pass 3-7): requires Checkpoint C validated
+  const canGenerateReport =
+    (analyzeComplete || checkpointCValidated) &&
+    docsToProcessCount > 0 &&
+    !isReadabilityInProgress &&
+    !isClassificationInProgress &&
+    !isOrganisationInProgress &&
+    !isProcessingInProgress &&
+    !isGenerating;
+
+  // Tooltip for Generate Report button
+  const generateReportTooltip = useMemo(() => {
+    if (canGenerateReport) {
       return selectedDocIds.size > 0
-        ? `Analyse ${selectedDocIds.size} selected document(s)`
-        : `Analyse all ${docsToProcessCount} document(s)`;
+        ? `Generate report from ${selectedDocIds.size} analysed document(s)`
+        : `Generate report from ${docsToProcessCount} analysed document(s)`;
     }
     // Specific messages for different disabled states
-    if (isProcessingInProgress) {
+    if (isProcessingInProgress || isGenerating) {
       return "Processing is already in progress";
+    }
+    if (isAnalyzing) {
+      return "Wait for document analysis to complete";
+    }
+    if (isWaitingForCheckpointC) {
+      return "Complete Checkpoint C validation before generating report";
+    }
+    if (!analyzeComplete && !checkpointCValidated) {
+      return "Run document analysis first";
     }
     if (isClassificationInProgress || isOrganisationInProgress) {
       return "Wait for classification/organisation to complete";
@@ -1397,19 +1559,14 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     if (isReadabilityInProgress) {
       return "Wait for readability check to complete";
     }
-    if (!areDocsReadyForDD) {
-      const pendingCount = allCategoryDocs.filter((doc) => doc.readabilityStatus === "pending").length;
-      const failedCount = allCategoryDocs.filter((doc) => doc.readabilityStatus === "failed").length;
-      if (failedCount > 0) {
-        return `${failedCount} document(s) failed readability check`;
-      }
-      if (pendingCount > 0) {
-        return `Run Readability check first (${pendingCount} pending)`;
-      }
-      return "No documents ready for analysis";
+    if (allCategoryDocs.length === 0) {
+      return "No documents available - complete classification first";
     }
-    return "Complete Doc Readability before performing Due Diligence analysis";
-  }, [canStartDD, selectedDocIds.size, docsToProcessCount, isProcessingInProgress, isClassificationInProgress, isOrganisationInProgress, isReadabilityInProgress, areDocsReadyForDD, allCategoryDocs]);
+    if (docsToProcessCount === 0) {
+      return "No documents ready for report generation";
+    }
+    return "Complete document analysis before generating report";
+  }, [canGenerateReport, selectedDocIds.size, docsToProcessCount, isProcessingInProgress, isGenerating, isAnalyzing, isWaitingForCheckpointC, analyzeComplete, checkpointCValidated, isClassificationInProgress, isOrganisationInProgress, isReadabilityInProgress, allCategoryDocs]);
 
   return (
     <div className="min-h-[600px] bg-gray-200 dark:from-gray-900 dark:to-gray-950 p-6 space-y-6">
@@ -1493,13 +1650,19 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         // View Entity Map
         onViewEntityMap={() => setShowEntityMappingModal(true)}
         hasEntityMap={entityMappingComplete && entityMappingResult !== null}
+        // Analyze Documents (Pass 1-2)
+        onAnalyzeDocuments={handleAnalyzeClick}
+        isAnalyzing={isAnalyzing}
+        canAnalyze={canAnalyze}
+        analyzeComplete={analyzeComplete || isWaitingForCheckpointC || checkpointCValidated}
+        // Generate Report (Pass 3-7)
+        onGenerateReport={handleGenerateReportClick}
+        isGenerating={isGenerating}
+        canGenerateReport={canGenerateReport}
+        generateReportTooltip={generateReportTooltip}
         // Configure
         selectedTier={selectedModelTier}
         onTierChange={setSelectedModelTier}
-        // Run DD
-        onRunDD={handleRunDDClick}
-        canRunDD={canStartDD}
-        runDDTooltip={runDDTooltip}
         docsToProcessCount={docsToProcessCount}
         // Processing state
         isProcessing={isProcessingInProgress}
@@ -1859,7 +2022,9 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         </DialogContent>
       </Dialog>
 
-      {/* Validation Wizard Modal - Human-in-the-loop Checkpoint B */}
+      {/* Validation Wizard Modal - Checkpoint C (post_analysis)
+          Shows after Analyze (Pass 1-2) completes to validate AI understanding
+          before proceeding to Generate Report (Pass 3-7) */}
       {checkpointData?.has_checkpoint && checkpointData.checkpoint && (
         <ValidationWizardModal
           open={showValidationWizard}
@@ -1870,13 +2035,13 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
             setShowValidationWizard(false);
             refetchCheckpoint();
             refetch(); // Refresh processing progress
-            addLogEntry("success", "Validation checkpoint completed", "Analysis will continue with your corrections");
+            addLogEntry("success", "Checkpoint C validated", "You can now generate the report");
           }}
           onSkip={() => {
             setShowValidationWizard(false);
             refetchCheckpoint();
             refetch();
-            addLogEntry("info", "Validation checkpoint skipped", "Analysis will continue with AI assessments");
+            addLogEntry("info", "Checkpoint C skipped", "You can now generate the report with AI assessments");
           }}
         />
       )}

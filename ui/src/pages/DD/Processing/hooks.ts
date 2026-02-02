@@ -579,3 +579,138 @@ export function useStartProcessing(): {
 
   return { startProcessing, isStarting, error };
 }
+
+/**
+ * Hook to run document analysis (Pass 1-2 only)
+ * Extracts and analyzes documents, then creates Checkpoint C for validation
+ */
+export function useAnalyzeDocuments(): {
+  analyzeDocuments: (runId: string, options?: {
+    modelTier?: ModelTier;
+  }) => Promise<{
+    status: string;
+    runId: string;
+    checkpointId?: string;
+    totalDocuments: number;
+    message: string;
+  }>;
+  isAnalyzing: boolean;
+  error: string | null;
+} {
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const analyzeDocuments = useCallback(async (
+    runId: string,
+    options: { modelTier?: ModelTier } = {}
+  ) => {
+    setIsAnalyzing(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `/api/dd-analyze?run_id=${runId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model_tier: options.modelTier ?? 'balanced'
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || `HTTP ${response.status}`);
+      }
+
+      return {
+        status: data.status,
+        runId: data.run_id,
+        checkpointId: data.checkpoint_id,
+        totalDocuments: data.total_documents,
+        message: data.message || 'Analysis started'
+      };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to start analysis';
+      setError(message);
+      throw err;
+    } finally {
+      setIsAnalyzing(false);
+    }
+  }, []);
+
+  return { analyzeDocuments, isAnalyzing, error };
+}
+
+/**
+ * Hook to generate DD report (Pass 3-7)
+ * Runs cross-document analysis, synthesis, and report generation
+ * Requires Checkpoint C to be validated first
+ */
+export function useGenerateReport(): {
+  generateReport: (runId: string, options?: {
+    modelTier?: ModelTier;
+    useClusteredPass3?: boolean;
+  }) => Promise<{
+    status: string;
+    runId: string;
+    checkpointId?: string;
+    totalDocuments: number;
+    message: string;
+  }>;
+  isGenerating: boolean;
+  error: string | null;
+} {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const generateReport = useCallback(async (
+    runId: string,
+    options: { modelTier?: ModelTier; useClusteredPass3?: boolean } = {}
+  ) => {
+    setIsGenerating(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `/api/dd-generate-report?run_id=${runId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model_tier: options.modelTier ?? 'balanced',
+            use_clustered_pass3: options.useClusteredPass3 ?? true
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || `HTTP ${response.status}`);
+      }
+
+      return {
+        status: data.status,
+        runId: data.run_id,
+        checkpointId: data.checkpoint_id,
+        totalDocuments: data.total_documents,
+        message: data.message || 'Report generation started'
+      };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to start report generation';
+      setError(message);
+      throw err;
+    } finally {
+      setIsGenerating(false);
+    }
+  }, []);
+
+  return { generateReport, isGenerating, error };
+}

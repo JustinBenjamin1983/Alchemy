@@ -2,9 +2,9 @@
  * ControlBar - Unified action bar for DD Console
  *
  * Clean horizontal toolbar with three logical groups:
- * 1. Document Prep (Classify, Readability)
+ * 1. Document Prep (Classify, Readability, Entity Map, Analyze)
  * 2. Accuracy Mode (segmented control)
- * 3. Primary Action (Run Due Diligence)
+ * 3. Primary Action (Generate Report)
  */
 import React from "react";
 import {
@@ -22,6 +22,8 @@ import {
   Check,
   Network,
   Eye,
+  FileSearch,
+  FileText,
 } from "lucide-react";
 // Note: FolderPlus removed as Add Folder button is not in this component
 import { Button } from "@/components/ui/button";
@@ -55,11 +57,18 @@ interface ControlBarProps {
   // View Entity Map
   onViewEntityMap: () => void;
   hasEntityMap: boolean;
+  // Analyze Documents (Pass 1-2)
+  onAnalyzeDocuments: () => void;
+  isAnalyzing: boolean;
+  canAnalyze?: boolean;
+  analyzeComplete: boolean;
+  // Generate Report (Pass 3-7)
+  onGenerateReport: () => void;
+  isGenerating: boolean;
+  canGenerateReport: boolean;
+  generateReportTooltip: string;
   selectedTier: ModelTier;
   onTierChange: (tier: ModelTier) => void;
-  onRunDD: () => void;
-  canRunDD: boolean;
-  runDDTooltip: string;
   docsToProcessCount: number;
   isProcessing: boolean;
   isPaused: boolean;
@@ -97,11 +106,16 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   entityCount = 0,
   onViewEntityMap,
   hasEntityMap,
+  onAnalyzeDocuments,
+  isAnalyzing,
+  canAnalyze = false,
+  analyzeComplete,
+  onGenerateReport,
+  isGenerating,
+  canGenerateReport,
+  generateReportTooltip,
   selectedTier,
   onTierChange,
-  onRunDD,
-  canRunDD,
-  runDDTooltip,
   docsToProcessCount,
   isProcessing,
   isPaused,
@@ -319,6 +333,46 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                 )}
               </TooltipContent>
             </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={onAnalyzeDocuments}
+                    disabled={disabled || isAnalyzing || !canAnalyze}
+                    className={cn(
+                      "h-9 w-28 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md",
+                      analyzeComplete && canAnalyze && "border-green-400 bg-green-50 text-green-700 hover:bg-green-100",
+                      !canAnalyze && "border-gray-200 bg-gray-50 text-gray-400"
+                    )}
+                  >
+                    {isAnalyzing ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : analyzeComplete ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <FileSearch className={cn("h-4 w-4", canAnalyze ? "text-cyan-500" : "text-gray-400")} />
+                    )}
+                    Analyze
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2 max-w-xs">
+                {!canAnalyze ? (
+                  <div>
+                    <p className="text-sm font-semibold text-gray-300">Entity Map Required</p>
+                    <p className="text-sm text-white">Complete entity mapping and validate Checkpoint B before running analysis.</p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-sm text-white">Extract and analyze document content.</p>
+                    <p className="text-sm text-cyan-300 mt-1">Runs Pass 1 (Extraction) and Pass 2 (Analysis), then presents Checkpoint C for validation.</p>
+                  </div>
+                )}
+              </TooltipContent>
+            </Tooltip>
           </div>
 
           {/* Visual Divider - hidden on mobile */}
@@ -382,22 +436,29 @@ export const ControlBar: React.FC<ControlBarProps> = ({
               <TooltipTrigger asChild>
                 <span className="flex-1 lg:flex-none">
                   <Button
-                    onClick={onRunDD}
-                    disabled={!canRunDD}
+                    onClick={onGenerateReport}
+                    disabled={!canGenerateReport || isGenerating}
                     className={cn(
                       "h-10 px-5 text-sm font-semibold shadow-sm w-full lg:w-auto gap-2 transition-all duration-200",
-                      canRunDD
+                      canGenerateReport && !isGenerating
                         ? "bg-[#ff6b00] hover:bg-[#e55f00] text-white hover:scale-105 hover:shadow-lg"
                         : "bg-gray-200 text-gray-400 cursor-not-allowed"
                     )}
                   >
-                    <Play className="h-4 w-4" />
-                    Run Due Diligence
+                    {isGenerating ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <FileText className="h-4 w-4" />
+                    )}
+                    Generate Report
                   </Button>
                 </span>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="max-w-xs bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2">
-                <p className="text-sm text-white">{runDDTooltip}</p>
+                <p className="text-sm text-white">{generateReportTooltip}</p>
+                {canGenerateReport && (
+                  <p className="text-sm text-orange-300 mt-1">Runs Pass 3-7: Cross-document analysis, synthesis, and report generation.</p>
+                )}
               </TooltipContent>
             </Tooltip>
           </div>

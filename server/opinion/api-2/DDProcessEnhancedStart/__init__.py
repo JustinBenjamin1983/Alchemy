@@ -21,6 +21,7 @@ from typing import Dict, Any
 import azure.functions as func
 
 from shared.session import transactional_session
+from sqlalchemy import text
 from shared.models import (
     Document, DueDiligence, DueDiligenceMember, Folder,
     PerspectiveRisk, PerspectiveRiskFinding, Perspective, DDWizardDraft,
@@ -119,17 +120,44 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         with transactional_session() as session:
             # Validate run exists and get its details
             run_uuid = uuid_module.UUID(run_id)
+            logging.info(f"[DDProcessEnhancedStart] Querying for run_id: {run_id} (UUID: {run_uuid})")
+
+            # FIRST: Raw SQL query to see exactly what's in the database
+            raw_result = session.execute(
+                text("SELECT id, dd_id, status, selected_document_ids, total_documents FROM dd_analysis_run WHERE id = :run_id"),
+                {"run_id": str(run_uuid)}
+            ).fetchone()
+
+            if raw_result:
+                logging.info(f"[DDProcessEnhancedStart] RAW SQL - id: {raw_result[0]}")
+                logging.info(f"[DDProcessEnhancedStart] RAW SQL - dd_id: {raw_result[1]}")
+                logging.info(f"[DDProcessEnhancedStart] RAW SQL - status: {raw_result[2]}")
+                logging.info(f"[DDProcessEnhancedStart] RAW SQL - selected_document_ids type: {type(raw_result[3])}")
+                logging.info(f"[DDProcessEnhancedStart] RAW SQL - selected_document_ids value: {raw_result[3]}")
+                logging.info(f"[DDProcessEnhancedStart] RAW SQL - total_documents: {raw_result[4]}")
+            else:
+                logging.error(f"[DDProcessEnhancedStart] RAW SQL - No run found for id: {run_uuid}")
+
+            # Now use ORM query
             run = session.query(DDAnalysisRun).filter(DDAnalysisRun.id == run_uuid).first()
             if not run:
+                logging.error(f"[DDProcessEnhancedStart] Run not found for id: {run_id}")
                 return func.HttpResponse(
                     json.dumps({"error": "Run not found"}),
                     status_code=404,
                     mimetype="application/json"
                 )
 
+            logging.info(f"[DDProcessEnhancedStart] Found run: id={run.id}, dd_id={run.dd_id}")
+            logging.info(f"[DDProcessEnhancedStart] Run status={run.status}, total_docs={run.total_documents}")
+            logging.info(f"[DDProcessEnhancedStart] Raw selected_document_ids from DB: type={type(run.selected_document_ids)}")
+            logging.info(f"[DDProcessEnhancedStart] Raw selected_document_ids value: {run.selected_document_ids}")
+
             dd_id = run.dd_id  # Keep as UUID object for database operations
             dd_id_str = str(run.dd_id)  # String version for JSON responses
             selected_doc_ids = run.selected_document_ids or []
+
+            logging.info(f"[DDProcessEnhancedStart] After 'or []': count={len(selected_doc_ids)}, first 5: {selected_doc_ids[:5] if selected_doc_ids else []}")
 
             if not selected_doc_ids:
                 return func.HttpResponse(
@@ -450,6 +478,11 @@ def _run_processing_in_background(
                 logging.info(f"[BackgroundProcessor] Checkpoint C already validated, continuing")
 
         # ===== PASS 3: Cross-document analysis =====
+        print(f"\n[BackgroundProcessor] ===== ENTERING PASS 3 =====", flush=True)
+        print(f"[BackgroundProcessor] use_clustered_pass3: {use_clustered_pass3}", flush=True)
+        print(f"[BackgroundProcessor] doc_dicts count: {len(doc_dicts)}", flush=True)
+        print(f"[BackgroundProcessor] pass2_findings count: {len(pass2_findings) if pass2_findings else 0}", flush=True)
+
         _update_checkpoint(checkpoint_id, {
             'current_pass': 3,
             'current_stage': 'pass3_crossdoc',
@@ -458,26 +491,48 @@ def _run_processing_in_background(
 
         logging.info("[BackgroundProcessor] Pass 3: Cross-document analysis")
 
-        if use_clustered_pass3:
-            pass3_results = _run_pass3_clustered_with_progress(
-                doc_dicts, pass1_results, blueprint, client, checkpoint_id, run_id, pass2_findings
-            )
-        else:
-            pass3_results = _run_pass3_simple(
-                doc_dicts, pass2_findings, blueprint, client
-            )
-            _update_checkpoint(checkpoint_id, {'pass3_progress': 100})
+        try:
+            if use_clustered_pass3:
+                print(f"[BackgroundProcessor] Calling _run_pass3_clustered_with_progress...", flush=True)
+                pass3_results = _run_pass3_clustered_with_progress(
+                    doc_dicts, pass1_results, blueprint, client, checkpoint_id, run_id, pass2_findings
+                )
+            else:
+                print(f"[BackgroundProcessor] Calling _run_pass3_simple...", flush=True)
+                pass3_results = _run_pass3_simple(
+                    doc_dicts, pass2_findings, blueprint, client
+                )
+                _update_checkpoint(checkpoint_id, {'pass3_progress': 100})
+
+            print(f"[BackgroundProcessor] Pass 3 returned: {type(pass3_results)}", flush=True)
+            if pass3_results:
+                print(f"[BackgroundProcessor] Pass 3 findings: {len(pass3_results.get('cross_doc_findings', []))}", flush=True)
+        except Exception as pass3_error:
+            import traceback
+            print(f"[BackgroundProcessor] PASS 3 EXCEPTION: {pass3_error}", flush=True)
+            print(f"[BackgroundProcessor] PASS 3 TRACEBACK:\n{traceback.format_exc()}", flush=True)
+            logging.exception(f"[BackgroundProcessor] Pass 3 fatal error: {pass3_error}")
+            _update_checkpoint(checkpoint_id, {
+                'status': 'failed',
+                'last_error': f"Pass 3 error: {str(pass3_error)[:800]}"
+            })
+            _update_run_status(run_id, 'failed', {'last_error': f"Pass 3 error: {str(pass3_error)[:800]}"})
+            raise
 
         # Check if we should exit (None = paused timeout)
         if pass3_results is None:
+            print(f"[BackgroundProcessor] Pass 3 returned None - exiting (paused timeout)", flush=True)
             logging.info(f"[BackgroundProcessor] Thread exiting after Pass 3 pause timeout (state saved)")
             return
 
         # Check if cancelled after Pass 3
         should_stop, reason = _check_should_stop(checkpoint_id)
         if should_stop and reason in ('cancelled', 'failed'):
+            print(f"[BackgroundProcessor] Stopped after Pass 3: {reason}", flush=True)
             logging.info(f"[BackgroundProcessor] Stopped after Pass 3: {reason}")
             return
+
+        print(f"[BackgroundProcessor] ===== PASS 3 COMPLETE, ENTERING PASS 4 =====\n", flush=True)
 
         # ===== PASS 4: Synthesis =====
         _update_checkpoint(checkpoint_id, {
@@ -831,12 +886,38 @@ def _load_dd_data_for_processing(dd_id: str, selected_doc_ids: list = None) -> D
             if not documents:
                 return {"error": "No documents found"}
 
+            # Smart document selection: use converted PDF if available (better for text extraction)
+            # This ensures we process the best version while linking findings to the original
+            docs_to_process = []
+            original_id_map = {}  # Maps processed doc ID -> original doc ID for finding linkage
+
+            for doc in documents:
+                if doc.converted_doc_id and doc.conversion_status == "converted":
+                    # This original has a converted PDF - use the converted version
+                    converted_doc = session.query(Document).filter(
+                        Document.id == doc.converted_doc_id
+                    ).first()
+                    if converted_doc:
+                        docs_to_process.append(converted_doc)
+                        original_id_map[str(converted_doc.id)] = str(doc.id)
+                        logging.info(f"Using converted PDF for {doc.original_file_name}")
+                    else:
+                        # Converted doc not found, use original
+                        docs_to_process.append(doc)
+                        original_id_map[str(doc.id)] = str(doc.id)
+                else:
+                    # No conversion, use the original
+                    docs_to_process.append(doc)
+                    original_id_map[str(doc.id)] = str(doc.id)
+
+            logging.info(f"Smart selection: {len(documents)} selected → {len(docs_to_process)} to process")
+
             # Extract document content
             dev_config = get_dev_config()
             local_storage_path = dev_config.get("local_storage_path", "/tmp/dd_storage")
 
             doc_dicts = []
-            for doc in documents:
+            for doc in docs_to_process:
                 file_path = os.path.join(local_storage_path, "docs", str(doc.id))
                 extension = doc.type if doc.type else os.path.splitext(doc.original_file_name)[1].lstrip('.')
 
@@ -847,8 +928,12 @@ def _load_dd_data_for_processing(dd_id: str, selected_doc_ids: list = None) -> D
 
                 if content:
                     folder = folder_lookup.get(str(doc.folder_id))
+                    doc_id = str(doc.id)
+                    # Use original_id for finding linkage (maps back to user's uploaded file)
+                    original_id = original_id_map.get(doc_id, doc_id)
                     doc_dicts.append({
-                        "id": str(doc.id),
+                        "id": doc_id,
+                        "original_id": original_id,  # Link findings to original document
                         "filename": doc.original_file_name,
                         "text": content,
                         "doc_type": _classify_doc_type(doc.original_file_name, folder),
@@ -1119,11 +1204,41 @@ def _run_pass2_with_progress(
 
 def _run_pass3_clustered_with_progress(doc_dicts, pass1_results, blueprint, client, checkpoint_id, run_id: str = None, pass2_findings: list = None):
     """Run Pass 3 with per-cluster progress updates. Supports pause/cancel."""
-    from dd_enhanced.core.document_clusters import group_documents_by_cluster
-    from dd_enhanced.core.pass3_clustered import analyze_cluster
+    import traceback
+    import time
 
-    clustered_docs = group_documents_by_cluster(doc_dicts)
-    total_clusters = len(clustered_docs)
+    print(f"\n{'='*60}", flush=True)
+    print(f"[Pass 3] Starting Cross-Document Analysis", flush=True)
+    print(f"{'='*60}", flush=True)
+
+    try:
+        from dd_enhanced.core.document_clusters import group_documents_by_cluster
+        print(f"[Pass 3] Imported group_documents_by_cluster", flush=True)
+    except Exception as e:
+        print(f"[Pass 3] ERROR importing group_documents_by_cluster: {e}", flush=True)
+        print(f"[Pass 3] Traceback:\n{traceback.format_exc()}", flush=True)
+        _update_checkpoint(checkpoint_id, {'last_error': f"Pass 3 import error: {str(e)[:500]}"})
+        raise
+
+    try:
+        from dd_enhanced.core.pass3_clustered import analyze_cluster
+        print(f"[Pass 3] Imported analyze_cluster", flush=True)
+    except Exception as e:
+        print(f"[Pass 3] ERROR importing analyze_cluster: {e}", flush=True)
+        print(f"[Pass 3] Traceback:\n{traceback.format_exc()}", flush=True)
+        _update_checkpoint(checkpoint_id, {'last_error': f"Pass 3 import error: {str(e)[:500]}"})
+        raise
+
+    print(f"[Pass 3] Grouping {len(doc_dicts)} documents into clusters...", flush=True)
+    try:
+        clustered_docs = group_documents_by_cluster(doc_dicts)
+        total_clusters = len(clustered_docs)
+        print(f"[Pass 3] Created {total_clusters} clusters: {list(clustered_docs.keys())}", flush=True)
+    except Exception as e:
+        print(f"[Pass 3] ERROR grouping documents: {e}", flush=True)
+        print(f"[Pass 3] Traceback:\n{traceback.format_exc()}", flush=True)
+        _update_checkpoint(checkpoint_id, {'last_error': f"Pass 3 clustering error: {str(e)[:500]}"})
+        raise
 
     _update_checkpoint(checkpoint_id, {
         'clusters_total': total_clusters,
@@ -1132,17 +1247,24 @@ def _run_pass3_clustered_with_progress(doc_dicts, pass1_results, blueprint, clie
 
     all_cross_doc_findings = []
     clusters_status = {}
+    pass3_start_time = time.time()
 
     for idx, (cluster_name, docs) in enumerate(clustered_docs.items()):
+        cluster_start_time = time.time()
+        print(f"\n[Pass 3] Processing cluster {idx + 1}/{total_clusters}: '{cluster_name}' ({len(docs)} docs)", flush=True)
+
         # Check if we should stop (cancelled or paused)
         should_stop, reason = _check_should_stop(checkpoint_id)
         if should_stop:
+            print(f"[Pass 3] Stop requested: {reason}", flush=True)
             if reason == 'paused':
                 logging.info(f"[BackgroundProcessor] Pass 3 paused at cluster {idx + 1}/{total_clusters}")
                 wait_result = _wait_while_paused(checkpoint_id, run_id or '')
                 if wait_result == 'resumed':
+                    print(f"[Pass 3] Resumed after pause", flush=True)
                     logging.info(f"[BackgroundProcessor] Pass 3 resumed")
                 elif wait_result == 'timeout':
+                    print(f"[Pass 3] Pause timeout - saving state and exiting", flush=True)
                     # Save state and exit - can resume later
                     _save_intermediate_results(checkpoint_id, {
                         'pass1_extractions': pass1_results,
@@ -1150,6 +1272,7 @@ def _run_pass3_clustered_with_progress(doc_dicts, pass1_results, blueprint, clie
                     })
                     return None  # Signal to exit thread
                 else:  # cancelled
+                    print(f"[Pass 3] Cancelled while paused", flush=True)
                     logging.info(f"[BackgroundProcessor] Pass 3 cancelled while paused")
                     break
             else:
@@ -1162,21 +1285,47 @@ def _run_pass3_clustered_with_progress(doc_dicts, pass1_results, blueprint, clie
                 'pass3_progress': int((idx / total_clusters) * 100)
             })
 
+            print(f"[Pass 3] Calling analyze_cluster for '{cluster_name}'...", flush=True)
+            print(f"[Pass 3]   - Documents: {[d.get('filename', 'unknown') for d in docs]}", flush=True)
+            print(f"[Pass 3]   - pass1_results keys: {list(pass1_results.keys()) if pass1_results else 'None'}", flush=True)
+            print(f"[Pass 3]   - blueprint type: {type(blueprint)}", flush=True)
+
             cluster_results = analyze_cluster(
                 cluster_name, docs, pass1_results, blueprint, client
             )
 
+            cluster_elapsed = time.time() - cluster_start_time
             findings = cluster_results.get("cross_doc_findings", [])
             all_cross_doc_findings.extend(findings)
             clusters_status[cluster_name] = {"status": "completed", "findings": len(findings)}
+
+            print(f"[Pass 3] Cluster '{cluster_name}' completed in {cluster_elapsed:.1f}s - {len(findings)} findings", flush=True)
 
             _update_checkpoint(checkpoint_id, {
                 'clusters_processed': clusters_status
             })
 
         except Exception as e:
-            logging.warning(f"[BackgroundProcessor] Pass 3 error for cluster {cluster_name}: {e}")
+            cluster_elapsed = time.time() - cluster_start_time
+            error_msg = f"Pass 3 error in cluster '{cluster_name}': {str(e)}"
+            print(f"[Pass 3] ERROR in cluster '{cluster_name}' after {cluster_elapsed:.1f}s: {e}", flush=True)
+            print(f"[Pass 3] Full traceback:\n{traceback.format_exc()}", flush=True)
+            logging.exception(f"[BackgroundProcessor] Pass 3 error for cluster {cluster_name}: {e}")
             clusters_status[cluster_name] = {"status": "error", "error": str(e)}
+
+            # Update checkpoint with error for visibility
+            _update_checkpoint(checkpoint_id, {
+                'last_error': error_msg[:1000],
+                'clusters_processed': clusters_status
+            })
+            # Continue to next cluster instead of failing completely
+
+    pass3_elapsed = time.time() - pass3_start_time
+    print(f"\n{'='*60}", flush=True)
+    print(f"[Pass 3] Completed in {pass3_elapsed:.1f}s", flush=True)
+    print(f"[Pass 3] Total cross-doc findings: {len(all_cross_doc_findings)}", flush=True)
+    print(f"[Pass 3] Cluster status: {clusters_status}", flush=True)
+    print(f"{'='*60}\n", flush=True)
 
     return {
         "cross_doc_findings": all_cross_doc_findings,
@@ -1224,6 +1373,10 @@ def _store_findings_to_db(dd_id, run_id, owned_by, doc_dicts, pass4_results, pas
 
             # Also create lookup from doc_dicts filename to doc ID for fallback
             doc_dict_lookup = {d.get("filename"): d.get("id") for d in doc_dicts if d.get("filename") and d.get("id")}
+
+            # Create lookup from processed doc ID → original doc ID for finding linkage
+            # This ensures findings link to the user's uploaded file, not converted versions
+            original_id_lookup = {d.get("id"): d.get("original_id") for d in doc_dicts if d.get("id") and d.get("original_id")}
 
             # Get or create member
             member = session.query(DueDiligenceMember).filter(
@@ -1289,8 +1442,13 @@ def _store_findings_to_db(dd_id, run_id, owned_by, doc_dicts, pass4_results, pas
                         if doc_id_from_dicts:
                             doc = doc_id_lookup.get(doc_id_from_dicts)
 
-                    doc_id = doc.id if doc else None
-                    if not doc:
+                    # Get document ID, mapping to original if this was a converted doc
+                    if doc:
+                        processed_doc_id = str(doc.id)
+                        # Use original_id if available (links to user's uploaded file, not converted version)
+                        doc_id = uuid_module.UUID(original_id_lookup.get(processed_doc_id, processed_doc_id))
+                    else:
+                        doc_id = None
                         logging.debug(f"[BackgroundProcessor] No document match for source_document='{source_doc}'")
 
                     # Map severity
@@ -1510,17 +1668,31 @@ def _create_checkpoint_c_if_needed(
 
     Returns True if checkpoint was created (or already exists), False on error.
     """
+    import traceback
+
+    print(f"\n{'='*60}", flush=True)
+    print(f"[Checkpoint C] _create_checkpoint_c_if_needed CALLED", flush=True)
+    print(f"[Checkpoint C] dd_id={dd_id}, run_id={run_id}", flush=True)
+    print(f"[Checkpoint C] pass2_findings type: {type(pass2_findings)}", flush=True)
+    if isinstance(pass2_findings, list):
+        print(f"[Checkpoint C] pass2_findings count: {len(pass2_findings)}", flush=True)
+    elif isinstance(pass2_findings, dict):
+        print(f"[Checkpoint C] pass2_findings keys: {list(pass2_findings.keys())}", flush=True)
     logging.info(f"[BackgroundProcessor] _create_checkpoint_c_if_needed called with dd_id={dd_id}, run_id={run_id}")
 
     try:
         # Check if Checkpoint C already exists for this run
+        print(f"[Checkpoint C] Checking if already validated...", flush=True)
         validated_result = get_validated_context(run_id)
+        print(f"[Checkpoint C] get_validated_context result: {validated_result}", flush=True)
         logging.info(f"[BackgroundProcessor] Validated context check: {validated_result.get('has_validated_context', False)}")
         if validated_result.get("has_validated_context"):
+            print(f"[Checkpoint C] Already completed, returning True", flush=True)
             logging.info(f"[BackgroundProcessor] Checkpoint C already completed for run {run_id}")
             return True
 
         # Check if a pending checkpoint already exists
+        print(f"[Checkpoint C] Checking for existing pending checkpoint...", flush=True)
         with transactional_session() as session:
             from shared.models import DDValidationCheckpoint as CheckpointModel
             run_uuid = uuid_module.UUID(run_id) if isinstance(run_id, str) else run_id
@@ -1531,23 +1703,30 @@ def _create_checkpoint_c_if_needed(
             ).first()
 
             if existing:
+                print(f"[Checkpoint C] Found existing pending checkpoint: {existing.id}", flush=True)
                 logging.info(f"[BackgroundProcessor] Checkpoint C already pending for run {run_id}: {existing.id}")
                 return True
 
+        print(f"[Checkpoint C] No existing checkpoint found, creating new one...", flush=True)
         logging.info(f"[BackgroundProcessor] No existing Checkpoint C found, creating new one...")
 
         # Generate Checkpoint C content
         findings_list = pass2_findings if isinstance(pass2_findings, list) else pass2_findings.get('findings', [])
+        print(f"[Checkpoint C] Generating content from {len(findings_list)} findings", flush=True)
         logging.info(f"[BackgroundProcessor] Generating checkpoint content from {len(findings_list)} findings")
 
+        print(f"[Checkpoint C] Calling generate_checkpoint_c_content...", flush=True)
         checkpoint_content = generate_checkpoint_c_content(
             findings=findings_list,
             pass1_results=pass1_results,
             transaction_context=transaction_context,
             synthesis_preview=None  # Not available yet
         )
+        print(f"[Checkpoint C] generate_checkpoint_c_content returned: {list(checkpoint_content.keys()) if checkpoint_content else 'None'}", flush=True)
 
         # Create the checkpoint
+        # Note: Keys from generate_checkpoint_c_content are: step_1_understanding, step_2_financial, step_3_missing_docs
+        print(f"[Checkpoint C] Calling create_checkpoint...", flush=True)
         result = create_checkpoint(
             dd_id=dd_id,
             run_id=run_id,
@@ -1555,19 +1734,24 @@ def _create_checkpoint_c_if_needed(
             content={
                 "preliminary_summary": checkpoint_content.get("step_1_understanding", {}).get("preliminary_summary", ""),
                 "questions": checkpoint_content.get("step_1_understanding", {}).get("questions", []),
-                "financial_confirmations": checkpoint_content.get("step_2_financials", {}).get("confirmations", []),
-                "missing_docs": checkpoint_content.get("step_3_missing", {}).get("missing_from_analysis", [])
+                "financial_confirmations": checkpoint_content.get("step_2_financial", {}).get("confirmations", []),
+                "missing_docs": checkpoint_content.get("step_3_missing_docs", {}).get("missing_documents", [])
             }
         )
+        print(f"[Checkpoint C] create_checkpoint result: {result}", flush=True)
 
         if result.get("checkpoint_id"):
+            print(f"[Checkpoint C] SUCCESS - Created checkpoint: {result['checkpoint_id']}", flush=True)
             logging.info(f"[BackgroundProcessor] Created Checkpoint C: {result['checkpoint_id']}")
             return True
         else:
+            print(f"[Checkpoint C] FAILED - No checkpoint_id in result: {result}", flush=True)
             logging.warning(f"[BackgroundProcessor] Failed to create Checkpoint C: {result}")
             return False
 
     except Exception as e:
+        print(f"[Checkpoint C] EXCEPTION: {e}", flush=True)
+        print(f"[Checkpoint C] Traceback:\n{traceback.format_exc()}", flush=True)
         logging.exception(f"[BackgroundProcessor] Error creating Checkpoint C: {e}")
         return False
 

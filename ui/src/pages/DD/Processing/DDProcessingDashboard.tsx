@@ -1839,8 +1839,8 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
           {/* Processing Pipeline Card */}
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-2 bg-alchemyPrimaryNavyBlue border-b border-gray-700">
-              <h2 className="font-medium text-white text-sm">
+            <div className="flex items-center justify-between px-4 py-3 bg-alchemyPrimaryNavyBlue border-b border-gray-700">
+              <h2 className="font-medium text-white">
                 Processing Pipeline
               </h2>
               <div className="flex items-center gap-2">

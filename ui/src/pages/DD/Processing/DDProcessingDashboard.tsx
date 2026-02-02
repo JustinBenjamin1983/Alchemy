@@ -26,7 +26,7 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
-import { Play, Pause, Square, AlertTriangle, CheckCircle2, Loader2, X, RotateCcw, RefreshCw, ClipboardCheck } from "lucide-react";
+import { Play, Pause, Square, AlertTriangle, CheckCircle2, Loader2, X, RotateCcw, RefreshCw, ClipboardCheck, Circle } from "lucide-react";
 import { ProcessingProgress, RiskSummary, PASS_CONFIG, STATUS_COLORS, RING_COLORS, ProcessingPass } from "./types";
 import {
   useProcessingProgress,
@@ -109,6 +109,9 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   const [isPaused, setIsPaused] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [isRestarting, setIsRestarting] = useState(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [displayReset, setDisplayReset] = useState(false);
+  const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
   const [currentRunId, setCurrentRunId] = useState<string | null>(null);
   const [dismissedRuns, setDismissedRuns] = useState<Set<string>>(new Set());
   const [userHasModifiedSelection, setUserHasModifiedSelection] = useState(false);
@@ -320,6 +323,34 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
       setIsPaused(false);
     }
   }, [progress?.status, isPaused]);
+
+  // Track last saved time during processing (progress updates = auto-save)
+  useEffect(() => {
+    if (progress?.status === "processing" && progress?.lastUpdated) {
+      setLastSavedTime(new Date());
+    }
+  }, [progress?.lastUpdated, progress?.status]);
+
+  // Clear display reset when a new run starts or progress resumes
+  useEffect(() => {
+    if (progress?.status === "processing" && displayReset) {
+      setDisplayReset(false);
+    }
+  }, [progress?.status, displayReset]);
+
+  // Browser close warning during active processing
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (progress?.status === "processing") {
+        e.preventDefault();
+        e.returnValue = "Processing is in progress. Progress is auto-saved, but closing may interrupt the current document.";
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [progress?.status]);
 
   // Refetch DD data when classification completes to sync documentsByCategory with categoryCounts
   useEffect(() => {
@@ -1164,6 +1195,14 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     }
   };
 
+  // Reset display (visual only - doesn't delete run data)
+  const handleResetDisplay = () => {
+    setDisplayReset(true);
+    setShowResetDialog(false);
+    setLastSavedTime(null);
+    addLogEntry("info", "Display reset", "Pipeline visualization cleared. Run data preserved in Analysis tab.");
+  };
+
   // Cancel processing
   const handleCancel = async () => {
     if (isCancelling) return;
@@ -1800,10 +1839,60 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
           {/* Processing Pipeline Card */}
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 bg-alchemyPrimaryNavyBlue border-b border-gray-700">
-              <h2 className="font-medium text-white">
+            <div className="flex items-center justify-between px-4 py-2 bg-alchemyPrimaryNavyBlue border-b border-gray-700">
+              <h2 className="font-medium text-white text-sm">
                 Processing Pipeline
               </h2>
+              <div className="flex items-center gap-2">
+                {/* Auto-save indicator */}
+                {progress?.status === "processing" && (
+                  <div className="flex items-center gap-1.5 text-[10px] text-green-300">
+                    <Circle className="w-2 h-2 fill-green-400 text-green-400 animate-pulse" />
+                    <span>Auto-saving</span>
+                    {lastSavedTime && (
+                      <span className="text-white/60">
+                        · {Math.round((Date.now() - lastSavedTime.getTime()) / 1000)}s ago
+                      </span>
+                    )}
+                  </div>
+                )}
+                {isPaused && (
+                  <div className="flex items-center gap-1.5 text-[10px] text-amber-300">
+                    <Pause className="w-3 h-3" />
+                    <span>Paused</span>
+                  </div>
+                )}
+                {/* Pause/Resume button */}
+                {(progress?.status === "processing" || isPaused) && (
+                  <button
+                    onClick={handlePauseResume}
+                    className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded bg-white text-gray-700 hover:bg-gray-100 hover:scale-105 transition-all duration-200 shadow-sm"
+                  >
+                    {isPaused ? (
+                      <>
+                        <Play className="w-3 h-3 text-green-600" />
+                        Resume
+                      </>
+                    ) : (
+                      <>
+                        <Pause className="w-3 h-3 text-amber-600" />
+                        Pause
+                      </>
+                    )}
+                  </button>
+                )}
+                {/* Reset button - show when there's progress to reset */}
+                {(progress?.passProgress?.extract?.progress ?? 0) > 0 && !displayReset && (
+                  <button
+                    onClick={() => setShowResetDialog(true)}
+                    disabled={progress?.status === "processing"}
+                    className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded bg-white text-red-600 hover:bg-red-50 hover:scale-105 transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  >
+                    <RotateCcw className="w-3 h-3" />
+                    Reset
+                  </button>
+                )}
+              </div>
             </div>
             {/* Content */}
             <div className="p-4">
@@ -1854,24 +1943,26 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
 
             {/* Pipeline rings */}
             <div className="flex justify-center mt-20 mb-8">
-              <PipelineRings progress={progress} size={200} />
+              <PipelineRings progress={displayReset ? null : progress} size={200} />
             </div>
 
             {/* Pass progress bars - compact for narrow column */}
             <div className="space-y-2 mt-24">
               {(["extract", "analyze", "calculate", "crossdoc", "aggregate", "synthesize", "verify"] as const).map((pass) => {
                 const config = PASS_CONFIG[pass];
-                const passProgress = progress?.passProgress?.[pass];
+                const passProgress = displayReset ? undefined : progress?.passProgress?.[pass];
                 const isCompleted = passProgress?.status === "completed";
                 const isFailed = passProgress?.status === "failed";
-                const isActive = progress?.currentPass === pass && progress?.status === "processing";
+                const isActive = !displayReset && progress?.currentPass === pass && progress?.status === "processing";
 
                 const ringColor = RING_COLORS[pass as ProcessingPass];
-                const barColor = isFailed
-                  ? STATUS_COLORS.failed
-                  : isCompleted || isActive
-                    ? ringColor
-                    : STATUS_COLORS.default;
+                const barColor = displayReset
+                  ? STATUS_COLORS.default
+                  : isFailed
+                    ? STATUS_COLORS.failed
+                    : isCompleted || isActive
+                      ? ringColor
+                      : STATUS_COLORS.default;
 
                 return (
                   <div key={pass} className="flex items-center gap-2">
@@ -1908,7 +1999,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
 
             {/* Time tracking */}
             <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700 text-center text-xs text-gray-500">
-              <span>Elapsed: {elapsedTime}</span>
+              <span>Elapsed: {displayReset ? "--:--" : elapsedTime}</span>
             </div>
             </div>
           </div>
@@ -2017,6 +2108,34 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
             </Button>
             <Button size="sm" className="bg-blue-600 hover:bg-blue-700 transition-all duration-200 hover:scale-105 hover:shadow-md" onClick={handleStartDD}>
               Run Again
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reset Display Confirmation Dialog */}
+      <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600 text-base">
+              <RotateCcw className="h-4 w-4" />
+              Reset Pipeline Display?
+            </DialogTitle>
+            <DialogDescription className="text-sm pt-2 space-y-2">
+              <p>
+                This will clear the pipeline visualization (rings, progress bars, and elapsed time).
+              </p>
+              <p className="text-green-600 font-medium">
+                Your run data is preserved and can still be viewed in the Analysis tab.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" size="sm" onClick={() => setShowResetDialog(false)} className="transition-all duration-200 hover:scale-105 hover:shadow-md">
+              Cancel
+            </Button>
+            <Button size="sm" className="bg-red-600 hover:bg-red-700 transition-all duration-200 hover:scale-105 hover:shadow-md" onClick={handleResetDisplay}>
+              Reset Display
             </Button>
           </DialogFooter>
         </DialogContent>

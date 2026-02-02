@@ -1725,7 +1725,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
             isCheckingReadability={checkReadability.isPending}
             isCollapsed={isDocPanelCollapsed}
             onToggleCollapse={() => setIsDocPanelCollapsed(!isDocPanelCollapsed)}
-            isClassificationMode={currentPhase === "classified" || currentPhase === "organised" || currentPhase === "readability" || currentPhase === "ready" || currentPhase === "processing" || currentPhase === "completed"}
+            isClassificationMode={true}
             transactionType={ddData?.transaction_type}
             categoryDistribution={categoryDistribution}
             documentsByCategory={documentsByCategory}

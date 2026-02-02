@@ -1442,10 +1442,14 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   // 2. Pass 2 (analyze) is completed, OR
   // 3. Any pass beyond analyze (calculate, crossdoc, etc.) has started/completed
   useEffect(() => {
-    const analyzePassComplete = progress?.passProgress?.analyze?.status === 'completed';
-    const beyondAnalyze = progress?.passProgress?.calculate?.status !== 'pending' ||
-                          progress?.passProgress?.crossdoc?.status !== 'pending';
-    const waitingForCheckpoint = progress?.currentStage === 'waiting_for_checkpoint_c';
+    // Only check if we have actual progress data
+    if (!progress?.passProgress) return;
+
+    const analyzePassComplete = progress.passProgress.analyze?.status === 'completed';
+    // beyondAnalyze: check if calculate or crossdoc is actively processing or completed (not just "not pending")
+    const beyondAnalyze = ['processing', 'completed'].includes(progress.passProgress.calculate?.status || '') ||
+                          ['processing', 'completed'].includes(progress.passProgress.crossdoc?.status || '');
+    const waitingForCheckpoint = progress.currentStage === 'waiting_for_checkpoint_c';
 
     if (waitingForCheckpoint || analyzePassComplete || beyondAnalyze) {
       if (!analyzeComplete) {
@@ -1456,7 +1460,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         }
       }
     }
-  }, [progress?.currentStage, progress?.passProgress?.analyze?.status, progress?.passProgress?.calculate?.status, progress?.passProgress?.crossdoc?.status, analyzeComplete, refetchCheckpoint]);
+  }, [progress?.currentStage, progress?.passProgress, analyzeComplete, refetchCheckpoint]);
 
   // Navigation handlers - use callbacks if provided, otherwise use router
   const handleBack = () => {
@@ -1562,9 +1566,11 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   const checkpointCValidated = checkpointData?.checkpoint?.checkpoint_type === 'post_analysis' &&
     (checkpointData.checkpoint?.status === 'completed' || checkpointData.checkpoint?.status === 'skipped');
 
-  // Can run Generate Report (Pass 3-7): requires Checkpoint C validated
+  // Can run Generate Report (Pass 3-7): requires analysis complete AND Checkpoint C validated
+  // checkpointCValidated implies analysis was done (can't have post_analysis checkpoint without it)
   const canGenerateReport =
-    (analyzeComplete || checkpointCValidated) &&
+    analyzeComplete &&
+    checkpointCValidated &&
     docsToProcessCount > 0 &&
     !isReadabilityInProgress &&
     !isClassificationInProgress &&

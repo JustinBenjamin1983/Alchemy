@@ -373,6 +373,44 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                 )}
               </TooltipContent>
             </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={onGenerateReport}
+                    disabled={disabled || !canGenerateReport || isGenerating}
+                    className={cn(
+                      "h-9 w-36 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md",
+                      canGenerateReport && !isGenerating && "border-orange-400 bg-orange-50 text-orange-700 hover:bg-orange-100",
+                      !canGenerateReport && "border-gray-200 bg-gray-50 text-gray-400"
+                    )}
+                  >
+                    {isGenerating ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <FileText className={cn("h-4 w-4", canGenerateReport ? "text-orange-500" : "text-gray-400")} />
+                    )}
+                    Generate Report
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2 max-w-xs">
+                {!canGenerateReport ? (
+                  <div>
+                    <p className="text-sm font-semibold text-gray-300">Analysis Required</p>
+                    <p className="text-sm text-white">{generateReportTooltip}</p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-sm text-white">Generate the Due Diligence report.</p>
+                    <p className="text-sm text-orange-300 mt-1">Runs Pass 3-7: Cross-document analysis, synthesis, and report generation.</p>
+                  </div>
+                )}
+              </TooltipContent>
+            </Tooltip>
           </div>
 
           {/* Visual Divider - hidden on mobile */}
@@ -415,12 +453,12 @@ export const ControlBar: React.FC<ControlBarProps> = ({
             </div>
           </div>
 
-          {/* Visual Divider - hidden on mobile */}
-          <div className="hidden lg:block w-px h-8 bg-gray-300 dark:bg-gray-600" />
-
-          {/* GROUP 3: Primary Action */}
-          <div className="flex items-center gap-2 w-full lg:w-auto justify-end">
-            {showRestart && (
+          {/* GROUP 3: Restart (only shown when needed) */}
+          {showRestart && (
+            <>
+            {/* Visual Divider - hidden on mobile */}
+            <div className="hidden lg:block w-px h-8 bg-gray-300 dark:bg-gray-600" />
+            <div className="flex items-center gap-2 w-full lg:w-auto justify-end">
               <Button
                 variant="outline"
                 size="sm"
@@ -431,37 +469,9 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                 <RotateCcw className={cn("mr-1.5 h-4 w-4", isRestarting && "animate-spin")} />
                 Restart
               </Button>
-            )}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className="flex-1 lg:flex-none">
-                  <Button
-                    onClick={onGenerateReport}
-                    disabled={!canGenerateReport || isGenerating}
-                    className={cn(
-                      "h-10 px-5 text-sm font-semibold shadow-sm w-full lg:w-auto gap-2 transition-all duration-200",
-                      canGenerateReport && !isGenerating
-                        ? "bg-[#ff6b00] hover:bg-[#e55f00] text-white hover:scale-105 hover:shadow-lg"
-                        : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    )}
-                  >
-                    {isGenerating ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <FileText className="h-4 w-4" />
-                    )}
-                    Generate Report
-                  </Button>
-                </span>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-xs bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2">
-                <p className="text-sm text-white">{generateReportTooltip}</p>
-                {canGenerateReport && (
-                  <p className="text-sm text-orange-300 mt-1">Runs Pass 3-7: Cross-document analysis, synthesis, and report generation.</p>
-                )}
-              </TooltipContent>
-            </Tooltip>
-          </div>
+            </div>
+            </>
+          )}
         </div>
       </div>
     </TooltipProvider>

@@ -14,7 +14,7 @@ import azure.functions as func
 from shared.utils import auth_get_email
 from shared.models import DDAnalysisRun, DueDiligence, Document, Folder
 from shared.session import transactional_session
-from sqlalchemy import func as sql_func
+from sqlalchemy import func as sql_func, text
 
 
 DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
@@ -31,6 +31,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         data = req.get_json()
         dd_id = data.get("dd_id")
         selected_document_ids = data.get("selected_document_ids", [])
+
+        logging.info(f"[DDAnalysisRunCreate] dd_id: {dd_id}")
+        logging.info(f"[DDAnalysisRunCreate] selected_document_ids type: {type(selected_document_ids)}, count: {len(selected_document_ids) if selected_document_ids else 0}")
+        logging.info(f"[DDAnalysisRunCreate] selected_document_ids: {selected_document_ids[:5] if selected_document_ids else []}...")
 
         if not dd_id:
             return func.HttpResponse(
@@ -98,19 +102,46 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 created_at=datetime.datetime.utcnow()
             )
             session.add(run)
-            session.commit()
+            session.flush()  # Flush to get the ID without committing yet
 
-            # Return run details
+            # Store the run_id immediately after flush
+            run_id = str(run.id)
+            run_number_val = run.run_number
+            run_name = run.name
+            run_status = str(run.status) if run.status else "pending"
+            total_docs = run.total_documents
+            created_at_str = run.created_at.isoformat()
+
+            session.commit()  # Now commit
+
+            logging.info(f"[DDAnalysisRunCreate] Run created - id: {run_id}, run_number: {run_number_val}")
+            logging.info(f"[DDAnalysisRunCreate] Stored {len(selected_document_ids)} document IDs")
+
+            # VERIFICATION: Use raw SQL to check what was actually stored
+            verify_result = session.execute(
+                text("SELECT id, selected_document_ids, total_documents FROM dd_analysis_run WHERE id = :run_id"),
+                {"run_id": run_id}
+            ).fetchone()
+
+            if verify_result:
+                logging.info(f"[DDAnalysisRunCreate] RAW SQL VERIFY - id: {verify_result[0]}")
+                logging.info(f"[DDAnalysisRunCreate] RAW SQL VERIFY - selected_document_ids: {verify_result[1]}")
+                logging.info(f"[DDAnalysisRunCreate] RAW SQL VERIFY - total_documents: {verify_result[2]}")
+            else:
+                logging.error(f"[DDAnalysisRunCreate] RAW SQL VERIFY FAILED - run not found!")
+
+            # Return run details - use original selected_document_ids from request
+            # (we know it's correct, and this avoids any SQLAlchemy object state issues)
             return func.HttpResponse(
                 json.dumps({
-                    "run_id": str(run.id),
+                    "run_id": run_id,
                     "dd_id": str(dd_id),
-                    "run_number": run.run_number,
-                    "name": run.name,
-                    "status": run.status,
-                    "selected_document_ids": run.selected_document_ids,
-                    "total_documents": run.total_documents,
-                    "created_at": run.created_at.isoformat()
+                    "run_number": run_number_val,
+                    "name": run_name,
+                    "status": run_status,
+                    "selected_document_ids": selected_document_ids,  # Use original input
+                    "total_documents": total_docs,
+                    "created_at": created_at_str
                 }),
                 status_code=201,
                 mimetype="application/json"

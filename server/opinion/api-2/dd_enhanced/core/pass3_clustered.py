@@ -440,8 +440,19 @@ def analyze_cluster(
     Returns:
         Dict with 'cross_doc_findings' list
     """
+    import traceback
+    import time
+
+    print(f"\n[analyze_cluster] Starting cluster '{cluster_name}' with {len(cluster_docs)} docs", flush=True)
+    cluster_start = time.time()
+
     if not cluster_docs:
+        print(f"[analyze_cluster] No docs in cluster '{cluster_name}', returning empty", flush=True)
         return {"cross_doc_findings": []}
+
+    # Log document names in this cluster
+    doc_names = [d.get('filename', d.get('doc_id', 'unknown')) for d in cluster_docs]
+    print(f"[analyze_cluster] Documents: {doc_names}", flush=True)
 
     system_prompt = """You are a senior M&A lawyer conducting cross-document due diligence.
 Focus on issues that are only visible when comparing documents together.
@@ -449,35 +460,61 @@ Be specific with clause references and quantify financial exposure where possibl
 Always show your calculation for any financial figures.
 Output valid JSON only."""
 
-    # Build context (using Pass 1 extractions for efficiency)
-    context = build_cluster_context(cluster_docs, pass1_extractions)
+    try:
+        # Build context (using Pass 1 extractions for efficiency)
+        print(f"[analyze_cluster] Building context...", flush=True)
+        context_start = time.time()
+        context = build_cluster_context(cluster_docs, pass1_extractions)
+        context_elapsed = time.time() - context_start
+        print(f"[analyze_cluster] Context built in {context_elapsed:.2f}s, length={len(context)} chars", flush=True)
 
-    # Get questions for this cluster
-    questions = get_cross_doc_questions_for_cluster(cluster_name, blueprint)
+        # Get questions for this cluster
+        questions = get_cross_doc_questions_for_cluster(cluster_name, blueprint)
+        print(f"[analyze_cluster] Got {len(questions)} questions for cluster", flush=True)
 
-    # Build and execute prompt
-    prompt = build_cluster_analysis_prompt(
-        cluster_name,
-        context,
-        questions,
-        reference_findings,
-        blueprint
-    )
+        # Build and execute prompt
+        print(f"[analyze_cluster] Building analysis prompt...", flush=True)
+        prompt = build_cluster_analysis_prompt(
+            cluster_name,
+            context,
+            questions,
+            reference_findings,
+            blueprint
+        )
+        print(f"[analyze_cluster] Prompt built, length={len(prompt)} chars", flush=True)
 
-    result = client.complete_crossdoc(prompt, system_prompt)
+        # Call Claude
+        print(f"[analyze_cluster] Calling Claude API (complete_crossdoc)...", flush=True)
+        api_start = time.time()
+        result = client.complete_crossdoc(prompt, system_prompt)
+        api_elapsed = time.time() - api_start
+        print(f"[analyze_cluster] Claude API returned in {api_elapsed:.2f}s", flush=True)
 
-    if "error" in result:
-        logger.warning(f"Cluster '{cluster_name}' analysis failed: {result.get('error')}")
-        return {"cross_doc_findings": []}
+        if "error" in result:
+            error_msg = result.get('error', 'Unknown error')
+            print(f"[analyze_cluster] ERROR from Claude: {error_msg}", flush=True)
+            logger.warning(f"Cluster '{cluster_name}' analysis failed: {error_msg}")
+            return {"cross_doc_findings": [], "error": error_msg}
 
-    findings = result.get("cross_doc_findings", [])
+        findings = result.get("cross_doc_findings", [])
+        print(f"[analyze_cluster] Got {len(findings)} findings from Claude", flush=True)
 
-    # Add cluster name to each finding for tracking
-    for f in findings:
-        f["source_cluster"] = cluster_name
-        f["analysis_pass"] = 3
+        # Add cluster name to each finding for tracking
+        for f in findings:
+            f["source_cluster"] = cluster_name
+            f["analysis_pass"] = 3
 
-    return {"cross_doc_findings": findings}
+        total_elapsed = time.time() - cluster_start
+        print(f"[analyze_cluster] Cluster '{cluster_name}' completed in {total_elapsed:.2f}s with {len(findings)} findings", flush=True)
+
+        return {"cross_doc_findings": findings}
+
+    except Exception as e:
+        elapsed = time.time() - cluster_start
+        print(f"[analyze_cluster] EXCEPTION in cluster '{cluster_name}' after {elapsed:.2f}s: {e}", flush=True)
+        print(f"[analyze_cluster] Full traceback:\n{traceback.format_exc()}", flush=True)
+        logger.error(f"Exception in analyze_cluster '{cluster_name}': {e}")
+        return {"cross_doc_findings": [], "error": str(e)}
 
 
 def run_pass3_clustered(
@@ -510,24 +547,48 @@ def run_pass3_clustered(
     Returns:
         Combined Pass 3 results with cross-doc findings
     """
+    import traceback
+    import time
+
+    print(f"\n{'='*70}", flush=True)
+    print(f"[run_pass3_clustered] STARTING PASS 3 - Cross-Document Analysis", flush=True)
+    print(f"{'='*70}", flush=True)
+    print(f"[run_pass3_clustered] Input: {len(documents)} documents, {len(pass1_extractions)} extractions, {len(pass2_findings)} pass2 findings", flush=True)
+    print(f"[run_pass3_clustered] Blueprint: {blueprint.get('name', 'None') if blueprint else 'None'}", flush=True)
+    pass3_start = time.time()
+
     logger.info("Starting Pass 3: Clustered cross-document analysis")
 
     # Phase 3: Initialize QuestionLoader for folder-aware cross-doc checks
-    question_loader = QuestionLoader(blueprint) if blueprint else None
-    use_folder_clustering = any(doc.get("folder_category") for doc in documents)
+    try:
+        print(f"[run_pass3_clustered] Initializing QuestionLoader...", flush=True)
+        question_loader = QuestionLoader(blueprint) if blueprint else None
+        use_folder_clustering = any(doc.get("folder_category") for doc in documents)
+        print(f"[run_pass3_clustered] Use folder clustering: {use_folder_clustering}", flush=True)
 
-    if use_folder_clustering:
-        logger.info("Phase 3: Using folder-based clustering")
-        clusters = group_documents_by_folder_cluster(documents)
-    else:
-        # Fall back to doc_type-based clustering
-        clusters = group_documents_by_cluster(documents)
+        if use_folder_clustering:
+            logger.info("Phase 3: Using folder-based clustering")
+            print(f"[run_pass3_clustered] Grouping documents by folder cluster...", flush=True)
+            clusters = group_documents_by_folder_cluster(documents)
+        else:
+            # Fall back to doc_type-based clustering
+            print(f"[run_pass3_clustered] Grouping documents by doc_type cluster...", flush=True)
+            clusters = group_documents_by_cluster(documents)
 
-    if verbose:
-        summary = get_cluster_summary(clusters)
-        logger.info(f"Documents grouped into {summary['total_clusters']} clusters")
-        for name, info in summary['clusters'].items():
-            logger.info(f"  {name}: {info['document_count']} docs, ~{info['estimated_context_chars']:,} chars")
+        print(f"[run_pass3_clustered] Created {len(clusters)} clusters: {list(clusters.keys())}", flush=True)
+
+        if verbose:
+            summary = get_cluster_summary(clusters)
+            logger.info(f"Documents grouped into {summary['total_clusters']} clusters")
+            print(f"[run_pass3_clustered] Cluster summary:", flush=True)
+            for name, info in summary['clusters'].items():
+                logger.info(f"  {name}: {info['document_count']} docs, ~{info['estimated_context_chars']:,} chars")
+                print(f"  - {name}: {info['document_count']} docs, ~{info['estimated_context_chars']:,} chars", flush=True)
+    except Exception as e:
+        elapsed = time.time() - pass3_start
+        print(f"[run_pass3_clustered] EXCEPTION during clustering after {elapsed:.2f}s: {e}", flush=True)
+        print(f"[run_pass3_clustered] Full traceback:\n{traceback.format_exc()}", flush=True)
+        raise
 
     # Process each cluster
     cluster_findings: Dict[str, List[Dict]] = {}
@@ -542,109 +603,169 @@ Be specific with clause references and quantify financial exposure where possibl
 Always show your calculation for any financial figures.
 Output valid JSON only."""
 
-    for cluster_name in processing_order:
+    print(f"\n[run_pass3_clustered] Processing order: {processing_order}", flush=True)
+    clusters_to_process = [c for c in processing_order if c in clusters]
+    print(f"[run_pass3_clustered] Will process {len(clusters_to_process)} clusters: {clusters_to_process}", flush=True)
+
+    for cluster_idx, cluster_name in enumerate(processing_order):
         if cluster_name not in clusters:
             continue
 
         cluster_docs = clusters[cluster_name]
+        print(f"\n{'-'*60}", flush=True)
+        print(f"[run_pass3_clustered] Cluster {cluster_idx + 1}/{len(clusters_to_process)}: '{cluster_name}' ({len(cluster_docs)} docs)", flush=True)
+        cluster_start = time.time()
+
         if verbose:
             logger.info(f"[Pass 3] Processing cluster '{cluster_name}' with {len(cluster_docs)} documents")
 
-        # Build context (using Pass 1 extractions for efficiency)
-        context = build_cluster_context(cluster_docs, pass1_extractions)
+        try:
+            # Build context (using Pass 1 extractions for efficiency)
+            print(f"[run_pass3_clustered] Building context for '{cluster_name}'...", flush=True)
+            context = build_cluster_context(cluster_docs, pass1_extractions)
+            print(f"[run_pass3_clustered] Context built: {len(context)} chars", flush=True)
 
-        # Phase 3: Get folder-based cross-doc checks if available
-        folder_categories = list(set(
-            doc.get("folder_category") for doc in cluster_docs
-            if doc.get("folder_category") and not should_skip_folder(doc.get("folder_category"))
-        ))
+            # Phase 3: Get folder-based cross-doc checks if available
+            folder_categories = list(set(
+                doc.get("folder_category") for doc in cluster_docs
+                if doc.get("folder_category") and not should_skip_folder(doc.get("folder_category"))
+            ))
+            print(f"[run_pass3_clustered] Folder categories: {folder_categories}", flush=True)
 
-        if folder_categories and question_loader:
-            # Use folder-specific cross-doc checks
-            folder_checks = get_folder_cross_doc_checks(folder_categories, question_loader)
-            if folder_checks:
-                logger.debug(f"Using {len(folder_checks)} folder-specific cross-doc checks for {cluster_name}")
-                # Combine with cluster-based questions
-                base_questions = get_cross_doc_questions_for_cluster(cluster_name, blueprint)
-                # Folder checks take precedence, add unique base questions
-                questions = folder_checks + [q for q in base_questions if q not in folder_checks]
+            if folder_categories and question_loader:
+                # Use folder-specific cross-doc checks
+                folder_checks = get_folder_cross_doc_checks(folder_categories, question_loader)
+                if folder_checks:
+                    logger.debug(f"Using {len(folder_checks)} folder-specific cross-doc checks for {cluster_name}")
+                    print(f"[run_pass3_clustered] Using {len(folder_checks)} folder-specific checks", flush=True)
+                    # Combine with cluster-based questions
+                    base_questions = get_cross_doc_questions_for_cluster(cluster_name, blueprint)
+                    # Folder checks take precedence, add unique base questions
+                    questions = folder_checks + [q for q in base_questions if q not in folder_checks]
+                else:
+                    questions = get_cross_doc_questions_for_cluster(cluster_name, blueprint)
             else:
+                # Fall back to cluster-based questions
                 questions = get_cross_doc_questions_for_cluster(cluster_name, blueprint)
-        else:
-            # Fall back to cluster-based questions
-            questions = get_cross_doc_questions_for_cluster(cluster_name, blueprint)
 
-        # Build and execute prompt
-        prompt = build_cluster_analysis_prompt(
-            cluster_name,
-            context,
-            questions,
-            reference_findings if cluster_name != "corporate_governance" else None,
-            blueprint
-        )
+            print(f"[run_pass3_clustered] Got {len(questions)} questions for cluster", flush=True)
 
-        result = client.complete_crossdoc(prompt, system_prompt)
+            # Build and execute prompt
+            print(f"[run_pass3_clustered] Building analysis prompt...", flush=True)
+            prompt = build_cluster_analysis_prompt(
+                cluster_name,
+                context,
+                questions,
+                reference_findings if cluster_name != "corporate_governance" else None,
+                blueprint
+            )
+            print(f"[run_pass3_clustered] Prompt built: {len(prompt)} chars", flush=True)
 
-        if "error" in result:
-            logger.warning(f"Cluster '{cluster_name}' analysis failed: {result.get('error')}")
+            print(f"[run_pass3_clustered] Calling Claude API for '{cluster_name}'...", flush=True)
+            api_start = time.time()
+            result = client.complete_crossdoc(prompt, system_prompt)
+            api_elapsed = time.time() - api_start
+            print(f"[run_pass3_clustered] Claude API returned in {api_elapsed:.2f}s", flush=True)
+
+            if "error" in result:
+                error_msg = result.get('error', 'Unknown error')
+                print(f"[run_pass3_clustered] ERROR from Claude for '{cluster_name}': {error_msg}", flush=True)
+                logger.warning(f"Cluster '{cluster_name}' analysis failed: {error_msg}")
+                cluster_findings[cluster_name] = []
+            else:
+                findings = result.get("cross_doc_findings", [])
+                print(f"[run_pass3_clustered] Got {len(findings)} findings from '{cluster_name}'", flush=True)
+                cluster_findings[cluster_name] = findings
+
+                # Add cluster name and Phase 3 metadata to each finding
+                for f in findings:
+                    f["source_cluster"] = cluster_name
+                    f["analysis_pass"] = 3
+                    f["is_cross_document"] = True
+                    # Store related document IDs as JSON
+                    docs_involved = f.get("documents_involved", [])
+                    if docs_involved:
+                        f["related_document_ids"] = json.dumps(docs_involved)
+                    # Add folder context if available
+                    if folder_categories:
+                        f["folder_category"] = folder_categories[0] if len(folder_categories) == 1 else None
+
+                # Add to reference findings for subsequent clusters
+                reference_findings.extend(findings)
+
+                if verbose:
+                    logger.info(f"  Cluster '{cluster_name}' complete: {len(findings)} findings")
+
+            cluster_elapsed = time.time() - cluster_start
+            print(f"[run_pass3_clustered] Cluster '{cluster_name}' completed in {cluster_elapsed:.2f}s", flush=True)
+
+        except Exception as e:
+            cluster_elapsed = time.time() - cluster_start
+            print(f"[run_pass3_clustered] EXCEPTION in cluster '{cluster_name}' after {cluster_elapsed:.2f}s: {e}", flush=True)
+            print(f"[run_pass3_clustered] Full traceback:\n{traceback.format_exc()}", flush=True)
+            logger.error(f"Exception processing cluster '{cluster_name}': {e}")
             cluster_findings[cluster_name] = []
-        else:
-            findings = result.get("cross_doc_findings", [])
-            cluster_findings[cluster_name] = findings
-
-            # Add cluster name and Phase 3 metadata to each finding
-            for f in findings:
-                f["source_cluster"] = cluster_name
-                f["analysis_pass"] = 3
-                f["is_cross_document"] = True
-                # Store related document IDs as JSON
-                docs_involved = f.get("documents_involved", [])
-                if docs_involved:
-                    f["related_document_ids"] = json.dumps(docs_involved)
-                # Add folder context if available
-                if folder_categories:
-                    f["folder_category"] = folder_categories[0] if len(folder_categories) == 1 else None
-
-            # Add to reference findings for subsequent clusters
-            reference_findings.extend(findings)
-
-            if verbose:
-                logger.info(f"  Cluster '{cluster_name}' complete: {len(findings)} findings")
 
         # Checkpoint if callback provided
         if checkpoint_callback:
+            print(f"[run_pass3_clustered] Saving checkpoint for '{cluster_name}'...", flush=True)
             checkpoint_callback(
                 stage=f"pass3_{cluster_name}",
                 data={"cluster_findings": cluster_findings}
             )
 
     # Cross-cluster synthesis
+    print(f"\n{'='*60}", flush=True)
+    print(f"[run_pass3_clustered] Running cross-cluster synthesis...", flush=True)
+    synthesis_start = time.time()
+
     if verbose:
         logger.info("[Pass 3] Running cross-cluster synthesis")
 
-    # Build summary from Pass 1 for synthesis context
-    pass1_summary_parts = []
-    for doc in documents[:10]:  # Limit to first 10 docs
-        doc_id = doc.get("doc_id", doc.get("filename"))
-        extraction = pass1_extractions.get(str(doc_id), {})
-        if extraction:
-            pass1_summary_parts.append(
-                f"- {doc.get('filename', 'Unknown')}: "
-                f"{len(extraction.get('parties', []))} parties, "
-                f"{len(extraction.get('change_of_control_clauses', []))} CoC clauses"
-            )
-    pass1_summary = "\n".join(pass1_summary_parts)
+    try:
+        # Build summary from Pass 1 for synthesis context
+        print(f"[run_pass3_clustered] Building Pass 1 summary for synthesis...", flush=True)
+        pass1_summary_parts = []
+        for doc in documents[:10]:  # Limit to first 10 docs
+            doc_id = doc.get("doc_id", doc.get("filename"))
+            extraction = pass1_extractions.get(str(doc_id), {})
+            if extraction:
+                pass1_summary_parts.append(
+                    f"- {doc.get('filename', 'Unknown')}: "
+                    f"{len(extraction.get('parties', []))} parties, "
+                    f"{len(extraction.get('change_of_control_clauses', []))} CoC clauses"
+                )
+        pass1_summary = "\n".join(pass1_summary_parts)
+        print(f"[run_pass3_clustered] Pass 1 summary built: {len(pass1_summary_parts)} docs summarized", flush=True)
 
-    synthesis_prompt = build_cross_cluster_synthesis_prompt(
-        cluster_findings,
-        pass1_summary,
-        blueprint
-    )
+        print(f"[run_pass3_clustered] Building synthesis prompt...", flush=True)
+        synthesis_prompt = build_cross_cluster_synthesis_prompt(
+            cluster_findings,
+            pass1_summary,
+            blueprint
+        )
+        print(f"[run_pass3_clustered] Synthesis prompt built: {len(synthesis_prompt)} chars", flush=True)
 
-    synthesis_result = client.complete_crossdoc(synthesis_prompt, system_prompt)
+        print(f"[run_pass3_clustered] Calling Claude API for synthesis...", flush=True)
+        api_start = time.time()
+        synthesis_result = client.complete_crossdoc(synthesis_prompt, system_prompt)
+        api_elapsed = time.time() - api_start
+        print(f"[run_pass3_clustered] Synthesis API returned in {api_elapsed:.2f}s", flush=True)
 
-    if "error" in synthesis_result:
-        logger.warning(f"Cross-cluster synthesis failed: {synthesis_result.get('error')}")
+        if "error" in synthesis_result:
+            error_msg = synthesis_result.get('error', 'Unknown error')
+            print(f"[run_pass3_clustered] ERROR in synthesis: {error_msg}", flush=True)
+            logger.warning(f"Cross-cluster synthesis failed: {error_msg}")
+            synthesis_result = {}
+        else:
+            print(f"[run_pass3_clustered] Synthesis completed successfully", flush=True)
+            print(f"[run_pass3_clustered] Synthesis results: {list(synthesis_result.keys())}", flush=True)
+
+    except Exception as e:
+        synthesis_elapsed = time.time() - synthesis_start
+        print(f"[run_pass3_clustered] EXCEPTION in synthesis after {synthesis_elapsed:.2f}s: {e}", flush=True)
+        print(f"[run_pass3_clustered] Full traceback:\n{traceback.format_exc()}", flush=True)
+        logger.error(f"Exception in cross-cluster synthesis: {e}")
         synthesis_result = {}
 
     # Combine all findings
@@ -673,6 +794,14 @@ Output valid JSON only."""
             "source_cluster": "synthesis",
             "analysis_pass": 3,
         })
+
+    total_elapsed = time.time() - pass3_start
+    print(f"\n{'='*70}", flush=True)
+    print(f"[run_pass3_clustered] PASS 3 COMPLETE", flush=True)
+    print(f"[run_pass3_clustered] Total time: {total_elapsed:.2f}s", flush=True)
+    print(f"[run_pass3_clustered] Total findings: {len(all_cross_doc_findings)}", flush=True)
+    print(f"[run_pass3_clustered] Clusters processed: {list(cluster_findings.keys())}", flush=True)
+    print(f"{'='*70}\n", flush=True)
 
     if verbose:
         logger.info(f"[Pass 3] Complete: {len(all_cross_doc_findings)} total cross-doc findings")

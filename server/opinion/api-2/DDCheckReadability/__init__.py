@@ -760,15 +760,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 )
 
             # Get documents to check
-            # Check ORIGINAL uploaded documents (is_original=True), not converted ones
-            # Also exclude documents that are themselves conversions (converted_from_id is set)
+            # Check uploaded documents, excluding:
+            # - Converted documents (converted_from_id is set) - these are generated PDFs
+            # - Archive files (ZIP, RAR, etc.) - these are source packages, not documents to analyze
+            # Note: is_original=True only on the ZIP archive itself; extracted files have is_original=False/NULL
+            ARCHIVE_TYPES = ("zip", "rar", "7z", "tar", "gz", "tgz")
             docs_query = (
                 session.query(Document)
                 .join(Folder, Document.folder_id == Folder.id)
                 .filter(
                     Folder.dd_id == dd_id,
-                    Document.is_original == True,
-                    Document.converted_from_id == None  # Exclude converted documents
+                    Document.converted_from_id == None,  # Exclude converted documents
+                    ~Document.type.in_(ARCHIVE_TYPES)  # Exclude archive files
                 )
             )
 

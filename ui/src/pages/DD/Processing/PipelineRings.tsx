@@ -305,6 +305,8 @@ export const PipelineRings: React.FC<PipelineRingsProps> = ({
 
   const getPassProgress = useCallback((pass: ProcessingPass): number => {
     if (!progress) return 0;
+    // Return 100% for completed passes, regardless of what backend returns
+    if (progress.passProgress[pass]?.status === 'completed') return 100;
     return progress.passProgress[pass]?.progress ?? 0;
   }, [progress]);
 

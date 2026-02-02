@@ -276,6 +276,12 @@ function getPassStatus(
     if (passIndex <= currentIndex) return 'failed';
     return 'pending';
   }
+  // Handle paused status (e.g., waiting for Checkpoint C after analysis)
+  // Passes up to and including current pass are completed, others are pending
+  if (data.status === 'paused') {
+    if (passIndex <= currentIndex) return 'completed';
+    return 'pending';
+  }
 
   if (passIndex < currentIndex) return 'completed';
   if (passIndex === currentIndex) return 'processing';

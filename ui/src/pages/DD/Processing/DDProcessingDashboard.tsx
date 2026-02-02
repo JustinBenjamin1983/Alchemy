@@ -26,7 +26,7 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
-import { Play, Pause, Square, AlertTriangle, CheckCircle2, Loader2, X, RotateCcw, RefreshCw, ClipboardCheck, Circle } from "lucide-react";
+import { Play, Pause, Square, AlertTriangle, CheckCircle2, Loader2, X, RotateCcw, RefreshCw, ClipboardCheck, Circle, Check } from "lucide-react";
 import { ProcessingProgress, RiskSummary, PASS_CONFIG, STATUS_COLORS, RING_COLORS, ProcessingPass } from "./types";
 import {
   useProcessingProgress,
@@ -51,6 +51,7 @@ import { useDeleteDocument } from "@/hooks/useDeleteDocument";
 import useEntityMapping, { useGetEntityMap, useModifyEntityMap, useConfirmEntityMap } from "@/hooks/useEntityMapping";
 import { CategoryCount, CategoryDocument } from "./FileTree/FileTree";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -68,7 +69,7 @@ import {
 import { celebrationVariants, SPRING_GENTLE } from "./animations";
 import { AccuracyTierSelector, ModelTier } from "./AccuracyTierSelector";
 import { ControlBar } from "./ControlBar";
-import { useValidationCheckpoint } from "@/hooks/useValidationCheckpoint";
+import { useValidationCheckpoint, useCreateCheckpoint, UnderstandingQuestion, FinancialConfirmation, MissingDocument } from "@/hooks/useValidationCheckpoint";
 import { ValidationWizardModal } from "../ValidationWizardModal";
 import { EntityMappingModal, EntityMappingResult, EntityMapEntry } from "./EntityMappingModal";
 
@@ -95,6 +96,16 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
 
   const ddId = propDdId || params.ddId || "";
 
+  // Helper to get displayReset from localStorage (used for lazy initialization)
+  const getInitialDisplayReset = () => {
+    if (!ddId) return false;
+    try {
+      return localStorage.getItem(`dd-display-reset-${ddId}`) === "true";
+    } catch {
+      return false;
+    }
+  };
+
   // Local state
   const [selectedDocIds, setSelectedDocIds] = useState<Set<string>>(new Set());
   const [logEntries, setLogEntries] = useState<LogEntry[]>([]);
@@ -110,7 +121,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   const [isCancelling, setIsCancelling] = useState(false);
   const [isRestarting, setIsRestarting] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
-  const [displayReset, setDisplayReset] = useState(false);
+  const [displayReset, setDisplayReset] = useState(getInitialDisplayReset);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
   const [currentRunId, setCurrentRunId] = useState<string | null>(null);
   const [dismissedRuns, setDismissedRuns] = useState<Set<string>>(new Set());
@@ -125,6 +136,12 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
 
   // Log entries storage key (per DD project, not per run - so we see full history)
   const getLogEntriesKey = (id: string) => `dd-log-entries-${id}`;
+
+  // Display reset storage key (per DD project)
+  const getDisplayResetKey = (id: string) => `dd-display-reset-${id}`;
+
+  // Entity mapping complete storage key (per DD project)
+  const getEntityMappingCompleteKey = (id: string) => `dd-entity-mapping-complete-${id}`;
 
   // Load log entries from localStorage when component mounts or ddId changes
   useEffect(() => {
@@ -159,6 +176,28 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
       }
     }
   }, [ddId, logEntries, logEntriesLoaded]);
+
+  // Load displayReset from localStorage on mount
+  useEffect(() => {
+    if (ddId) {
+      const storedReset = localStorage.getItem(getDisplayResetKey(ddId));
+      if (storedReset === "true") {
+        setDisplayReset(true);
+        setAnalyzeComplete(false); // Also reset analyzeComplete when display is reset
+      }
+    }
+  }, [ddId]);
+
+  // Save displayReset to localStorage when it changes
+  useEffect(() => {
+    if (ddId) {
+      if (displayReset) {
+        localStorage.setItem(getDisplayResetKey(ddId), "true");
+      } else {
+        localStorage.removeItem(getDisplayResetKey(ddId));
+      }
+    }
+  }, [ddId, displayReset]);
 
   // Initialize dismissedRuns from localStorage on mount
   useEffect(() => {
@@ -199,14 +238,22 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
 
   // Validation checkpoint hook - polls for pending checkpoints during processing
   const { data: checkpointData, refetch: refetchCheckpoint } = useValidationCheckpoint(ddId || undefined);
+  const createCheckpoint = useCreateCheckpoint();
   const [showValidationWizard, setShowValidationWizard] = useState(false);
+  const [isCreatingCheckpoint, setIsCreatingCheckpoint] = useState(false);
 
-  // Auto-show validation wizard when checkpoint is awaiting user input
+  // Auto-show validation wizard when Checkpoint C (post_analysis) is awaiting user input
+  // Don't auto-show if user has reset the display (they want to start fresh)
   useEffect(() => {
-    if (checkpointData?.has_checkpoint && checkpointData.checkpoint?.status === 'awaiting_user_input') {
+    if (
+      checkpointData?.has_checkpoint &&
+      checkpointData.checkpoint?.checkpoint_type === 'post_analysis' &&
+      checkpointData.checkpoint?.status === 'awaiting_user_input' &&
+      !displayReset
+    ) {
       setShowValidationWizard(true);
     }
-  }, [checkpointData]);
+  }, [checkpointData, displayReset]);
 
   // Sanitized progress - returns undefined during new run creation to reset UI
   // This ensures pipeline rings, progress bars, and elapsed time reset when starting a new run
@@ -249,7 +296,8 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   const [entityMappingResult, setEntityMappingResult] = useState<EntityMappingResult | null>(null);
 
   // Analyze stage state (Pass 1-2)
-  const [analyzeComplete, setAnalyzeComplete] = useState(false);
+  // Initialize to false if displayReset is true (user wants to see pre-analysis state)
+  const [analyzeComplete, setAnalyzeComplete] = useState(() => !getInitialDisplayReset());
 
   // Fetch stored entity map on page load - always enabled if we have a ddId
   // This ensures previously saved entity maps are loaded even after browser refresh
@@ -258,7 +306,17 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     true // Always try to fetch - the hook handles empty responses gracefully
   );
 
-  // Update entity mapping state when stored data is loaded
+  // Load entityMappingComplete from localStorage on mount (immediate restore)
+  useEffect(() => {
+    if (ddId) {
+      const storedEntityMappingComplete = localStorage.getItem(getEntityMappingCompleteKey(ddId));
+      if (storedEntityMappingComplete === "true") {
+        setEntityMappingComplete(true);
+      }
+    }
+  }, [ddId]);
+
+  // Update entity mapping state when stored data is loaded from API
   useEffect(() => {
     if (storedEntityMap?.entity_map && storedEntityMap.entity_map.length > 0) {
       setEntityMappingComplete(true);
@@ -287,6 +345,17 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     }
   }, [storedEntityMap]);
 
+  // Save entityMappingComplete to localStorage when it changes
+  useEffect(() => {
+    if (ddId) {
+      if (entityMappingComplete) {
+        localStorage.setItem(getEntityMappingCompleteKey(ddId), "true");
+      } else {
+        localStorage.removeItem(getEntityMappingCompleteKey(ddId));
+      }
+    }
+  }, [ddId, entityMappingComplete]);
+
   // Blueprint requirements for Checkpoint A - fetch after classification is done
   // Enable when status is past classification (not pending/classifying/cancelled/failed)
   const classificationComplete = organisationProgress?.status &&
@@ -299,6 +368,9 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
 
   // Auto-select the most recent completed run if none selected (for returning visitors)
   useEffect(() => {
+    // Don't auto-restore runId if display is reset (user wants to start fresh)
+    if (displayReset) return;
+
     if (runsData?.runs && runsData.runs.length > 0 && !currentRunId) {
       // Find the most recent completed run
       const completedRuns = runsData.runs.filter((r) => r.status === "completed");
@@ -306,14 +378,17 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         setCurrentRunId(completedRuns[0].run_id);
       }
     }
-  }, [runsData, currentRunId]);
+  }, [runsData, currentRunId, displayReset]);
 
   // Set currentRunId from progress data if not already set (fallback for when dd_analysis_runs table doesn't exist)
   useEffect(() => {
+    // Don't auto-restore runId if display is reset (user wants to start fresh)
+    if (displayReset) return;
+
     if (progress?.runId && !currentRunId) {
       setCurrentRunId(progress.runId);
     }
-  }, [progress?.runId, currentRunId]);
+  }, [progress?.runId, currentRunId, displayReset]);
 
   // Sync isPaused state with actual progress status
   useEffect(() => {
@@ -371,6 +446,23 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     []
   );
 
+  // Refetch checkpoint when status becomes "paused" (Checkpoint C after analysis)
+  // This ensures we get the checkpoint data even if it's created slightly after status change
+  useEffect(() => {
+    // Skip if user has explicitly reset the display - don't override their action
+    if (displayReset) return;
+
+    if (progress?.status === "paused") {
+      // Mark analysis as complete
+      if (!analyzeComplete) {
+        setAnalyzeComplete(true);
+        addLogEntry("success", "Document analysis complete", "Review the findings before generating the report");
+      }
+      // Refetch checkpoint data to show Checkpoint C modal
+      refetchCheckpoint();
+    }
+  }, [progress?.status, displayReset, analyzeComplete, refetchCheckpoint, addLogEntry]);
+
   // Transform documents to include readability status
   const documents: DocumentItem[] = useMemo(() => {
     if (propDocuments.length > 0) {
@@ -401,6 +493,9 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     if (progress?.status === "completed") return "completed";
     if (progress?.status === "failed") return "failed";
     if (progress?.status === "processing") return "processing";
+    // Handle paused status (e.g., waiting for Checkpoint C after analysis)
+    // Keep showing "ready" phase so we don't revert to classification phases
+    if (progress?.status === "paused") return "ready";
 
     // Check organisation/classification status first (Phase 1 & 2)
     const orgStatus = organisationProgress?.status;
@@ -885,6 +980,313 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     setSelectedDocIds(newSelection);
   }, []);
 
+  // Handle Checkpoint C button click - creates checkpoint from synthesis data if needed
+  const handleViewCheckpointC = useCallback(async () => {
+    // If checkpoint already exists, just show the modal
+    if (checkpointData?.has_checkpoint && checkpointData.checkpoint) {
+      setShowValidationWizard(true);
+      return;
+    }
+
+    // Otherwise, create a checkpoint from synthesis data and project setup
+    const currentRun = runsData?.runs?.find(r => r.run_id === currentRunId);
+    if (!currentRun || !currentRunId) {
+      addLogEntry("error", "No completed analysis run found to create checkpoint.");
+      setShowValidationWizard(true); // Still show fallback modal
+      return;
+    }
+
+    const synthesis = currentRun.synthesis_data;
+    const projectSetup = ddData?.project_setup;
+
+    setIsCreatingCheckpoint(true);
+    try {
+      // Build understanding questions using project setup data for transaction-specific questions
+      const questions: UnderstandingQuestion[] = [];
+
+      // Question 1: Transaction structure understanding (using project setup)
+      if (projectSetup?.targetEntityName && projectSetup?.clientName) {
+        // Use dealRationale for context if available (contains detailed user input)
+        // Otherwise construct from individual fields
+        let transactionContext: string;
+        if (projectSetup.dealRationale && projectSetup.dealRationale.trim()) {
+          transactionContext = projectSetup.dealRationale.trim();
+        } else {
+          const dealStructureText = projectSetup.dealStructure === "share_sale" ? "share sale" :
+            projectSetup.dealStructure === "asset_sale" ? "asset sale" :
+            projectSetup.dealStructure?.replace(/_/g, " ") || "acquisition";
+          const valueText = projectSetup.estimatedValue
+            ? ` for approximately R${(projectSetup.estimatedValue / 1000000).toFixed(0)} million`
+            : "";
+          transactionContext = `This appears to be a ${dealStructureText} of ${projectSetup.targetEntityName} by ${projectSetup.clientName}${valueText}.`;
+        }
+
+        questions.push({
+          question_id: "q_transaction_structure",
+          question: "Is this transaction summary correct?",
+          context: transactionContext,
+          ai_assessment: `${projectSetup.clientName} (${projectSetup.clientRole === "buyer" ? "Buyer" : projectSetup.clientRole || "Buyer"}) → acquiring ${projectSetup.targetEntityName}`,
+          confidence: 0.9,
+          options: [
+            { value: "correct", label: "Yes, this is correct", description: "The transaction summary is accurate" },
+            { value: "partially", label: "Partially correct (please clarify below)", description: "Some details need adjustment" },
+            { value: "incorrect", label: "No, this is incorrect (please clarify below)", description: "The summary is wrong" },
+          ],
+          requires_correction_text: true,
+        });
+      }
+
+      // Question 2: Corporate structure (if shareholders available)
+      if (projectSetup?.shareholders && projectSetup.shareholders.length > 0) {
+        const shareholdersList = projectSetup.shareholders
+          .filter((s: any) => s.name)
+          .map((s: any) => `${s.name}${s.percentage ? ` (${s.percentage}%)` : ""}`)
+          .join(", ");
+
+        questions.push({
+          question_id: "q_corporate_structure",
+          question: "Is the corporate structure correct?",
+          context: `We understand the shareholding structure as: ${shareholdersList || "Not specified"}`,
+          ai_assessment: `${projectSetup.shareholders.length} shareholder(s) identified`,
+          confidence: 0.85,
+          options: [
+            { value: "correct", label: "Yes, this is correct", description: "The corporate structure is accurate" },
+            { value: "partially", label: "Partially correct (please clarify below)", description: "Some ownership details need adjustment" },
+            { value: "incorrect", label: "No, this is incorrect (please clarify below)", description: "The structure is wrong" },
+          ],
+          requires_correction_text: true,
+        });
+      }
+
+      // Question: Known concerns coverage (if user flagged concerns)
+      if (projectSetup?.knownConcerns && projectSetup.knownConcerns.length > 0) {
+        const concernsList = projectSetup.knownConcerns.slice(0, 3).join(", ");
+        questions.push({
+          question_id: "q_known_concerns",
+          question: "Were your flagged concerns adequately addressed?",
+          context: `You identified these concerns: ${concernsList}${projectSetup.knownConcerns.length > 3 ? ` (+${projectSetup.knownConcerns.length - 3} more)` : ""}`,
+          ai_assessment: `${projectSetup.knownConcerns.length} concern(s) to validate`,
+          confidence: 0.8,
+          options: [
+            { value: "addressed", label: "Yes, all addressed", description: "The analysis covered these concerns" },
+            { value: "partially", label: "Partially addressed", description: "Some concerns need more attention" },
+            { value: "not_addressed", label: "Not adequately addressed", description: "These concerns were not sufficiently covered" },
+          ],
+          requires_correction_text: true,
+        });
+      }
+
+      // Question: Critical priorities coverage
+      if (projectSetup?.criticalPriorities && projectSetup.criticalPriorities.length > 0) {
+        const prioritiesList = projectSetup.criticalPriorities.slice(0, 3).join(", ");
+        questions.push({
+          question_id: "q_critical_priorities",
+          question: "Were your critical priorities sufficiently analyzed?",
+          context: `Critical priorities identified: ${prioritiesList}${projectSetup.criticalPriorities.length > 3 ? ` (+${projectSetup.criticalPriorities.length - 3} more)` : ""}`,
+          ai_assessment: `${projectSetup.criticalPriorities.length} priority area(s) to validate`,
+          confidence: 0.8,
+          options: [
+            { value: "covered", label: "Yes, well covered", description: "These areas were thoroughly analyzed" },
+            { value: "partially", label: "Partially covered", description: "More depth needed in some areas" },
+            { value: "not_covered", label: "Not sufficiently covered", description: "Critical areas were missed" },
+          ],
+          requires_correction_text: true,
+        });
+      }
+
+      // Question: Known deal breakers validation
+      if (projectSetup?.knownDealBreakers && projectSetup.knownDealBreakers.length > 0) {
+        const dealBreakersList = projectSetup.knownDealBreakers.slice(0, 3).join(", ");
+        questions.push({
+          question_id: "q_known_deal_breakers",
+          question: "Were your known deal breakers identified in the analysis?",
+          context: `You flagged these as potential deal breakers: ${dealBreakersList}${projectSetup.knownDealBreakers.length > 3 ? ` (+${projectSetup.knownDealBreakers.length - 3} more)` : ""}`,
+          ai_assessment: `${projectSetup.knownDealBreakers.length} deal breaker(s) to check`,
+          confidence: 0.85,
+          options: [
+            { value: "found", label: "Yes, all identified", description: "The analysis found evidence of these issues" },
+            { value: "some_found", label: "Some identified", description: "Only some deal breakers were found" },
+            { value: "not_found", label: "Not identified", description: "The analysis did not surface these issues" },
+          ],
+          requires_correction_text: true,
+        });
+      }
+
+      // Question: Key stakeholders identification
+      const keyStakeholders = [
+        ...(projectSetup?.keyLenders || []).map((l: any) => l.name || l),
+        ...(projectSetup?.keyCustomers || []).map((c: any) => c.name || c),
+        ...(projectSetup?.keySuppliers || []),
+      ].filter(Boolean);
+
+      if (keyStakeholders.length > 0) {
+        const stakeholdersList = keyStakeholders.slice(0, 4).join(", ");
+        questions.push({
+          question_id: "q_key_stakeholders",
+          question: "Were the key stakeholders you identified found in the documents?",
+          context: `Key stakeholders identified: ${stakeholdersList}${keyStakeholders.length > 4 ? ` (+${keyStakeholders.length - 4} more)` : ""}`,
+          ai_assessment: `${keyStakeholders.length} stakeholder(s) to verify`,
+          confidence: 0.75,
+          options: [
+            { value: "all_found", label: "Yes, all found", description: "All stakeholders appeared in the documents" },
+            { value: "some_found", label: "Some found", description: "Only some stakeholders were identified" },
+            { value: "none_found", label: "None found", description: "Key stakeholders were not found in documents" },
+          ],
+          requires_correction_text: true,
+        });
+      }
+
+      // Question 3: Deal assessment from synthesis
+      if (synthesis?.deal_assessment) {
+        questions.push({
+          question_id: "q_deal_assessment",
+          question: "Do you agree with the overall deal risk assessment?",
+          context: `Our analysis rated this deal as ${synthesis.deal_assessment.overall_risk_rating?.toUpperCase() || "MEDIUM"} risk. ${synthesis.deal_assessment.can_proceed ? "We believe the deal can proceed with appropriate mitigations." : "We have identified issues that may need resolution before proceeding."}`,
+          ai_assessment: synthesis.deal_assessment.overall_risk_rating || "medium",
+          confidence: 0.85,
+          options: [
+            { value: "agree", label: "Agree", description: "The risk assessment reflects my understanding" },
+            { value: "disagree_higher", label: "Higher Risk", description: "The deal has more risk than assessed" },
+            { value: "disagree_lower", label: "Lower Risk", description: "The deal has less risk than assessed" },
+          ],
+          requires_correction_text: true,
+        });
+      }
+
+      // Question 4: Deal blockers
+      if (synthesis?.deal_blockers && synthesis.deal_blockers.length > 0) {
+        questions.push({
+          question_id: "q_deal_blockers",
+          question: `We identified ${synthesis.deal_blockers.length} potential deal blocker(s). Do you agree these are material issues?`,
+          context: synthesis.deal_blockers.slice(0, 3).map((b: any) => b.issue || b.description).join("; "),
+          ai_assessment: `${synthesis.deal_blockers.length} deal blockers identified`,
+          confidence: 0.9,
+          options: [
+            { value: "agree", label: "Agree", description: "These are correctly identified as deal blockers" },
+            { value: "too_many", label: "Over-flagged", description: "Some items are not actually deal blockers" },
+            { value: "too_few", label: "Under-flagged", description: "There are additional deal blockers not listed" },
+          ],
+          requires_correction_text: true,
+        });
+      }
+
+      // Build financial confirmations from synthesis data and project setup
+      const financialConfirmations: FinancialConfirmation[] = [];
+
+      // Add estimated transaction value from project setup
+      if (projectSetup?.estimatedValue) {
+        financialConfirmations.push({
+          metric: "Transaction Value",
+          extracted_value: projectSetup.estimatedValue,
+          currency: "ZAR",
+          source_document: "Project Setup",
+          confidence: 0.95,
+        });
+      }
+
+      if (synthesis?.financial_exposures) {
+        const exposures = synthesis.financial_exposures;
+        // Add total exposure if available
+        if (exposures.total !== undefined) {
+          financialConfirmations.push({
+            metric: "Total Financial Exposure",
+            extracted_value: exposures.total,
+            currency: exposures.currency || "ZAR",
+            source_document: "Aggregated from all documents",
+            confidence: 0.75,
+          });
+        }
+        // Add individual exposure items if available
+        if (exposures.items && exposures.items.length > 0) {
+          exposures.items.slice(0, 4).forEach((item) => {
+            financialConfirmations.push({
+              metric: item.type.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()),
+              extracted_value: item.amount,
+              currency: exposures.currency || "ZAR",
+              source_document: item.source || "Multiple documents",
+              confidence: 0.7,
+            });
+          });
+        }
+      }
+
+      // Build missing documents list if any
+      const missingDocs: MissingDocument[] = [];
+      // Note: synthesis_data may not have missing docs info, but the validation wizard can still function
+
+      // Create checkpoint with preliminary summary using project setup details
+      // Build a clear description of what's being acquired based on deal structure
+      const getDealDescription = (dealStructure: string | undefined) => {
+        if (!dealStructure) return "";
+        const structureDescriptions: Record<string, string> = {
+          share_purchase: "the shares in",
+          asset_purchase: "the business assets of",
+          merger: "a merger with",
+          scheme: "a scheme of arrangement involving",
+          mining_right_transfer: "the mining rights of",
+          section_11: "a Section 11 transfer of",
+          joint_venture: "a joint venture with",
+          farm_in: "a farm-in arrangement with",
+        };
+        return structureDescriptions[dealStructure] || `a ${dealStructure.replace(/_/g, " ")} involving`;
+      };
+
+      const dealDesc = getDealDescription(projectSetup?.dealStructure);
+
+      // Build preliminary summary from project setup data
+      // If dealRationale is provided, use it as the primary description (it contains user's detailed context)
+      // Otherwise fall back to constructing from individual fields
+      let preliminarySummary = "";
+
+      if (projectSetup?.dealRationale && projectSetup.dealRationale.trim()) {
+        // Use the user's detailed deal rationale as the summary
+        preliminarySummary = projectSetup.dealRationale.trim();
+      } else if (projectSetup?.targetEntityName && projectSetup?.clientName) {
+        // Construct from individual fields
+        preliminarySummary = `This appears to be an acquisition of ${dealDesc ? `${dealDesc} ` : ""}${projectSetup.targetEntityName} by ${projectSetup.clientName}${projectSetup.estimatedValue ? ` for approximately R${(projectSetup.estimatedValue / 1000000).toFixed(0)} million` : ""}.`;
+      } else {
+        // Fall back to synthesis executive summary
+        preliminarySummary = synthesis?.executive_summary || "";
+      }
+
+      await createCheckpoint.mutateAsync({
+        ddId,
+        runId: currentRunId,
+        checkpointType: "post_analysis",
+        content: {
+          preliminary_summary: preliminarySummary,
+          questions: questions.length > 0 ? questions : [
+            {
+              question_id: "q_general",
+              question: "Does this summary accurately describe the transaction?",
+              context: preliminarySummary || "Transaction details pending confirmation",
+              ai_assessment: "Awaiting user confirmation",
+              confidence: 0.8,
+              options: [
+                { value: "agree", label: "Agree", description: "Summary is accurate" },
+                { value: "partially", label: "Partially", description: "Some details need correction" },
+                { value: "disagree", label: "Disagree", description: "Summary needs significant changes" },
+              ],
+              requires_correction_text: true,
+            },
+          ],
+          financial_confirmations: financialConfirmations.length > 0 ? financialConfirmations : undefined,
+          missing_docs: missingDocs.length > 0 ? missingDocs : undefined,
+        },
+      });
+
+      addLogEntry("success", "Checkpoint C created from analysis results");
+      await refetchCheckpoint();
+      setShowValidationWizard(true);
+    } catch (error) {
+      console.error("Failed to create checkpoint:", error);
+      addLogEntry("error", "Failed to create checkpoint. Showing analysis summary instead.");
+      setShowValidationWizard(true); // Show fallback modal
+    } finally {
+      setIsCreatingCheckpoint(false);
+    }
+  }, [checkpointData, runsData, currentRunId, ddId, ddData, createCheckpoint, refetchCheckpoint, addLogEntry]);
+
   // Handle Run DD button click
   // Note: checkForMatchingCompletedRun is defined inline to access allCategoryDocs which is defined later
   const handleRunDDClick = () => {
@@ -935,7 +1337,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     }
   };
 
-  // Handle Analyze button click - creates run if needed, runs Pass 1-2 and creates Checkpoint C
+  // Handle Analyse button click - creates run if needed, runs Pass 1-2 and creates Checkpoint C
   const handleAnalyzeClick = async () => {
     if (!ddId) {
       addLogEntry("error", "No DD project selected.");
@@ -951,6 +1353,15 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
       addLogEntry("error", "No documents ready for analysis.");
       return;
     }
+
+    // Clear reset state and hide any existing checkpoint wizard when starting new analysis
+    // This ensures we don't show stale checkpoint data from a previous run
+    if (displayReset) {
+      setDisplayReset(false);
+      localStorage.removeItem(`dd-display-reset-${ddId}`);
+    }
+    setShowValidationWizard(false);
+    setAnalyzeComplete(false);
 
     addLogEntry("info", `Starting document analysis for ${docsToProcess.length} documents...`);
 
@@ -973,6 +1384,14 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
       const result = await analyzeDocuments(runId, {
         modelTier: selectedModelTier,
       });
+
+      // Handle already_completed status
+      if (result.status === 'already_completed') {
+        addLogEntry("info", "Analysis already completed for this run", "Use Reset to start a new analysis run.");
+        setAnalyzeComplete(true);
+        refetch();
+        return;
+      }
 
       const tierLabel = selectedModelTier === "cost_optimized" ? "Economy" :
                        selectedModelTier === "balanced" ? "Balanced" :
@@ -1200,7 +1619,11 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     setDisplayReset(true);
     setShowResetDialog(false);
     setLastSavedTime(null);
-    addLogEntry("info", "Display reset", "Pipeline visualization cleared. Run data preserved in Analysis tab.");
+    // Reset analyzeComplete so user can re-run analysis after visual reset
+    setAnalyzeComplete(false);
+    // Clear currentRunId so a new run is created when user clicks Analyse
+    setCurrentRunId(null);
+    addLogEntry("info", "Display reset", "Pipeline visualisation cleared. A new analysis run will be created when you click Analyse.");
   };
 
   // Cancel processing
@@ -1439,8 +1862,8 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   // Track when analysis (Pass 1-2) completes and restore state on page return
   // Analysis is complete when:
   // 1. currentStage is 'waiting_for_checkpoint_c', OR
-  // 2. Pass 2 (analyze) is completed, OR
-  // 3. Any pass beyond analyze (calculate, crossdoc, etc.) has started/completed
+  // 2. Pass 2 (analyse) is completed, OR
+  // 3. Any pass beyond analyse (calculate, crossdoc, etc.) has started/completed
   useEffect(() => {
     // Only check if we have actual progress data
     if (!progress?.passProgress) return;
@@ -1452,6 +1875,11 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     const waitingForCheckpoint = progress.currentStage === 'waiting_for_checkpoint_c';
 
     if (waitingForCheckpoint || analyzePassComplete || beyondAnalyze) {
+      // Only auto-update UI if user hasn't explicitly reset
+      // displayReset being true means user clicked Reset - respect that choice
+      if (displayReset) {
+        return; // Don't override user's explicit reset action
+      }
       if (!analyzeComplete) {
         setAnalyzeComplete(true);
         // Refetch checkpoint to show Checkpoint C (if in waiting state)
@@ -1460,7 +1888,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         }
       }
     }
-  }, [progress?.currentStage, progress?.passProgress, analyzeComplete, refetchCheckpoint]);
+  }, [progress?.currentStage, progress?.passProgress, analyzeComplete, refetchCheckpoint, displayReset]);
 
   // Navigation handlers - use callbacks if provided, otherwise use router
   const handleBack = () => {
@@ -1545,7 +1973,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   // If entity mapping is confirmed, all prior steps must have completed successfully
   const hasCompletedRun = progress?.status === "completed";
 
-  // Can run Analyze (Pass 1-2): requires entity mapping complete
+  // Can run Analyse (Pass 1-2): requires entity mapping complete
   const canAnalyze =
     entityMappingComplete &&
     docsToProcessCount > 0 &&
@@ -1554,7 +1982,8 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     !isOrganisationInProgress &&
     !isProcessingInProgress &&
     !isAnalyzing &&
-    !analyzeComplete; // Don't allow re-analyze if already done
+    !analyzeComplete; // Don't allow re-analyse if already done
+
 
   // Check if waiting for Checkpoint C validation (analysis done, waiting for user validation)
   // Checkpoint C is the 'post_analysis' checkpoint type
@@ -1647,6 +2076,11 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
           }
         }}
         isClassifying={classifyDocuments.isPending || organisationProgress?.status === "classifying"}
+        classificationComplete={
+          organisationProgress?.status === "classified" ||
+          organisationProgress?.status === "organised" ||
+          organisationProgress?.status === "completed"
+        }
         onAddFolder={() => {
           // Trigger add folder dialog in FileTree - we'll handle this via state
           const event = new CustomEvent('dd-add-folder');
@@ -1699,7 +2133,16 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         onAnalyzeDocuments={handleAnalyzeClick}
         isAnalyzing={isAnalyzing}
         canAnalyze={canAnalyze}
-        analyzeComplete={analyzeComplete || isWaitingForCheckpointC || checkpointCValidated}
+        analyzeComplete={!displayReset && (analyzeComplete || isWaitingForCheckpointC || checkpointCValidated)}
+        // Checkpoint C (post-analysis validation)
+        onViewCheckpointC={handleViewCheckpointC}
+        isCreatingCheckpoint={isCreatingCheckpoint}
+        hasCheckpointC={!displayReset && (
+          (checkpointData?.has_checkpoint && checkpointData.checkpoint?.checkpoint_type === 'post_analysis') ||
+          // Also show as available if we have synthesis data to create from
+          runsData?.runs?.some(r => r.run_id === currentRunId && r.synthesis_data)
+        )}
+        checkpointCStatus={checkpointData?.checkpoint?.status as 'awaiting_user_input' | 'completed' | 'skipped' | undefined}
         // Generate Report (Pass 3-7)
         onGenerateReport={handleGenerateReportClick}
         isGenerating={isGenerating}
@@ -1723,8 +2166,8 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         disabled={isClassificationInProgress || isOrganisationInProgress}
       />
 
-      {/* Pending Checkpoint Banner */}
-      {checkpointData?.has_checkpoint && checkpointData.checkpoint?.status === 'awaiting_user_input' && !showValidationWizard && (
+      {/* Pending Checkpoint Banner - hide during reset or when new analysis is running */}
+      {checkpointData?.has_checkpoint && checkpointData.checkpoint?.status === 'awaiting_user_input' && !showValidationWizard && !displayReset && !isAnalyzing && !isProcessingInProgress && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1960,6 +2403,8 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
                 const isCompleted = passProgress?.status === "completed";
                 const isFailed = passProgress?.status === "failed";
                 const isActive = !displayReset && progress?.currentPass === pass && progress?.status === "processing";
+                // Use 100% for completed passes, regardless of what backend returns
+                const progressPercent = isCompleted ? 100 : (passProgress?.progress ?? 0);
 
                 const ringColor = RING_COLORS[pass as ProcessingPass];
                 const barColor = displayReset
@@ -1987,7 +2432,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
                           className="h-full rounded-full"
                           style={{ backgroundColor: barColor }}
                           initial={{ width: 0 }}
-                          animate={{ width: `${passProgress?.progress ?? 0}%` }}
+                          animate={{ width: `${progressPercent}%` }}
                           transition={{ type: "spring", stiffness: 50, damping: 20 }}
                         />
                       </div>
@@ -1996,7 +2441,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
                       className="w-10 text-right text-[10px] font-mono"
                       style={{ color: barColor }}
                     >
-                      {passProgress?.progress ?? 0}%
+                      {progressPercent}%
                     </div>
                   </div>
                 );
@@ -2150,7 +2595,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
       {/* Validation Wizard Modal - Checkpoint C (post_analysis)
           Shows after Analyze (Pass 1-2) completes to validate AI understanding
           before proceeding to Generate Report (Pass 3-7) */}
-      {checkpointData?.has_checkpoint && checkpointData.checkpoint && (
+      {checkpointData?.has_checkpoint && checkpointData.checkpoint ? (
         <ValidationWizardModal
           open={showValidationWizard}
           onClose={() => setShowValidationWizard(false)}
@@ -2169,6 +2614,203 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
             addLogEntry("info", "Checkpoint C skipped", "You can now generate the report with AI assessments");
           }}
         />
+      ) : (
+        /* Analysis Results modal when no checkpoint data exists - shows REAL analysis data */
+        <Dialog open={showValidationWizard} onOpenChange={setShowValidationWizard}>
+          <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <ClipboardCheck className="h-5 w-5 text-blue-600" />
+                Checkpoint C - Analysis Results
+              </DialogTitle>
+              <DialogDescription>
+                Review the analysis findings from the completed run.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-6">
+              {/* Get actual run data */}
+              {(() => {
+                const currentRun = runsData?.runs?.find(r => r.run_id === currentRunId);
+                const synthesis = currentRun?.synthesis_data;
+
+                if (!currentRun) {
+                  return (
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                      <div className="flex items-start gap-3">
+                        <AlertTriangle className="h-5 w-5 text-amber-500 mt-0.5" />
+                        <div>
+                          <h4 className="font-medium text-amber-800">No Run Data Found</h4>
+                          <p className="text-sm text-amber-700 mt-1">
+                            Could not find analysis run data. The run may still be processing or data hasn't been saved yet.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <>
+                    {/* Findings Summary */}
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                      <h4 className="font-medium text-gray-800 mb-3">Findings Summary</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 text-center">
+                        <div>
+                          <div className="text-2xl font-bold text-gray-900">{currentRun.findings_total || 0}</div>
+                          <div className="text-xs text-gray-500">Total</div>
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-red-600">{currentRun.findings_critical || 0}</div>
+                          <div className="text-xs text-gray-500">Critical</div>
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-orange-600">{currentRun.findings_high || 0}</div>
+                          <div className="text-xs text-gray-500">High</div>
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-yellow-600">{currentRun.findings_medium || 0}</div>
+                          <div className="text-xs text-gray-500">Medium</div>
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-green-600">{currentRun.findings_low || 0}</div>
+                          <div className="text-xs text-gray-500">Low</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Synthesis Data - if available */}
+                    {synthesis ? (
+                      <>
+                        {/* Executive Summary */}
+                        {synthesis.executive_summary && (
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <h4 className="font-medium text-blue-800 mb-2">Executive Summary</h4>
+                            <p className="text-sm text-blue-900 whitespace-pre-wrap">{synthesis.executive_summary}</p>
+                          </div>
+                        )}
+
+                        {/* Deal Assessment */}
+                        {synthesis.deal_assessment && (
+                          <div className="bg-white border border-gray-200 rounded-lg p-4">
+                            <h4 className="font-medium text-gray-800 mb-3">Deal Assessment</h4>
+                            <div className="space-y-3">
+                              {synthesis.deal_assessment.overall_risk_rating && (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-600">Overall Risk:</span>
+                                  <Badge variant={
+                                    synthesis.deal_assessment.overall_risk_rating === 'high' ? 'destructive' :
+                                    synthesis.deal_assessment.overall_risk_rating === 'medium' ? 'default' : 'secondary'
+                                  }>
+                                    {synthesis.deal_assessment.overall_risk_rating.toUpperCase()}
+                                  </Badge>
+                                </div>
+                              )}
+                              {synthesis.deal_assessment.can_proceed !== undefined && (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-600">Can Proceed:</span>
+                                  <Badge variant={synthesis.deal_assessment.can_proceed ? 'secondary' : 'destructive'}>
+                                    {synthesis.deal_assessment.can_proceed ? 'Yes' : 'No - Issues to Resolve'}
+                                  </Badge>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Deal Blockers */}
+                        {synthesis.deal_blockers && synthesis.deal_blockers.length > 0 && (
+                          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <h4 className="font-medium text-red-800 mb-3 flex items-center gap-2">
+                              <AlertTriangle className="h-4 w-4" />
+                              Deal Blockers ({synthesis.deal_blockers.length})
+                            </h4>
+                            <div className="space-y-2">
+                              {synthesis.deal_blockers.slice(0, 5).map((blocker, idx) => (
+                                <div key={idx} className="bg-white rounded p-3 border border-red-100">
+                                  <div className="font-medium text-red-900 text-sm">{blocker.issue || blocker.description}</div>
+                                  {blocker.description && blocker.issue && (
+                                    <div className="text-xs text-red-700 mt-1">{blocker.description}</div>
+                                  )}
+                                  {blocker.resolution_path && (
+                                    <div className="text-xs text-gray-600 mt-1">
+                                      <span className="font-medium">Resolution:</span> {blocker.resolution_path}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                              {synthesis.deal_blockers.length > 5 && (
+                                <p className="text-xs text-red-600">...and {synthesis.deal_blockers.length - 5} more</p>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Conditions Precedent */}
+                        {synthesis.conditions_precedent && synthesis.conditions_precedent.length > 0 && (
+                          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                            <h4 className="font-medium text-amber-800 mb-3">
+                              Conditions Precedent ({synthesis.conditions_precedent.length})
+                            </h4>
+                            <div className="space-y-2">
+                              {synthesis.conditions_precedent.slice(0, 5).map((cp, idx) => (
+                                <div key={idx} className="bg-white rounded p-2 border border-amber-100 text-sm">
+                                  <span className="font-medium text-amber-900">CP{cp.cp_number || idx + 1}:</span>{' '}
+                                  <span className="text-gray-700">{cp.description}</span>
+                                </div>
+                              ))}
+                              {synthesis.conditions_precedent.length > 5 && (
+                                <p className="text-xs text-amber-600">...and {synthesis.conditions_precedent.length - 5} more</p>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Recommendations */}
+                        {synthesis.recommendations && synthesis.recommendations.length > 0 && (
+                          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <h4 className="font-medium text-green-800 mb-3">Recommendations</h4>
+                            <ul className="space-y-1">
+                              {synthesis.recommendations.slice(0, 5).map((rec, idx) => (
+                                <li key={idx} className="text-sm text-green-900 flex items-start gap-2">
+                                  <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                                  {rec}
+                                </li>
+                              ))}
+                              {synthesis.recommendations.length > 5 && (
+                                <li className="text-xs text-green-600">...and {synthesis.recommendations.length - 5} more</li>
+                              )}
+                            </ul>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <p className="text-sm text-gray-600">
+                          Detailed synthesis data is not yet available. This is generated after Pass 4 (Synthesis) completes.
+                          The findings summary above shows the results from Pass 1-2 (Extract & Analyse).
+                        </p>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowValidationWizard(false)}>
+                Close
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowValidationWizard(false);
+                  addLogEntry("info", "Analysis results reviewed", "Ready to proceed with report generation");
+                }}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                Confirm & Continue
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       )}
 
       {/* Entity Mapping Modal - Checkpoint A.5 */}

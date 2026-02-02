@@ -3,9 +3,9 @@
 from sqlalchemy import (
     Column, String, Boolean, Text, ForeignKey, DateTime, Integer, Float, BigInteger, ForeignKeyConstraint, UniqueConstraint, JSON
 )
-from sqlalchemy.dialects.postgresql import ENUM, UUID
+from sqlalchemy.dialects.postgresql import ENUM, UUID, JSONB
 from sqlalchemy.inspection import inspect
-from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.orm import relationship, declarative_base, backref
 import uuid
 import datetime
 
@@ -552,8 +552,8 @@ class DDAnalysisRun(BaseModel):
     # Status
     status = Column(ProcessingStatusEnum, default="pending")
 
-    # Document selection (JSON array of document UUIDs)
-    selected_document_ids = Column(JSON, nullable=False, default=list)
+    # Document selection (JSONB array of document UUIDs)
+    selected_document_ids = Column(JSONB, nullable=False, default=list)
 
     # Progress tracking
     documents_processed = Column(Integer, default=0)
@@ -782,3 +782,114 @@ class DDDocumentReference(BaseModel):
     run = relationship("DDAnalysisRun", backref="document_references")
     source_document = relationship("Document", foreign_keys=[source_document_id], backref="outgoing_references")
     matched_document = relationship("Document", foreign_keys=[matched_document_id], backref="incoming_references")
+
+
+# ============================================================================
+# DD EVALUATION SYSTEM: Tables for internal testing against known rubrics
+# ============================================================================
+
+# Evaluation status enum
+EvaluationStatusEnum = ENUM(
+    'pending', 'evaluating', 'completed', 'failed',
+    name='evaluation_status_enum',
+    create_type=True
+)
+
+# Performance band enum
+PerformanceBandEnum = ENUM(
+    'EXCELLENT', 'GOOD', 'ADEQUATE', 'BELOW_EXPECTATIONS', 'FAILURE',
+    name='performance_band_enum',
+    create_type=True
+)
+
+
+class DDEvalRubric(BaseModel):
+    """
+    Stores evaluation rubrics for test projects.
+
+    Rubrics define expected findings/flags that should be detected in a DD analysis.
+    Used for internal QA testing against known answer sets.
+    """
+    __tablename__ = "dd_eval_rubric"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(Text, nullable=False)  # e.g., "Karoo Mining Test"
+    description = Column(Text, nullable=True)
+
+    # Full rubric structure as JSON:
+    # {
+    #   "critical_red_flags": [{name, description, points, ...}, ...],
+    #   "amber_flags": [{name, description, points, ...}, ...],
+    #   "cross_document_connections": [{name, description, points, ...}, ...],
+    #   "intelligent_questions": {criteria, points},
+    #   "missing_documents": [{category, points}, ...],
+    #   "overall_quality": {criteria, points}
+    # }
+    rubric_data = Column(JSON, nullable=False)
+
+    total_points = Column(Integer, default=200)
+
+    # Optional link to a specific DD project this rubric is designed for
+    dd_id = Column(UUID(as_uuid=True), ForeignKey("due_diligence.id", ondelete="SET NULL"), nullable=True)
+
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_by = Column(Text, nullable=True)  # Email of creator
+
+    # Relationships - use lazy="noload" to prevent auto-loading when DD is serialized
+    # This is an internal testing tool, so we don't need it in standard DD queries
+    dd = relationship("DueDiligence", backref=backref("eval_rubrics", lazy="noload"))
+    evaluations = relationship("DDEvaluation", back_populates="rubric", cascade="all, delete-orphan")
+
+
+class DDEvaluation(BaseModel):
+    """
+    Stores evaluation results from running a DD analysis against a rubric.
+
+    Performance Bands (based on score out of 200):
+    - EXCELLENT: 180-200
+    - GOOD: 150-179
+    - ADEQUATE: 120-149
+    - BELOW_EXPECTATIONS: 90-119
+    - FAILURE: <90
+    """
+    __tablename__ = "dd_evaluation"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    rubric_id = Column(UUID(as_uuid=True), ForeignKey("dd_eval_rubric.id", ondelete="CASCADE"), nullable=False)
+    run_id = Column(UUID(as_uuid=True), ForeignKey("dd_analysis_run.id", ondelete="CASCADE"), nullable=False)
+
+    # Status tracking
+    status = Column(String(20), default="pending")  # pending, evaluating, completed, failed
+
+    # Detailed scoring breakdown as JSON:
+    # {
+    #   "critical_red_flags": {found: [...], missed: [...], score: X, max: Y},
+    #   "amber_flags": {found: [...], missed: [...], score: X, max: Y},
+    #   "cross_document_connections": {found: [...], missed: [...], score: X, max: Y},
+    #   "intelligent_questions": {assessment: "...", score: X, max: Y},
+    #   "missing_documents": {flagged: [...], not_flagged: [...], score: X, max: Y},
+    #   "overall_quality": {assessment: "...", score: X, max: Y}
+    # }
+    scores = Column(JSON, nullable=True)
+
+    # Summary scores
+    total_score = Column(Integer, nullable=True)
+    percentage = Column(Float, nullable=True)
+    performance_band = Column(String(20), nullable=True)  # EXCELLENT, GOOD, ADEQUATE, BELOW_EXPECTATIONS, FAILURE
+
+    # Model used for evaluation
+    evaluation_model = Column(String(100), default="claude-opus-4-20250514")
+
+    # Raw response from evaluation model (for debugging)
+    raw_response = Column(Text, nullable=True)
+
+    # Error message if failed
+    error_message = Column(Text, nullable=True)
+
+    # Timestamps
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    completed_at = Column(DateTime, nullable=True)
+
+    # Relationships - use lazy="noload" to prevent auto-loading when Run is serialized
+    rubric = relationship("DDEvalRubric", back_populates="evaluations")
+    run = relationship("DDAnalysisRun", backref=backref("evaluations", lazy="noload"))

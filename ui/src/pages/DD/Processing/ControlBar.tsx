@@ -2,7 +2,7 @@
  * ControlBar - Unified action bar for DD Console
  *
  * Clean horizontal toolbar with three logical groups:
- * 1. Document Prep (Classify, Readability, Entity Map, Analyze)
+ * 1. Document Prep (Classify, Readability, Entity Map, Analyse)
  * 2. Accuracy Mode (segmented control)
  * 3. Primary Action (Generate Report)
  */
@@ -24,6 +24,7 @@ import {
   Eye,
   FileSearch,
   FileText,
+  ClipboardCheck,
 } from "lucide-react";
 // Note: FolderPlus removed as Add Folder button is not in this component
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ import { cn } from "@/lib/utils";
 interface ControlBarProps {
   onClassifyDocs: () => void;
   isClassifying: boolean;
+  classificationComplete: boolean;
   onAddFolder: () => void;
   onRunReadability: () => void;
   isCheckingReadability: boolean;
@@ -62,6 +64,11 @@ interface ControlBarProps {
   isAnalyzing: boolean;
   canAnalyze?: boolean;
   analyzeComplete: boolean;
+  // Checkpoint C (post-analysis validation)
+  onViewCheckpointC: () => void;
+  isCreatingCheckpoint?: boolean;
+  hasCheckpointC: boolean;
+  checkpointCStatus?: 'awaiting_user_input' | 'completed' | 'skipped';
   // Generate Report (Pass 3-7)
   onGenerateReport: () => void;
   isGenerating: boolean;
@@ -91,6 +98,7 @@ const TIER_OPTIONS: { id: ModelTier; label: string; fullName: string; icon: Reac
 export const ControlBar: React.FC<ControlBarProps> = ({
   onClassifyDocs,
   isClassifying,
+  classificationComplete,
   onAddFolder,
   onRunReadability,
   isCheckingReadability,
@@ -110,6 +118,10 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   isAnalyzing,
   canAnalyze = false,
   analyzeComplete,
+  onViewCheckpointC,
+  isCreatingCheckpoint = false,
+  hasCheckpointC,
+  checkpointCStatus,
   onGenerateReport,
   isGenerating,
   canGenerateReport,
@@ -194,18 +206,29 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                   size="sm"
                   onClick={onClassifyDocs}
                   disabled={disabled || isClassifying}
-                  className="h-9 w-36 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md"
+                  className={cn(
+                    "h-9 w-36 text-sm font-medium gap-2 transition-all duration-200",
+                    classificationComplete && !isClassifying
+                      ? "border-green-700 bg-green-50 text-green-700 hover:bg-green-100 hover:scale-105 hover:shadow-md"
+                      : "border-gray-300 bg-white hover:bg-gray-50 hover:scale-105 hover:shadow-md"
+                  )}
                 >
                   {isClassifying ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : classificationComplete ? (
+                    <Check className="h-4 w-4" />
                   ) : (
                     <FolderCog className="h-4 w-4 text-purple-500" />
                   )}
-                  Reclassify Files
+                  {classificationComplete ? "Classified" : "Classify Files"}
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2">
-                <p className="text-sm text-white">Re-run AI classification on all documents</p>
+                {classificationComplete ? (
+                  <p className="text-sm text-white">Classification complete. Click to re-run AI classification.</p>
+                ) : (
+                  <p className="text-sm text-white">Run AI classification on all documents</p>
+                )}
               </TooltipContent>
             </Tooltip>
 
@@ -219,7 +242,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                     disabled={disabled || isCheckingReadability || !canRunReadability}
                     className={cn(
                       "h-9 w-32 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md",
-                      readabilityComplete && failedCount === 0 && canRunReadability && "border-green-400 bg-green-50 text-green-700 hover:bg-green-100",
+                      readabilityComplete && failedCount === 0 && canRunReadability && "border-green-700 bg-green-50 text-green-700 hover:bg-green-100",
                       !canRunReadability && "border-amber-300 bg-amber-50 text-amber-700"
                     )}
                   >
@@ -236,7 +259,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                     {readabilityComplete && canRunReadability && (
                       <span className={cn(
                         "text-xs font-semibold",
-                        failedCount > 0 ? "text-amber-600" : "text-green-600"
+                        failedCount > 0 ? "text-amber-600" : "text-green-700"
                       )}>
                         {readyCount}{failedCount > 0 && `/${failedCount}`}
                       </span>
@@ -266,7 +289,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                     disabled={disabled || isRunningEntityMapping || !canRunEntityMapping}
                     className={cn(
                       "h-9 w-36 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md",
-                      entityMappingComplete && canRunEntityMapping && "border-green-400 bg-green-50 text-green-700 hover:bg-green-100",
+                      entityMappingComplete && canRunEntityMapping && "border-green-700 bg-green-50 text-green-700 hover:bg-green-100",
                       !canRunEntityMapping && "border-gray-200 bg-gray-50 text-gray-400"
                     )}
                   >
@@ -279,7 +302,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                     )}
                     Entity Map
                     {entityMappingComplete && entityCount > 0 && (
-                      <span className="text-xs font-semibold text-green-600">
+                      <span className="text-xs font-semibold text-green-700">
                         {entityCount}
                       </span>
                     )}
@@ -341,11 +364,14 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                     variant="outline"
                     size="sm"
                     onClick={onAnalyzeDocuments}
-                    disabled={disabled || isAnalyzing || !canAnalyze}
+                    disabled={disabled || isAnalyzing || !canAnalyze || analyzeComplete}
                     className={cn(
-                      "h-9 w-28 text-sm font-medium border-gray-300 bg-white hover:bg-gray-50 gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md",
-                      analyzeComplete && canAnalyze && "border-green-400 bg-green-50 text-green-700 hover:bg-green-100",
-                      !canAnalyze && "border-gray-200 bg-gray-50 text-gray-400"
+                      "h-9 w-28 text-sm font-medium gap-2 transition-all duration-200",
+                      analyzeComplete
+                        ? "border-green-700 bg-green-50 text-green-700 disabled:opacity-100 disabled:border-green-700 disabled:bg-green-50 disabled:text-green-700"
+                        : canAnalyze
+                          ? "border-gray-300 bg-white hover:bg-gray-50 hover:scale-105 hover:shadow-md"
+                          : "border-gray-200 bg-gray-50 text-gray-400"
                     )}
                   >
                     {isAnalyzing ? (
@@ -355,24 +381,80 @@ export const ControlBar: React.FC<ControlBarProps> = ({
                     ) : (
                       <FileSearch className={cn("h-4 w-4", canAnalyze ? "text-cyan-500" : "text-gray-400")} />
                     )}
-                    Analyze
+                    Analyse
                   </Button>
                 </span>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2 max-w-xs">
-                {!canAnalyze ? (
+                {analyzeComplete ? (
+                  <div>
+                    <p className="text-sm font-semibold text-green-400">Analysis Complete</p>
+                    <p className="text-sm text-white">Document extraction and analysis finished. Click Reset to run again.</p>
+                  </div>
+                ) : !canAnalyze ? (
                   <div>
                     <p className="text-sm font-semibold text-gray-300">Entity Map Required</p>
                     <p className="text-sm text-white">Complete entity mapping and validate Checkpoint B before running analysis.</p>
                   </div>
                 ) : (
                   <div>
-                    <p className="text-sm text-white">Extract and analyze document content.</p>
+                    <p className="text-sm text-white">Extract and analyse document content.</p>
                     <p className="text-sm text-cyan-300 mt-1">Runs Pass 1 (Extraction) and Pass 2 (Analysis), then presents Checkpoint C for validation.</p>
                   </div>
                 )}
               </TooltipContent>
             </Tooltip>
+
+            {/* Checkpoint C Button - shows after analysis is complete */}
+            {analyzeComplete && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={onViewCheckpointC}
+                    disabled={disabled || isCreatingCheckpoint}
+                    className={cn(
+                      "h-9 w-32 text-sm font-medium gap-2 transition-all duration-200 hover:scale-105 hover:shadow-md",
+                      checkpointCStatus === 'awaiting_user_input'
+                        ? "border-amber-500 bg-amber-50 text-amber-700 hover:bg-amber-100"
+                        : hasCheckpointC
+                          ? "border-green-700 bg-green-50 text-green-700 hover:bg-green-100"
+                          : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                    )}
+                  >
+                    {isCreatingCheckpoint ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-amber-600" />
+                    ) : checkpointCStatus === 'awaiting_user_input' ? (
+                      <ClipboardCheck className="h-4 w-4 text-amber-600" />
+                    ) : hasCheckpointC ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <ClipboardCheck className="h-4 w-4 text-gray-500" />
+                    )}
+                    {isCreatingCheckpoint ? "Creating..." : "Checkpoint C"}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="bg-alchemyPrimaryNavyBlue border-alchemyPrimaryNavyBlue px-3 py-2 max-w-xs">
+                  {checkpointCStatus === 'awaiting_user_input' ? (
+                    <div>
+                      <p className="text-sm font-semibold text-amber-300">Validation Required</p>
+                      <p className="text-sm text-white">Review AI findings and confirm understanding before generating report.</p>
+                    </div>
+                  ) : hasCheckpointC ? (
+                    <div>
+                      <p className="text-sm font-semibold text-green-400">Validation Complete</p>
+                      <p className="text-sm text-white">Click to review the validated checkpoint data.</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-sm font-semibold text-gray-300">No Checkpoint Data</p>
+                      <p className="text-sm text-white">Checkpoint C data not yet available from analysis.</p>
+                    </div>
+                  )}
+                </TooltipContent>
+              </Tooltip>
+            )}
 
             <Tooltip>
               <TooltipTrigger asChild>

@@ -24,7 +24,7 @@ from shared.session import transactional_session
 from sqlalchemy import text
 from shared.models import (
     Document, DueDiligence, DueDiligenceMember, Folder,
-    PerspectiveRisk, PerspectiveRiskFinding, Perspective, DDWizardDraft,
+    PerspectiveRisk, PerspectiveRiskFinding, Perspective,
     DDProcessingCheckpoint, DDAnalysisRun, DDReportVersion
 )
 from shared.audit import log_audit_event, AuditEventType
@@ -832,19 +832,14 @@ def _load_dd_data_for_processing(dd_id: str, selected_doc_ids: list = None) -> D
             dd_briefing = dd.briefing
             owned_by = dd.owned_by
 
-            # Get wizard draft for transaction context
-            draft = session.query(DDWizardDraft).filter(
-                DDWizardDraft.owned_by == owned_by,
-                DDWizardDraft.transaction_name == dd_name
-            ).first()
+            # Get transaction context from dd.project_setup (linked by dd_id, no name matching)
+            project_setup = dd.project_setup or {}
 
-            transaction_type = draft.transaction_type if draft else "General"
+            transaction_type = project_setup.get("transactionType") or "General"
             transaction_type_code = _map_transaction_type(transaction_type)
 
             # Phase 2: Extract transaction value for materiality calculation
-            transaction_value = None
-            if draft and hasattr(draft, 'estimated_value'):
-                transaction_value = draft.estimated_value
+            transaction_value = project_setup.get("estimatedValue")
 
             # Load blueprint
             try:
@@ -852,19 +847,12 @@ def _load_dd_data_for_processing(dd_id: str, selected_doc_ids: list = None) -> D
             except ValueError:
                 blueprint = load_blueprint("ma_corporate")
 
-            # Build transaction context
+            # Build transaction context from project_setup
             transaction_context = {}
-            if draft:
-                if draft.known_concerns:
-                    try:
-                        transaction_context['known_concerns'] = json.loads(draft.known_concerns)
-                    except:
-                        pass
-                if draft.critical_priorities:
-                    try:
-                        transaction_context['critical_priorities'] = json.loads(draft.critical_priorities)
-                    except:
-                        pass
+            if project_setup.get("knownConcerns"):
+                transaction_context['known_concerns'] = project_setup.get("knownConcerns", [])
+            if project_setup.get("criticalPriorities"):
+                transaction_context['critical_priorities'] = project_setup.get("criticalPriorities", [])
 
             # Get folders and documents
             folders = session.query(Folder).filter(Folder.dd_id == dd_uuid).all()

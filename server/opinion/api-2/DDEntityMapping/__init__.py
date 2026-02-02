@@ -20,7 +20,7 @@ import uuid as uuid_module
 
 from shared.utils import auth_get_email
 from shared.session import transactional_session
-from shared.models import Document, Folder, DueDiligence, DDWizardDraft, DDEntityMap, DDAnalysisRun
+from shared.models import Document, Folder, DueDiligence, DDEntityMap, DDAnalysisRun
 from shared.document_selector import get_processable_documents
 
 DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
@@ -100,143 +100,81 @@ def run_entity_mapping(dd_id: str, run_id: str = None, max_docs: int = None) -> 
         if not dd:
             return {"error": f"Due diligence {dd_id} not found", "status": "failed"}
 
-        # Get target entity information from wizard draft
-        # Try multiple matching strategies since wizard field names may vary
-        draft = session.query(DDWizardDraft).filter(
-            DDWizardDraft.owned_by == dd.owned_by,
-            DDWizardDraft.transaction_name == dd.name
-        ).first()
+        # Get target entity information from dd.project_setup (stored directly on the DD record)
+        # This is the correct approach - linked by dd_id, no name matching needed
+        project_setup = dd.project_setup or {}
 
-        # If not found by transaction_name, try target_entity_name
-        if not draft:
-            draft = session.query(DDWizardDraft).filter(
-                DDWizardDraft.owned_by == dd.owned_by,
-                DDWizardDraft.target_entity_name == dd.name
-            ).first()
-
-        # If still not found, get the most recent draft for this user
-        if not draft:
-            draft = session.query(DDWizardDraft).filter(
-                DDWizardDraft.owned_by == dd.owned_by
-            ).order_by(DDWizardDraft.updated_at.desc()).first()
-
-        logging.info(f"[DDEntityMapping] Looking for draft - DD name: '{dd.name}', owner: '{dd.owned_by}', found: {draft is not None}")
+        logging.info(f"[DDEntityMapping] DD '{dd.name}' has project_setup: {bool(project_setup)}")
 
         target_entity = {
-            "name": dd.name,
-            "registration_number": None,
-            "transaction_type": None,
-            "deal_structure": None,
+            "name": project_setup.get("targetEntityName") or dd.name,
+            "registration_number": project_setup.get("targetRegistrationNumber"),
+            "transaction_type": project_setup.get("transactionType"),
+            "deal_structure": project_setup.get("dealStructure"),
             "expected_counterparties": []
         }
 
         # Client entity (the acquirer/buyer in the transaction)
         client_entity = None
+        if project_setup.get("clientName"):
+            client_entity = {
+                "name": project_setup.get("clientName"),
+                "registration_number": project_setup.get("clientRegistrationNumber"),
+                "role": project_setup.get("clientRole"),
+                "deal_structure": project_setup.get("dealStructure"),
+            }
 
         # Shareholders list for display
         shareholders_list = []
+        if project_setup.get("shareholders"):
+            for sh in project_setup.get("shareholders", []):
+                if isinstance(sh, dict) and sh.get("name"):
+                    shareholders_list.append({
+                        "name": sh.get("name"),
+                        "ownership_percentage": sh.get("percentage") or sh.get("ownership_percentage"),
+                        "registration_number": sh.get("registrationNumber") or sh.get("registration_number"),
+                    })
+                elif isinstance(sh, str) and sh:
+                    shareholders_list.append({"name": sh, "ownership_percentage": None, "registration_number": None})
 
-        if draft:
-            target_entity["name"] = draft.target_entity_name or dd.name
-            target_entity["transaction_type"] = draft.transaction_type
-            target_entity["deal_structure"] = draft.deal_structure
-
-            # Get registration number
-            if draft.target_registration_number:
-                target_entity["registration_number"] = draft.target_registration_number
-
-            # Get expected counterparties (stored as JSON text)
-            if draft.expected_counterparties:
-                try:
-                    target_entity["expected_counterparties"] = json.loads(draft.expected_counterparties)
-                except (json.JSONDecodeError, TypeError):
-                    target_entity["expected_counterparties"] = []
-
-            # Build client entity from draft
-            if draft.client_name:
-                client_entity = {
-                    "name": draft.client_name,
-                    "role": draft.client_role,
-                    "deal_structure": draft.deal_structure,
-                }
-
-            # Build shareholders list from draft
-            if draft.shareholders:
-                try:
-                    sh_data = json.loads(draft.shareholders)
-                    for sh in sh_data:
-                        if isinstance(sh, dict) and sh.get("name"):
-                            shareholders_list.append({
-                                "name": sh.get("name"),
-                                "ownership_percentage": sh.get("percentage") or sh.get("ownership_percentage"),
-                            })
-                        elif isinstance(sh, str) and sh:
-                            shareholders_list.append({"name": sh, "ownership_percentage": None})
-                except (json.JSONDecodeError, TypeError):
-                    pass
-
-        # Load known entities from wizard (subsidiaries, holding company)
+        # Load known entities from project_setup
         known_entities = []
-        if draft:
-            # Parse known_subsidiaries (stored as JSON text)
-            if draft.known_subsidiaries:
-                try:
-                    subsidiaries = json.loads(draft.known_subsidiaries)
-                    for sub in subsidiaries:
-                        if isinstance(sub, dict):
-                            known_entities.append({
-                                "entity_name": sub.get("name", ""),
-                                "relationship_to_target": sub.get("relationship", "subsidiary")
-                            })
-                except (json.JSONDecodeError, TypeError):
-                    pass
 
-            # Parse holding_company (stored as JSON text)
-            if draft.holding_company:
-                try:
-                    holding = json.loads(draft.holding_company)
-                    if isinstance(holding, dict) and holding.get("name"):
-                        known_entities.append({
-                            "entity_name": holding.get("name", ""),
-                            "relationship_to_target": "parent"
-                        })
-                except (json.JSONDecodeError, TypeError):
-                    pass
+        # Add shareholders as known entities
+        for sh in shareholders_list:
+            if sh.get("name"):
+                known_entities.append({
+                    "entity_name": sh["name"],
+                    "relationship_to_target": "shareholder"
+                })
 
-            # Also add shareholders as known entities
-            if draft.shareholders:
-                try:
-                    shareholders = json.loads(draft.shareholders)
-                    for sh in shareholders:
-                        if isinstance(sh, dict) and sh.get("name"):
-                            known_entities.append({
-                                "entity_name": sh.get("name", ""),
-                                "relationship_to_target": "shareholder"
-                            })
-                except (json.JSONDecodeError, TypeError):
-                    pass
+        # Add key customers/counterparties as known entities
+        for customer in project_setup.get("keyCustomers", []):
+            if isinstance(customer, dict) and customer.get("name"):
+                known_entities.append({
+                    "entity_name": customer["name"],
+                    "relationship_to_target": "counterparty"
+                })
 
-            # Add counterparties/customers as known entities
-            if draft.counterparties:
-                try:
-                    counterparties = json.loads(draft.counterparties)
-                    for cp in counterparties:
-                        if isinstance(cp, dict) and cp.get("name"):
-                            known_entities.append({
-                                "entity_name": cp.get("name", ""),
-                                "relationship_to_target": "counterparty"
-                            })
-                        elif isinstance(cp, str) and cp:
-                            known_entities.append({
-                                "entity_name": cp,
-                                "relationship_to_target": "counterparty"
-                            })
-                except (json.JSONDecodeError, TypeError):
-                    pass
+        # Add key lenders as known entities
+        for lender in project_setup.get("keyLenders", []):
+            if isinstance(lender, dict) and lender.get("name"):
+                known_entities.append({
+                    "entity_name": lender["name"],
+                    "relationship_to_target": "lender"
+                })
+
+        # Add key suppliers as known entities
+        for supplier in project_setup.get("keySuppliers", []):
+            if isinstance(supplier, str) and supplier:
+                known_entities.append({
+                    "entity_name": supplier,
+                    "relationship_to_target": "supplier"
+                })
 
         logging.info(f"[DDEntityMapping] Target entity: {target_entity['name']}, "
                      f"Registration: {target_entity['registration_number']}, "
-                     f"Known entities from wizard: {len(known_entities)}")
+                     f"Known entities from project_setup: {len(known_entities)}")
 
         # Get all classified documents using smart selection
         # This ensures we process converted PDFs instead of originals when both exist
@@ -266,7 +204,19 @@ def run_entity_mapping(dd_id: str, run_id: str = None, max_docs: int = None) -> 
                 "status": "no_documents",
                 "message": "No classified documents found",
                 "entity_map": [],
-                "checkpoint_recommended": False
+                "checkpoint_recommended": False,
+                "summary": {
+                    "total_unique_entities": 0,
+                    "entities_needing_confirmation": 0,
+                    "high_confidence_entities": 0,
+                    "target_subsidiaries": 0,
+                    "counterparties": 0,
+                    "unknown_relationships": 0,
+                },
+                "total_documents_processed": 0,
+                "target_entity": target_entity,
+                "client_entity": client_entity,
+                "shareholders": shareholders_list,
             }
 
         # Process each document
@@ -423,86 +373,45 @@ def handle_get(req: func.HttpRequest, email: str) -> func.HttpResponse:
                     all_doc_names.update(doc_names)
             total_documents_processed = len(all_doc_names)
 
-            # Get wizard data for target entity, shareholders, and client info
-            # Try multiple matching strategies since wizard field names may vary
-            draft = session.query(DDWizardDraft).filter(
-                DDWizardDraft.owned_by == dd.owned_by,
-                DDWizardDraft.transaction_name == dd.name
-            ).first()
+            # Get wizard data from dd.project_setup (stored directly on the DD record)
+            # This is linked by dd_id - no name matching needed
+            project_setup = dd.project_setup or {}
 
-            # If not found by transaction_name, try target_entity_name
-            if not draft:
-                draft = session.query(DDWizardDraft).filter(
-                    DDWizardDraft.owned_by == dd.owned_by,
-                    DDWizardDraft.target_entity_name == dd.name
-                ).first()
-                logging.info(f"[DDEntityMapping GET] Draft found by target_entity_name: {draft is not None}")
+            logging.info(f"[DDEntityMapping GET] DD '{dd.name}' has project_setup: {bool(project_setup)}")
 
-            # If still not found, get the most recent draft for this user
-            if not draft:
-                draft = session.query(DDWizardDraft).filter(
-                    DDWizardDraft.owned_by == dd.owned_by
-                ).order_by(DDWizardDraft.updated_at.desc()).first()
-                logging.info(f"[DDEntityMapping GET] Draft found by most recent: {draft is not None}")
-
-            logging.info(f"[DDEntityMapping GET] Looking for draft - DD name: '{dd.name}', owner: '{dd.owned_by}'")
-            if draft:
-                logging.info(f"[DDEntityMapping GET] Found draft - transaction_name: '{draft.transaction_name}', "
-                           f"target_entity_name: '{draft.target_entity_name}', "
-                           f"client_name: '{draft.client_name}', "
-                           f"shareholders: '{draft.shareholders[:100] if draft.shareholders else None}...'")
-            else:
-                logging.warning(f"[DDEntityMapping GET] No draft found for DD '{dd.name}'")
-
-            # Build target entity info
+            # Build target entity info from project_setup
             target_entity = {
-                "name": dd.name,
-                "registration_number": None,
-                "transaction_type": None,
-                "deal_structure": None,
+                "name": project_setup.get("targetEntityName") or dd.name,
+                "registration_number": project_setup.get("targetRegistrationNumber"),
+                "transaction_type": project_setup.get("transactionType"),
+                "deal_structure": project_setup.get("dealStructure"),
             }
 
             # Build client/acquirer info
             client_entity = None
+            if project_setup.get("clientName"):
+                client_entity = {
+                    "name": project_setup.get("clientName"),
+                    "registration_number": project_setup.get("clientRegistrationNumber"),
+                    "role": project_setup.get("clientRole"),
+                    "deal_structure": project_setup.get("dealStructure"),
+                }
 
-            # Build shareholders list
+            # Build shareholders list from project_setup
             shareholders = []
+            for sh in project_setup.get("shareholders", []):
+                if isinstance(sh, dict) and sh.get("name"):
+                    shareholders.append({
+                        "name": sh.get("name"),
+                        "ownership_percentage": sh.get("percentage") or sh.get("ownership_percentage"),
+                        "registration_number": sh.get("registrationNumber") or sh.get("registration_number"),
+                    })
+                elif isinstance(sh, str) and sh:
+                    shareholders.append({"name": sh, "ownership_percentage": None, "registration_number": None})
 
-            if draft:
-                # Target entity details
-                target_entity["name"] = draft.target_entity_name or dd.name
-                target_entity["registration_number"] = draft.target_registration_number
-
-                # Transaction details
-                target_entity["transaction_type"] = draft.transaction_type
-                target_entity["deal_structure"] = draft.deal_structure
-
-                # Client entity (the acquirer/counterparty to the transaction)
-                if draft.client_name:
-                    client_entity = {
-                        "name": draft.client_name,
-                        "role": draft.client_role,  # e.g., "Acquirer / Purchaser"
-                        "deal_structure": draft.deal_structure,  # e.g., "Share Purchase"
-                    }
-
-                # Parse shareholders from wizard data
-                if draft.shareholders:
-                    try:
-                        sh_data = json.loads(draft.shareholders)
-                        logging.info(f"[DDEntityMapping GET] Raw shareholders data: {sh_data}")
-                        for sh in sh_data:
-                            if isinstance(sh, dict) and sh.get("name"):
-                                shareholders.append({
-                                    "name": sh.get("name"),
-                                    "ownership_percentage": sh.get("percentage") or sh.get("ownership_percentage"),
-                                })
-                            elif isinstance(sh, str) and sh:
-                                shareholders.append({"name": sh, "ownership_percentage": None})
-                        logging.info(f"[DDEntityMapping GET] Parsed shareholders: {shareholders}")
-                    except (json.JSONDecodeError, TypeError) as e:
-                        logging.error(f"[DDEntityMapping GET] Failed to parse shareholders: {e}")
-                else:
-                    logging.info(f"[DDEntityMapping GET] No shareholders data in draft")
+            logging.info(f"[DDEntityMapping GET] Target: {target_entity['name']}, "
+                        f"Client: {client_entity['name'] if client_entity else 'None'}, "
+                        f"Shareholders: {len(shareholders)}")
 
             # Calculate summary
             summary = {
@@ -618,23 +527,12 @@ def handle_put(req: func.HttpRequest, email: str) -> func.HttpResponse:
             if not current_entity_map:
                 current_entity_map = get_entity_map_for_dd(dd_id, session)
 
-            # Get target entity info
-            target_entity = {"name": dd.name}
-
-            # Get wizard draft for more target info
-            draft = session.query(DDWizardDraft).filter(
-                DDWizardDraft.owned_by == dd.owned_by,
-                DDWizardDraft.target_entity_name == dd.name
-            ).first()
-
-            if not draft:
-                draft = session.query(DDWizardDraft).filter(
-                    DDWizardDraft.owned_by == dd.owned_by
-                ).order_by(DDWizardDraft.updated_at.desc()).first()
-
-            if draft:
-                target_entity["name"] = draft.target_entity_name or dd.name
-                target_entity["registration_number"] = draft.target_registration_number
+            # Get target entity info from dd.project_setup (linked by dd_id)
+            project_setup = dd.project_setup or {}
+            target_entity = {
+                "name": project_setup.get("targetEntityName") or dd.name,
+                "registration_number": project_setup.get("targetRegistrationNumber"),
+            }
 
             # Initialize Claude client
             client = get_claude_client()

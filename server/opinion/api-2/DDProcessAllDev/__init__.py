@@ -7,7 +7,7 @@ import json
 from typing import List, Dict, Any
 import azure.functions as func
 from shared.session import transactional_session
-from shared.models import Document, DueDiligence, DueDiligenceMember, Folder, PerspectiveRisk, PerspectiveRiskFinding, Perspective, DDWizardDraft
+from shared.models import Document, DueDiligence, DueDiligenceMember, Folder, PerspectiveRisk, PerspectiveRiskFinding, Perspective
 from shared.dev_adapters.claude_llm import call_llm_with
 from shared.dev_adapters.local_search import add_to_index
 from shared.dev_adapters.dev_config import get_dev_config
@@ -221,12 +221,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     mimetype="application/json"
                 )
 
-            # Try to get transaction type from wizard draft (if available)
-            draft = session.query(DDWizardDraft).filter(
-                DDWizardDraft.owned_by == dd.owned_by,
-                DDWizardDraft.transaction_name == dd.name
-            ).first()
-            transaction_type = draft.transaction_type if draft and draft.transaction_type else "General"
+            # Get transaction type from dd.project_setup (linked by dd_id)
+            project_setup = dd.project_setup or {}
+            transaction_type = project_setup.get("transactionType") or "General"
 
             # Get all documents that haven't been processed
             # Include 'Queued' which is the status after ZIP extraction

@@ -10,7 +10,7 @@ from collections import defaultdict
 import azure.functions as func
 from shared.session import transactional_session
 from shared.utils import auth_get_email
-from shared.models import DueDiligence, Document, Folder, PerspectiveRiskFinding, PerspectiveRisk, Perspective, DueDiligenceMember, DDWizardDraft, DDAnalysisRun
+from shared.models import DueDiligence, Document, Folder, PerspectiveRiskFinding, PerspectiveRisk, Perspective, DueDiligenceMember, DDAnalysisRun
 from .report_generator import generate_dd_report
 from .claude_synthesis import get_report_synthesis
 
@@ -49,12 +49,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     mimetype="application/json"
                 )
 
-            # Get transaction type from wizard draft
-            draft = session.query(DDWizardDraft).filter(
-                DDWizardDraft.owned_by == dd.owned_by,
-                DDWizardDraft.transaction_name == dd.name
-            ).first()
-            transaction_type = draft.transaction_type if draft and draft.transaction_type else "General"
+            # Get transaction type from dd.project_setup (linked by dd_id)
+            project_setup = dd.project_setup or {}
+            transaction_type = project_setup.get("transactionType") or "General"
 
             # Fetch all folders and documents for this DD
             folders = session.query(Folder).filter(Folder.dd_id == dd_id).all()

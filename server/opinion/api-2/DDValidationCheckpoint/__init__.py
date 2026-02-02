@@ -23,7 +23,7 @@ import uuid as uuid_module
 from shared.utils import auth_get_email
 from shared.session import transactional_session
 from shared.models import (
-    Document, Folder, DueDiligence, DDWizardDraft,
+    Document, Folder, DueDiligence,
     DDValidationCheckpoint, DDAnalysisRun, PerspectiveRiskFinding
 )
 

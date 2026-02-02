@@ -452,6 +452,45 @@ Once Checkpoint A is complete:
 **Endpoint:** `POST /api/dd-check-readability`
 **Backend:** `DDCheckReadability/__init__.py`
 
+#### Document Filtering Logic
+
+The readability check queries documents with specific filters to ensure correct processing:
+
+```sql
+-- Documents checked for readability (excludes archives and converted docs)
+SELECT * FROM document d
+JOIN folder f ON d.folder_id = f.id
+WHERE f.dd_id = :dd_id
+  AND d.converted_from_id IS NULL  -- Exclude converted PDFs (generated files)
+  AND d.type NOT IN ('zip', 'rar', '7z', 'tar', 'gz', 'tgz')  -- Exclude archive files
+```
+
+**Key Filtering Rules:**
+
+| Document Type | Included? | Reason |
+|---------------|-----------|--------|
+| User-uploaded PDFs | ✓ Yes | Original documents to analyze |
+| Extracted files from ZIP | ✓ Yes | Documents extracted from uploaded archives |
+| ZIP/RAR/7z archives | ✗ No | Source packages, not documents to analyze |
+| Converted PDFs (`converted_from_id` set) | ✗ No | Generated files, linked to originals |
+
+**Document Lifecycle Context:**
+
+When a user uploads a ZIP file:
+1. ZIP file is stored as a `Document` record with `is_original=True`
+2. ZIP contents are extracted - each file becomes a separate `Document` with `is_original=False` or `NULL`
+3. The readability check processes the **extracted files**, not the ZIP archive itself
+4. If an extracted file (e.g., DOCX) needs conversion, the converted PDF has `converted_from_id` pointing to the original
+
+#### Failure Handling
+
+When a document fails the readability check:
+- The document is marked with `readability_status='failed'`
+- **Processing continues** for all other documents
+- Failed documents display with a red ✗ indicator on the document card
+- Successfully checked documents display with a green ✓ indicator
+- The user can proceed with processing even if some documents failed (those will be skipped)
+
 #### Supported Conversions
 | Format | Conversion Method | Libraries Used |
 |--------|-------------------|----------------|
@@ -470,7 +509,8 @@ Once Checkpoint A is complete:
 
 #### Output
 - Updates `Document.readability_status`
-- Creates `Document.converted_doc_id` if converted
+- Creates `Document.converted_doc_id` if converted (points from original → converted PDF)
+- Creates converted document with `Document.converted_from_id` (points from converted PDF → original)
 - Extracts `Document.extracted_text_with_pages` with `[PAGE X]` markers
 
 ---
@@ -754,6 +794,88 @@ All findings now include materiality classification:
 | **Financial Exposure** | ✓ Full detail | ✓ Summary | Aggregate only | ✓ Listed |
 
 **Note:** The full findings report is NOT capped - all findings are included. Only the Executive Summary is limited to top 15-20 items by materiality.
+
+---
+
+### 4.1.5 Smart Document Selection
+
+**Purpose:** Ensure the pipeline processes the "best version" of each document while maintaining correct linkage for findings.
+
+**Backend:** `DDProcessEnhancedStart/__init__.py` (run-based processing)
+**Utility:** `shared/document_selector.py`
+
+#### Problem Solved
+
+When a DOCX/XLSX/PPTX file is converted to PDF during readability check, the data room contains two versions:
+1. **Original** - User-uploaded file (e.g., `Contract.docx`)
+2. **Converted** - Generated PDF with better text extraction (e.g., `Contract_converted.pdf`)
+
+Processing both would create duplicate findings. Processing only the original would miss better text extraction from the converted PDF.
+
+#### Solution: Smart Selection
+
+The pipeline uses this logic to select which documents to process:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Smart Document Selection Flow                                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  For each document in selected folders:                         │
+│                                                                 │
+│  1. Does document have converted_doc_id AND conversion_status   │
+│     = "converted"?                                              │
+│     └─ YES: Process the CONVERTED PDF (better text extraction)  │
+│     └─ NO:  Process the ORIGINAL document                       │
+│                                                                 │
+│  2. When processing converted PDF:                              │
+│     └─ Map converted_doc.id → original_doc.id                   │
+│     └─ Store in original_id_lookup for finding linkage          │
+│                                                                 │
+│  3. When saving findings:                                       │
+│     └─ Use original_id_lookup to link finding.document_id       │
+│        to the ORIGINAL document, not the converted version      │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### Document Field Reference
+
+| Field | Set On | Points To | Purpose |
+|-------|--------|-----------|---------|
+| `converted_doc_id` | Original document | Converted PDF | Find the converted version |
+| `converted_from_id` | Converted PDF | Original document | Trace back to original |
+| `conversion_status` | Original document | - | Track conversion state |
+
+#### Finding Linkage
+
+All findings are linked to the **original** user-uploaded document, even when extracted from the converted PDF:
+
+```json
+{
+  "finding": {
+    "id": "F001",
+    "document_id": "abc-123",  // Original DOCX document ID
+    "source_document": "Contract.docx",  // Original filename shown to user
+    "extracted_from": "Contract_converted.pdf",  // Actual extraction source (internal)
+    "clause_reference": "Clause 15.2"
+  }
+}
+```
+
+This ensures:
+- Users see findings linked to files they recognize (their uploaded documents)
+- Text extraction quality is maximized (PDF provides cleaner extraction)
+- No duplicate findings from processing both original and converted versions
+
+#### Selection Summary
+
+| Document State | Processed? | Findings Linked To |
+|----------------|------------|-------------------|
+| Original without conversion | ✓ Yes | Original |
+| Original with successful conversion | ✗ No (skip) | - |
+| Converted PDF | ✓ Yes | Original (via `converted_from_id`) |
+| Archive files (ZIP, RAR, etc.) | ✗ No | - |
 
 ---
 

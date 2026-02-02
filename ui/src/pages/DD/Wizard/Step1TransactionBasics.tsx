@@ -126,6 +126,19 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
         </div>
 
         <div>
+          <Label htmlFor="clientRegistrationNumber" className="text-xs text-muted-foreground mb-1 block">
+            Client Reg/ID Number
+          </Label>
+          <Input
+            id="clientRegistrationNumber"
+            className="h-9"
+            placeholder="e.g., 2020/123456/07 or ID number"
+            value={data.clientRegistrationNumber || ""}
+            onChange={(e) => onChange({ clientRegistrationNumber: e.target.value })}
+          />
+        </div>
+
+        <div>
           <Label htmlFor="targetEntityName" className="text-xs text-muted-foreground mb-1 block">
             {targetEntityConfig.label}
           </Label>
@@ -135,6 +148,20 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
             placeholder={targetEntityConfig.placeholder}
             value={data.targetEntityName}
             onChange={(e) => onChange({ targetEntityName: e.target.value })}
+            disabled={!data.transactionType}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="targetRegistrationNumber" className="text-xs text-muted-foreground mb-1 block">
+            Target Reg/ID Number
+          </Label>
+          <Input
+            id="targetRegistrationNumber"
+            className="h-9"
+            placeholder="e.g., 2018/654321/07 or Trust IT number"
+            value={data.targetRegistrationNumber || ""}
+            onChange={(e) => onChange({ targetRegistrationNumber: e.target.value })}
             disabled={!data.transactionType}
           />
         </div>

@@ -622,19 +622,19 @@ export function EntityMappingModal({
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                        <span className="text-sm font-bold text-blue-600">{result.summary.total_unique_entities}</span>
+                        <span className="text-sm font-bold text-blue-600">{result.summary?.total_unique_entities ?? 0}</span>
                       </div>
                       <span className="text-sm text-gray-600">Entities</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                        <span className="text-sm font-bold text-green-600">{result.summary.target_subsidiaries}</span>
+                        <span className="text-sm font-bold text-green-600">{result.summary?.target_subsidiaries ?? 0}</span>
                       </div>
                       <span className="text-sm text-gray-600">Subsidiaries</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center">
-                        <span className="text-sm font-bold text-amber-600">{result.summary.counterparties}</span>
+                        <span className="text-sm font-bold text-amber-600">{result.summary?.counterparties ?? 0}</span>
                       </div>
                       <span className="text-sm text-gray-600">Counterparties</span>
                     </div>

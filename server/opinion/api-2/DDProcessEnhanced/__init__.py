@@ -25,7 +25,7 @@ import azure.functions as func
 from shared.session import transactional_session
 from shared.models import (
     Document, DueDiligence, DueDiligenceMember, Folder,
-    PerspectiveRisk, PerspectiveRiskFinding, Perspective, DDWizardDraft,
+    PerspectiveRisk, PerspectiveRiskFinding, Perspective,
     DDProcessingCheckpoint
 )
 from shared.dev_adapters.dev_config import get_dev_config
@@ -432,20 +432,17 @@ def _load_dd_data(dd_id: str, resume_from_checkpoint: bool) -> Dict[str, Any]:
 
             checkpoint_id = str(checkpoint.id)
 
-            # Get transaction type from wizard draft
-            draft = session.query(DDWizardDraft).filter(
-                DDWizardDraft.owned_by == owned_by,
-                DDWizardDraft.transaction_name == dd_name
-            ).first()
+            # Get transaction context from dd.project_setup (linked by dd_id, no name matching)
+            project_setup = dd.project_setup or {}
 
             transaction_type_code = _map_transaction_type_to_code(
-                draft.transaction_type if draft and draft.transaction_type else "General"
+                project_setup.get("transactionType") or "General"
             )
 
             logging.info(f"[DDProcessEnhanced] Transaction type: {transaction_type_code}")
 
-            # Build transaction context from wizard draft
-            transaction_context = _build_transaction_context_from_draft(draft) if draft else {}
+            # Build transaction context from project_setup
+            transaction_context = _build_transaction_context_from_project_setup(project_setup)
 
             # Load blueprint for this transaction type
             try:
@@ -1493,30 +1490,64 @@ def _create_checkpoint_c_if_needed(
         return False
 
 
-def _build_transaction_context_from_draft(draft: DDWizardDraft) -> Dict[str, Any]:
-    """Build transaction context dict from wizard draft for question prioritization."""
+def _build_transaction_context_from_project_setup(project_setup: Dict[str, Any]) -> Dict[str, Any]:
+    """Build transaction context dict from dd.project_setup for question prioritization."""
+    context = {}
+
+    # project_setup stores data as native Python objects (JSON column), not text
+    if project_setup.get("knownConcerns"):
+        context['known_concerns'] = project_setup.get("knownConcerns", [])
+
+    if project_setup.get("criticalPriorities"):
+        context['critical_priorities'] = project_setup.get("criticalPriorities", [])
+
+    if project_setup.get("knownDealBreakers"):
+        context['known_deal_breakers'] = project_setup.get("knownDealBreakers", [])
+
+    if project_setup.get("deprioritizedAreas"):
+        context['deprioritized_areas'] = project_setup.get("deprioritizedAreas", [])
+
+    # Additional context from project_setup
+    if project_setup.get("targetEntityName"):
+        context['target_entity_name'] = project_setup.get("targetEntityName")
+
+    if project_setup.get("clientName"):
+        context['client_name'] = project_setup.get("clientName")
+
+    if project_setup.get("dealStructure"):
+        context['deal_structure'] = project_setup.get("dealStructure")
+
+    if project_setup.get("estimatedValue"):
+        context['estimated_value'] = project_setup.get("estimatedValue")
+
+    return context
+
+
+def _build_transaction_context_from_draft(draft) -> Dict[str, Any]:
+    """DEPRECATED: Use _build_transaction_context_from_project_setup instead.
+    Kept for backwards compatibility but should not be used."""
     context = {}
 
     # Parse JSON arrays from text fields
-    if draft.known_concerns:
+    if draft and draft.known_concerns:
         try:
             context['known_concerns'] = json.loads(draft.known_concerns)
         except (json.JSONDecodeError, TypeError):
             context['known_concerns'] = []
 
-    if draft.critical_priorities:
+    if draft and draft.critical_priorities:
         try:
             context['critical_priorities'] = json.loads(draft.critical_priorities)
         except (json.JSONDecodeError, TypeError):
             context['critical_priorities'] = []
 
-    if draft.known_deal_breakers:
+    if draft and draft.known_deal_breakers:
         try:
             context['known_deal_breakers'] = json.loads(draft.known_deal_breakers)
         except (json.JSONDecodeError, TypeError):
             context['known_deal_breakers'] = []
 
-    if draft.deprioritized_areas:
+    if draft and draft.deprioritized_areas:
         try:
             context['deprioritized_areas'] = json.loads(draft.deprioritized_areas)
         except (json.JSONDecodeError, TypeError):

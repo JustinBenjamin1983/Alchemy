@@ -75,10 +75,12 @@ export interface OrganogramEntity {
 export interface ShareholderInfo {
   name: string;
   ownership_percentage?: number;
+  registration_number?: string;
 }
 
 export interface ClientEntityInfo {
   name: string;
+  registration_number?: string;
   role?: string;
   deal_structure?: string;
 }
@@ -299,7 +301,7 @@ const EntityNode: React.FC<NodeProps> = ({ data: rawData }) => {
     );
   }
 
-  // Compact shareholder node - just entity name, fixed size
+  // Compact shareholder node - entity name and registration number, fixed size
   if (isShareholder) {
     return (
       <div
@@ -321,6 +323,11 @@ const EntityNode: React.FC<NodeProps> = ({ data: rawData }) => {
         <div className="font-semibold text-xs text-gray-900 leading-tight truncate" title={data.label}>
           {data.label}
         </div>
+        {data.registrationNumber && (
+          <div className="text-[10px] text-gray-500 truncate mt-0.5" title={data.registrationNumber}>
+            {data.registrationNumber}
+          </div>
+        )}
       </div>
     );
   }
@@ -781,7 +788,7 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
     const row1Y = centerY - verticalSpacing * 2;
 
     // Build array of transaction parties: client first, then other counterparties
-    type TransactionParty = { id: string; name: string; isClient: boolean; dealStructure?: string; entity?: OrganogramEntity };
+    type TransactionParty = { id: string; name: string; isClient: boolean; dealStructure?: string; registrationNumber?: string; entity?: OrganogramEntity };
     const allTransactionParties: TransactionParty[] = [];
 
     // Create pseudo-entity for client
@@ -790,6 +797,7 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
       clientEntity = {
         id: "client",
         entity_name: data.client_entity.name,
+        registration_number: data.client_entity.registration_number,
         relationship_to_target: "client",
         relationship_detail: data.client_entity.role || "Acquirer/Purchaser",
         confidence: 1,
@@ -800,6 +808,7 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
         name: data.client_entity.name,
         isClient: true,
         dealStructure: data.client_entity.deal_structure,
+        registrationNumber: data.client_entity.registration_number,
       });
     }
 
@@ -824,6 +833,7 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
           data: {
             label: party.name,
             relationship: party.isClient ? "client" : party.entity?.relationship_to_target || "counterparty",
+            registrationNumber: party.isClient ? party.registrationNumber : party.entity?.registration_number,
             confidence: party.isClient ? 1 : party.entity?.confidence || 0.5,
             docsCount: party.isClient ? 0 : party.entity?.documents_appearing_in.length || 0,
             dealStructure: party.dealStructure,
@@ -871,6 +881,7 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
         const shareholderEntity: OrganogramEntity = {
           id: `shareholder-${idx}`,
           entity_name: sh.name,
+          registration_number: sh.registration_number,
           relationship_to_target: "shareholder",
           relationship_detail: sh.ownership_percentage ? `${sh.ownership_percentage}% ownership stake` : "Shareholder",
           ownership_percentage: sh.ownership_percentage,
@@ -885,6 +896,7 @@ export const EntityOrganogram: React.FC<EntityOrganogramProps> = ({
           data: {
             label: sh.name,
             relationship: "shareholder",
+            registrationNumber: sh.registration_number,
             confidence: 1,
             docsCount: 0,
             onClick: () => {

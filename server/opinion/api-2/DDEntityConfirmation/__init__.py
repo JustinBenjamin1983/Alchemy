@@ -29,7 +29,7 @@ from typing import List, Dict, Any, Optional
 from shared.utils import auth_get_email
 from shared.session import transactional_session
 from shared.models import (
-    DueDiligence, DDEntityMap, DDValidationCheckpoint, DDWizardDraft
+    DueDiligence, DDEntityMap, DDValidationCheckpoint
 )
 
 DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
@@ -231,13 +231,9 @@ def submit_entity_corrections(dd_id: str, corrections: str, user_email: str) -> 
             for e in entities
         ]
 
-        # Get target entity info from wizard
-        draft = session.query(DDWizardDraft).filter(
-            DDWizardDraft.owned_by == dd.owned_by,
-            DDWizardDraft.transaction_name == dd.name
-        ).first()
-
-        target_name = draft.target_entity_name if draft else dd.name
+        # Get target entity info from dd.project_setup (linked by dd_id)
+        project_setup = dd.project_setup or {}
+        target_name = project_setup.get("targetEntityName") or dd.name
 
         # Store entity lookup for updates
         entity_lookup = {str(e.id): e for e in entities}

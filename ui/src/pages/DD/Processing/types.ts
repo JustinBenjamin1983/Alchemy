@@ -60,8 +60,8 @@ export const PASS_CONFIG: Record<ProcessingPass, {
     description: 'Identifying clauses, dates, parties, and financial terms'
   },
   analyze: {
-    label: 'Analyzing Documents',
-    shortLabel: 'Analyze',
+    label: 'Analysing Documents',
+    shortLabel: 'Analyse',
     color: RING_COLORS.analyze,
     ringColor: RING_COLORS.analyze,
     description: 'Reviewing each document for risks and issues'
@@ -88,8 +88,8 @@ export const PASS_CONFIG: Record<ProcessingPass, {
     description: 'Combining calculations across all documents'
   },
   synthesize: {
-    label: 'Synthesizing Findings',
-    shortLabel: 'Synthesize',
+    label: 'Synthesising Findings',
+    shortLabel: 'Synthesise',
     color: RING_COLORS.synthesize,
     ringColor: RING_COLORS.synthesize,
     description: 'Consolidating results and generating recommendations'

@@ -84,6 +84,7 @@ function draftToProjectSetup(draft: WizardDraftData): DDProjectSetup {
     shareholders: (draft as any).shareholders || [],
     uploadedFile: null, // Files can't be restored from draft
     // Phase 1 Enhancement fields
+    clientRegistrationNumber: (draft as any).clientRegistrationNumber || "",
     targetRegistrationNumber: (draft as any).targetRegistrationNumber || "",
     knownSubsidiaries: (draft as any).knownSubsidiaries || [],
     holdingCompany: (draft as any).holdingCompany || null,
@@ -119,6 +120,7 @@ function projectSetupToDraft(setup: DDProjectSetup, currentStep: number): Partia
     shareholderEntityName: setup.shareholderEntityName,
     shareholders: setup.shareholders as any, // Shareholder[] stored as JSON
     // Phase 1 Enhancement fields
+    clientRegistrationNumber: setup.clientRegistrationNumber,
     targetRegistrationNumber: setup.targetRegistrationNumber,
     knownSubsidiaries: setup.knownSubsidiaries as any,
     holdingCompany: setup.holdingCompany as any,

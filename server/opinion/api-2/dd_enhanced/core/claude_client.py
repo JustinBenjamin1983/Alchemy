@@ -257,11 +257,18 @@ class ClaudeClient:
         Returns:
             Dict with either {"text": str} or parsed JSON, or {"error": str, "raw": str}
         """
+        import traceback
+
         resolved_model = self._resolve_model(model)
         messages = [{"role": "user", "content": prompt}]
 
+        print(f"[ClaudeClient.complete] Starting API call: model={resolved_model}, prompt_len={len(prompt)}, max_tokens={max_tokens}, json_mode={json_mode}", flush=True)
+
         for attempt in range(self.MAX_RETRIES):
             try:
+                print(f"[ClaudeClient.complete] Attempt {attempt + 1}/{self.MAX_RETRIES}...", flush=True)
+                api_start = time.time()
+
                 response = self._client.messages.create(
                     model=resolved_model,
                     max_tokens=max_tokens,
@@ -269,6 +276,10 @@ class ClaudeClient:
                     system=system if system else "You are an expert legal analyst.",
                     messages=messages
                 )
+
+                api_elapsed = time.time() - api_start
+                print(f"[ClaudeClient.complete] API response received in {api_elapsed:.2f}s", flush=True)
+                print(f"[ClaudeClient.complete] Tokens: input={response.usage.input_tokens}, output={response.usage.output_tokens}", flush=True)
 
                 # Track usage
                 self.usage.add(
@@ -278,27 +289,38 @@ class ClaudeClient:
                 )
 
                 content = response.content[0].text
+                print(f"[ClaudeClient.complete] Response content length: {len(content)} chars", flush=True)
 
                 if json_mode:
+                    print(f"[ClaudeClient.complete] Parsing JSON response...", flush=True)
                     parsed = self._parse_json_response(content)
-                    if "error" in parsed and attempt < self.MAX_RETRIES - 1:
-                        logger.warning(f"JSON parse failed, attempt {attempt + 1}/{self.MAX_RETRIES}")
-                        continue
+                    if "error" in parsed:
+                        print(f"[ClaudeClient.complete] JSON parse error: {parsed.get('error')}", flush=True)
+                        if attempt < self.MAX_RETRIES - 1:
+                            logger.warning(f"JSON parse failed, attempt {attempt + 1}/{self.MAX_RETRIES}")
+                            print(f"[ClaudeClient.complete] Raw content (first 500 chars): {content[:500]}", flush=True)
+                            continue
+                    else:
+                        print(f"[ClaudeClient.complete] JSON parsed successfully, keys: {list(parsed.keys()) if isinstance(parsed, dict) else 'array'}", flush=True)
                     return parsed
 
                 return {"text": content}
 
             except anthropic.RateLimitError as e:
                 delay = self.RETRY_DELAY_BASE * (2 ** attempt)
+                print(f"[ClaudeClient.complete] RATE LIMITED, waiting {delay}s (attempt {attempt + 1}/{self.MAX_RETRIES})", flush=True)
                 logger.warning(f"Rate limited, waiting {delay}s (attempt {attempt + 1}/{self.MAX_RETRIES})")
                 if attempt < self.MAX_RETRIES - 1:
                     time.sleep(delay)
                 else:
+                    print(f"[ClaudeClient.complete] Rate limit exceeded after all retries", flush=True)
                     return {"error": f"Rate limit exceeded after {self.MAX_RETRIES} attempts", "raw": str(e)}
 
             except anthropic.APIStatusError as e:
+                print(f"[ClaudeClient.complete] API STATUS ERROR: status={e.status_code}, message={str(e)}", flush=True)
                 if e.status_code == 529:  # Overloaded
                     delay = self.RETRY_DELAY_BASE * (2 ** attempt)
+                    print(f"[ClaudeClient.complete] API overloaded, waiting {delay}s", flush=True)
                     logger.warning(f"API overloaded, waiting {delay}s (attempt {attempt + 1}/{self.MAX_RETRIES})")
                     if attempt < self.MAX_RETRIES - 1:
                         time.sleep(delay)
@@ -308,11 +330,16 @@ class ClaudeClient:
                     return {"error": f"API error ({e.status_code}): {str(e)}", "raw": ""}
 
             except anthropic.APIError as e:
+                print(f"[ClaudeClient.complete] API ERROR: {str(e)}", flush=True)
+                print(f"[ClaudeClient.complete] Traceback:\n{traceback.format_exc()}", flush=True)
                 return {"error": f"API error: {str(e)}", "raw": ""}
             except Exception as e:
+                print(f"[ClaudeClient.complete] UNEXPECTED ERROR: {str(e)}", flush=True)
+                print(f"[ClaudeClient.complete] Traceback:\n{traceback.format_exc()}", flush=True)
                 logger.exception(f"Unexpected error in Claude API call: {e}")
                 return {"error": f"Unexpected error: {str(e)}", "raw": ""}
 
+        print(f"[ClaudeClient.complete] Max retries exceeded", flush=True)
         return {"error": "Max retries exceeded", "raw": ""}
 
     def _parse_json_response(self, content: str) -> Dict[str, Any]:

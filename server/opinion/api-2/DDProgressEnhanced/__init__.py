@@ -517,7 +517,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             }
 
             # Get document statuses using smart selection (avoids counting duplicates)
-            documents = _get_processable_documents_for_progress(session, dd_id)
+            # IMPORTANT: Use actual_dd_id (from checkpoint) not dd_id (from request params, may be None)
+            documents = _get_processable_documents_for_progress(session, actual_dd_id)
 
             # Use checkpoint finding counts ONLY during active processing (real-time updates)
             # For completed runs, always use the authoritative database query
@@ -594,7 +595,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         ORDER BY started_at DESC
                         LIMIT 1
                     """)
-                    graph_result = session.execute(graph_query, {"dd_id": dd_id}).fetchone()
+                    # IMPORTANT: Use actual_dd_id (from checkpoint) not dd_id (from request params)
+                    graph_result = session.execute(graph_query, {"dd_id": actual_dd_id}).fetchone()
                     if graph_result:
                         graph_stats = {
                             "status": graph_result.status,
@@ -608,7 +610,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     pass
 
             # Get classification/organisation progress from dd_organisation_status
-            organisation_progress = _get_organisation_progress(session, dd_id)
+            # IMPORTANT: Use actual_dd_id (from checkpoint) not dd_id (from request params)
+            organisation_progress = _get_organisation_progress(session, actual_dd_id)
 
             # Build response
             response_data = {

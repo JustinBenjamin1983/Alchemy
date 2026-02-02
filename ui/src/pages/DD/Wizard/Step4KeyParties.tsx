@@ -683,13 +683,15 @@ function ShareholderInput({
   // Ensure we always have at least 3 slots
   const displayShareholders =
     shareholders.length < 3
-      ? [...shareholders, ...Array(3 - shareholders.length).fill({ name: "", percentage: null })]
+      ? [...shareholders, ...Array(3 - shareholders.length).fill({ name: "", percentage: null, registrationNumber: "" })]
       : shareholders;
 
-  const updateShareholder = (index: number, field: "name" | "percentage", value: string) => {
+  const updateShareholder = (index: number, field: "name" | "percentage" | "registrationNumber", value: string) => {
     const updated = [...displayShareholders];
     if (field === "name") {
       updated[index] = { ...updated[index], name: value };
+    } else if (field === "registrationNumber") {
+      updated[index] = { ...updated[index], registrationNumber: value };
     } else {
       const numValue = value.trim() ? parseFloat(value.replace(/[^0-9.]/g, "")) : null;
       updated[index] = {
@@ -697,20 +699,20 @@ function ShareholderInput({
         percentage: isNaN(numValue as number) ? null : numValue,
       };
     }
-    onShareholdersChange(updated.filter((s) => s.name.trim() || s.percentage !== null));
+    onShareholdersChange(updated.filter((s) => s.name.trim() || s.percentage !== null || s.registrationNumber?.trim()));
   };
 
   const addShareholder = () => {
-    onShareholdersChange([...displayShareholders, { name: "", percentage: null }]);
+    onShareholdersChange([...displayShareholders, { name: "", percentage: null, registrationNumber: "" }]);
   };
 
   const removeShareholder = (index: number) => {
     const updated = displayShareholders.filter((_, i) => i !== index);
-    onShareholdersChange(updated.filter((s) => s.name.trim() || s.percentage !== null));
+    onShareholdersChange(updated.filter((s) => s.name.trim() || s.percentage !== null || s.registrationNumber?.trim()));
   };
 
   const filledShareholders = displayShareholders.filter(
-    (s) => s.name.trim() || s.percentage !== null
+    (s) => s.name.trim() || s.percentage !== null || s.registrationNumber?.trim()
   );
   const totalPercentage = filledShareholders.reduce((sum, s) => sum + (s.percentage || 0), 0);
 
@@ -771,7 +773,7 @@ function ShareholderInput({
           <div key={rowIndex} className="grid grid-cols-3 gap-3">
             {row.map((shareholder, colIndex) => {
               const globalIndex = rowIndex * 3 + colIndex;
-              const hasContent = shareholder.name.trim() || shareholder.percentage !== null;
+              const hasContent = shareholder.name.trim() || shareholder.percentage !== null || shareholder.registrationNumber?.trim();
               return (
                 <div key={globalIndex} className="relative">
                   <div className="flex gap-1.5">
@@ -802,6 +804,12 @@ function ShareholderInput({
                       </button>
                     )}
                   </div>
+                  <Input
+                    className="h-7 text-xs mt-1"
+                    placeholder="Reg/ID number (optional)"
+                    value={shareholder.registrationNumber || ""}
+                    onChange={(e) => updateShareholder(globalIndex, "registrationNumber", e.target.value)}
+                  />
                 </div>
               );
             })}

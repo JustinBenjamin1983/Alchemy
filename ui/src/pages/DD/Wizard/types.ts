@@ -35,6 +35,7 @@ export interface OtherStakeholder {
 export interface Shareholder {
   name: string;
   percentage: number | null;
+  registrationNumber?: string;  // Company reg, trust IT number, or ID number
 }
 
 export interface LenderStakeholder {
@@ -100,6 +101,9 @@ export interface DDProjectSetup {
 
   // ===== PHASE 1 ENHANCEMENTS: Entity Mapping Context =====
   // These fields help the AI correctly identify entities across documents
+
+  // Client registration number (company reg, trust IT number, or ID number)
+  clientRegistrationNumber?: string;
 
   // Target entity registration number (helps match entity names across docs)
   targetRegistrationNumber?: string;

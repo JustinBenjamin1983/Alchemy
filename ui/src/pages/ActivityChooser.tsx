@@ -128,6 +128,26 @@ export function ActivityChooser() {
               <CardFooter></CardFooter>
             </Card>
           </div>
+
+          <div className="pb-4">
+            <Card
+              className="text-2xl bg-purple-700 text-white cursor-pointer"
+              onClick={() => navigate("/dd-evaluation")}
+            >
+              <CardHeader>
+                <CardTitle>DD Evaluation Testing</CardTitle>
+                <CardDescription></CardDescription>
+              </CardHeader>
+              <CardContent className="text-lg">
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    Internal tool for evaluating DD report quality against known answer rubrics.
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter></CardFooter>
+            </Card>
+          </div>
         </div>
       </div>
     </>

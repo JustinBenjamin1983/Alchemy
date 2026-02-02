@@ -283,10 +283,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         )
 
     except Exception as e:
+        import traceback
+        error_traceback = traceback.format_exc()
         logging.error(f"[DDGetBlueprintRequirements] Error: {str(e)}")
-        logging.exception("Full traceback:")
+        logging.error(f"[DDGetBlueprintRequirements] Traceback:\n{error_traceback}")
+        print(f"[DDGetBlueprintRequirements] ERROR: {str(e)}", flush=True)
+        print(f"[DDGetBlueprintRequirements] Traceback:\n{error_traceback}", flush=True)
         return func.HttpResponse(
-            json.dumps({"error": str(e)}),
+            json.dumps({"error": str(e), "traceback": error_traceback}),
             status_code=500,
             mimetype="application/json"
         )

@@ -228,7 +228,10 @@ function Step1Understanding({ questions, responses, onResponseChange, preliminar
   ];
 
   const options = currentQuestion.options || defaultOptions;
-  const showCorrectionField = currentResponse.selected_option === "partial" || currentResponse.selected_option === "incorrect";
+  // Show correction field for any response that isn't a full confirmation
+  // Handles various option values: "partial", "partially", "incorrect", "needs_correction", etc.
+  const showCorrectionField = currentResponse.selected_option &&
+    !["correct", "accurate", "agree", "confirmed", "yes"].includes(currentResponse.selected_option.toLowerCase());
 
   return (
     <div className="space-y-6">

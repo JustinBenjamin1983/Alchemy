@@ -296,13 +296,16 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 )
 
             # Map current_pass to our pass names
-            # Pipeline: 1=extract, 2=analyze, 2.5=calculate, 3=crossdoc, 3.5=aggregate, 4=synthesize, 5=verify
+            # Pipeline: 1=extract, 2=analyze, 2.5=calculate, 3=crossdoc, 3.5=aggregate, 4=synthesize, 5-7=verify
+            # Note: DDGenerateReport uses 3=crossdoc, 4=synthesize, 7=verify
             pass_mapping = {
                 1: "extract",
                 2: "analyze",
                 3: "crossdoc",
                 4: "synthesize",
-                5: "verify"
+                5: "verify",
+                6: "verify",  # Pass 6 also maps to verify phase
+                7: "verify",  # DDGenerateReport sets current_pass=7 for verification
             }
 
             current_pass_num = result.current_pass or 1
@@ -313,6 +316,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 current_pass = "calculate"
             elif "pass3_5" in current_stage or "aggregate" in current_stage.lower():
                 current_pass = "aggregate"
+            elif "pass7" in current_stage or "verify" in current_stage.lower():
+                current_pass = "verify"
+            elif "pass4" in current_stage or "synth" in current_stage.lower():
+                current_pass = "synthesize"
+            elif "pass3" in current_stage or "crossdoc" in current_stage.lower():
+                current_pass = "crossdoc"
             else:
                 current_pass = pass_mapping.get(current_pass_num, "extract")
 

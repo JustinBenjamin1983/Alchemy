@@ -1,6 +1,7 @@
 // DDTop.tsx
 import { Button } from "@/components/ui/button";
-import { Trash2, Loader2, Activity, ChevronUp, ChevronDown } from "lucide-react";
+import { DarkModeToggle } from "@/components/ui/dark-mode-toggle";
+import { Trash2, Loader2, ChevronUp, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import {
   Dialog,
@@ -27,7 +28,8 @@ export type ScreenState =
   | "DocumentChanges"
   | "ShowReport"
   | "MissingDocs"
-  | "CheckpointA";
+  | "CheckpointA"
+  | "Evaluation";
 
 interface DDTopProps {
   ddId: string;
@@ -37,8 +39,6 @@ interface DDTopProps {
   setScreenState: (state: ScreenState) => void;
   onDelete?: (ddId: string) => void;
   isDeleting?: boolean;
-  onGenerateReport?: () => void;
-  isGeneratingReport?: boolean;
   isHeaderCollapsed?: boolean;
   onToggleHeaderCollapse?: () => void;
 }
@@ -51,8 +51,6 @@ export function DDTop({
   setScreenState,
   onDelete,
   isDeleting = false,
-  onGenerateReport,
-  isGeneratingReport = false,
   isHeaderCollapsed = false,
   onToggleHeaderCollapse,
 }: DDTopProps) {
@@ -82,7 +80,7 @@ export function DDTop({
         {ddName && (
           <div className={`transition-all duration-300 ${isHeaderCollapsed ? 'px-4 py-1' : 'p-4 pb-2'}`}>
             {/* Title row - always visible */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between gap-3">
               <p className={`font-semibold text-gray-700 transition-all duration-300 ${isHeaderCollapsed ? 'text-xs' : 'text-lg'}`}>
                 {ddName}
                 {typeInfo && (
@@ -91,6 +89,8 @@ export function DDTop({
                   </span>
                 )}
               </p>
+              {/* Dark Mode Toggle - positioned on the right */}
+              <DarkModeToggle className={`transition-all duration-300 ${isHeaderCollapsed ? 'scale-75' : ''}`} />
             </div>
             {/* Navigation Buttons - hidden when collapsed */}
             <div className={`flex gap-4 justify-between items-center overflow-hidden transition-all duration-300 ${isHeaderCollapsed ? 'max-h-0 opacity-0 mt-0' : 'max-h-20 opacity-100 mt-3'}`}>
@@ -125,15 +125,15 @@ export function DDTop({
                   Start / join
                 </Button>
                 <Button
-                  className="bg-alchemyPrimaryNavyBlue text-white transition-all duration-200 hover:scale-105 hover:shadow-md hover:bg-alchemyPrimaryNavyBlue/90"
+                  className={`transition-all duration-200 hover:scale-105 hover:shadow-md ${
+                    screenState === "Evaluation"
+                      ? "bg-purple-600 text-white hover:bg-purple-700"
+                      : "bg-purple-600 text-white hover:bg-purple-700"
+                  }`}
                   variant="outline"
-                  onClick={onGenerateReport}
-                  disabled={isGeneratingReport || !onGenerateReport}
+                  onClick={() => setScreenState("Evaluation")}
                 >
-                  {isGeneratingReport && (
-                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                  )}
-                  Generate Report
+                  DD Evaluation
                 </Button>
               </div>
               {/* Delete button - positioned at far right */}

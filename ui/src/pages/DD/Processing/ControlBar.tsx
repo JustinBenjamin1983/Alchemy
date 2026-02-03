@@ -84,6 +84,7 @@ interface ControlBarProps {
   isGenerating: boolean;
   canGenerateReport: boolean;
   generateReportFailed?: boolean;
+  generateReportComplete?: boolean;
   generateReportTooltip: string;
   // View Analysis
   onViewAnalysis?: () => void;
@@ -146,6 +147,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   isGenerating,
   canGenerateReport,
   generateReportFailed = false,
+  generateReportComplete = false,
   generateReportTooltip,
   onViewAnalysis,
   hasAnalysisResults = false,
@@ -241,6 +243,7 @@ export const ControlBar: React.FC<ControlBarProps> = ({
     isGenerating,
     canGenerateReport,
     generateReportFailed,
+    generateReportComplete,
   };
 
   const pipelineCallbacks: DDPipelineCallbacks = {

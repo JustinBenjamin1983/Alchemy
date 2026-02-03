@@ -2169,6 +2169,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
           progress?.passProgress?.synthesize?.status === "failed" ||
           progress?.passProgress?.verify?.status === "failed"
         }
+        generateReportComplete={runsData?.runs?.some(r => r.run_id === currentRunId && r.synthesis_data) ?? false}
         generateReportTooltip={generateReportTooltip}
         // View Analysis - only enabled after report synthesis is complete
         onViewAnalysis={onViewResults}

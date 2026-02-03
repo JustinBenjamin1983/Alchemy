@@ -347,7 +347,7 @@ export const DDPipelineTimeline: React.FC<DDPipelineTimelineProps> = ({
                 className={cn(
                   "relative flex items-center justify-center gap-2 py-2.5 px-4 transition-all duration-150 flex-shrink-0",
                   hasAnalysisResults
-                    ? "bg-blue-600 text-white cursor-pointer hover:bg-blue-500"
+                    ? "bg-amber-500 border-2 border-amber-600 text-white cursor-pointer hover:bg-amber-400"
                     : "bg-white border-2 border-slate-300 text-slate-400 cursor-not-allowed",
                   isAnalysisHovered && hasAnalysisResults && "brightness-110"
                 )}
@@ -445,6 +445,7 @@ export interface DDPipelineState {
   isGenerating: boolean;
   canGenerateReport: boolean;
   generateReportFailed?: boolean;
+  generateReportComplete?: boolean;  // True when synthesis has completed successfully
 }
 
 export interface DDPipelineCallbacks {
@@ -509,6 +510,7 @@ export function buildPipelineSteps(
 
   const getGenerateReportState = (): StepState => {
     if (state.isGenerating) return 'active';
+    if (state.generateReportComplete) return 'completed';  // Green when synthesis done
     if (state.generateReportFailed) return 'failed';
     if (!state.canGenerateReport) return 'locked';
     return 'available';

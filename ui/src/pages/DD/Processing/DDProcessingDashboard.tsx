@@ -2053,6 +2053,8 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
           projectSetup={ddData.project_setup}
           isCollapsed={isSummaryCollapsed}
           onToggleCollapse={() => setIsSummaryCollapsed(!isSummaryCollapsed)}
+          onViewOrganogram={() => setShowEntityMappingModal(true)}
+          hasOrganogram={entityMappingComplete && entityMappingResult !== null}
         />
       )}
 
@@ -2081,6 +2083,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
           organisationProgress?.status === "organised" ||
           organisationProgress?.status === "completed"
         }
+        classificationFailed={classifyDocuments.isError || organisationProgress?.status === "failed"}
         onAddFolder={() => {
           // Trigger add folder dialog in FileTree - we'll handle this via state
           const event = new CustomEvent('dd-add-folder');
@@ -2093,6 +2096,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         }}
         isCheckingReadability={checkReadability.isPending}
         readabilityComplete={readabilityChecked}
+        readabilityFailed={checkReadability.isError}
         readyCount={readabilitySummary.ready}
         failedCount={readabilitySummary.failed}
         // Checkpoint A blocking condition
@@ -2124,6 +2128,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         }}
         isRunningEntityMapping={entityMapping.isPending}
         entityMappingComplete={entityMappingComplete}
+        entityMappingFailed={entityMapping.isError}
         canRunEntityMapping={(readabilityChecked || areDocsReadyForDD) && readabilitySummary.failed === 0}
         entityCount={entityCount}
         // View Entity Map
@@ -2134,6 +2139,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
         isAnalyzing={isAnalyzing}
         canAnalyze={canAnalyze}
         analyzeComplete={!displayReset && (analyzeComplete || isWaitingForCheckpointC || checkpointCValidated)}
+        analyzeFailed={!!analyzeError || progress?.passProgress?.extract?.status === "failed" || progress?.passProgress?.analyze?.status === "failed"}
         // Checkpoint C (post-analysis validation)
         onViewCheckpointC={handleViewCheckpointC}
         isCreatingCheckpoint={isCreatingCheckpoint}
@@ -2142,12 +2148,24 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
           // Also show as available if we have synthesis data to create from
           runsData?.runs?.some(r => r.run_id === currentRunId && r.synthesis_data)
         )}
+        checkpointCFailed={createCheckpoint.isError}
         checkpointCStatus={checkpointData?.checkpoint?.status as 'awaiting_user_input' | 'completed' | 'skipped' | undefined}
         // Generate Report (Pass 3-7)
         onGenerateReport={handleGenerateReportClick}
         isGenerating={isGenerating}
         canGenerateReport={canGenerateReport}
+        generateReportFailed={
+          !!generateError ||
+          progress?.passProgress?.calculate?.status === "failed" ||
+          progress?.passProgress?.crossdoc?.status === "failed" ||
+          progress?.passProgress?.aggregate?.status === "failed" ||
+          progress?.passProgress?.synthesize?.status === "failed" ||
+          progress?.passProgress?.verify?.status === "failed"
+        }
         generateReportTooltip={generateReportTooltip}
+        // View Analysis - only enabled after report synthesis is complete
+        onViewAnalysis={onViewResults}
+        hasAnalysisResults={runsData?.runs?.some(r => r.run_id === currentRunId && r.synthesis_data) ?? false}
         // Configure
         selectedTier={selectedModelTier}
         onTierChange={setSelectedModelTier}

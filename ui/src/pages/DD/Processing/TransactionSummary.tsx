@@ -23,6 +23,7 @@ import {
   Scale,
   MoreHorizontal,
   PieChart,
+  Network,
 } from "lucide-react";
 import {
   Tooltip,
@@ -67,6 +68,9 @@ interface TransactionSummaryProps {
   className?: string;
   transactionTypeCode?: string | null;
   projectSetup?: ProjectSetup | null;
+  // Organogram button
+  onViewOrganogram?: () => void;
+  hasOrganogram?: boolean;
 }
 
 interface ParsedBriefing {
@@ -289,6 +293,8 @@ export const TransactionSummary: React.FC<TransactionSummaryProps> = ({
   className = "",
   transactionTypeCode,
   projectSetup,
+  onViewOrganogram,
+  hasOrganogram = false,
 }) => {
   // State to control expanded/collapsed details sections
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
@@ -499,24 +505,50 @@ export const TransactionSummary: React.FC<TransactionSummaryProps> = ({
             </TooltipProvider>
           )}
         </div>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                className="p-1 rounded-full hover:bg-white/20 transition-colors"
-                onClick={(e) => e.stopPropagation()}
+        <div className="flex items-center gap-2">
+          {/* Transaction Organogram Button */}
+          {hasOrganogram && onViewOrganogram && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/10 hover:bg-white/20 border border-white/20 transition-colors text-white text-xs font-medium"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onViewOrganogram();
+                    }}
+                  >
+                    <Network className="w-3.5 h-3.5" />
+                    <span className="leading-tight text-center">
+                      Transaction<br />Organogram
+                    </span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-xs">
+                  <p className="text-xs">View the corporate structure and entity relationships identified from your documents</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className="p-1 rounded-full hover:bg-white/20 transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Info className="w-4 h-4 text-white/70" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="left"
+                className="max-w-sm p-3 text-xs whitespace-pre-line"
               >
-                <Info className="w-4 h-4 text-white/70" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent
-              side="left"
-              className="max-w-sm p-3 text-xs whitespace-pre-line"
-            >
-              {CONTEXT_TOOLTIP}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+                {CONTEXT_TOOLTIP}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
 
       {/* Content */}

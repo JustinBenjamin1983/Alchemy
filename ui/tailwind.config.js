@@ -91,9 +91,20 @@ module.exports = {
           "0%": { backgroundPosition: "-100% 0%" },
           "100%": { backgroundPosition: "100% 0%" },
         },
+        "glow-throb": {
+          "0%, 100%": {
+            transform: "scale(1)",
+            filter: "drop-shadow(0 0 8px rgba(251, 191, 36, 0.6)) drop-shadow(0 0 20px rgba(251, 191, 36, 0.4))",
+          },
+          "50%": {
+            transform: "scale(0.97)",
+            filter: "drop-shadow(0 0 4px rgba(251, 191, 36, 0.3)) drop-shadow(0 0 10px rgba(251, 191, 36, 0.2))",
+          },
+        },
       },
       animation: {
         shimmerText: "shimmerText 2s linear infinite",
+        "glow-throb": "glow-throb 15s ease-in-out infinite",
       },
     },
   },

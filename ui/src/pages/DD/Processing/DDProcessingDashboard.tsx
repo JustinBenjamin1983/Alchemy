@@ -1699,16 +1699,23 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     }
   };
 
-  // Check if the run appears to be stuck (processing but no updates for > 2 minutes)
+  // Check if the run appears to be stuck (processing but no updates for extended period)
+  // Synthesis and verification passes can take 5-10+ minutes due to Opus API calls
   const isRunStuck = useMemo(() => {
     if (!progress || progress.status !== "processing") return false;
     if (!progress.lastUpdated) return false;
 
     const lastUpdate = new Date(progress.lastUpdated).getTime();
     const now = Date.now();
-    const twoMinutes = 2 * 60 * 1000;
 
-    return now - lastUpdate > twoMinutes;
+    // Use longer timeout for synthesis/verification passes (10 mins) vs extraction (3 mins)
+    const currentPass = progress.currentPass || progress.currentStage || "";
+    const isSynthesisPhase = ["synthesize", "verify", "pass4", "pass7", "crossdoc", "aggregate"].some(
+      phase => currentPass.toLowerCase().includes(phase)
+    );
+    const stuckThreshold = isSynthesisPhase ? 10 * 60 * 1000 : 3 * 60 * 1000;
+
+    return now - lastUpdate > stuckThreshold;
   }, [progress]);
 
   // Check if run failed unexpectedly (not user-cancelled)

@@ -610,9 +610,9 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
       style={{ minHeight: containerHeight }}
     >
       {/* Top Bar - Compact with Run Selector, Filters, and Actions */}
-      <div className="flex-shrink-0 px-4 py-3 border-b border-gray-700 bg-alchemyPrimaryNavyBlue">
+      <div className="flex-shrink-0 px-4 py-2.5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {/* Run Selector */}
             <RunSelector
               runs={runs}
@@ -624,7 +624,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
             <select
               value={activeTab}
               onChange={(e) => setActiveTab(e.target.value as ActiveTab)}
-              className="h-8 px-2.5 text-xs font-medium bg-white border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="h-8 px-2.5 text-xs font-medium bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               <optgroup label="Analysis">
                 <option value="findings">Findings</option>
@@ -655,7 +655,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
               <select
                 value={filterCategory || ''}
                 onChange={(e) => setFilterCategory((e.target.value as DDCategory) || null)}
-                className="h-8 px-2.5 text-xs bg-white border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="h-8 px-2.5 text-xs bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="">All Categories</option>
                 {DD_CATEGORY_ORDER.map(cat => (
@@ -671,7 +671,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
               <select
                 value={filterSeverity || ''}
                 onChange={(e) => setFilterSeverity(e.target.value as FindingSeverity || null)}
-                className="h-8 px-2.5 text-xs bg-white border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="h-8 px-2.5 text-xs bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="">All Severities</option>
                 {availableSeverities.map(sev => (
@@ -719,41 +719,51 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
               </div>
             )}
 
-            {/* Report Download Buttons */}
+            {/* Report Download Buttons - Chevron Style */}
             {onDownloadReport && (
-              <div className="flex items-center gap-2 pl-3 border-l border-gray-300 dark:border-gray-600">
+              <div className="flex items-center pl-3 border-l border-gray-200 dark:border-gray-600">
+                {/* Preliminary Report Button (Orange with chevron pointing right) */}
                 <button
                   onClick={() => onDownloadReport('preliminary')}
                   disabled={reportTypeLoading !== null}
                   className={`
-                    h-8 flex items-center gap-1.5 px-3 text-xs font-medium rounded-lg
-                    transition-all duration-200 ease-in-out
-                    border border-gray-300 dark:border-gray-600
+                    h-8 flex items-center gap-1.5 pl-3 pr-4 text-xs font-medium
+                    transition-all duration-200 ease-in-out relative
                     ${reportTypeLoading === 'preliminary'
-                      ? 'bg-amber-50 dark:bg-amber-900/30 border-amber-300 text-amber-700 cursor-wait'
+                      ? 'bg-[#ff6b00] text-white cursor-wait'
                       : reportTypeLoading !== null
-                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
-                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700 dark:hover:bg-amber-900/20 dark:hover:border-amber-600 dark:hover:text-amber-400 hover:shadow-md hover:scale-105 active:scale-95'
+                      ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                      : 'bg-[#ff6b00] text-white hover:bg-[#e55f00] hover:shadow-md active:bg-[#cc5500]'
                     }
                   `}
+                  style={{
+                    clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%)',
+                    borderRadius: '4px 0 0 4px'
+                  }}
                   title="Download preliminary report (Word document)"
                 >
                   {reportTypeLoading === 'preliminary' ? <SpinnerIcon /> : <FileTextIcon />}
-                  {reportTypeLoading === 'preliminary' ? 'Generating...' : 'Preliminary Report'}
+                  {reportTypeLoading === 'preliminary' ? 'Generating...' : 'Preliminary'}
                 </button>
+                {/* Final Report Button (White/Grey, receives the chevron) */}
                 <button
                   onClick={() => onDownloadReport('final')}
                   disabled={reportTypeLoading !== null}
                   className={`
-                    h-8 flex items-center gap-1.5 px-3 text-xs font-medium rounded-lg
-                    transition-all duration-200 ease-in-out
+                    h-8 flex items-center gap-1.5 pl-4 pr-3 text-xs font-medium
+                    transition-all duration-200 ease-in-out relative -ml-[10px]
+                    border border-gray-200 dark:border-slate-600
                     ${reportTypeLoading === 'final'
-                      ? 'bg-[#ff6b00] text-white cursor-wait'
+                      ? 'bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-200 cursor-wait'
                       : reportTypeLoading !== null
-                      ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                      : 'bg-[#ff6b00] text-white hover:bg-[#e55f00] hover:shadow-md hover:scale-105 active:scale-95 active:bg-[#cc5500]'
+                      ? 'bg-gray-100 dark:bg-slate-700 text-gray-400 cursor-not-allowed'
+                      : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-600 hover:shadow-md'
                     }
                   `}
+                  style={{
+                    clipPath: 'polygon(10px 0, 100% 0, 100% 100%, 10px 100%, 0 50%)',
+                    borderRadius: '0 4px 4px 0'
+                  }}
                   title="Download final report with all findings (Word document)"
                 >
                   {reportTypeLoading === 'final' ? <SpinnerIcon /> : <DownloadIcon />}
@@ -783,7 +793,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
           <div className="flex-1 flex min-h-0">
             {/* Left Panel - Document Navigator */}
             <div
-              className="flex-shrink-0 border-r border-gray-300 dark:border-gray-600 bg-slate-50 dark:bg-gray-850 relative shadow-[2px_0_8px_-2px_rgba(0,0,0,0.1)]"
+              className="flex-shrink-0 border-r border-gray-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-600 relative shadow-[2px_0_8px_-2px_rgba(0,0,0,0.1)]"
               style={{ width: leftPanelCollapsed ? 40 : leftPanelWidth }}
             >
               <div className="h-full flex flex-col">
@@ -838,7 +848,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
 
             {/* Right Panel - Finding Detail */}
             <div
-              className="flex-shrink-0 border-l border-gray-300 dark:border-gray-600 bg-slate-50 dark:bg-gray-850 relative shadow-[-2px_0_8px_-2px_rgba(0,0,0,0.1)]"
+              className="flex-shrink-0 border-l border-gray-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-600 relative shadow-[-2px_0_8px_-2px_rgba(0,0,0,0.1)]"
               style={{ width: rightPanelCollapsed ? 40 : rightPanelWidth }}
             >
               {/* Right panel resize handle */}
@@ -996,7 +1006,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
       </div>
 
       {/* Bottom Stats Bar with Severity Legend */}
-      <div className="flex-shrink-0 px-4 py-2.5 border-t border-gray-300 dark:border-gray-600 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-gray-800 dark:to-gray-800 shadow-[0_-2px_8px_-2px_rgba(0,0,0,0.05)]">
+      <div className="flex-shrink-0 px-4 py-2.5 border-t border-gray-200 dark:border-slate-600 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-700 dark:to-slate-700 shadow-[0_-2px_8px_-2px_rgba(0,0,0,0.05)]">
         <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
           <div className="flex items-center gap-4">
             <span>{stats.total} findings</span>

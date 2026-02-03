@@ -7,8 +7,41 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectSeparator,
 } from "@/components/ui/select";
 import { TransactionTypeSelector, BlueprintSummary } from "./TransactionTypeSelector";
+
+// Currency options: ZAR first, then 4 major currencies, then rest alphabetically
+const MAJOR_CURRENCIES = [
+  { value: "ZAR", label: "ZAR" },
+  { value: "USD", label: "USD" },
+  { value: "EUR", label: "EUR" },
+  { value: "GBP", label: "GBP" },
+  { value: "JPY", label: "JPY" },
+];
+
+const OTHER_CURRENCIES = [
+  { value: "AED", label: "AED" },
+  { value: "AUD", label: "AUD" },
+  { value: "BRL", label: "BRL" },
+  { value: "CAD", label: "CAD" },
+  { value: "CHF", label: "CHF" },
+  { value: "CNY", label: "CNY" },
+  { value: "DKK", label: "DKK" },
+  { value: "HKD", label: "HKD" },
+  { value: "INR", label: "INR" },
+  { value: "KRW", label: "KRW" },
+  { value: "MXN", label: "MXN" },
+  { value: "NOK", label: "NOK" },
+  { value: "NZD", label: "NZD" },
+  { value: "PLN", label: "PLN" },
+  { value: "RUB", label: "RUB" },
+  { value: "SAR", label: "SAR" },
+  { value: "SEK", label: "SEK" },
+  { value: "SGD", label: "SGD" },
+  { value: "THB", label: "THB" },
+  { value: "TRY", label: "TRY" },
+];
 import {
   DDProjectSetup,
   TransactionTypeCode,
@@ -25,23 +58,23 @@ interface Step1Props {
   onChange: (updates: Partial<DDProjectSetup>) => void;
 }
 
-// Format number as South African Rand currency
-function formatZAR(value: number | null): string {
+// Format number with spaces (South African style)
+function formatValue(value: number | null): string {
   if (value === null || value === 0) return "";
-  return `R${value.toLocaleString("en-ZA")}`;
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
 // Parse currency string back to number
-function parseZAR(value: string): number | null {
-  // Remove R, spaces, and commas
-  const cleaned = value.replace(/[R\s,]/g, "");
+function parseValue(value: string): number | null {
+  // Remove currency symbols, spaces, and commas
+  const cleaned = value.replace(/[^\d.-]/g, "");
   if (!cleaned) return null;
   const num = parseInt(cleaned, 10);
   return isNaN(num) ? null : num;
 }
 
 export function Step1TransactionBasics({ data, onChange }: Step1Props) {
-  const [valueInput, setValueInput] = useState(formatZAR(data.estimatedValue));
+  const [valueInput, setValueInput] = useState(formatValue(data.estimatedValue));
   const [isValueFocused, setIsValueFocused] = useState(false);
 
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,14 +82,14 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
     setValueInput(input);
 
     // Parse and update the actual value
-    const parsed = parseZAR(input);
+    const parsed = parseValue(input);
     onChange({ estimatedValue: parsed });
   };
 
   const handleValueBlur = () => {
     setIsValueFocused(false);
     // Format the display value on blur
-    setValueInput(formatZAR(data.estimatedValue));
+    setValueInput(formatValue(data.estimatedValue));
   };
 
   const handleValueFocus = () => {
@@ -65,6 +98,10 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
     if (data.estimatedValue) {
       setValueInput(data.estimatedValue.toString());
     }
+  };
+
+  const handleCurrencyChange = (currency: string) => {
+    onChange({ estimatedValueCurrency: currency });
   };
 
   // Get dynamic target entity label based on transaction type (with fallback for legacy types)
@@ -212,18 +249,37 @@ export function Step1TransactionBasics({ data, onChange }: Step1Props) {
 
         <div>
           <Label htmlFor="estimatedValue" className="text-xs text-muted-foreground mb-1 block">
-            {valueDateConfig.valueLabel}
+            Estimated Value
           </Label>
-          <Input
-            id="estimatedValue"
-            type="text"
-            className="h-9"
-            placeholder={valueDateConfig.valuePlaceholder}
-            value={valueInput}
-            onChange={handleValueChange}
-            onFocus={handleValueFocus}
-            onBlur={handleValueBlur}
-          />
+          <div className="flex gap-2">
+            <Select
+              value={data.estimatedValueCurrency || "ZAR"}
+              onValueChange={handleCurrencyChange}
+            >
+              <SelectTrigger className="w-[90px] h-9 bg-white">
+                <SelectValue placeholder="Currency" />
+              </SelectTrigger>
+              <SelectContent className="bg-white">
+                {MAJOR_CURRENCIES.map((curr) => (
+                  <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+                ))}
+                <SelectSeparator />
+                {OTHER_CURRENCIES.map((curr) => (
+                  <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input
+              id="estimatedValue"
+              type="text"
+              className="h-9 flex-1"
+              placeholder="e.g., 500 000 000"
+              value={valueInput}
+              onChange={handleValueChange}
+              onFocus={handleValueFocus}
+              onBlur={handleValueBlur}
+            />
+          </div>
         </div>
 
         <div>

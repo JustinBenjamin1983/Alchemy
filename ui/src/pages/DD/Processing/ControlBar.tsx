@@ -167,11 +167,11 @@ export const ControlBar: React.FC<ControlBarProps> = ({
   // Processing mode - minimal bar with processing controls
   if (isProcessing) {
     return (
-      <div className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 shadow-sm mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg px-4 py-3 shadow-sm mb-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
           <div className="flex items-center gap-2.5">
             <Loader2 className="h-4 w-4 animate-spin text-[#ff6b00]" />
-            <span className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="text-sm text-gray-700 dark:text-gray-200">
               Processing <span className="font-semibold">{docsToProcessCount}</span> documents...
             </span>
           </div>

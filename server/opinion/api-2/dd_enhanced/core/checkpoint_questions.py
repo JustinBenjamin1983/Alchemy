@@ -133,7 +133,8 @@ def generate_understanding_questions(
     findings: List[Dict[str, Any]],
     transaction_context: Dict[str, Any],
     synthesis_preview: str = None,
-    max_questions: int = 10
+    max_questions: int = 10,
+    project_setup: Dict[str, Any] = None
 ) -> List[Dict[str, Any]]:
     """
     Generate questions for unclear, vital, or ambiguous items.
@@ -145,11 +146,13 @@ def generate_understanding_questions(
         transaction_context: Transaction context dict
         synthesis_preview: Optional preliminary synthesis text
         max_questions: Maximum number of questions to generate
+        project_setup: Optional project setup from wizard (includes dealRationale, knownConcerns, etc.)
 
     Returns:
         List of question dicts with context and options
     """
     questions = []
+    project_setup = project_setup or {}
 
     # 1. Questions about critical findings with low confidence
     low_conf_critical = [
@@ -164,11 +167,13 @@ def generate_understanding_questions(
             "context": f"This critical finding has confidence {finding.get('confidence_score', 'unknown')}. "
                        f"Source: {finding.get('document_name', 'Unknown document')}",
             "options": [
-                {"label": "Confirmed correct", "value": "confirmed"},
-                {"label": "Needs correction", "value": "needs_correction"},
-                {"label": "Cannot verify", "value": "cannot_verify"}
+                {"label": "Confirmed correct", "value": "confirmed", "description": "This finding is accurate"},
+                {"label": "Needs correction", "value": "needs_correction", "description": "The finding needs to be corrected"},
+                {"label": "Accept AI's assessment", "value": "accept_ai", "description": "I haven't reviewed - proceed with AI's findings"},
+                {"label": "Uncertain - flag for extra review", "value": "uncertain_check", "description": "AI should double-check this point specifically"}
             ],
             "finding_id": finding.get("id"),
+            "requires_correction_text": True,
             "question_type": "finding_confirmation"
         })
 
@@ -182,12 +187,13 @@ def generate_understanding_questions(
             "context": f"Document: {blocker.get('document_name', 'Unknown')}. "
                        f"Recommendation: {blocker.get('recommendation', 'N/A')}",
             "options": [
-                {"label": "Yes, this is a deal blocker", "value": "confirmed_blocker"},
-                {"label": "No, downgrade to condition precedent", "value": "downgrade_cp"},
-                {"label": "No, downgrade to price chip", "value": "downgrade_price"},
-                {"label": "This issue doesn't exist", "value": "remove"}
+                {"label": "Yes, this is a deal blocker", "value": "confirmed_blocker", "description": "Confirm this is a genuine deal blocker"},
+                {"label": "Downgrade to condition precedent", "value": "downgrade_cp", "description": "Issue exists but can be resolved before closing"},
+                {"label": "Downgrade to price chip", "value": "downgrade_price", "description": "Issue exists but should affect price, not block deal"},
+                {"label": "Uncertain - flag for extra review", "value": "uncertain_check", "description": "AI should double-check this point specifically"}
             ],
             "finding_id": blocker.get("id"),
+            "requires_correction_text": True,
             "question_type": "deal_blocker_validation"
         })
 
@@ -204,12 +210,13 @@ def generate_understanding_questions(
             "context": f"The analysis couldn't determine the responsible party. "
                        f"Document: {entity_finding.get('document_name', 'Unknown')}",
             "options": [
-                {"label": "Seller's responsibility", "value": "seller"},
-                {"label": "Buyer's responsibility", "value": "buyer"},
-                {"label": "Third party responsibility", "value": "third_party"},
-                {"label": "Not applicable", "value": "not_applicable"}
+                {"label": "Seller's responsibility", "value": "seller", "description": "The seller bears this responsibility"},
+                {"label": "Buyer's responsibility", "value": "buyer", "description": "The buyer bears this responsibility"},
+                {"label": "Third party responsibility", "value": "third_party", "description": "A third party is responsible"},
+                {"label": "Uncertain - flag for extra review", "value": "uncertain_check", "description": "AI should double-check this point specifically"}
             ],
             "finding_id": entity_finding.get("id"),
+            "requires_correction_text": True,
             "question_type": "responsibility_clarification"
         })
 
@@ -222,12 +229,85 @@ def generate_understanding_questions(
                 "question": "What is the deal structure?",
                 "context": "The deal structure affects how risks are assessed.",
                 "options": [
-                    {"label": "Share sale (100%)", "value": "share_sale_100"},
-                    {"label": "Share sale (majority)", "value": "share_sale_majority"},
-                    {"label": "Asset sale", "value": "asset_sale"},
-                    {"label": "Business rescue/restructure", "value": "restructure"}
+                    {"label": "Share sale (100%)", "value": "share_sale_100", "description": "Full acquisition of all shares"},
+                    {"label": "Share sale (majority)", "value": "share_sale_majority", "description": "Acquisition of controlling stake"},
+                    {"label": "Asset sale", "value": "asset_sale", "description": "Purchase of specific assets, not shares"},
+                    {"label": "Uncertain - flag for extra review", "value": "uncertain_check", "description": "AI should clarify the structure from documents"}
                 ],
+                "requires_correction_text": True,
                 "question_type": "transaction_clarification"
+            })
+
+    # 5. Questions about known concerns from wizard
+    known_concerns = project_setup.get("knownConcerns", [])
+    if known_concerns and len(known_concerns) > 0:
+        concerns_list = ", ".join(known_concerns[:5])
+        questions.append({
+            "question": "Have your flagged concerns been addressed in the analysis?",
+            "context": f"You flagged these concerns during setup: {concerns_list}",
+            "options": [
+                {"label": "Yes, addressed", "value": "all_addressed", "description": "The analysis adequately covers these concerns"},
+                {"label": "Partially addressed", "value": "partial", "description": "Some concerns need more attention"},
+                {"label": "Accept AI's assessment", "value": "accept_ai", "description": "I haven't fully reviewed - proceed with AI's findings"},
+                {"label": "Uncertain - flag for extra review", "value": "uncertain_check", "description": "AI should double-check this point specifically"}
+            ],
+            "requires_correction_text": True,
+            "question_type": "wizard_concerns_validation"
+        })
+
+    # 6. Questions about critical priorities from wizard
+    critical_priorities = project_setup.get("criticalPriorities", [])
+    if critical_priorities and len(critical_priorities) > 0:
+        priorities_list = ", ".join(critical_priorities[:5])
+        questions.append({
+            "question": "Have your critical priorities been sufficiently covered?",
+            "context": f"Your stated priorities: {priorities_list}",
+            "options": [
+                {"label": "Yes, well covered", "value": "well_covered", "description": "The analysis gives these appropriate focus"},
+                {"label": "Need more depth", "value": "need_depth", "description": "Some priorities need deeper analysis"},
+                {"label": "Accept AI's assessment", "value": "accept_ai", "description": "I haven't fully reviewed - proceed with AI's findings"},
+                {"label": "Uncertain - flag for extra review", "value": "uncertain_check", "description": "AI should double-check this point specifically"}
+            ],
+            "requires_correction_text": True,
+            "question_type": "wizard_priorities_validation"
+        })
+
+    # 7. Questions about known deal breakers from wizard
+    known_deal_breakers = project_setup.get("knownDealBreakers", [])
+    if known_deal_breakers and len(known_deal_breakers) > 0:
+        breakers_list = ", ".join(known_deal_breakers[:5])
+        questions.append({
+            "question": "Did the analysis find any of your potential deal breakers?",
+            "context": f"You specified these as potential deal breakers: {breakers_list}",
+            "options": [
+                {"label": "Yes, found issues", "value": "found", "description": "Deal breaker issues were identified"},
+                {"label": "No issues found", "value": "not_found", "description": "None of these deal breakers appear in the documents"},
+                {"label": "Accept AI's assessment", "value": "accept_ai", "description": "I haven't fully reviewed - proceed with AI's findings"},
+                {"label": "Uncertain - flag for extra review", "value": "uncertain_check", "description": "AI should double-check this point specifically"}
+            ],
+            "requires_correction_text": True,
+            "question_type": "wizard_dealbreakers_validation"
+        })
+
+    # 8. Questions about key stakeholders from wizard
+    key_stakeholders = project_setup.get("keyStakeholders", [])
+    if key_stakeholders and len(key_stakeholders) > 0:
+        stakeholder_names = [s.get("name", "") for s in key_stakeholders if s.get("name")]
+        if stakeholder_names:
+            stakeholders_list = ", ".join(stakeholder_names[:5])
+            stakeholder_count = len(stakeholder_names)
+            questions.append({
+                "question": f"We found references to {stakeholder_count} of your key stakeholders in the documents. Does this look correct?",
+                "context": f"Key stakeholders identified: {stakeholders_list}",
+                "ai_assessment": f"{stakeholder_count} stakeholder(s) to verify",
+                "options": [
+                    {"label": "Looks correct", "value": "correct", "description": "The AI correctly identified these stakeholders"},
+                    {"label": "Partially correct", "value": "partial", "description": "Some stakeholders are missing or incorrectly identified"},
+                    {"label": "Accept AI's assessment", "value": "accept_ai", "description": "I haven't reviewed the documents - proceed with AI's findings"},
+                    {"label": "Uncertain - flag for extra review", "value": "uncertain_check", "description": "AI should double-check this point specifically"}
+                ],
+                "requires_correction_text": True,
+                "question_type": "wizard_stakeholders_validation"
             })
 
     return questions[:max_questions]
@@ -305,7 +385,8 @@ def generate_checkpoint_c_content(
     findings: List[Dict[str, Any]],
     pass1_results: Dict[str, Any],
     transaction_context: Dict[str, Any],
-    synthesis_preview: str = None
+    synthesis_preview: str = None,
+    project_setup: Dict[str, Any] = None
 ) -> Dict[str, Any]:
     """
     Generate all content for Checkpoint C (4-step post-analysis wizard).
@@ -321,6 +402,7 @@ def generate_checkpoint_c_content(
         pass1_results: Pass 1 extraction results
         transaction_context: Transaction context dict
         synthesis_preview: Optional preliminary synthesis
+        project_setup: Optional project setup from wizard (includes dealRationale, knownConcerns, etc.)
 
     Returns:
         Dict with content for each wizard step
@@ -330,11 +412,12 @@ def generate_checkpoint_c_content(
         findings=findings,
         transaction_context=transaction_context,
         synthesis_preview=synthesis_preview,
-        max_questions=8
+        max_questions=8,
+        project_setup=project_setup
     )
 
-    # Generate preliminary summary
-    preliminary_summary = _generate_preliminary_summary(findings, transaction_context)
+    # Generate preliminary summary using dealRationale if available
+    preliminary_summary = _generate_preliminary_summary(findings, transaction_context, project_setup)
 
     # Step 2: Financial Confirmations
     financial_confirmations = generate_financial_confirmations(
@@ -438,31 +521,58 @@ def _determine_importance(doc_type: str, folder: str, relevance: str) -> str:
 
 def _generate_preliminary_summary(
     findings: List[Dict[str, Any]],
-    transaction_context: Dict[str, Any]
+    transaction_context: Dict[str, Any],
+    project_setup: Dict[str, Any] = None
 ) -> str:
-    """Generate a preliminary summary for Checkpoint C Step 1."""
-    critical_count = sum(1 for f in findings if f.get("severity") == "critical")
-    high_count = sum(1 for f in findings if f.get("severity") == "high")
-    blocker_count = sum(1 for f in findings if f.get("deal_impact") == "deal_blocker")
+    """
+    Generate a preliminary summary for Checkpoint C Step 1.
 
-    total_exposure = sum(
-        f.get("exposure_amount", 0) or
-        (f.get("financial_exposure", {}).get("amount", 0) if isinstance(f.get("financial_exposure"), dict) else 0)
-        for f in findings
-    )
+    Uses dealRationale from wizard if available, otherwise falls back to transaction context.
+    Does NOT include findings count (that's shown elsewhere in the UI).
+    """
+    project_setup = project_setup or {}
 
+    # Primary source: dealRationale from wizard Step 2
+    deal_rationale = project_setup.get("dealRationale", "")
+
+    if deal_rationale and deal_rationale.strip():
+        # Use the user's detailed transaction description
+        summary = f"""TRANSACTION OVERVIEW
+
+{deal_rationale.strip()}"""
+
+        # Add key parties if available
+        client_name = project_setup.get("clientName", "")
+        target_name = project_setup.get("targetName", "")
+        estimated_value = project_setup.get("estimatedValue")
+
+        if client_name or target_name:
+            summary += "\n\nKEY PARTIES:"
+            if client_name:
+                client_reg = project_setup.get("clientRegistrationNumber", "")
+                if client_reg:
+                    summary += f"\n- Client: {client_name} ({client_reg})"
+                else:
+                    summary += f"\n- Client: {client_name}"
+            if target_name:
+                target_reg = project_setup.get("targetRegistrationNumber", "")
+                if target_reg:
+                    summary += f"\n- Target: {target_name} ({target_reg})"
+                else:
+                    summary += f"\n- Target: {target_name}"
+
+        if estimated_value:
+            summary += f"\n\nESTIMATED TRANSACTION VALUE: R{estimated_value:,.0f}"
+
+        summary += "\n\nPlease review and confirm this transaction understanding."
+
+        return summary
+
+    # Fallback: Build summary from transaction_context
     summary = f"""PRELIMINARY ANALYSIS SUMMARY
 
 Transaction: {transaction_context.get('transaction_name', 'Unknown')}
 Target: {transaction_context.get('target_entity_name', 'Unknown')}
-
-FINDINGS OVERVIEW:
-- {len(findings)} total findings identified
-- {critical_count} critical severity
-- {high_count} high severity
-- {blocker_count} potential deal blockers
-
-ESTIMATED TOTAL EXPOSURE: R{total_exposure:,.0f}
 
 Please review the questions below to help us refine our understanding."""
 

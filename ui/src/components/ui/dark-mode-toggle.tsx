@@ -2,20 +2,21 @@
  * DarkModeToggle - Pill-shaped toggle for light/dark mode
  *
  * Design: Two-sided pill with sun/moon icons and labels
- * - Light mode: Sun icon + "LIGHT MODE"
- * - Dark mode: Moon icon + "DARK MODE"
+ * - Light mode: Sun icon + "Light"
+ * - Dark mode: Moon icon + "Dark"
  */
-import React, { useState } from "react";
+import React from "react";
 import { Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/theme-provider";
 
 interface DarkModeToggleProps {
   className?: string;
 }
 
 export const DarkModeToggle: React.FC<DarkModeToggleProps> = ({ className }) => {
-  // Local state for now (not functional yet)
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const isDarkMode = theme === "dark";
 
   return (
     <div
@@ -32,7 +33,7 @@ export const DarkModeToggle: React.FC<DarkModeToggleProps> = ({ className }) => 
     >
       {/* Light Mode Button */}
       <button
-        onClick={() => setIsDarkMode(false)}
+        onClick={() => setTheme("light")}
         className={cn(
           "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-wide transition-all duration-200",
           !isDarkMode
@@ -49,7 +50,7 @@ export const DarkModeToggle: React.FC<DarkModeToggleProps> = ({ className }) => 
 
       {/* Dark Mode Button */}
       <button
-        onClick={() => setIsDarkMode(true)}
+        onClick={() => setTheme("dark")}
         className={cn(
           "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-wide transition-all duration-200",
           isDarkMode

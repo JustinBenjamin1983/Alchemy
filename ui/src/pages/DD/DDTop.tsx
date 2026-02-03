@@ -76,15 +76,15 @@ export function DDTop({
 
   return (
     <>
-      <header className="relative flex flex-col shrink-0 border-b bg-white transition-all duration-300 mb-3">
+      <header className="relative flex flex-col shrink-0 border-b bg-white dark:bg-slate-900 dark:border-slate-700 transition-all duration-300 mb-3">
         {ddName && (
           <div className={`transition-all duration-300 ${isHeaderCollapsed ? 'px-4 py-1' : 'p-4 pb-2'}`}>
             {/* Title row - always visible */}
             <div className="flex items-center justify-between gap-3">
-              <p className={`font-semibold text-gray-700 transition-all duration-300 ${isHeaderCollapsed ? 'text-xs' : 'text-lg'}`}>
+              <p className={`font-semibold text-gray-700 dark:text-gray-200 transition-all duration-300 ${isHeaderCollapsed ? 'text-xs' : 'text-lg'}`}>
                 {ddName}
                 {typeInfo && (
-                  <span className="text-gray-500 font-normal">
+                  <span className="text-gray-500 dark:text-gray-400 font-normal">
                     {" "}&mdash; {typeInfo.name}
                   </span>
                 )}

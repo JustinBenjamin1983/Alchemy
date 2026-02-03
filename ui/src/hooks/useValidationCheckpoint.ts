@@ -87,7 +87,8 @@ export interface FinancialResponse {
   metric: string;
   extracted_value: number | null;
   confirmed_value: number | null;
-  status: 'correct' | 'incorrect' | 'not_available';
+  status: 'correct' | 'incorrect' | 'not_available' | 'uncertain_check';
+  correction_text?: string;  // Used with uncertain_check to specify what to verify
 }
 
 export interface MissingDocResponse {
@@ -227,6 +228,51 @@ export function useCreateCheckpoint() {
           run_id: runId,
           checkpoint_type: checkpointType,
           content: content,
+        },
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["validation-checkpoint"] });
+    },
+  });
+}
+
+/**
+ * Hook to regenerate the preliminary summary using AI with user corrections
+ */
+export function useRegenerateSummary() {
+  const axios = useAxiosWithAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    {
+      success: boolean;
+      updated_summary: string;
+      corrections_applied?: {
+        question_corrections: number;
+        financial_corrections: number;
+      };
+      message: string;
+      error?: string;
+    },
+    Error,
+    {
+      checkpointId: string;
+      corrections: {
+        question_responses?: Record<string, QuestionResponse>;
+        financial_confirmations?: FinancialResponse[];
+      };
+    }
+  >({
+    mutationFn: async ({ checkpointId, corrections }) => {
+      const { data } = await axios({
+        url: "/dd-validation-checkpoint",
+        method: "POST",
+        data: {
+          action: "regenerate_summary",
+          checkpoint_id: checkpointId,
+          corrections: corrections,
         },
       });
       return data;

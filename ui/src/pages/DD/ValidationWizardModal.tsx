@@ -9,7 +9,7 @@
  * Step 4: Review & Confirm - Final confirmation before proceeding
  */
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +25,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectSeparator,
+} from "@/components/ui/select";
 import {
   ChevronLeft,
   ChevronRight,
@@ -54,6 +62,7 @@ import {
   EntityResponse,
   useSubmitCheckpointResponse,
   useSkipCheckpoint,
+  useRegenerateSummary,
 } from "@/hooks/useValidationCheckpoint";
 
 // ============================================
@@ -115,6 +124,63 @@ const ENTITY_STEPS: StepConfig[] = [
     icon: <Building2 className="h-4 w-4" />,
   },
 ];
+
+// Currency options: ZAR first, then 4 major currencies, then rest alphabetically
+const MAJOR_CURRENCIES = [
+  { value: "ZAR", label: "ZAR - South African Rand" },
+  { value: "USD", label: "USD - US Dollar" },
+  { value: "EUR", label: "EUR - Euro" },
+  { value: "GBP", label: "GBP - British Pound" },
+  { value: "JPY", label: "JPY - Japanese Yen" },
+];
+
+const OTHER_CURRENCIES = [
+  { value: "AED", label: "AED - UAE Dirham" },
+  { value: "AUD", label: "AUD - Australian Dollar" },
+  { value: "BRL", label: "BRL - Brazilian Real" },
+  { value: "CAD", label: "CAD - Canadian Dollar" },
+  { value: "CHF", label: "CHF - Swiss Franc" },
+  { value: "CNY", label: "CNY - Chinese Yuan" },
+  { value: "DKK", label: "DKK - Danish Krone" },
+  { value: "HKD", label: "HKD - Hong Kong Dollar" },
+  { value: "INR", label: "INR - Indian Rupee" },
+  { value: "KRW", label: "KRW - South Korean Won" },
+  { value: "MXN", label: "MXN - Mexican Peso" },
+  { value: "NOK", label: "NOK - Norwegian Krone" },
+  { value: "NZD", label: "NZD - New Zealand Dollar" },
+  { value: "PLN", label: "PLN - Polish Zloty" },
+  { value: "RUB", label: "RUB - Russian Ruble" },
+  { value: "SAR", label: "SAR - Saudi Riyal" },
+  { value: "SEK", label: "SEK - Swedish Krona" },
+  { value: "SGD", label: "SGD - Singapore Dollar" },
+  { value: "THB", label: "THB - Thai Baht" },
+  { value: "TRY", label: "TRY - Turkish Lira" },
+];
+
+// ============================================
+// Helper Functions
+// ============================================
+
+/**
+ * Sanitizes markdown formatting from text to display as plain text.
+ * Removes asterisks (bold/italic), underscores, and other common markdown.
+ */
+function sanitizeMarkdown(text: string): string {
+  if (!text) return text;
+  return text
+    // Remove bold/italic markers (**, __, *, _)
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/__([^_]+)__/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/_([^_]+)_/g, '$1')
+    // Remove standalone asterisks/underscores at line starts (bullet points converted to dashes)
+    .replace(/^\s*\*\s+/gm, '- ')
+    // Remove markdown headers (# ## ###)
+    .replace(/^#{1,6}\s+/gm, '')
+    // Clean up any remaining standalone asterisks
+    .replace(/\*{2,}/g, '')
+    .trim();
+}
 
 // ============================================
 // Helper Components
@@ -224,29 +290,36 @@ function Step1Understanding({ questions, responses, onResponseChange, preliminar
   const defaultOptions = [
     { value: "correct", label: "Yes, this is correct", description: "The AI understanding is accurate" },
     { value: "partial", label: "Partially correct", description: "Some aspects need clarification" },
-    { value: "incorrect", label: "No, this is incorrect", description: "Please provide the correct information below" },
+    { value: "accept_ai", label: "Accept AI's assessment", description: "I haven't fully reviewed - proceed with AI's findings" },
+    { value: "uncertain_check", label: "Uncertain - flag for extra review", description: "AI should double-check this point specifically" },
   ];
 
-  const options = currentQuestion.options || defaultOptions;
-  // Show correction field for any response that isn't a full confirmation
+  // Always ensure "Accept AI" and "Uncertain" options are available
+  const additionalOptions = [
+    { value: "accept_ai", label: "Accept AI's assessment", description: "I haven't fully reviewed - proceed with AI's findings" },
+    { value: "uncertain_check", label: "Uncertain - flag for extra review", description: "AI should double-check this point specifically" },
+  ];
+
+  // Use question options if provided, but always add the additional options if not present
+  const baseOptions = currentQuestion.options || defaultOptions;
+  const hasAcceptAi = baseOptions.some((o: { value: string }) => o.value === "accept_ai");
+  const hasUncertain = baseOptions.some((o: { value: string }) => o.value === "uncertain_check");
+  const options = [
+    ...baseOptions,
+    ...(!hasAcceptAi ? [additionalOptions[0]] : []),
+    ...(!hasUncertain ? [additionalOptions[1]] : []),
+  ];
+  // Show correction field for any response that isn't a full confirmation or acceptance
   // Handles various option values: "partial", "partially", "incorrect", "needs_correction", etc.
+  // "accept_ai" means user accepts AI's assessment without reviewing - no correction needed
+  const confirmationValues = ["correct", "accurate", "agree", "confirmed", "yes", "accept_ai",
+                              "all_addressed", "well_covered", "no_issues", "not_found",
+                              "not_relevant", "not_applicable"];
   const showCorrectionField = currentResponse.selected_option &&
-    !["correct", "accurate", "agree", "confirmed", "yes"].includes(currentResponse.selected_option.toLowerCase());
+    !confirmationValues.includes(currentResponse.selected_option.toLowerCase());
 
   return (
     <div className="space-y-6">
-      {/* Preliminary Summary */}
-      {preliminarySummary && currentQuestionIndex === 0 && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-          <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-2">
-            Preliminary Summary
-          </h4>
-          <p className="text-sm text-blue-700 dark:text-blue-400">
-            {preliminarySummary}
-          </p>
-        </div>
-      )}
-
       {/* Question Progress */}
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>Question {currentQuestionIndex + 1} of {totalQuestions}</span>
@@ -331,15 +404,27 @@ function Step1Understanding({ questions, responses, onResponseChange, preliminar
         {/* Correction Text */}
         {showCorrectionField && (
           <div className="mt-4">
-            <Label htmlFor="correction" className="text-sm font-medium mb-2 block">
-              Please provide the correct information:
-            </Label>
+            <div className="flex items-center justify-between mb-2">
+              <Label htmlFor="correction" className="text-sm font-medium">
+                Please provide the correct information:
+              </Label>
+              {currentResponse.correction_text && currentResponse.correction_text.trim().length > 0 && (
+                <span className="flex items-center text-xs text-green-600">
+                  <Check className="h-3 w-3 mr-1" />
+                  Correction saved
+                </span>
+              )}
+            </div>
             <Textarea
               id="correction"
               placeholder="Enter your correction or clarification..."
               value={currentResponse.correction_text || ""}
               onChange={(e) => handleCorrectionChange(e.target.value)}
-              className="min-h-[100px]"
+              className={`min-h-[100px] ${
+                currentResponse.correction_text && currentResponse.correction_text.trim().length > 0
+                  ? "border-green-300 focus:border-green-500"
+                  : ""
+              }`}
             />
           </div>
         )}
@@ -401,6 +486,15 @@ function Step2Financials({
     }).format(value);
   };
 
+  // Format number with spaces for display (South African style)
+  const formatNumberWithSpaces = (value: number | string | undefined): string => {
+    if (value === undefined || value === "") return "";
+    const num = typeof value === "string" ? parseFloat(value) : value;
+    if (isNaN(num)) return "";
+    // Format with spaces instead of commas
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  };
+
   const handleConfirmationChange = (index: number, field: keyof FinancialResponse, value: unknown) => {
     const newResponses = [...responses];
     if (!newResponses[index]) {
@@ -444,7 +538,7 @@ function Step2Financials({
             metric: conf.metric,
             extracted_value: conf.extracted_value,
             confirmed_value: null,
-            status: "correct" as const,
+            status: "" as const,  // Start unchecked - requires positive user action
           };
 
           return (
@@ -484,7 +578,7 @@ function Step2Financials({
                 onValueChange={(value) =>
                   handleConfirmationChange(index, "status", value)
                 }
-                className="flex gap-4"
+                className="flex flex-wrap gap-3"
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="correct" id={`${conf.metric}-correct`} />
@@ -502,6 +596,12 @@ function Step2Financials({
                   <RadioGroupItem value="not_available" id={`${conf.metric}-na`} />
                   <Label htmlFor={`${conf.metric}-na`} className="text-sm cursor-pointer">
                     Not in documents
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="uncertain_check" id={`${conf.metric}-uncertain`} />
+                  <Label htmlFor={`${conf.metric}-uncertain`} className="text-sm cursor-pointer text-amber-600">
+                    Uncertain - flag for review
                   </Label>
                 </div>
               </RadioGroup>
@@ -523,6 +623,21 @@ function Step2Financials({
                   />
                 </div>
               )}
+
+              {response.status === "uncertain_check" && (
+                <div className="mt-3">
+                  <Label className="text-xs text-amber-600 mb-1 block">
+                    What should the AI double-check? (optional)
+                  </Label>
+                  <Input
+                    type="text"
+                    placeholder="e.g., Verify this figure against the AFS"
+                    value={(response as any).correction_text || ""}
+                    onChange={(e) => handleConfirmationChange(index, "correction_text" as any, e.target.value)}
+                    className="h-9 border-amber-300 focus:border-amber-500"
+                  />
+                </div>
+              )}
             </div>
           );
         })}
@@ -536,30 +651,160 @@ function Step2Financials({
         <p className="text-xs text-muted-foreground mb-4">
           If you have values that weren't in the documents but are important for analysis:
         </p>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-3">
+          {/* EBITDA */}
           <div>
-            <Label className="text-xs text-muted-foreground mb-1 block">
-              EBITDA (ZAR)
-            </Label>
-            <Input
-              type="text"
-              placeholder="e.g., 28,000,000"
-              value={manualInputs["ebitda"]?.toString() || ""}
-              onChange={(e) => handleManualInput("ebitda", e.target.value)}
-              className="h-9"
-            />
+            <Label className="text-xs text-muted-foreground mb-1 block">EBITDA</Label>
+            <div className="flex gap-2">
+              <Select
+                value={(manualInputs["ebitda_currency"] as string) || "ZAR"}
+                onValueChange={(value) => onManualInputChange({ ...manualInputs, ebitda_currency: value })}
+              >
+                <SelectTrigger className="w-[140px] h-9">
+                  <SelectValue placeholder="Currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {MAJOR_CURRENCIES.map((curr) => (
+                    <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+                  ))}
+                  <SelectSeparator />
+                  {OTHER_CURRENCIES.map((curr) => (
+                    <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Input
+                type="text"
+                placeholder="e.g., 28 000 000"
+                value={formatNumberWithSpaces(manualInputs["ebitda"])}
+                onChange={(e) => handleManualInput("ebitda", e.target.value)}
+                className="h-9 flex-1"
+              />
+            </div>
           </div>
+
+          {/* Working Capital */}
           <div>
-            <Label className="text-xs text-muted-foreground mb-1 block">
-              Working Capital (ZAR)
-            </Label>
-            <Input
-              type="text"
-              placeholder="e.g., 15,000,000"
-              value={manualInputs["working_capital"]?.toString() || ""}
-              onChange={(e) => handleManualInput("working_capital", e.target.value)}
-              className="h-9"
-            />
+            <Label className="text-xs text-muted-foreground mb-1 block">Working Capital</Label>
+            <div className="flex gap-2">
+              <Select
+                value={(manualInputs["working_capital_currency"] as string) || "ZAR"}
+                onValueChange={(value) => onManualInputChange({ ...manualInputs, working_capital_currency: value })}
+              >
+                <SelectTrigger className="w-[140px] h-9">
+                  <SelectValue placeholder="Currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {MAJOR_CURRENCIES.map((curr) => (
+                    <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+                  ))}
+                  <SelectSeparator />
+                  {OTHER_CURRENCIES.map((curr) => (
+                    <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Input
+                type="text"
+                placeholder="e.g., 15 000 000"
+                value={formatNumberWithSpaces(manualInputs["working_capital"])}
+                onChange={(e) => handleManualInput("working_capital", e.target.value)}
+                className="h-9 flex-1"
+              />
+            </div>
+          </div>
+
+          {/* Revenue */}
+          <div>
+            <Label className="text-xs text-muted-foreground mb-1 block">Revenue</Label>
+            <div className="flex gap-2">
+              <Select
+                value={(manualInputs["revenue_currency"] as string) || "ZAR"}
+                onValueChange={(value) => onManualInputChange({ ...manualInputs, revenue_currency: value })}
+              >
+                <SelectTrigger className="w-[140px] h-9">
+                  <SelectValue placeholder="Currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {MAJOR_CURRENCIES.map((curr) => (
+                    <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+                  ))}
+                  <SelectSeparator />
+                  {OTHER_CURRENCIES.map((curr) => (
+                    <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Input
+                type="text"
+                placeholder="e.g., 150 000 000"
+                value={formatNumberWithSpaces(manualInputs["revenue"])}
+                onChange={(e) => handleManualInput("revenue", e.target.value)}
+                className="h-9 flex-1"
+              />
+            </div>
+          </div>
+
+          {/* NPAT */}
+          <div>
+            <Label className="text-xs text-muted-foreground mb-1 block">NPAT</Label>
+            <div className="flex gap-2">
+              <Select
+                value={(manualInputs["npat_currency"] as string) || "ZAR"}
+                onValueChange={(value) => onManualInputChange({ ...manualInputs, npat_currency: value })}
+              >
+                <SelectTrigger className="w-[140px] h-9">
+                  <SelectValue placeholder="Currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {MAJOR_CURRENCIES.map((curr) => (
+                    <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+                  ))}
+                  <SelectSeparator />
+                  {OTHER_CURRENCIES.map((curr) => (
+                    <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Input
+                type="text"
+                placeholder="e.g., 20 000 000"
+                value={formatNumberWithSpaces(manualInputs["npat"])}
+                onChange={(e) => handleManualInput("npat", e.target.value)}
+                className="h-9 flex-1"
+              />
+            </div>
+          </div>
+
+          {/* Total Debt */}
+          <div>
+            <Label className="text-xs text-muted-foreground mb-1 block">Total Debt</Label>
+            <div className="flex gap-2">
+              <Select
+                value={(manualInputs["total_debt_currency"] as string) || "ZAR"}
+                onValueChange={(value) => onManualInputChange({ ...manualInputs, total_debt_currency: value })}
+              >
+                <SelectTrigger className="w-[140px] h-9">
+                  <SelectValue placeholder="Currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {MAJOR_CURRENCIES.map((curr) => (
+                    <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+                  ))}
+                  <SelectSeparator />
+                  {OTHER_CURRENCIES.map((curr) => (
+                    <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Input
+                type="text"
+                placeholder="e.g., 45 000 000"
+                value={formatNumberWithSpaces(manualInputs["total_debt"])}
+                onChange={(e) => handleManualInput("total_debt", e.target.value)}
+                className="h-9 flex-1"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -721,6 +966,8 @@ interface Step4Props {
   missingDocResponses: Record<string, MissingDocResponse>;
   onConfirm: () => void;
   onBack: () => void;
+  regeneratedSummary?: string;
+  isRegenerating?: boolean;
 }
 
 function Step4Review({
@@ -729,6 +976,8 @@ function Step4Review({
   financialResponses,
   manualInputs,
   missingDocResponses,
+  regeneratedSummary,
+  isRegenerating,
 }: Step4Props) {
   const questions = (checkpoint.questions as UnderstandingQuestion[]) || [];
   const financials = checkpoint.financial_confirmations || [];
@@ -737,24 +986,51 @@ function Step4Review({
   const questionsAnswered = Object.keys(questionResponses).length;
   const financialsConfirmed = financialResponses.filter((r) => r?.status).length;
   const docsAddressed = Object.keys(missingDocResponses).length;
+  // Values that indicate acceptance/confirmation (no correction needed)
+  const confirmValues = ["correct", "accurate", "agree", "confirmed", "yes", "accept_ai",
+                         "all_addressed", "well_covered", "no_issues", "not_found",
+                         "not_relevant", "not_applicable"];
   const corrections = Object.values(questionResponses).filter(
-    (r) => r.selected_option === "incorrect" || r.selected_option === "partial"
+    (r) => r.selected_option && !confirmValues.includes(r.selected_option.toLowerCase())
   ).length;
   const financialCorrections = financialResponses.filter((r) => r?.status === "incorrect").length;
   const manualInputCount = Object.values(manualInputs).filter((v) => v !== "").length;
 
+  // Use regenerated summary if available, otherwise fall back to original
+  // Apply sanitization to remove any markdown artifacts (asterisks, etc.)
+  const rawSummary = regeneratedSummary || checkpoint.preliminary_summary || "Your responses have been recorded and will be incorporated into the analysis.";
+  const displaySummary = sanitizeMarkdown(rawSummary);
+
   return (
     <div className="space-y-6">
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-        <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-2">
-          Updated Summary
-        </h4>
-        <p className="text-sm text-blue-700 dark:text-blue-400">
-          {checkpoint.preliminary_summary || "Your responses have been recorded and will be incorporated into the analysis."}
-        </p>
-        {corrections > 0 && (
-          <p className="text-sm text-blue-700 dark:text-blue-400 mt-2">
-            <strong>{corrections} correction(s)</strong> will be applied to improve accuracy.
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-300">
+            {regeneratedSummary ? "AI-Updated Summary" : "Summary"}
+          </h4>
+          {isRegenerating && (
+            <span className="flex items-center text-xs text-blue-600">
+              <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+              Updating with your corrections...
+            </span>
+          )}
+          {regeneratedSummary && !isRegenerating && (
+            <span className="flex items-center text-xs text-green-600">
+              <Check className="h-3 w-3 mr-1" />
+              Updated with your corrections
+            </span>
+          )}
+        </div>
+        {isRegenerating ? (
+          <div className="flex items-center justify-center py-6">
+            <Loader2 className="h-6 w-6 animate-spin text-blue-500 mr-2" />
+            <span className="text-sm text-blue-600">
+              AI is regenerating the summary with your corrections...
+            </span>
+          </div>
+        ) : (
+          <p className="text-sm text-blue-700 dark:text-blue-400 whitespace-pre-line">
+            {displaySummary}
           </p>
         )}
       </div>
@@ -787,23 +1063,69 @@ function Step4Review({
         </div>
       </div>
 
-      {/* Corrections Summary */}
+      {/* Corrections Summary - Show actual correction details */}
       {(corrections > 0 || financialCorrections > 0 || manualInputCount > 0) && (
         <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-          <h4 className="text-sm font-semibold text-yellow-800 dark:text-yellow-300 mb-2">
-            Changes to be Applied
+          <h4 className="text-sm font-semibold text-yellow-800 dark:text-yellow-300 mb-3">
+            Your Corrections & Inputs
           </h4>
-          <ul className="text-sm text-yellow-700 dark:text-yellow-400 space-y-1">
-            {corrections > 0 && (
-              <li>• {corrections} understanding correction(s)</li>
-            )}
-            {financialCorrections > 0 && (
-              <li>• {financialCorrections} financial figure correction(s)</li>
-            )}
-            {manualInputCount > 0 && (
-              <li>• {manualInputCount} manual data input(s) added</li>
-            )}
-          </ul>
+          <div className="space-y-3">
+            {/* Show understanding corrections with actual text */}
+            {Object.entries(questionResponses)
+              .filter(([_, r]) => {
+                // Match logic: show if NOT a confirmation (same as showCorrectionField)
+                // "accept_ai" and other acceptance values don't count as corrections
+                const confirmVals = ["correct", "accurate", "agree", "confirmed", "yes", "accept_ai",
+                                     "all_addressed", "well_covered", "no_issues", "not_found",
+                                     "not_relevant", "not_applicable"];
+                return r.selected_option && !confirmVals.includes(r.selected_option.toLowerCase());
+              })
+              .map(([questionId, response]) => {
+                const question = questions.find(q => q.question_id === questionId);
+                return (
+                  <div key={questionId} className="bg-white dark:bg-gray-800 rounded p-3 border border-yellow-200 dark:border-yellow-700">
+                    <p className="text-xs text-muted-foreground mb-1">
+                      {question?.question || "Question"}
+                    </p>
+                    <p className="text-sm text-yellow-800 dark:text-yellow-300">
+                      <strong>Your correction:</strong> {response.correction_text || "(No details provided)"}
+                    </p>
+                  </div>
+                );
+              })}
+
+            {/* Show financial corrections */}
+            {financialResponses
+              .filter(r => r?.status === "incorrect")
+              .map((response, idx) => (
+                <div key={idx} className="bg-white dark:bg-gray-800 rounded p-3 border border-yellow-200 dark:border-yellow-700">
+                  <p className="text-xs text-muted-foreground mb-1">
+                    {response.metric}
+                  </p>
+                  <p className="text-sm text-yellow-800 dark:text-yellow-300">
+                    <strong>Corrected to:</strong> {response.confirmed_value?.toLocaleString() || "(Not specified)"}
+                  </p>
+                </div>
+              ))}
+
+            {/* Show manual inputs */}
+            {Object.entries(manualInputs)
+              .filter(([key, v]) => v !== "" && !key.includes("_currency"))
+              .map(([key, value]) => {
+                const currency = manualInputs[`${key}_currency`] || "ZAR";
+                const label = key.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+                return (
+                  <div key={key} className="bg-white dark:bg-gray-800 rounded p-3 border border-green-200 dark:border-green-700">
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Manual Input: {label}
+                    </p>
+                    <p className="text-sm text-green-700 dark:text-green-300">
+                      <strong>{currency}</strong> {Number(value).toLocaleString()}
+                    </p>
+                  </div>
+                );
+              })}
+          </div>
         </div>
       )}
 
@@ -965,6 +1287,10 @@ export function ValidationWizardModal({
   // API mutations
   const submitMutation = useSubmitCheckpointResponse();
   const skipMutation = useSkipCheckpoint();
+  const regenerateMutation = useRegenerateSummary();
+
+  // Track regenerated summary
+  const [regeneratedSummary, setRegeneratedSummary] = useState<string | undefined>(undefined);
 
   // Determine which steps to show based on checkpoint type
   const isEntityCheckpoint = checkpoint.checkpoint_type === "entity_confirmation";
@@ -979,6 +1305,46 @@ export function ValidationWizardModal({
   const entities = (checkpoint.questions as EntityQuestion[]) || [];
   const financials = checkpoint.financial_confirmations || [];
   const missingDocs = checkpoint.missing_docs || [];
+
+  // Calculate if there are any corrections or uncertainty flags to trigger regeneration
+  // "accept_ai" and similar values indicate acceptance, not a correction
+  const confirmValues = ["correct", "accurate", "agree", "confirmed", "yes",
+                        "confirmed_blocker", "all_addressed", "well_covered",
+                        "no_issues", "not_found", "accept_ai",
+                        "not_relevant", "not_applicable"];
+  const hasQuestionCorrections = Object.values(questionResponses).some(
+    (r) => r.selected_option && !confirmValues.includes(r.selected_option.toLowerCase())
+  );
+  const hasFinancialCorrections = financialResponses.some(
+    (r) => r?.status === "incorrect" || r?.status === "uncertain_check"
+  );
+  const hasCorrections = hasQuestionCorrections || hasFinancialCorrections;
+
+  // Trigger summary regeneration when entering Step 4 with corrections
+  useEffect(() => {
+    if (currentStep === 4 && hasCorrections && !regeneratedSummary && !regenerateMutation.isPending) {
+      regenerateMutation.mutate(
+        {
+          checkpointId: checkpoint.id,
+          corrections: {
+            question_responses: questionResponses,
+            financial_confirmations: financialResponses,
+          },
+        },
+        {
+          onSuccess: (data) => {
+            if (data.success && data.updated_summary) {
+              setRegeneratedSummary(data.updated_summary);
+            }
+          },
+          onError: (error) => {
+            console.error("Failed to regenerate summary:", error);
+            // Continue without regenerated summary
+          },
+        }
+      );
+    }
+  }, [currentStep, hasCorrections, regeneratedSummary, checkpoint.id, questionResponses, financialResponses, regenerateMutation]);
 
   // Navigation handlers
   const canGoNext = useMemo(() => {
@@ -1118,6 +1484,8 @@ export function ValidationWizardModal({
             missingDocResponses={missingDocResponses}
             onConfirm={handleSubmit}
             onBack={handleBack}
+            regeneratedSummary={regeneratedSummary}
+            isRegenerating={regenerateMutation.isPending}
           />
         );
       default:
@@ -1126,6 +1494,7 @@ export function ValidationWizardModal({
   };
 
   const isSubmitting = submitMutation.isPending || skipMutation.isPending;
+  const isRegenerating = regenerateMutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
@@ -1233,13 +1602,18 @@ export function ValidationWizardModal({
               ) : (
                 <Button
                   onClick={handleSubmit}
-                  disabled={!canGoNext || isSubmitting}
+                  disabled={!canGoNext || isSubmitting || isRegenerating}
                   className="bg-alchemyPrimaryOrange hover:bg-alchemyPrimaryOrange/90"
                 >
                   {isSubmitting ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                       Submitting...
+                    </>
+                  ) : isRegenerating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Updating Summary...
                     </>
                   ) : (
                     <>

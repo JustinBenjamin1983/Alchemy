@@ -1,8 +1,48 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectSeparator,
+} from "@/components/ui/select";
 import { X, Plus, Info } from "lucide-react";
 import { useState, KeyboardEvent } from "react";
+
+// Currency options: ZAR first, then 4 major currencies, then rest alphabetically
+const MAJOR_CURRENCIES = [
+  { value: "ZAR", label: "ZAR" },
+  { value: "USD", label: "USD" },
+  { value: "EUR", label: "EUR" },
+  { value: "GBP", label: "GBP" },
+  { value: "JPY", label: "JPY" },
+];
+
+const OTHER_CURRENCIES = [
+  { value: "AED", label: "AED" },
+  { value: "AUD", label: "AUD" },
+  { value: "BRL", label: "BRL" },
+  { value: "CAD", label: "CAD" },
+  { value: "CHF", label: "CHF" },
+  { value: "CNY", label: "CNY" },
+  { value: "DKK", label: "DKK" },
+  { value: "HKD", label: "HKD" },
+  { value: "INR", label: "INR" },
+  { value: "KRW", label: "KRW" },
+  { value: "MXN", label: "MXN" },
+  { value: "NOK", label: "NOK" },
+  { value: "NZD", label: "NZD" },
+  { value: "PLN", label: "PLN" },
+  { value: "RUB", label: "RUB" },
+  { value: "SAR", label: "SAR" },
+  { value: "SEK", label: "SEK" },
+  { value: "SGD", label: "SGD" },
+  { value: "THB", label: "THB" },
+  { value: "TRY", label: "TRY" },
+];
 import {
   DDProjectSetup,
   STEP4_CONFIG,
@@ -11,14 +51,15 @@ import {
   Shareholder,
 } from "./types";
 
-// Format number string as South African Rand currency
+// Format number string with spaces (South African style)
 function formatCurrency(value: string): string {
   if (!value) return "";
   const cleaned = value.replace(/[^\d.]/g, "");
   if (!cleaned) return "";
   const num = parseFloat(cleaned);
   if (isNaN(num)) return value;
-  return `R${Math.round(num).toLocaleString("en-ZA")}`;
+  // Format with spaces instead of commas
+  return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
 interface Step4Props {
@@ -314,27 +355,32 @@ function LenderInput({ field, lenders, onChange }: LenderInputProps) {
   const [nameInput, setNameInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState("");
   const [amountInput, setAmountInput] = useState("");
+  const [currencyInput, setCurrencyInput] = useState("ZAR");
 
   const canAdd = nameInput.trim().length > 0;
 
   const handleAdd = () => {
     if (canAdd) {
+      const formattedAmount = amountInput.trim()
+        ? `${currencyInput} ${formatCurrency(amountInput).replace(/^R/, '')}`
+        : "";
       onChange([
         ...lenders,
         {
           name: nameInput.trim(),
           description: descriptionInput.trim(),
-          facilityAmount: formatCurrency(amountInput),
+          facilityAmount: formattedAmount,
         },
       ]);
       setNameInput("");
       setDescriptionInput("");
       setAmountInput("");
+      setCurrencyInput("ZAR");
     }
   };
 
   const handleAmountBlur = () => {
-    setAmountInput(formatCurrency(amountInput));
+    setAmountInput(formatCurrency(amountInput).replace(/^R/, ''));
   };
 
   const removeLender = (index: number) => {
@@ -364,10 +410,24 @@ function LenderInput({ field, lenders, onChange }: LenderInputProps) {
             onChange={(e) => setDescriptionInput(e.target.value)}
           />
         </div>
-        <div className="w-32">
+        <Select value={currencyInput} onValueChange={setCurrencyInput}>
+          <SelectTrigger className="w-[80px] h-8 text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {MAJOR_CURRENCIES.map((curr) => (
+              <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+            ))}
+            <SelectSeparator />
+            {OTHER_CURRENCIES.map((curr) => (
+              <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <div className="w-28">
           <Input
             className="h-8 text-sm"
-            placeholder={field.amountPlaceholder || "e.g. R500m"}
+            placeholder="e.g. 500 000 000"
             value={amountInput}
             onChange={(e) => setAmountInput(e.target.value)}
             onBlur={handleAmountBlur}
@@ -433,27 +493,32 @@ function CounterpartyInput({ field, counterparties, onChange }: CounterpartyInpu
   const [nameInput, setNameInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState("");
   const [exposureInput, setExposureInput] = useState("");
+  const [currencyInput, setCurrencyInput] = useState("ZAR");
 
   const canAdd = nameInput.trim().length > 0;
 
   const handleAdd = () => {
     if (canAdd) {
+      const formattedExposure = exposureInput.trim()
+        ? `${currencyInput} ${formatCurrency(exposureInput).replace(/^R/, '')}`
+        : "";
       onChange([
         ...counterparties,
         {
           name: nameInput.trim(),
           description: descriptionInput.trim(),
-          exposure: formatCurrency(exposureInput),
+          exposure: formattedExposure,
         },
       ]);
       setNameInput("");
       setDescriptionInput("");
       setExposureInput("");
+      setCurrencyInput("ZAR");
     }
   };
 
   const handleExposureBlur = () => {
-    setExposureInput(formatCurrency(exposureInput));
+    setExposureInput(formatCurrency(exposureInput).replace(/^R/, ''));
   };
 
   const removeCounterparty = (index: number) => {
@@ -483,10 +548,24 @@ function CounterpartyInput({ field, counterparties, onChange }: CounterpartyInpu
             onChange={(e) => setDescriptionInput(e.target.value)}
           />
         </div>
-        <div className="w-32">
+        <Select value={currencyInput} onValueChange={setCurrencyInput}>
+          <SelectTrigger className="w-[80px] h-8 text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {MAJOR_CURRENCIES.map((curr) => (
+              <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+            ))}
+            <SelectSeparator />
+            {OTHER_CURRENCIES.map((curr) => (
+              <SelectItem key={curr.value} value={curr.value}>{curr.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <div className="w-28">
           <Input
             className="h-8 text-sm"
-            placeholder={field.amountPlaceholder || "e.g. R100m"}
+            placeholder="e.g. 100 000 000"
             value={exposureInput}
             onChange={(e) => setExposureInput(e.target.value)}
             onBlur={handleExposureBlur}

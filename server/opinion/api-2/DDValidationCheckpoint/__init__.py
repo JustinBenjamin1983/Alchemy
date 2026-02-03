@@ -12,6 +12,7 @@ Endpoints:
 - POST /api/dd-validation-checkpoint/respond - Submit checkpoint response
 - POST /api/dd-validation-checkpoint/upload - Upload docs during checkpoint
 - POST /api/dd-validation-checkpoint/skip - Skip checkpoint
+- POST /api/dd-validation-checkpoint/regenerate_summary - Regenerate summary with corrections
 """
 import logging
 import os
@@ -26,20 +27,22 @@ from shared.models import (
     Document, Folder, DueDiligence,
     DDValidationCheckpoint, DDAnalysisRun, PerspectiveRiskFinding
 )
+from dd_enhanced.core.claude_client import ClaudeClient
 
 DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
 
 
 def get_pending_checkpoint(dd_id: str) -> dict:
     """
-    Get pending checkpoint for a DD project.
+    Get checkpoint for a DD project.
 
-    Returns the oldest pending/awaiting_user_input checkpoint.
+    Returns the most recent checkpoint, prioritizing pending/awaiting_user_input
+    but also returning completed/skipped checkpoints so the UI can show status.
     """
     dd_uuid = uuid_module.UUID(dd_id) if isinstance(dd_id, str) else dd_id
 
     with transactional_session() as session:
-        # Find pending checkpoint
+        # First try to find a pending checkpoint that needs action
         checkpoint = (
             session.query(DDValidationCheckpoint)
             .filter(
@@ -49,6 +52,19 @@ def get_pending_checkpoint(dd_id: str) -> dict:
             .order_by(DDValidationCheckpoint.created_at.asc())
             .first()
         )
+
+        # If no pending checkpoint, get the most recent completed/skipped one
+        # so the UI can show the green "completed" state
+        if not checkpoint:
+            checkpoint = (
+                session.query(DDValidationCheckpoint)
+                .filter(
+                    DDValidationCheckpoint.dd_id == dd_uuid,
+                    DDValidationCheckpoint.status.in_(["completed", "skipped"])
+                )
+                .order_by(DDValidationCheckpoint.created_at.desc())
+                .first()
+            )
 
         if not checkpoint:
             return {
@@ -424,6 +440,207 @@ def _check_checkpoint_complete(checkpoint: DDValidationCheckpoint, responses: di
     return False
 
 
+def regenerate_summary_with_corrections(checkpoint_id: str, corrections: dict) -> dict:
+    """
+    Use Claude AI to regenerate the preliminary summary incorporating user corrections.
+
+    Args:
+        checkpoint_id: Checkpoint UUID
+        corrections: Dict containing:
+            - question_responses: Dict of question responses with correction_text
+            - financial_confirmations: List of financial confirmation responses
+
+    Returns:
+        Dict with updated_summary and success status
+    """
+    cp_uuid = uuid_module.UUID(checkpoint_id) if isinstance(checkpoint_id, str) else checkpoint_id
+
+    with transactional_session() as session:
+        checkpoint = session.query(DDValidationCheckpoint).filter(
+            DDValidationCheckpoint.id == cp_uuid
+        ).first()
+
+        if not checkpoint:
+            return {"error": f"Checkpoint {checkpoint_id} not found"}
+
+        original_summary = checkpoint.preliminary_summary or ""
+
+        # Extract corrections from user responses
+        question_corrections = []
+        question_uncertainties = []
+        question_responses = corrections.get("question_responses", {})
+
+        for q_id, response in question_responses.items():
+            if isinstance(response, dict):
+                correction_text = response.get("correction_text", "")
+                selected_option = response.get("selected_option", "")
+
+                # Check if this is an uncertainty flag
+                if selected_option and selected_option.lower() == "uncertain_check":
+                    question_uncertainties.append({
+                        "question_id": q_id,
+                        "check_note": correction_text
+                    })
+                # Check if this is a non-confirmation response (i.e., a correction)
+                # "accept_ai" means user accepts AI's assessment without reviewing
+                elif selected_option:
+                    confirm_values = ["correct", "accurate", "agree", "confirmed", "yes",
+                                      "confirmed_blocker", "all_addressed", "well_covered",
+                                      "no_issues", "not_found", "accept_ai",
+                                      "not_relevant", "not_applicable"]
+                    if selected_option.lower() not in confirm_values:
+                        question_corrections.append({
+                            "question_id": q_id,
+                            "user_response": selected_option,
+                            "correction_details": correction_text
+                        })
+
+        # Extract financial corrections and uncertainty flags
+        financial_corrections = []
+        financial_uncertainties = []
+        financial_confirmations = corrections.get("financial_confirmations", [])
+
+        for fin_conf in financial_confirmations:
+            if isinstance(fin_conf, dict):
+                status = fin_conf.get("status", "")
+                if status in ["incorrect", "partial"]:
+                    financial_corrections.append({
+                        "metric": fin_conf.get("metric", ""),
+                        "original_value": fin_conf.get("extracted_value"),
+                        "corrected_value": fin_conf.get("confirmed_value"),
+                        "currency": fin_conf.get("currency", "ZAR"),
+                        "correction_text": fin_conf.get("correction_text", "")
+                    })
+                elif status == "uncertain_check":
+                    financial_uncertainties.append({
+                        "metric": fin_conf.get("metric", ""),
+                        "value": fin_conf.get("extracted_value"),
+                        "currency": fin_conf.get("currency", "ZAR"),
+                        "check_note": fin_conf.get("correction_text", "")
+                    })
+
+        # If no corrections or uncertainties, return original summary
+        has_changes = (question_corrections or question_uncertainties or
+                       financial_corrections or financial_uncertainties)
+        if not has_changes:
+            return {
+                "success": True,
+                "updated_summary": original_summary,
+                "message": "No corrections to incorporate"
+            }
+
+        # Build prompt for Claude
+        corrections_text = ""
+
+        if question_corrections:
+            corrections_text += "\n\nUSER CORRECTIONS TO TRANSACTION UNDERSTANDING:\n"
+            for i, corr in enumerate(question_corrections, 1):
+                corrections_text += f"\n{i}. Response: {corr['user_response']}"
+                if corr['correction_details']:
+                    corrections_text += f"\n   Details: {corr['correction_details']}"
+
+        if question_uncertainties:
+            corrections_text += "\n\nQUESTIONS FLAGGED FOR EXTRA VERIFICATION:\n"
+            corrections_text += "(User is uncertain about these - AI should double-check specifically)\n"
+            for i, unc in enumerate(question_uncertainties, 1):
+                corrections_text += f"\n{i}. Question ID: {unc['question_id']}"
+                if unc.get('check_note'):
+                    corrections_text += f"\n   User note: {unc['check_note']}"
+
+        if financial_corrections:
+            corrections_text += "\n\nFINANCIAL CORRECTIONS:\n"
+            for i, corr in enumerate(financial_corrections, 1):
+                corrections_text += f"\n{i}. {corr['metric']}:"
+                corrections_text += f"\n   Original: {corr.get('currency', 'ZAR')} {corr['original_value']:,.0f}" if corr['original_value'] else "\n   Original: Not specified"
+                corrections_text += f"\n   Corrected: {corr.get('currency', 'ZAR')} {corr['corrected_value']:,.0f}" if corr['corrected_value'] else "\n   Corrected: Not specified"
+                if corr.get('correction_text'):
+                    corrections_text += f"\n   Note: {corr['correction_text']}"
+
+        if financial_uncertainties:
+            corrections_text += "\n\nFINANCIAL ITEMS FLAGGED FOR EXTRA VERIFICATION:\n"
+            corrections_text += "(User is uncertain - AI should double-check these specifically)\n"
+            for i, unc in enumerate(financial_uncertainties, 1):
+                corrections_text += f"\n{i}. {unc['metric']}: {unc.get('currency', 'ZAR')} {unc['value']:,.0f}" if unc['value'] else f"\n{i}. {unc['metric']}: Value not specified"
+                if unc.get('check_note'):
+                    corrections_text += f"\n   User note: {unc['check_note']}"
+
+        system_prompt = """You are a legal due diligence expert. Your task is to update a transaction summary
+based on user corrections and uncertainty flags. Maintain the professional tone and structure of the original
+summary while incorporating the corrections accurately.
+
+CRITICAL FORMATTING RULES:
+- Use PLAIN TEXT only - NO markdown, NO asterisks (*), NO bold formatting
+- Use UPPERCASE for section headers (e.g., TRANSACTION OVERVIEW, KEY PARTIES)
+- Use simple dashes (-) for bullet points
+- Use line breaks to separate sections clearly
+
+Content Guidelines:
+- Keep the same overall structure (TRANSACTION OVERVIEW, KEY PARTIES, etc.)
+- Incorporate corrections naturally into the narrative
+- If financial figures were corrected, use the corrected values
+- For items flagged as UNCERTAIN: add a brief note in parentheses like "(requires verification)"
+- Keep the summary concise but comprehensive
+- Do NOT add speculative information - only incorporate what the user provided"""
+
+        user_prompt = f"""Please update the following transaction summary by incorporating the user's corrections.
+
+ORIGINAL SUMMARY:
+{original_summary}
+
+{corrections_text}
+
+Provide an updated summary incorporating these corrections. Use the EXACT same plain text format as the original -
+NO markdown formatting, NO asterisks for bold. Use UPPERCASE for headers and simple dashes for bullets."""
+
+        try:
+            # Use Claude to regenerate the summary
+            client = ClaudeClient()
+            response = client.complete(
+                prompt=user_prompt,
+                system=system_prompt,
+                model="sonnet",  # Use Sonnet for cost-effectiveness
+                max_tokens=2048,
+                temperature=0.3,  # Low temperature for consistency
+                json_mode=False
+            )
+
+            if "error" in response:
+                logging.error(f"Claude API error: {response.get('error')}")
+                return {
+                    "success": False,
+                    "error": f"AI regeneration failed: {response.get('error')}",
+                    "updated_summary": original_summary
+                }
+
+            updated_summary = response.get("text", original_summary)
+
+            # Store the updated summary in the checkpoint
+            checkpoint.preliminary_summary = updated_summary
+            checkpoint.user_responses = checkpoint.user_responses or {}
+            checkpoint.user_responses["summary_regenerated"] = True
+            checkpoint.user_responses["summary_regenerated_at"] = datetime.datetime.utcnow().isoformat()
+
+            session.commit()
+
+            return {
+                "success": True,
+                "updated_summary": updated_summary,
+                "corrections_applied": {
+                    "question_corrections": len(question_corrections),
+                    "financial_corrections": len(financial_corrections)
+                },
+                "message": f"Summary updated with {len(question_corrections)} understanding corrections and {len(financial_corrections)} financial corrections"
+            }
+
+        except Exception as e:
+            logging.error(f"Error regenerating summary: {str(e)}")
+            return {
+                "success": False,
+                "error": str(e),
+                "updated_summary": original_summary
+            }
+
+
 def main(req: func.HttpRequest) -> func.HttpResponse:
     """
     Validation checkpoint endpoints.
@@ -545,6 +762,19 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     )
 
                 result = get_validated_context(run_id)
+
+            elif action == "regenerate_summary":
+                checkpoint_id = req_body.get("checkpoint_id")
+                corrections = req_body.get("corrections", {})
+
+                if not checkpoint_id:
+                    return func.HttpResponse(
+                        json.dumps({"error": "checkpoint_id is required"}),
+                        status_code=400,
+                        mimetype="application/json"
+                    )
+
+                result = regenerate_summary_with_corrections(checkpoint_id, corrections)
 
             else:
                 return func.HttpResponse(

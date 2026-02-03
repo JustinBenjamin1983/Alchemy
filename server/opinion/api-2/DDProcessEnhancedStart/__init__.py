@@ -343,6 +343,7 @@ def _run_processing_in_background(
         transaction_context_str = load_result["transaction_context_str"]
         reference_docs = load_result["reference_docs"]
         owned_by = load_result["owned_by"]
+        project_setup = load_result.get("project_setup", {})
 
         # Phase 2: Calculate materiality thresholds based on transaction value
         transaction_value = load_result.get("transaction_value")
@@ -440,7 +441,8 @@ def _run_processing_in_background(
             pass1_results=pass1_results,
             pass2_findings=pass2_findings,
             transaction_context=transaction_context,
-            checkpoint_id=checkpoint_id
+            checkpoint_id=checkpoint_id,
+            project_setup=project_setup
         )
 
         if checkpoint_c_created:
@@ -949,6 +951,7 @@ def _load_dd_data_for_processing(dd_id: str, selected_doc_ids: list = None) -> D
                 "owned_by": owned_by,
                 "dd_name": dd_name,
                 "transaction_value": transaction_value,  # Phase 2: For materiality calculation
+                "project_setup": project_setup,  # For Checkpoint C questions
             }
 
     except Exception as e:
@@ -1643,7 +1646,8 @@ def _create_checkpoint_c_if_needed(
     pass1_results: Dict[str, Any],
     pass2_findings: Any,
     transaction_context: Dict[str, Any],
-    checkpoint_id: str
+    checkpoint_id: str,
+    project_setup: Dict[str, Any] = None
 ) -> bool:
     """
     Create Checkpoint C (post-analysis validation) if not already exists.
@@ -1653,6 +1657,9 @@ def _create_checkpoint_c_if_needed(
     2. Validate financial figures
     3. Identify missing documents
     4. Review and confirm before proceeding
+
+    Args:
+        project_setup: Optional project setup from wizard (includes dealRationale, knownConcerns, etc.)
 
     Returns True if checkpoint was created (or already exists), False on error.
     """
@@ -1708,7 +1715,8 @@ def _create_checkpoint_c_if_needed(
             findings=findings_list,
             pass1_results=pass1_results,
             transaction_context=transaction_context,
-            synthesis_preview=None  # Not available yet
+            synthesis_preview=None,  # Not available yet
+            project_setup=project_setup
         )
         print(f"[Checkpoint C] generate_checkpoint_c_content returned: {list(checkpoint_content.keys()) if checkpoint_content else 'None'}", flush=True)
 

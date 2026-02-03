@@ -1,0 +1,1 @@
+DB_CONNECTION_STRING=postgresql://aishopmain:Upka6iAo4nvktFKP8th4T6N5AV33ukFuqfZ1URP@alchemy-aishop-apps-db.postgres.database.azure.com:5432/postgres?sslmode=require

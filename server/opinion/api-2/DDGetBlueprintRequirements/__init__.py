@@ -126,8 +126,8 @@ def match_documents_to_requirements(
     expected_remaining = set(expected_docs)
 
     for doc in found_docs:
-        doc_type = doc.get("document_type", "").lower()
-        filename = doc.get("filename", "").lower()
+        doc_type = (doc.get("document_type") or "").lower()
+        filename = (doc.get("filename") or "").lower()
 
         # Try to match by document type or filename
         matched_type = None

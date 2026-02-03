@@ -71,6 +71,7 @@ export interface DDProjectSetup {
   clientRole: ClientRole | null;
   dealStructure: DealStructure | null;
   estimatedValue: number | null;
+  estimatedValueCurrency: string;
   targetClosingDate: Date | null;
 
   // Step 2: Deal Context
@@ -126,6 +127,7 @@ export const DEFAULT_PROJECT_SETUP: DDProjectSetup = {
   clientRole: null,
   dealStructure: null,
   estimatedValue: null,
+  estimatedValueCurrency: "ZAR",
   targetClosingDate: null,
   dealRationale: "",
   knownConcerns: [],

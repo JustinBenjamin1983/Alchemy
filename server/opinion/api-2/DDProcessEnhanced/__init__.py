@@ -170,6 +170,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         reference_docs = load_result["reference_docs"]
         transaction_context_str = load_result["transaction_context_str"]
         dd_name = load_result["dd_name"]
+        project_setup = load_result.get("project_setup", {})
         owned_by = load_result["owned_by"]
         entity_map = load_result.get("entity_map")  # Entity map for party validation
 
@@ -198,6 +199,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             dd_id=dd_id,  # Phase 6: for parallel orchestrator
             run_id=checkpoint_id,  # Phase 6: use checkpoint as run_id
             entity_map=entity_map,  # Entity map for party validation
+            project_setup=project_setup,  # For Checkpoint C questions
         )
 
         if processing_result.get("error"):
@@ -539,7 +541,8 @@ def _load_dd_data(dd_id: str, resume_from_checkpoint: bool) -> Dict[str, Any]:
                 "transaction_context_str": transaction_context_str,
                 "dd_name": dd_name,
                 "owned_by": owned_by,
-                "entity_map": entity_map
+                "entity_map": entity_map,
+                "project_setup": project_setup,  # For Checkpoint C questions
             }
 
     except Exception as e:
@@ -561,6 +564,7 @@ def _run_all_passes(
     run_id: Optional[str] = None,
     previous_run_id: Optional[str] = None,
     entity_map: Optional[List[Dict]] = None,
+    project_setup: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Phase 2: Run all 4 passes of Claude API processing.
@@ -805,7 +809,8 @@ def _run_all_passes(
             pass1_results=pass1_results,
             pass2_findings=pass2_findings,
             transaction_context=transaction_context,
-            checkpoint_id=checkpoint_id
+            checkpoint_id=checkpoint_id,
+            project_setup=project_setup
         )
 
         logging.info(f"[DDProcessEnhanced] Checkpoint C creation result: {checkpoint_c_created}")
@@ -1416,10 +1421,14 @@ def _create_checkpoint_c_if_needed(
     pass1_results: Dict[str, Any],
     pass2_findings: Any,
     transaction_context: Dict[str, Any],
-    checkpoint_id: str
+    checkpoint_id: str,
+    project_setup: Dict[str, Any] = None
 ) -> bool:
     """
     Create Checkpoint C (post-analysis validation) if not already exists.
+
+    Args:
+        project_setup: Project setup from wizard (includes dealRationale, knownConcerns, etc.)
 
     Checkpoint C is the 4-step validation wizard where users:
     1. Confirm transaction understanding
@@ -1462,7 +1471,8 @@ def _create_checkpoint_c_if_needed(
             findings=findings_list,
             pass1_results=pass1_results,
             transaction_context=transaction_context,
-            synthesis_preview=None  # Not available yet
+            synthesis_preview=None,  # Not available yet
+            project_setup=project_setup
         )
 
         # Create the checkpoint

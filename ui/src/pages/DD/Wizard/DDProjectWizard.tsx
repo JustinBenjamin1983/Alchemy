@@ -47,6 +47,7 @@ function draftToProjectSetup(draft: WizardDraftData): DDProjectSetup {
     clientRole: draft.clientRole as any,
     dealStructure: draft.dealStructure as any,
     estimatedValue: draft.estimatedValue,
+    estimatedValueCurrency: (draft as any).estimatedValueCurrency || "ZAR",
     targetClosingDate: draft.targetClosingDate ? new Date(draft.targetClosingDate) : null,
     dealRationale: draft.dealRationale || "",
     knownConcerns: draft.knownConcerns || [],

@@ -42,8 +42,6 @@ import { useGenerateSAS } from "@/hooks/useGenerateSAS";
 import { DDTop, ScreenState } from "./DDTop";
 import axios from "axios";
 import ChatbotUI from "./ChatbotUI";
-import { generateDDReport } from "@/utils/reportGenerator";
-import { useGetDDRiskResults } from "@/hooks/useGetDDRiskResults";
 import { RiskSummary } from "./RiskSummary";
 import DocumentChanges from "./DocumentChanges";
 
@@ -56,6 +54,9 @@ import { useGetWizardDrafts, WizardDraftData } from "@/hooks/useWizardDraft";
 import { ClassificationProgressModal } from "./Processing/ClassificationProgressModal";
 import { DDProcessingDashboard } from "./Processing";
 import { useClassifyDocuments } from "@/hooks/useOrganisationProgress";
+
+// Import DD Evaluation components
+import { DDEvaluationMain } from "../DDEvaluation/DDEvaluationMain";
 
 export function DDMainEnhanced() {
   const navigate = useNavigate();
@@ -154,29 +155,6 @@ export function DDMainEnhanced() {
     );
   };
 
-  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
-  const { data: riskResultsRaw } = useGetDDRiskResults(selectedDDID);
-  const riskResults = (riskResultsRaw ?? []) as Array<{
-    category?: string;
-    findings?: any[];
-  }>;
-
-  const allFindings = useMemo(() => {
-    if (!riskResults) return [];
-    return riskResults.flatMap((category) =>
-      (category.findings ?? []).map((finding) => ({
-        ...finding,
-        category: category.category ?? "Uncategorized",
-      }))
-    );
-  }, [riskResults]);
-
-  const categories = useMemo(() => {
-    if (!riskResults) return [];
-    return Array.from(
-      new Set(riskResults.map((r) => r.category ?? "Uncategorized"))
-    );
-  }, [riskResults]);
 
   useEffect(() => {
     if (!mutateDDJoin.isSuccess) return;
@@ -184,26 +162,6 @@ export function DDMainEnhanced() {
   }, [mutateDDJoin.isSuccess]);
 
   const [screenState, setScreenState] = useState<ScreenState>("Wizard-Enhanced");
-
-  const handleGenerateReport = async () => {
-    if (!dd || allFindings.length === 0) {
-      alert("No findings available to generate report");
-      return;
-    }
-
-    setIsGeneratingReport(true);
-    try {
-      const activeFindings = allFindings.filter(
-        (f: any) => f.finding_status !== "Deleted"
-      );
-      await generateDDReport(dd.name, activeFindings, categories);
-    } catch (error) {
-      console.error("Failed to generate report:", error);
-      alert("Failed to generate report. Please try again.");
-    } finally {
-      setIsGeneratingReport(false);
-    }
-  };
 
   // Handle wizard completion - creates the DD project
   const handleWizardComplete = async (setup: DDProjectSetup) => {
@@ -458,8 +416,6 @@ export function DDMainEnhanced() {
           setScreenState={setScreenState}
           onDelete={handleDeleteDD}
           isDeleting={mutateDDDelete.isPending}
-          onGenerateReport={handleGenerateReport}
-          isGeneratingReport={isGeneratingReport}
         />
 
         {!dd && !ddIsFetching && (
@@ -492,8 +448,8 @@ export function DDMainEnhanced() {
         )}
 
         {dd && (
-          <div className="text-xl flex flex-1 flex-col gap-4 p-4 pt-4">
-            <div className="text-2xl font-bold">
+          <div className="text-xl flex flex-1 flex-col gap-4 p-4 pt-4 bg-white dark:bg-slate-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {screenState === "DocumentErrors" && "Document Errors"}
               {screenState === "DocumentChanges" && "Document Changes"}
               {screenState === "Search" && "Search"}
@@ -502,6 +458,7 @@ export function DDMainEnhanced() {
               {screenState === "ShowReport" && "Generate Report"}
               {screenState === "MissingDocs" && "Document Status"}
               {screenState === "CheckpointA" && "Console"}
+              {screenState === "Evaluation" && "DD Evaluation"}
             </div>
             <div>
               {screenState === "DocumentChanges" && (
@@ -529,6 +486,9 @@ export function DDMainEnhanced() {
                   onViewResults={() => setScreenState("Analysis")}
                   onReclassify={() => setShowClassificationModal(true)}
                 />
+              )}
+              {screenState === "Evaluation" && (
+                <DDEvaluationMain embedded />
               )}
             </div>
           </div>

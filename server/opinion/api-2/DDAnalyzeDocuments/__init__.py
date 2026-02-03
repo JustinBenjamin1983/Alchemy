@@ -299,6 +299,7 @@ def _run_analysis_in_background(
         transaction_context = load_result["transaction_context"]
         transaction_context_str = load_result["transaction_context_str"]
         reference_docs = load_result["reference_docs"]
+        project_setup = load_result.get("project_setup", {})
 
         print(f"[DDAnalyzeDocuments] Loaded {len(doc_dicts)} documents", flush=True)
 
@@ -396,6 +397,7 @@ def _run_analysis_in_background(
             pass1_results=pass1_results,
             pass2_findings=pass2_findings,
             transaction_context=transaction_context,
+            project_setup=project_setup,
             checkpoint_id=checkpoint_id
         )
 
@@ -445,10 +447,14 @@ def _create_checkpoint_c(
     pass1_results: Dict[str, Any],
     pass2_findings: Any,
     transaction_context: Dict[str, Any],
+    project_setup: Dict[str, Any],
     checkpoint_id: str
 ) -> bool:
     """
     Create Checkpoint C (post-analysis validation).
+
+    Args:
+        project_setup: Project setup from wizard (includes dealRationale, knownConcerns, etc.)
 
     Returns True if checkpoint was created successfully.
     """
@@ -485,7 +491,8 @@ def _create_checkpoint_c(
             findings=findings_list,
             pass1_results=pass1_results,
             transaction_context=transaction_context,
-            synthesis_preview=None
+            synthesis_preview=None,
+            project_setup=project_setup
         )
 
         # Create the checkpoint

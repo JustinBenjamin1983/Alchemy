@@ -746,22 +746,22 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                   {reportTypeLoading === 'preliminary' ? <SpinnerIcon /> : <FileTextIcon />}
                   {reportTypeLoading === 'preliminary' ? 'Generating...' : 'Preliminary'}
                 </button>
-                {/* Final Report Button (White/Grey, receives the orange chevron indent) */}
+                {/* Final Report Button (White/Grey, with notch for orange chevron to fit into) */}
                 <button
                   onClick={() => onDownloadReport('final')}
                   disabled={reportTypeLoading !== null}
                   className={`
-                    h-8 flex items-center gap-1.5 pl-5 pr-3 text-xs font-medium
+                    h-8 flex items-center gap-1.5 pl-4 pr-3 text-xs font-medium
                     transition-all duration-200 ease-in-out relative -ml-3
                     ${reportTypeLoading === 'final'
-                      ? 'bg-gray-200 dark:bg-slate-400 text-gray-700 dark:text-slate-800 cursor-wait'
+                      ? 'bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-200 cursor-wait'
                       : reportTypeLoading !== null
-                      ? 'bg-gray-100 dark:bg-slate-500 text-gray-400 dark:text-slate-600 cursor-not-allowed'
+                      ? 'bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
                       : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-600 hover:shadow-md'
                     }
                   `}
                   style={{
-                    clipPath: 'polygon(12px 0, 100% 0, 100% 100%, 12px 100%, 0 50%)',
+                    clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%, 12px 50%)',
                     borderRadius: '0 4px 4px 0'
                   }}
                   title="Download final report with all findings (Word document)"

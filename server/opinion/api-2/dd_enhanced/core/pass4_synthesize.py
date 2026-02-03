@@ -95,7 +95,8 @@ def run_pass4_synthesis(
         pass2_findings,
         pass3_results,
         client,
-        transaction_value
+        transaction_value,
+        validated_context
     )
 
     # 4.4 Extract deal-blockers
@@ -458,7 +459,8 @@ def _generate_synthesis(
     pass2_findings: List[Dict],
     pass3_results: Dict,
     client: ClaudeClient,
-    transaction_value: str
+    transaction_value: str,
+    validated_context: Optional[Dict] = None
 ) -> Dict[str, Any]:
     """Generate final synthesis via Claude."""
 

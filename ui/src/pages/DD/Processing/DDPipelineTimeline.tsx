@@ -44,6 +44,53 @@ import { cn } from "@/lib/utils";
 // Re-run Warning Messages
 // ============================================
 
+const getFailureExplanation = (stepId: string): { title: string; cause: string; action: string } => {
+  switch (stepId) {
+    case 'classify':
+      return {
+        title: 'Classification Failed',
+        cause: 'The AI could not sort your documents into folders. This may be due to unrecognised file formats or a temporary connection issue.',
+        action: 'Click to try again. If the problem persists, check that your documents are standard PDF, Word, or Excel files.',
+      };
+    case 'readability':
+      return {
+        title: 'Readability Check Failed',
+        cause: 'Some documents could not be converted to searchable format. This often happens with scanned images or password-protected files.',
+        action: 'Click to retry. You may need to re-scan poor quality documents or unlock protected files.',
+      };
+    case 'entity-map':
+      return {
+        title: 'Entity Mapping Failed',
+        cause: 'The AI could not identify the parties in your documents. This may happen if documents are heavily formatted or contain unusual text layouts.',
+        action: 'Click to try again. If it fails repeatedly, ensure documents are searchable PDFs.',
+      };
+    case 'analyze':
+      return {
+        title: 'Document Analysis Failed',
+        cause: 'The AI encountered an error while extracting data or assessing risks. This could be due to API limits, malformed document content, or a temporary outage.',
+        action: 'Click to retry the analysis. If it continues to fail, try reducing the number of documents or contact support.',
+      };
+    case 'checkpoint-c':
+      return {
+        title: 'Checkpoint Creation Failed',
+        cause: 'The validation checkpoint could not be generated. This may be due to missing analysis data or a database error.',
+        action: 'Click to retry. If the issue persists, try re-running the Extract & Assess step first.',
+      };
+    case 'generate-report':
+      return {
+        title: 'Report Synthesis Failed',
+        cause: 'The AI could not generate your final report. This is often caused by incomplete validation data or an API timeout during the multi-step synthesis process.',
+        action: 'Click to try again. Ensure Checkpoint C is completed. For large document sets, this may take multiple attempts.',
+      };
+    default:
+      return {
+        title: 'Step Failed',
+        cause: 'An unexpected error occurred during processing.',
+        action: 'Click to retry. If the problem persists, please contact support.',
+      };
+  }
+};
+
 const getRerunWarning = (stepId: string): { title: string; description: string; impact: string } => {
   switch (stepId) {
     case 'classify':
@@ -253,20 +300,36 @@ export const DDPipelineTimeline: React.FC<DDPipelineTimelineProps> = ({
                 </TooltipTrigger>
                 <TooltipContent
                   side="bottom"
-                  className="bg-slate-800 border-slate-700 px-3 py-2 max-w-xs shadow-xl"
-                >
-                  <p className="text-sm text-white">
-                    {step.tooltip}
-                  </p>
-                  {step.state === 'locked' && (
-                    <p className="text-xs text-amber-400 mt-1">
-                      Complete previous steps first
-                    </p>
+                  className={cn(
+                    "border px-3 py-2 shadow-xl",
+                    step.state === 'failed'
+                      ? "bg-red-900 border-red-700 max-w-sm"
+                      : "bg-slate-800 border-slate-700 max-w-xs"
                   )}
-                  {step.state === 'failed' && (
-                    <p className="text-xs text-red-400 mt-1">
-                      This step failed. Click to retry.
-                    </p>
+                >
+                  {step.state === 'failed' ? (
+                    <>
+                      <p className="text-sm font-semibold text-red-200">
+                        {getFailureExplanation(step.id).title}
+                      </p>
+                      <p className="text-xs text-red-100 mt-1.5">
+                        {getFailureExplanation(step.id).cause}
+                      </p>
+                      <p className="text-xs text-amber-300 mt-2 font-medium">
+                        {getFailureExplanation(step.id).action}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-sm text-white">
+                        {step.tooltip}
+                      </p>
+                      {step.state === 'locked' && (
+                        <p className="text-xs text-amber-400 mt-1">
+                          Complete previous steps first
+                        </p>
+                      )}
+                    </>
                   )}
                 </TooltipContent>
               </Tooltip>

@@ -231,6 +231,7 @@ def _run_report_generation_in_background(
     from dd_enhanced.core.claude_client import ClaudeClient, ModelTier
     from dd_enhanced.core.materiality import calculate_materiality_thresholds, apply_materiality_to_findings
     from dd_enhanced.core.pass4_synthesize import run_pass4_synthesis
+    from dd_enhanced.core.pass5_verify import run_pass5_verification, apply_verification_adjustments
 
     # Import shared functions
     from DDProcessEnhancedStart import (
@@ -359,6 +360,53 @@ def _run_report_generation_in_background(
 
         print(f"[DDGenerateReport] Applied materiality to {len(enriched_findings)} findings", flush=True)
 
+        # ===== PASS 7: Verification =====
+        print(f"\n[DDGenerateReport] Pass 7: Opus verification", flush=True)
+
+        _update_checkpoint(checkpoint_id, {
+            'current_pass': 7,
+            'current_stage': 'pass7_verify'
+        })
+
+        verification_result = None
+        try:
+            # Build transaction context string for verification
+            transaction_context_str = json.dumps(transaction_context) if isinstance(transaction_context, dict) else str(transaction_context)
+
+            verification_result = run_pass5_verification(
+                pass4_results=pass4_results,
+                pass3_results=pass3_results,
+                pass2_findings=pass2_findings,
+                pass1_results=pass1_results,
+                calculation_aggregates=None,  # Not available in this flow
+                transaction_context=transaction_context_str,
+                client=client,
+                verbose=True
+            )
+
+            if verification_result and not verification_result.error:
+                # Apply verification adjustments
+                pass4_results = apply_verification_adjustments(pass4_results, verification_result)
+
+                status = "PASSED" if verification_result.verification_passed else "NEEDS REVIEW"
+                print(f"[DDGenerateReport] Pass 7 complete: {status} ({verification_result.overall_confidence:.0%} confidence)", flush=True)
+
+                if verification_result.critical_issues:
+                    print(f"[DDGenerateReport] Pass 7 found {len(verification_result.critical_issues)} critical issues to review", flush=True)
+
+                _update_checkpoint(checkpoint_id, {
+                    'verification_passed': verification_result.verification_passed,
+                    'verification_confidence': verification_result.overall_confidence,
+                    'critical_issues_count': len(verification_result.critical_issues)
+                })
+            else:
+                error_msg = verification_result.error if verification_result else "No result"
+                print(f"[DDGenerateReport] Pass 7 verification had issues: {error_msg}", flush=True)
+
+        except Exception as verify_error:
+            print(f"[DDGenerateReport] Pass 7 verification failed (non-fatal): {verify_error}", flush=True)
+            # Continue without verification - it's quality assurance, not critical
+
         # ===== Store findings =====
         print(f"[DDGenerateReport] Storing findings in database", flush=True)
 
@@ -427,6 +475,11 @@ def _run_report_generation_in_background(
             'indemnities_register': pass4_results.get('indemnities_register', []),
             'recommendations': pass4_results.get('recommendations', []),
             'blueprint_qa': blueprint_qa,
+            # Pass 7 verification results
+            'verification': pass4_results.get('verification', {}),
+            'verified_recommendation': pass4_results.get('verified_recommendation', ''),
+            'potential_missing_blockers': pass4_results.get('potential_missing_blockers', []),
+            'consistency_issues': pass4_results.get('consistency_issues', []),
         }
 
         # Update run status

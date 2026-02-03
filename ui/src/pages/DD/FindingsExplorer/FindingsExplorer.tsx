@@ -752,7 +752,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                   disabled={reportTypeLoading !== null}
                   className={`
                     h-8 flex items-center gap-1.5 pl-4 pr-3 text-xs font-medium
-                    transition-all duration-200 ease-in-out relative -ml-3
+                    transition-all duration-200 ease-in-out relative -ml-2
                     ${reportTypeLoading === 'final'
                       ? 'bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-200 cursor-wait'
                       : reportTypeLoading !== null

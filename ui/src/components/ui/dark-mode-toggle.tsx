@@ -43,7 +43,7 @@ export const DarkModeToggle: React.FC<DarkModeToggleProps> = ({ className }) => 
           boxShadow: "3px 3px 6px rgba(0,0,0,0.12), -2px -2px 4px rgba(255,255,255,0.8), inset 1px 1px 1px rgba(255,255,255,0.6)"
         } : {}}
       >
-        <Sun className="h-3 w-3" />
+        <Sun className="h-4 w-4" />
         <span>Light</span>
       </button>
 
@@ -60,7 +60,7 @@ export const DarkModeToggle: React.FC<DarkModeToggleProps> = ({ className }) => 
           boxShadow: "3px 3px 6px rgba(0,0,0,0.3), -2px -2px 4px rgba(255,255,255,0.05), inset 1px 1px 1px rgba(255,255,255,0.1)"
         } : {}}
       >
-        <Moon className="h-3 w-3" />
+        <Moon className="h-4 w-4" />
         <span>Dark</span>
       </button>
     </div>

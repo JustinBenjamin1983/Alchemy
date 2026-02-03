@@ -47,53 +47,53 @@ const DocumentTooltip: React.FC<{
   if (!visible) return null;
 
   return (
-    <div className="absolute left-full top-0 ml-2 z-50 w-56 p-3 bg-white dark:bg-slate-200 border border-gray-200 dark:border-slate-400 rounded-lg shadow-lg pointer-events-none">
-      <div className="text-sm font-medium text-gray-900 dark:text-slate-800 mb-2 break-words">
+    <div className="absolute left-full top-0 ml-2 z-50 w-56 p-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg pointer-events-none">
+      <div className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 break-words">
         {doc.name}
       </div>
       <div className="space-y-1.5 text-xs">
         <div className="flex justify-between">
-          <span className="text-gray-500 dark:text-slate-600">Type:</span>
-          <span className="text-gray-700 dark:text-slate-700 uppercase">{doc.file_type}</span>
+          <span className="text-gray-500 dark:text-gray-400">Type:</span>
+          <span className="text-gray-700 dark:text-gray-300 uppercase">{doc.file_type}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-gray-500 dark:text-slate-600">Total findings:</span>
-          <span className="text-gray-700 dark:text-slate-700">{doc.findings_count}</span>
+          <span className="text-gray-500 dark:text-gray-400">Total findings:</span>
+          <span className="text-gray-700 dark:text-gray-300">{doc.findings_count}</span>
         </div>
         {doc.critical_count > 0 && (
           <div className="flex justify-between">
-            <span className="text-gray-500 dark:text-slate-600">Critical:</span>
+            <span className="text-gray-500 dark:text-gray-400">Critical:</span>
             <span className="text-red-600 dark:text-red-400 font-medium">{doc.critical_count}</span>
           </div>
         )}
         {doc.high_count > 0 && (
           <div className="flex justify-between">
-            <span className="text-gray-500 dark:text-slate-600">High:</span>
+            <span className="text-gray-500 dark:text-gray-400">High:</span>
             <span className="text-orange-600 dark:text-orange-400 font-medium">{doc.high_count}</span>
           </div>
         )}
         {doc.medium_count > 0 && (
           <div className="flex justify-between">
-            <span className="text-gray-500 dark:text-slate-600">Medium:</span>
+            <span className="text-gray-500 dark:text-gray-400">Medium:</span>
             <span className="text-yellow-600 dark:text-yellow-400 font-medium">{doc.medium_count}</span>
           </div>
         )}
         {doc.low_count > 0 && (
           <div className="flex justify-between">
-            <span className="text-gray-500 dark:text-slate-600">Low:</span>
+            <span className="text-gray-500 dark:text-gray-400">Low:</span>
             <span className="text-blue-600 dark:text-blue-400 font-medium">{doc.low_count}</span>
           </div>
         )}
         {doc.positive_count > 0 && (
           <div className="flex justify-between">
-            <span className="text-gray-500 dark:text-slate-600">Positive:</span>
+            <span className="text-gray-500 dark:text-gray-400">Positive:</span>
             <span className="text-green-600 dark:text-green-400 font-medium">{doc.positive_count}</span>
           </div>
         )}
         {doc.gap_count > 0 && (
           <div className="flex justify-between">
-            <span className="text-gray-500 dark:text-slate-600">Gaps:</span>
-            <span className="text-gray-600 dark:text-slate-600">{doc.gap_count}</span>
+            <span className="text-gray-500 dark:text-gray-400">Gaps:</span>
+            <span className="text-gray-600 dark:text-gray-400">{doc.gap_count}</span>
           </div>
         )}
       </div>
@@ -127,14 +127,14 @@ const DocumentItem: React.FC<{
         onClick={onSelect}
         className={`w-full px-3 py-2.5 text-left transition-all ${
           isSelected
-            ? 'bg-white dark:bg-slate-200 border-l-3 border-blue-500 shadow-sm'
+            ? 'bg-white dark:bg-slate-800 border-l-3 border-blue-500 shadow-sm'
             : 'hover:bg-gray-100 dark:hover:bg-slate-200 border-l-3 border-transparent hover:border-gray-300'
         }`}
       >
         <div className="flex items-start gap-2">
           <span className="flex-shrink-0 mt-0.5"><FileIcon /></span>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium text-gray-900 dark:text-slate-800 truncate pr-6">
+            <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate pr-6">
               {doc.name}
             </div>
             <div className="flex items-center gap-2 mt-1">
@@ -155,7 +155,7 @@ const DocumentItem: React.FC<{
                 </span>
               )}
               {!hasIssues && doc.findings_count > 0 && (
-                <span className="text-xs text-gray-500 dark:text-slate-600">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
                   {doc.findings_count} findings
                 </span>
               )}
@@ -177,7 +177,7 @@ const DocumentItem: React.FC<{
               e.stopPropagation();
               setShowMenu(!showMenu);
             }}
-            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-slate-300 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all duration-200 hover:scale-110"
+            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all duration-200 hover:scale-110"
             title="Document options"
           >
             <MoreVerticalIcon />
@@ -185,7 +185,7 @@ const DocumentItem: React.FC<{
 
           {/* Dropdown menu */}
           {showMenu && (
-            <div className="absolute right-0 top-full mt-1 w-36 bg-white dark:bg-slate-200 border border-gray-200 dark:border-slate-400 rounded-lg shadow-lg z-50 py-1">
+            <div className="absolute right-0 top-full mt-1 w-36 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg z-50 py-1">
               {onViewDocument && (
                 <button
                   onClick={(e) => {
@@ -193,7 +193,7 @@ const DocumentItem: React.FC<{
                     onViewDocument(doc.id);
                     setShowMenu(false);
                   }}
-                  className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-slate-700 hover:bg-blue-50 dark:hover:bg-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2 transition-all duration-200"
+                  className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2 transition-all duration-200"
                 >
                   <ExternalLinkIcon />
                   View
@@ -206,7 +206,7 @@ const DocumentItem: React.FC<{
                     onDownloadDocument(doc.id);
                     setShowMenu(false);
                   }}
-                  className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-slate-700 hover:bg-green-50 dark:hover:bg-slate-300 hover:text-green-600 dark:hover:text-green-400 flex items-center gap-2 transition-all duration-200"
+                  className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-slate-700 hover:text-green-600 dark:hover:text-green-400 flex items-center gap-2 transition-all duration-200"
                 >
                   <DownloadIcon />
                   Download
@@ -237,17 +237,17 @@ export const DocumentNavigator: React.FC<DocumentNavigatorProps> = ({
       {/* All Documents option */}
       <button
         onClick={() => onDocumentSelect(null)}
-        className={`w-full px-3 py-2.5 text-left border-b border-gray-200 dark:border-slate-400 transition-all ${
+        className={`w-full px-3 py-2.5 text-left border-b border-gray-200 dark:border-slate-700 transition-all ${
           selectedDocId === null
-            ? 'bg-white dark:bg-slate-200 border-l-3 border-blue-500 shadow-sm'
+            ? 'bg-white dark:bg-slate-800 border-l-3 border-blue-500 shadow-sm'
             : 'hover:bg-gray-100 dark:hover:bg-slate-200 border-l-3 border-transparent hover:border-gray-300'
         }`}
       >
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-900 dark:text-slate-800">
+          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
             All Documents
           </span>
-          <span className="text-xs text-gray-500 dark:text-slate-600">
+          <span className="text-xs text-gray-500 dark:text-gray-400">
             {totalFindings}
           </span>
         </div>
@@ -264,7 +264,7 @@ export const DocumentNavigator: React.FC<DocumentNavigatorProps> = ({
       <div className="flex-1 overflow-y-auto flex flex-col">
         {documents.length === 0 ? (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-center text-gray-400 dark:text-slate-500 text-sm">
+            <div className="text-center text-gray-400 dark:text-gray-500 text-sm">
               No documents analysed
             </div>
           </div>

@@ -94,12 +94,12 @@ export function DDTop({
             </div>
             {/* Navigation Buttons - hidden when collapsed */}
             <div className={`flex gap-4 justify-between items-center overflow-hidden transition-all duration-300 ${isHeaderCollapsed ? 'max-h-0 opacity-0 mt-0' : 'max-h-20 opacity-100 mt-3'}`}>
-              <div className="flex gap-4">
+              <div className="flex gap-3">
                 <Button
-                  className={`transition-all duration-200 hover:scale-105 hover:shadow-md ${
+                  className={`transition-all duration-200 ${
                     screenState === "CheckpointA"
-                      ? "bg-alchemyPrimaryOrange text-white hover:bg-alchemyPrimaryOrange/90"
-                      : "hover:border-gray-400"
+                      ? "bg-alchemyPrimaryOrange text-white border-alchemyPrimaryOrange hover:bg-alchemyPrimaryOrange/90"
+                      : "bg-transparent text-gray-300 border-gray-500 hover:border-gray-300 hover:text-white"
                   }`}
                   variant="outline"
                   onClick={() => setScreenState("CheckpointA")}
@@ -107,10 +107,10 @@ export function DDTop({
                   Console
                 </Button>
                 <Button
-                  className={`transition-all duration-200 hover:scale-105 hover:shadow-md ${
+                  className={`transition-all duration-200 ${
                     screenState === "Analysis"
-                      ? "bg-alchemyPrimaryOrange text-white hover:bg-alchemyPrimaryOrange/90"
-                      : "hover:border-gray-400"
+                      ? "bg-alchemyPrimaryOrange text-white border-alchemyPrimaryOrange hover:bg-alchemyPrimaryOrange/90"
+                      : "bg-transparent text-gray-300 border-gray-500 hover:border-gray-300 hover:text-white"
                   }`}
                   variant="outline"
                   onClick={() => setScreenState("Analysis")}
@@ -118,17 +118,17 @@ export function DDTop({
                   Analysis
                 </Button>
                 <Button
-                  className="transition-all duration-200 hover:scale-105 hover:shadow-md hover:border-gray-400"
+                  className="transition-all duration-200 bg-transparent text-gray-300 border-gray-500 hover:border-gray-300 hover:text-white"
                   variant="outline"
                   onClick={() => setScreenState("Wizard-Chooser")}
                 >
                   Start / join
                 </Button>
                 <Button
-                  className={`transition-all duration-200 hover:scale-105 hover:shadow-md ${
+                  className={`transition-all duration-200 ${
                     screenState === "Evaluation"
-                      ? "bg-purple-600 text-white hover:bg-purple-700"
-                      : "bg-purple-600 text-white hover:bg-purple-700"
+                      ? "bg-purple-600 text-white border-purple-600 hover:bg-purple-700"
+                      : "bg-transparent text-gray-300 border-gray-500 hover:border-gray-300 hover:text-white"
                   }`}
                   variant="outline"
                   onClick={() => setScreenState("Evaluation")}

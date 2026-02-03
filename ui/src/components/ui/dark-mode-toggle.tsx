@@ -29,28 +29,28 @@ export const DarkModeToggle: React.FC<DarkModeToggleProps> = ({ className }) => 
       <button
         onClick={() => setIsDarkMode(false)}
         className={cn(
-          "flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wide transition-all duration-200",
+          "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-wide transition-all duration-200",
           !isDarkMode
             ? "bg-white text-slate-700 shadow-sm"
             : "bg-transparent text-slate-400 hover:text-slate-300"
         )}
       >
-        <Sun className="h-4 w-4" />
-        <span>Light Mode</span>
+        <Sun className="h-3 w-3" />
+        <span>Light</span>
       </button>
 
       {/* Dark Mode Button */}
       <button
         onClick={() => setIsDarkMode(true)}
         className={cn(
-          "flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wide transition-all duration-200",
+          "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-wide transition-all duration-200",
           isDarkMode
             ? "bg-slate-700 text-white shadow-sm"
             : "bg-transparent text-slate-500 hover:text-slate-600"
         )}
       >
-        <Moon className="h-4 w-4" />
-        <span>Dark Mode</span>
+        <Moon className="h-3 w-3" />
+        <span>Dark</span>
       </button>
     </div>
   );

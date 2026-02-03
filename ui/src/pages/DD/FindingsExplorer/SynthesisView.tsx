@@ -108,17 +108,17 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
     return (
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-800 mb-2">
             Executive Summary
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-slate-600">
             AI-generated summary of the due diligence analysis
           </p>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 p-6">
+        <div className="bg-white dark:bg-slate-300 rounded-lg border border-gray-300 dark:border-slate-400 p-6">
           <div className="prose dark:prose-invert max-w-none">
             {synthesisData.executive_summary ? (
-              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
+              <p className="text-gray-700 dark:text-slate-700 whitespace-pre-wrap leading-relaxed">
                 {synthesisData.executive_summary}
               </p>
             ) : (
@@ -136,10 +136,10 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
     return (
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-800 mb-2">
             Deal Assessment
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-slate-600">
             Overall assessment of the transaction viability
           </p>
         </div>
@@ -165,8 +165,8 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
 
         {/* Blocking Issues */}
         {assessment.blocking_issues && assessment.blocking_issues.length > 0 && (
-          <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+          <div className="mb-6 bg-white dark:bg-slate-300 rounded-lg border border-gray-300 dark:border-slate-400 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-800 mb-4 flex items-center gap-2">
               <AlertTriangleIcon />
               Blocking Issues
             </h3>
@@ -176,7 +176,7 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
                   <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-300 rounded-full text-sm font-medium">
                     {index + 1}
                   </span>
-                  <span className="text-gray-700 dark:text-gray-300">{issue}</span>
+                  <span className="text-gray-700 dark:text-slate-700">{issue}</span>
                 </li>
               ))}
             </ul>
@@ -185,13 +185,13 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
 
         {/* Key Risks */}
         {assessment.key_risks && assessment.key_risks.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          <div className="bg-white dark:bg-slate-300 rounded-lg border border-gray-300 dark:border-slate-400 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-800 mb-4">
               Key Risks
             </h3>
             <ul className="space-y-2">
               {assessment.key_risks.map((risk, index) => (
-                <li key={index} className="flex items-start gap-3 text-gray-700 dark:text-gray-300">
+                <li key={index} className="flex items-start gap-3 text-gray-700 dark:text-slate-700">
                   <span className="flex-shrink-0 w-2 h-2 mt-2 bg-amber-500 rounded-full" />
                   {risk}
                 </li>
@@ -209,10 +209,10 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
     return (
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-800 mb-2">
             Financial Exposures
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-slate-600">
             Quantified financial risks and exposures
           </p>
         </div>
@@ -221,31 +221,31 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
         <div className="mb-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
           <div className="flex items-center gap-3 mb-2">
             <CurrencyIcon />
-            <span className="text-sm text-gray-600 dark:text-gray-400">Total Exposure</span>
+            <span className="text-sm text-gray-600 dark:text-slate-600">Total Exposure</span>
           </div>
-          <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <span className="text-3xl font-bold text-gray-900 dark:text-slate-800">
             {formatCurrency(exposures.total || 0, exposures.currency)}
           </span>
         </div>
 
         {/* Exposure Items */}
         {exposures.items && exposures.items.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
+          <div className="bg-white dark:bg-slate-300 rounded-lg border border-gray-300 dark:border-slate-400 overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-100 dark:bg-gray-700/50">
+              <thead className="bg-gray-100 dark:bg-slate-400/50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Source</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Type</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Amount</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Risk Level</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Source</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Type</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Amount</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Risk Level</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {exposures.items.map((item, index) => (
                   <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">{item.source}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{item.type}</td>
-                    <td className="px-6 py-4 text-sm text-right font-medium text-gray-900 dark:text-gray-100">
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-800">{item.source}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-slate-600">{item.type}</td>
+                    <td className="px-6 py-4 text-sm text-right font-medium text-gray-900 dark:text-slate-800">
                       {formatCurrency(item.amount, exposures.currency)}
                     </td>
                     <td className="px-6 py-4">
@@ -262,9 +262,9 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
 
         {/* Calculation Notes */}
         {exposures.calculation_notes && exposures.calculation_notes.length > 0 && (
-          <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Calculation Notes</h4>
-            <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+          <div className="mt-6 p-4 bg-gray-50 dark:bg-slate-300/50 rounded-lg">
+            <h4 className="text-sm font-medium text-gray-700 dark:text-slate-700 mb-2">Calculation Notes</h4>
+            <ul className="text-sm text-gray-600 dark:text-slate-600 space-y-1">
               {exposures.calculation_notes.map((note, index) => (
                 <li key={index}>• {note}</li>
               ))}
@@ -281,10 +281,10 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
     return (
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-800 mb-2">
             Deal Blockers
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-slate-600">
             Issues that must be resolved before the transaction can proceed
           </p>
         </div>
@@ -297,11 +297,11 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
         ) : (
           <div className="space-y-4">
             {blockers.map((blocker, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 rounded-lg border border-red-200 dark:border-red-800 overflow-hidden">
+              <div key={index} className="bg-white dark:bg-slate-300 rounded-lg border border-red-200 dark:border-red-800 overflow-hidden">
                 <div className="px-6 py-4 bg-red-50 dark:bg-red-900/20 border-b border-red-200 dark:border-red-800">
                   <div className="flex items-center gap-2">
                     <AlertTriangleIcon />
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                    <h3 className="font-semibold text-gray-900 dark:text-slate-800">
                       {blocker.issue || blocker.description || `Blocker ${index + 1}`}
                     </h3>
                   </div>
@@ -309,30 +309,30 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
                 <div className="px-6 py-4 space-y-3">
                   {blocker.source && (
                     <div>
-                      <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Source</span>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">{blocker.source}</p>
+                      <span className="text-xs text-gray-500 dark:text-slate-600 uppercase tracking-wider">Source</span>
+                      <p className="text-sm text-gray-700 dark:text-slate-700">{blocker.source}</p>
                     </div>
                   )}
                   {blocker.why_blocking && (
                     <div>
-                      <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Why Blocking</span>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">{blocker.why_blocking}</p>
+                      <span className="text-xs text-gray-500 dark:text-slate-600 uppercase tracking-wider">Why Blocking</span>
+                      <p className="text-sm text-gray-700 dark:text-slate-700">{blocker.why_blocking}</p>
                     </div>
                   )}
                   {blocker.resolution_path && (
                     <div>
-                      <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Resolution Path</span>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">{blocker.resolution_path}</p>
+                      <span className="text-xs text-gray-500 dark:text-slate-600 uppercase tracking-wider">Resolution Path</span>
+                      <p className="text-sm text-gray-700 dark:text-slate-700">{blocker.resolution_path}</p>
                     </div>
                   )}
                   <div className="flex gap-4 text-sm">
                     {blocker.resolution_timeline && (
-                      <span className="text-gray-600 dark:text-gray-400">
+                      <span className="text-gray-600 dark:text-slate-600">
                         Timeline: <span className="font-medium">{blocker.resolution_timeline}</span>
                       </span>
                     )}
                     {blocker.owner && (
-                      <span className="text-gray-600 dark:text-gray-400">
+                      <span className="text-gray-600 dark:text-slate-600">
                         Owner: <span className="font-medium">{blocker.owner}</span>
                       </span>
                     )}
@@ -352,38 +352,38 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
     return (
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-800 mb-2">
             Conditions Precedent Register
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-slate-600">
             Actions and conditions that must be satisfied before closing
           </p>
         </div>
 
         {cps.length === 0 ? (
-          <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 text-center">
+          <div className="p-6 bg-gray-50 dark:bg-slate-300 rounded-lg border border-gray-300 dark:border-slate-400 text-center">
             <ClipboardListIcon />
-            <p className="mt-2 text-gray-600 dark:text-gray-400">No conditions precedent identified</p>
+            <p className="mt-2 text-gray-600 dark:text-slate-600">No conditions precedent identified</p>
           </div>
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
+          <div className="bg-white dark:bg-slate-300 rounded-lg border border-gray-300 dark:border-slate-400 overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-100 dark:bg-gray-700/50">
+              <thead className="bg-gray-100 dark:bg-slate-400/50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-12">#</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Category</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Responsible</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider w-12">#</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Description</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Category</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Responsible</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {cps.map((cp, index) => (
                   <tr key={index} className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 ${cp.is_deal_blocker ? 'bg-red-50/50 dark:bg-red-900/10' : ''}`}>
-                    <td className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <td className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-slate-800">
                       {cp.cp_number || index + 1}
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-700 dark:text-gray-300">
+                    <td className="px-4 py-4 text-sm text-gray-700 dark:text-slate-700">
                       {cp.description}
                       {cp.is_deal_blocker && (
                         <span className="ml-2 inline-block px-2 py-0.5 text-xs bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded">
@@ -391,13 +391,13 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">{cp.category}</td>
-                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">{cp.responsible_party}</td>
+                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-slate-600">{cp.category}</td>
+                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-slate-600">{cp.responsible_party}</td>
                     <td className="px-4 py-4">
                       <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
                         cp.status === 'complete' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' :
                         cp.status === 'in_progress' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' :
-                        'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400'
+                        'bg-gray-100 text-gray-800 dark:bg-slate-400 dark:text-slate-600'
                       }`}>
                         {cp.status || 'not_started'}
                       </span>
@@ -429,42 +429,42 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
     return (
       <div className="max-w-5xl mx-auto">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-800 mb-2 flex items-center gap-2">
             <ShieldCheckIcon />
             Warranties Register
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-slate-600">
             Recommended warranties to protect the client based on DD findings
           </p>
         </div>
 
         {warranties.length === 0 ? (
-          <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 text-center">
+          <div className="p-6 bg-gray-50 dark:bg-slate-300 rounded-lg border border-gray-300 dark:border-slate-400 text-center">
             <ShieldCheckIcon />
-            <p className="mt-2 text-gray-600 dark:text-gray-400">No warranties identified yet</p>
+            <p className="mt-2 text-gray-600 dark:text-slate-600">No warranties identified yet</p>
             <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
               Warranties will be generated based on the DD analysis findings
             </p>
           </div>
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
+          <div className="bg-white dark:bg-slate-300 rounded-lg border border-gray-300 dark:border-slate-400 overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-100 dark:bg-gray-700/50">
+              <thead className="bg-gray-100 dark:bg-slate-400/50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-12">#</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Category</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cap / Survival</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Priority</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider w-12">#</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Category</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Description</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Cap / Survival</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Priority</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {warranties.map((warranty, index) => (
                   <tr key={index} className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 ${warranty.is_fundamental ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}`}>
-                    <td className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <td className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-slate-800">
                       {warranty.warranty_number || index + 1}
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-700 dark:text-gray-300">
+                    <td className="px-4 py-4 text-sm text-gray-700 dark:text-slate-700">
                       <span className="font-medium">{warranty.category}</span>
                       {warranty.is_fundamental && (
                         <span className="ml-2 inline-block px-2 py-0.5 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded">
@@ -472,13 +472,13 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
+                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-slate-600">
                       <p>{warranty.description}</p>
                       {warranty.source_finding && (
                         <p className="mt-1 text-xs text-gray-400">Source: {warranty.source_finding}</p>
                       )}
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
+                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-slate-600">
                       <div>{warranty.typical_cap || '-'}</div>
                       <div className="text-xs text-gray-400">{warranty.survival_period || '-'}</div>
                     </td>
@@ -509,11 +509,11 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
               </div>
               <div className="text-sm text-blue-600 dark:text-blue-400">Fundamental Warranties</div>
             </div>
-            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
-              <div className="text-2xl font-bold text-gray-700 dark:text-gray-300">
+            <div className="p-4 bg-gray-50 dark:bg-slate-300 rounded-lg border border-gray-300 dark:border-slate-400">
+              <div className="text-2xl font-bold text-gray-700 dark:text-slate-700">
                 {warranties.length}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Total Warranties</div>
+              <div className="text-sm text-gray-600 dark:text-slate-600">Total Warranties</div>
             </div>
           </div>
         )}
@@ -538,43 +538,43 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
     return (
       <div className="max-w-5xl mx-auto">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-800 mb-2 flex items-center gap-2">
             <DocumentShieldIcon />
             Indemnities Register
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-slate-600">
             Recommended indemnities to protect the client based on DD risk findings
           </p>
         </div>
 
         {indemnities.length === 0 ? (
-          <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 text-center">
+          <div className="p-6 bg-gray-50 dark:bg-slate-300 rounded-lg border border-gray-300 dark:border-slate-400 text-center">
             <DocumentShieldIcon />
-            <p className="mt-2 text-gray-600 dark:text-gray-400">No indemnities identified yet</p>
+            <p className="mt-2 text-gray-600 dark:text-slate-600">No indemnities identified yet</p>
             <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
               Indemnities will be generated based on specific risks identified in DD
             </p>
           </div>
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
+          <div className="bg-white dark:bg-slate-300 rounded-lg border border-gray-300 dark:border-slate-400 overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-100 dark:bg-gray-700/50">
+              <thead className="bg-gray-100 dark:bg-slate-400/50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-12">#</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Category</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Trigger / Exposure</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cap / Survival</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Priority</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider w-12">#</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Category</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Description</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Trigger / Exposure</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Cap / Survival</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-600 uppercase tracking-wider">Priority</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {indemnities.map((indemnity, index) => (
                   <tr key={index} className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 ${indemnity.escrow_recommendation ? 'bg-orange-50/50 dark:bg-orange-900/10' : ''}`}>
-                    <td className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <td className="px-4 py-4 text-sm font-medium text-gray-900 dark:text-slate-800">
                       {indemnity.indemnity_number || index + 1}
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-700 dark:text-gray-300">
+                    <td className="px-4 py-4 text-sm text-gray-700 dark:text-slate-700">
                       <span className="font-medium">{indemnity.category}</span>
                       {indemnity.escrow_recommendation && (
                         <span className="ml-2 inline-block px-2 py-0.5 text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded">
@@ -582,13 +582,13 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
+                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-slate-600">
                       <p>{indemnity.description}</p>
                       {indemnity.source_finding && (
                         <p className="mt-1 text-xs text-gray-400">Source: {indemnity.source_finding}</p>
                       )}
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
+                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-slate-600">
                       {indemnity.trigger_event && (
                         <div className="text-xs text-gray-500 mb-1">Trigger: {indemnity.trigger_event}</div>
                       )}
@@ -596,7 +596,7 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
                         <div className="font-medium text-amber-600 dark:text-amber-400">{indemnity.quantified_exposure}</div>
                       )}
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
+                    <td className="px-4 py-4 text-sm text-gray-600 dark:text-slate-600">
                       <div>{indemnity.typical_cap || '-'}</div>
                       <div className="text-xs text-gray-400">{indemnity.survival_period || '-'}</div>
                     </td>
@@ -627,11 +627,11 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
               </div>
               <div className="text-sm text-orange-600 dark:text-orange-400">Escrow Recommended</div>
             </div>
-            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
-              <div className="text-2xl font-bold text-gray-700 dark:text-gray-300">
+            <div className="p-4 bg-gray-50 dark:bg-slate-300 rounded-lg border border-gray-300 dark:border-slate-400">
+              <div className="text-2xl font-bold text-gray-700 dark:text-slate-700">
                 {indemnities.length}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Total Indemnities</div>
+              <div className="text-sm text-gray-600 dark:text-slate-600">Total Indemnities</div>
             </div>
           </div>
         )}
@@ -645,27 +645,27 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
     return (
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-800 mb-2">
             Key Recommendations
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-slate-600">
             Recommended actions for the transaction team
           </p>
         </div>
 
         {recommendations.length === 0 ? (
-          <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 text-center">
+          <div className="p-6 bg-gray-50 dark:bg-slate-300 rounded-lg border border-gray-300 dark:border-slate-400 text-center">
             <LightBulbIcon />
-            <p className="mt-2 text-gray-600 dark:text-gray-400">No recommendations available</p>
+            <p className="mt-2 text-gray-600 dark:text-slate-600">No recommendations available</p>
           </div>
         ) : (
           <div className="space-y-4">
             {recommendations.map((rec, index) => (
-              <div key={index} className="flex items-start gap-4 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
+              <div key={index} className="flex items-start gap-4 p-4 bg-white dark:bg-slate-300 rounded-lg border border-gray-300 dark:border-slate-400">
                 <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-full font-semibold">
                   {index + 1}
                 </div>
-                <p className="text-gray-700 dark:text-gray-300 pt-1">{rec}</p>
+                <p className="text-gray-700 dark:text-slate-700 pt-1">{rec}</p>
               </div>
             ))}
           </div>
@@ -676,7 +676,7 @@ export const SynthesisView: React.FC<SynthesisViewProps> = ({
 
   // Fallback
   return (
-    <div className="text-center text-gray-500 dark:text-gray-400 py-12">
+    <div className="text-center text-gray-500 dark:text-slate-600 py-12">
       Select a view from the dropdown
     </div>
   );

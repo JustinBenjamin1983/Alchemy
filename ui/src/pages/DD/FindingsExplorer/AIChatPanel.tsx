@@ -77,8 +77,8 @@ const MessageBubble: React.FC<{ message: ChatMessage }> = ({ message }) => {
     <div className={`flex gap-3 ${isUser ? 'flex-row-reverse' : ''}`}>
       <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
         isUser
-          ? 'bg-blue-100 dark:bg-blue-500/30 text-blue-600 dark:text-blue-300'
-          : 'bg-amber-100 dark:bg-amber-500/30 text-amber-600 dark:text-amber-300'
+          ? 'bg-blue-100 dark:bg-blue-200 text-blue-600 dark:text-blue-700'
+          : 'bg-amber-100 dark:bg-amber-200 text-amber-600 dark:text-amber-700'
       }`}>
         {isUser ? <UserIcon /> : <BrainIcon />}
       </div>
@@ -86,17 +86,17 @@ const MessageBubble: React.FC<{ message: ChatMessage }> = ({ message }) => {
         <div className={`inline-block px-4 py-2 rounded-lg ${
           isUser
             ? 'bg-blue-600 text-white'
-            : 'bg-white dark:bg-slate-500 text-gray-900 dark:text-slate-100 border border-gray-200 dark:border-slate-400'
+            : 'bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-slate-300 shadow-sm'
         }`}>
           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
         </div>
         {message.finding_id && (
-          <div className={`mt-1 text-xs text-gray-500 dark:text-slate-300 flex items-center gap-1 ${isUser ? 'justify-end' : ''}`}>
+          <div className={`mt-1 text-xs text-gray-500 dark:text-slate-600 flex items-center gap-1 ${isUser ? 'justify-end' : ''}`}>
             <DocumentIcon />
             <span>Re: Finding</span>
           </div>
         )}
-        <div className={`mt-1 text-xs text-gray-400 dark:text-slate-300 ${isUser ? 'text-right' : ''}`}>
+        <div className={`mt-1 text-xs text-gray-400 dark:text-slate-500 ${isUser ? 'text-right' : ''}`}>
           {new Date(message.timestamp).toLocaleTimeString('en-GB', {
             hour: '2-digit',
             minute: '2-digit'
@@ -180,13 +180,13 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
 
       {/* Expanded Content - Expands in place, adds height to container */}
       {isExpanded && (
-        <div className="h-72 flex flex-col border-t border-slate-600 bg-white dark:bg-slate-700">
+        <div className="h-72 flex flex-col border-t border-slate-600 bg-white dark:bg-slate-500">
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 bg-gray-50 dark:bg-slate-600">
+          <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 bg-white dark:bg-slate-400">
             {messages.length === 0 ? (
               <div className="text-center py-6">
-                <BrainIcon className="mx-auto text-amber-500 dark:text-amber-400" />
-                <p className="mt-2 text-sm text-gray-600 dark:text-slate-200">
+                <BrainIcon className="mx-auto text-amber-500 dark:text-amber-500" />
+                <p className="mt-2 text-sm text-gray-600 dark:text-slate-700">
                   Ask questions about this Due Diligence analysis
                 </p>
                 {/* Suggested questions */}
@@ -195,7 +195,7 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
                     <button
                       key={i}
                       onClick={() => handleSuggestedQuestion(q)}
-                      className="px-3 py-1.5 text-xs bg-white dark:bg-slate-500 text-gray-700 dark:text-slate-100 rounded-full hover:bg-gray-100 dark:hover:bg-slate-400 transition-all duration-200 hover:scale-105 hover:shadow-md border border-gray-200 dark:border-slate-400 shadow-sm"
+                      className="px-3 py-1.5 text-xs bg-white dark:bg-slate-300 text-gray-700 dark:text-slate-800 rounded-full hover:bg-gray-100 dark:hover:bg-slate-200 transition-all duration-200 hover:scale-105 hover:shadow-md border border-gray-200 dark:border-slate-400 shadow-sm"
                     >
                       {q}
                     </button>
@@ -209,18 +209,18 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
                 ))}
                 {isLoading && (
                   <div className="flex gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-amber-100 dark:bg-amber-500/30 text-amber-600 dark:text-amber-300">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-amber-100 dark:bg-amber-200 text-amber-600 dark:text-amber-700">
                       <BrainIcon />
                     </div>
                     <div className="flex-1">
-                      <div className="inline-block px-4 py-2 rounded-lg bg-white dark:bg-slate-500 border border-gray-200 dark:border-slate-400">
+                      <div className="inline-block px-4 py-2 rounded-lg bg-white dark:bg-white border border-gray-200 dark:border-slate-300 shadow-sm">
                         <div className="flex items-center gap-2">
                           <div className="flex gap-1">
                             <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                             <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                             <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                           </div>
-                          <span className="text-xs text-gray-600 dark:text-slate-200">Thinking...</span>
+                          <span className="text-xs text-gray-600 dark:text-gray-600">Thinking...</span>
                         </div>
                       </div>
                     </div>
@@ -232,7 +232,7 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
           </div>
 
           {/* Input */}
-          <div className="flex-shrink-0 px-4 py-3 border-t border-gray-200 dark:border-slate-500 bg-white dark:bg-slate-500">
+          <div className="flex-shrink-0 px-4 py-3 border-t border-gray-200 dark:border-slate-400 bg-gray-50 dark:bg-slate-300">
             <div className="flex items-center gap-2">
               <input
                 ref={inputRef}
@@ -245,7 +245,7 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
                   : 'Ask a question about this DD...'
                 }
                 disabled={isLoading}
-                className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-slate-400 rounded-lg bg-white dark:bg-slate-600 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-50"
+                className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-slate-400 rounded-lg bg-white dark:bg-white text-gray-900 dark:text-gray-900 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-50"
               />
               <button
                 onClick={handleSend}
@@ -262,13 +262,13 @@ export const AIChatPanel: React.FC<AIChatPanelProps> = ({
                     key={i}
                     onClick={() => handleSuggestedQuestion(q)}
                     disabled={isLoading}
-                    className="px-2 py-1 text-xs text-gray-600 dark:text-slate-200 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-400 rounded transition-all duration-200 hover:scale-105 disabled:opacity-50"
+                    className="px-2 py-1 text-xs text-gray-600 dark:text-slate-700 hover:text-gray-800 dark:hover:text-slate-900 hover:bg-gray-100 dark:hover:bg-slate-200 rounded transition-all duration-200 hover:scale-105 disabled:opacity-50"
                   >
                     {q}
                   </button>
                 ))}
               </div>
-              <span className="text-xs text-gray-400 dark:text-slate-300">
+              <span className="text-xs text-gray-400 dark:text-slate-500">
                 Powered by Claude
               </span>
             </div>

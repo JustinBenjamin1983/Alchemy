@@ -721,14 +721,14 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
 
             {/* Report Download Buttons - Chevron Style */}
             {onDownloadReport && (
-              <div className="flex items-center pl-3 border-l border-gray-200 dark:border-gray-600">
-                {/* Preliminary Report Button (Orange with chevron pointing right) */}
+              <div className="flex items-center pl-3 border-l border-gray-200 dark:border-slate-500">
+                {/* Preliminary Report Button (Orange with chevron pointing right INTO Final) */}
                 <button
                   onClick={() => onDownloadReport('preliminary')}
                   disabled={reportTypeLoading !== null}
                   className={`
-                    h-8 flex items-center gap-1.5 pl-3 pr-4 text-xs font-medium
-                    transition-all duration-200 ease-in-out relative
+                    h-8 flex items-center gap-1.5 pl-3 pr-2 text-xs font-medium
+                    transition-all duration-200 ease-in-out relative z-10
                     ${reportTypeLoading === 'preliminary'
                       ? 'bg-[#ff6b00] text-white cursor-wait'
                       : reportTypeLoading !== null
@@ -737,31 +737,31 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                     }
                   `}
                   style={{
-                    clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%)',
-                    borderRadius: '4px 0 0 4px'
+                    clipPath: 'polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%)',
+                    borderRadius: '4px 0 0 4px',
+                    paddingRight: '14px'
                   }}
                   title="Download preliminary report (Word document)"
                 >
                   {reportTypeLoading === 'preliminary' ? <SpinnerIcon /> : <FileTextIcon />}
                   {reportTypeLoading === 'preliminary' ? 'Generating...' : 'Preliminary'}
                 </button>
-                {/* Final Report Button (White/Grey, receives the chevron) */}
+                {/* Final Report Button (White/Grey, receives the orange chevron indent) */}
                 <button
                   onClick={() => onDownloadReport('final')}
                   disabled={reportTypeLoading !== null}
                   className={`
-                    h-8 flex items-center gap-1.5 pl-4 pr-3 text-xs font-medium
-                    transition-all duration-200 ease-in-out relative -ml-[10px]
-                    border border-gray-200 dark:border-slate-600
+                    h-8 flex items-center gap-1.5 pl-5 pr-3 text-xs font-medium
+                    transition-all duration-200 ease-in-out relative -ml-3
                     ${reportTypeLoading === 'final'
-                      ? 'bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-200 cursor-wait'
+                      ? 'bg-gray-200 dark:bg-slate-400 text-gray-700 dark:text-slate-800 cursor-wait'
                       : reportTypeLoading !== null
-                      ? 'bg-gray-100 dark:bg-slate-700 text-gray-400 cursor-not-allowed'
-                      : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-600 hover:shadow-md'
+                      ? 'bg-gray-100 dark:bg-slate-500 text-gray-400 dark:text-slate-600 cursor-not-allowed'
+                      : 'bg-gray-100 dark:bg-slate-400 text-gray-700 dark:text-slate-800 hover:bg-gray-200 dark:hover:bg-slate-300 hover:shadow-md'
                     }
                   `}
                   style={{
-                    clipPath: 'polygon(10px 0, 100% 0, 100% 100%, 10px 100%, 0 50%)',
+                    clipPath: 'polygon(12px 0, 100% 0, 100% 100%, 12px 100%, 0 50%)',
                     borderRadius: '0 4px 4px 0'
                   }}
                   title="Download final report with all findings (Word document)"
@@ -772,16 +772,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
               </div>
             )}
 
-            {/* Version Manager - show when synthesis is available */}
-            {selectedRunId && synthesisData && (
-              <div className="pl-3 border-l border-gray-300 dark:border-gray-600">
-                <ReportVersionManager
-                  runId={selectedRunId}
-                  ddId={ddId}
-                  className="h-8"
-                />
-              </div>
-            )}
+            {/* Version Manager removed from header for cleaner UI - can be accessed via Analysis page settings if needed */}
           </div>
         </div>
       </div>
@@ -793,7 +784,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
           <div className="flex-1 flex min-h-0">
             {/* Left Panel - Document Navigator */}
             <div
-              className="flex-shrink-0 border-r border-gray-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-600 relative shadow-[2px_0_8px_-2px_rgba(0,0,0,0.1)]"
+              className="flex-shrink-0 border-r border-gray-200 dark:border-slate-400 bg-slate-50 dark:bg-slate-300 relative shadow-[2px_0_8px_-2px_rgba(0,0,0,0.1)]"
               style={{ width: leftPanelCollapsed ? 40 : leftPanelWidth }}
             >
               <div className="h-full flex flex-col">
@@ -848,7 +839,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
 
             {/* Right Panel - Finding Detail */}
             <div
-              className="flex-shrink-0 border-l border-gray-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-600 relative shadow-[-2px_0_8px_-2px_rgba(0,0,0,0.1)]"
+              className="flex-shrink-0 border-l border-gray-200 dark:border-slate-400 bg-slate-50 dark:bg-slate-300 relative shadow-[-2px_0_8px_-2px_rgba(0,0,0,0.1)]"
               style={{ width: rightPanelCollapsed ? 40 : rightPanelWidth }}
             >
               {/* Right panel resize handle */}
@@ -1006,11 +997,11 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
       </div>
 
       {/* Bottom Stats Bar with Severity Legend */}
-      <div className="flex-shrink-0 px-4 py-2.5 border-t border-gray-200 dark:border-slate-600 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-700 dark:to-slate-700 shadow-[0_-2px_8px_-2px_rgba(0,0,0,0.05)]">
-        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+      <div className="flex-shrink-0 px-4 py-2.5 border-t border-gray-200 dark:border-slate-400 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-400 dark:to-slate-400 shadow-[0_-2px_8px_-2px_rgba(0,0,0,0.05)]">
+        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-slate-700">
           <div className="flex items-center gap-4">
             <span>{stats.total} findings</span>
-            <span className="text-gray-300 dark:text-gray-600">|</span>
+            <span className="text-gray-300 dark:text-slate-500">|</span>
             <span>
               {stats.documentsWithFindings} with findings
               {selectedRun && selectedRun.documents_processed > stats.documentsWithFindings && (

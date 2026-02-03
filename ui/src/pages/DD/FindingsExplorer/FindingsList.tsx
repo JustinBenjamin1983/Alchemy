@@ -176,7 +176,7 @@ const SeverityGroup: React.FC<SeverityGroupProps> = ({
   if (findings.length === 0) return null;
 
   return (
-    <div className="border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+    <div className="border-b border-gray-200 dark:border-slate-400 last:border-b-0">
       {/* Group Header */}
       <button
         onClick={onToggle}
@@ -209,10 +209,10 @@ const SeverityGroup: React.FC<SeverityGroupProps> = ({
               key={finding.id}
               className={`group flex items-start gap-2 px-4 py-2.5 border-l-4 transition-all cursor-pointer ${
                 selectedFindingId === finding.id
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/40 shadow-md ring-1 ring-blue-200 dark:ring-blue-800'
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-200 shadow-md ring-1 ring-blue-200 dark:ring-blue-400'
                   : focusedFindingId === finding.id
-                  ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/30'
-                  : 'border-transparent hover:bg-gray-100 dark:hover:bg-gray-800/50 hover:border-gray-300'
+                  ? 'border-blue-400 bg-blue-50 dark:bg-blue-100'
+                  : 'border-transparent hover:bg-gray-100 dark:hover:bg-slate-200 hover:border-gray-300'
               }`}
               onClick={() => onFindingSelect(finding.id)}
               data-finding-id={finding.id}
@@ -233,10 +233,10 @@ const SeverityGroup: React.FC<SeverityGroupProps> = ({
 
               <span className={`text-xs mt-0.5 ${config.color}`}>{config.icon}</span>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">
+                <div className="text-sm font-medium text-gray-900 dark:text-slate-800 line-clamp-2">
                   {finding.title}
                 </div>
-                <div className="flex items-center gap-2 mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <div className="flex items-center gap-2 mt-1 text-xs text-gray-500 dark:text-slate-600">
                   <span className="truncate max-w-[120px]" title={finding.document_name}>
                     {finding.document_name}
                   </span>
@@ -478,12 +478,12 @@ export const FindingsList: React.FC<ExtendedFindingsListProps> = ({
   return (
     <div className="flex flex-col h-full" ref={listRef} tabIndex={0}>
       {/* Header */}
-      <div className="flex-shrink-0 px-4 py-3 border-b border-gray-300 dark:border-gray-600 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-gray-800 dark:to-gray-800">
+      <div className="flex-shrink-0 px-4 py-3 border-b border-gray-300 dark:border-slate-400 bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-400 dark:to-slate-400">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+          <h3 className="text-xs font-semibold text-gray-600 dark:text-slate-700 uppercase tracking-wider">
             Findings
           </h3>
-          <span className="text-xs text-gray-400 dark:text-gray-500">
+          <span className="text-xs text-gray-400 dark:text-slate-600">
             {totalCount} {filterDocId ? 'filtered' : 'total'}
           </span>
         </div>
@@ -497,7 +497,7 @@ export const FindingsList: React.FC<ExtendedFindingsListProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search findings..."
-            className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 dark:border-slate-400 rounded bg-white dark:bg-white text-gray-900 dark:text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -507,10 +507,10 @@ export const FindingsList: React.FC<ExtendedFindingsListProps> = ({
         {totalCount === 0 ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <div className="text-sm text-gray-400 dark:text-gray-500">
+              <div className="text-sm text-gray-400 dark:text-slate-600">
                 {searchQuery ? 'No matching findings' : 'No findings'}
               </div>
-              <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+              <div className="text-xs text-gray-400 dark:text-slate-600 mt-1">
                 {searchQuery
                   ? 'Try a different search term'
                   : filterDocId

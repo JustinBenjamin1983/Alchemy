@@ -727,7 +727,7 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                   onClick={() => onDownloadReport('preliminary')}
                   disabled={reportTypeLoading !== null}
                   className={`
-                    h-8 flex items-center gap-1.5 pl-3 pr-2 text-xs font-medium
+                    flex items-center gap-1.5 pl-3 text-xs font-medium
                     transition-all duration-200 ease-in-out relative z-10
                     ${reportTypeLoading === 'preliminary'
                       ? 'bg-[#ff6b00] text-white cursor-wait'
@@ -737,9 +737,10 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                     }
                   `}
                   style={{
-                    clipPath: 'polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%)',
+                    clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%)',
                     borderRadius: '4px 0 0 4px',
-                    paddingRight: '14px'
+                    paddingRight: '12px',
+                    height: '32px'
                   }}
                   title="Download preliminary report (Word document)"
                 >
@@ -751,8 +752,8 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                   onClick={() => onDownloadReport('final')}
                   disabled={reportTypeLoading !== null}
                   className={`
-                    h-8 flex items-center gap-1.5 pl-4 pr-3 text-xs font-medium
-                    transition-all duration-200 ease-in-out relative -ml-2
+                    flex items-center gap-1.5 pl-4 pr-3 text-xs font-medium
+                    transition-all duration-200 ease-in-out relative
                     ${reportTypeLoading === 'final'
                       ? 'bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-200 cursor-wait'
                       : reportTypeLoading !== null
@@ -761,8 +762,10 @@ export const FindingsExplorer: React.FC<FindingsExplorerProps> = ({
                     }
                   `}
                   style={{
-                    clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%, 12px 50%)',
-                    borderRadius: '0 4px 4px 0'
+                    clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%, 10px 50%)',
+                    borderRadius: '0 4px 4px 0',
+                    marginLeft: '-6px',
+                    height: '32px'
                   }}
                   title="Download final report with all findings (Word document)"
                 >

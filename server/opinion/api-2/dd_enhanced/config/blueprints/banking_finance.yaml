@@ -8,6 +8,59 @@ description: 'Due diligence blueprint for banking and finance transactions inclu
 
   '
 jurisdiction: South Africa
+transaction_context:
+  deal_structures:
+    - id: term_loan
+      description: "Fixed-term bilateral or syndicated loan facility"
+      typical_considerations:
+        - "Borrower capacity and MOI borrowing limits"
+        - "Security package perfection and ranking"
+        - "Financial covenant calibration and headroom"
+        - "Conditions precedent satisfaction timeline"
+    - id: revolving_facility
+      description: "Revolving credit facility allowing repeated draw-downs and repayments"
+      typical_considerations:
+        - "Utilisation conditions and repeating representations"
+        - "Clean-down provisions and commitment reductions"
+        - "Interest rate mechanics (JIBAR/ZARONIA plus margin)"
+        - "Commitment fee on undrawn amounts"
+    - id: project_finance
+      description: "Non-recourse or limited-recourse financing of a specific project"
+      typical_considerations:
+        - "SPV ring-fencing and limited recourse structure"
+        - "Revenue account waterfall and cash sweep mechanics"
+        - "Completion test and conversion to term loan"
+        - "Sponsor support obligations and completion guarantees"
+        - "Insurance programme requirements"
+    - id: acquisition_finance
+      description: "Debt financing for acquisition of a target company or assets"
+      typical_considerations:
+        - "Certain funds provisions and clean-up periods"
+        - "Acquisition agreement conditionality alignment"
+        - "Permitted leakage and locked-box mechanics"
+        - "Post-acquisition integration covenants"
+        - "Target company warranty and indemnity pass-through"
+    - id: debt_restructuring
+      description: "Restructuring or refinancing of existing debt obligations"
+      typical_considerations:
+        - "Existing lender consent and intercreditor terms"
+        - "Subordination and priority arrangements"
+        - "Business rescue implications under Companies Act Chapter 6"
+        - "Cross-default cascade management"
+        - "Negative pledge waiver requirements"
+  typical_parties:
+    - role: borrower
+      description: "Entity borrowing under the facility — must have capacity and authority"
+    - role: lender_syndicate
+      description: "Bank or syndicate of banks providing the facility"
+    - role: guarantor
+      description: "Entity providing guarantee of borrower's obligations — Section 44/45 analysis required"
+    - role: security_agent
+      description: "Agent holding security on behalf of syndicate lenders"
+    - role: arranger
+      description: "Mandated lead arranger structuring the facility and syndication"
+    - role: prudential_authority
+      description: "Prudential Authority / SARB — regulator of banks and systemically important institutions"
 folder_structure:
   01_Corporate_Governance:
     relevance: critical
@@ -23,6 +76,30 @@ folder_structure:
     - Company Registration
     - Signing Authority
     - Group Structure Chart
+    document_expectations:
+      - type: "MOI"
+        aliases: ["Memorandum of Incorporation", "Articles of Association", "Constitution"]
+        tier: critical
+        why_critical: "Constitutional document defining borrowing powers, security granting authority, and approval thresholds"
+        red_flags_if_missing: "Cannot verify borrower capacity or borrowing limits"
+      - type: "Board Resolution"
+        aliases: ["Directors Resolution", "Written Resolution", "Borrowing Resolution"]
+        tier: critical
+        why_critical: "Must authorize the specific borrowing and security granting"
+        red_flags_if_missing: "Transaction lacks corporate authority — potential unenforceability"
+      - type: "Company Registration"
+        aliases: ["CIPC Registration", "CM29", "CoR14.3"]
+        tier: important
+        why_critical: "Confirms valid incorporation and registered office details"
+      - type: "Signing Authority"
+        aliases: ["Specimen Signatures", "Signing Resolution", "Authority to Sign"]
+        tier: critical
+        why_critical: "Confirms authorized signatories for facility agreement execution"
+        red_flags_if_missing: "Signing authority cannot be verified — execution risk"
+      - type: "Group Structure Chart"
+        aliases: ["Organogram", "Corporate Structure", "Group Organogram"]
+        tier: important
+        why_critical: "Maps borrower group for guarantor identification and Section 44/45 analysis"
   02_Commercial:
     relevance: high
     subcategories:
@@ -33,6 +110,19 @@ folder_structure:
     - Material Contract
     - Customer Agreement
     - Supply Agreement
+    document_expectations:
+      - type: "Material Contract"
+        aliases: ["Key Contract", "Principal Agreement", "Commercial Agreement"]
+        tier: important
+        why_critical: "May contain negative pledge, assignment restrictions, or CoC provisions affecting security"
+      - type: "Customer Agreement"
+        aliases: ["Customer Contract", "Sales Agreement", "Revenue Contract"]
+        tier: important
+        why_critical: "Revenue dependency — cession of receivables requires assessment of restrictions"
+      - type: "Supply Agreement"
+        aliases: ["Supplier Contract", "Procurement Agreement"]
+        tier: supporting
+        why_critical: "Cost structure and assignment restrictions may affect cession security"
   03_Financial:
     relevance: critical
     subcategories:
@@ -49,6 +139,39 @@ folder_structure:
     - Guarantee
     - Financial Statements
     - Management Accounts
+    document_expectations:
+      - type: "Existing Facility Agreement"
+        aliases: ["Loan Agreement", "Credit Agreement", "Term Loan", "RCF"]
+        tier: critical
+        why_critical: "Existing debt structure — negative pledge, cross-default, and permitted debt analysis"
+        red_flags_if_missing: "Existing debt obligations unknown — cannot assess new borrowing capacity"
+      - type: "Mortgage Bond"
+        aliases: ["Bond", "Covering Bond", "First Mortgage Bond"]
+        tier: critical
+        why_critical: "Security over immovable property — affects ranking and available security"
+        red_flags_if_missing: "Cannot confirm security ranking or existing encumbrances"
+      - type: "Cession Agreement"
+        aliases: ["Cession in Security", "Cession of Receivables", "Cession of Rights"]
+        tier: critical
+        why_critical: "Security over receivables, insurance, and contractual rights"
+      - type: "Pledge Agreement"
+        aliases: ["Pledge and Cession", "Share Pledge", "Movable Pledge"]
+        tier: critical
+        why_critical: "Security over movable assets and shares"
+      - type: "Guarantee"
+        aliases: ["Bank Guarantee", "Parent Company Guarantee", "Suretyship"]
+        tier: critical
+        why_critical: "Contingent liability exposure and Section 44/45 financial assistance analysis"
+        red_flags_if_missing: "Guarantee obligations unknown"
+      - type: "Financial Statements"
+        aliases: ["AFS", "Annual Financial Statements", "Audited Accounts"]
+        tier: critical
+        why_critical: "Basis for covenant compliance, solvency assessment, and financial warranties"
+        red_flags_if_missing: "Financial position cannot be verified — covenant compliance unknown"
+      - type: "Management Accounts"
+        aliases: ["Monthly Management Accounts", "Management Pack", "Interim Financials"]
+        tier: important
+        why_critical: "Current trading performance since last AFS — covenant compliance update"
   04_Regulatory:
     relevance: high
     subcategories:
@@ -61,6 +184,25 @@ folder_structure:
     - NCA Registration
     - FICA Compliance Certificate
     - Industry License
+    document_expectations:
+      - type: "Banking License"
+        aliases: ["Bank Registration", "PA Registration", "Banking Authorization"]
+        tier: critical
+        why_critical: "Confirms authorized banking activities — fundamental to borrower's business"
+        red_flags_if_missing: "Operating without license — criminal offence under Banks Act Section 11"
+      - type: "NCA Registration"
+        aliases: ["NCR Registration Certificate", "Credit Provider Registration"]
+        tier: critical
+        why_critical: "Required if facility subject to NCA — unregistered credit is void"
+        red_flags_if_missing: "Credit agreement may be unenforceable if NCA applies"
+      - type: "FICA Compliance Certificate"
+        aliases: ["FICA Certificate", "CDD Documentation", "KYC Documentation"]
+        tier: important
+        why_critical: "Anti-money laundering compliance — non-compliance carries criminal penalties"
+      - type: "Industry License"
+        aliases: ["FAIS License", "FSP License", "Sector License"]
+        tier: important
+        why_critical: "Industry-specific regulatory authorization"
   05_Employment:
     relevance: low
     subcategories:
@@ -68,6 +210,11 @@ folder_structure:
     - Key Person
     expected_documents:
     - Employment Contract
+    document_expectations:
+      - type: "Employment Contract"
+        aliases: ["Executive Contract", "Service Agreement", "Key Person Agreement"]
+        tier: supporting
+        why_critical: "Key person dependency and change of control severance exposure"
   06_Property:
     relevance: high
     subcategories:
@@ -78,6 +225,20 @@ folder_structure:
     - Title Deed
     - Property Valuation
     - Lease Agreement
+    document_expectations:
+      - type: "Title Deed"
+        aliases: ["Deed of Transfer", "Property Title", "Title Certificate"]
+        tier: critical
+        why_critical: "Proves ownership of immovable property for mortgage bond security"
+        red_flags_if_missing: "Cannot confirm title for mortgage bond registration"
+      - type: "Property Valuation"
+        aliases: ["Valuation Report", "Market Valuation", "Sworn Appraisal"]
+        tier: important
+        why_critical: "Determines LTV ratio and security adequacy"
+      - type: "Lease Agreement"
+        aliases: ["Commercial Lease", "Property Lease", "Rental Agreement"]
+        tier: important
+        why_critical: "Leasehold properties may require landlord consent for security"
   07_Insurance:
     relevance: medium
     subcategories:
@@ -86,6 +247,15 @@ folder_structure:
     expected_documents:
     - Insurance Policy
     - Certificate of Insurance
+    document_expectations:
+      - type: "Insurance Policy"
+        aliases: ["Insurance Schedule", "Policy Document", "Cover Note"]
+        tier: important
+        why_critical: "Lender requires insurance over secured assets with loss payee endorsement"
+      - type: "Certificate of Insurance"
+        aliases: ["Insurance Certificate", "Broker Certificate", "Cover Confirmation"]
+        tier: important
+        why_critical: "Confirms current coverage, limits, and lender interest notation"
   08_Litigation:
     relevance: high
     subcategories:
@@ -96,6 +266,19 @@ folder_structure:
     - Summons
     - Legal Opinion
     - Demand Letter
+    document_expectations:
+      - type: "Summons"
+        aliases: ["Court Papers", "Particulars of Claim", "Notice of Motion"]
+        tier: important
+        why_critical: "Active litigation may constitute event of default or representation breach"
+      - type: "Legal Opinion"
+        aliases: ["Legal Advice", "Counsel Opinion", "Attorney Opinion"]
+        tier: important
+        why_critical: "Assessment of litigation risk and quantum exposure"
+      - type: "Demand Letter"
+        aliases: ["Letter of Demand", "Threatened Claim", "Pre-litigation Notice"]
+        tier: supporting
+        why_critical: "Threatened litigation requiring disclosure against representations"
   09_Tax:
     relevance: medium
     subcategories:
@@ -104,6 +287,16 @@ folder_structure:
     expected_documents:
     - Tax Clearance Certificate
     - Tax Return
+    document_expectations:
+      - type: "Tax Clearance Certificate"
+        aliases: ["Tax Clearance", "TCC", "SARS Good Standing"]
+        tier: important
+        why_critical: "Typically a condition precedent — confirms no outstanding tax obligations"
+        red_flags_if_missing: "Tax compliance status unknown — CP may not be satisfiable"
+      - type: "Tax Return"
+        aliases: ["Income Tax Return", "IT14", "VAT Return"]
+        tier: supporting
+        why_critical: "Confirms filing compliance and basis for tax warranty"
   99_Needs_Review:
     relevance: n/a
     subcategories:
@@ -129,133 +322,657 @@ risk_categories:
   standard_questions:
   - question: Does the borrower have corporate capacity to borrow?
     priority: critical
+    id: "BF-BCA-001"
+    sub_questions:
+      - "Does the MOI objects clause permit borrowing or is it unrestricted?"
+      - "Is the borrower a validly existing company in good standing with CIPC?"
+      - "Are there any restrictions in constitutional documents on incurring debt?"
+    red_flags:
+      - "MOI objects clause does not include borrowing powers"
+      - "Company registration not in good standing — annual returns overdue"
+    expected_evidence:
+      - "MOI with objects clause and borrowing powers"
+      - "CIPC company search showing good standing"
+      - "Legal opinion on capacity"
   - question: What is the borrowing limit in the MOI if any?
     priority: critical
+    id: "BF-BCA-002"
+    sub_questions:
+      - "Does the MOI impose a monetary limit on borrowing?"
+      - "How does the proposed facility compare to the MOI limit?"
+      - "Does the limit apply to aggregate group borrowings or per-entity?"
+    red_flags:
+      - "Proposed facility exceeds MOI borrowing limit"
+      - "No clear borrowing limit clause — ambiguity risk"
+    expected_evidence:
+      - "MOI borrowing limit clause"
+      - "Schedule of existing borrowings for aggregate calculation"
+      - "Board calculation confirming headroom"
   - question: Has the board properly authorized the borrowing?
     priority: critical
+    id: "BF-BCA-003"
+    sub_questions:
+      - "Was the board resolution passed with the required quorum per MOI?"
+      - "Does the resolution specifically authorize the facility amount and terms?"
+      - "Does the resolution authorize the granting of security?"
+    red_flags:
+      - "Resolution does not cover full facility amount"
+      - "Quorum or voting requirements not met"
+    expected_evidence:
+      - "Board resolution authorizing borrowing"
+      - "MOI quorum and voting requirements"
+      - "Minutes of board meeting"
   - question: Are any shareholder approvals required for the borrowing?
     priority: critical
+    id: "BF-BCA-004"
+    sub_questions:
+      - "Does Section 44 (financial assistance for subscription of shares) apply?"
+      - "Does Section 45 (loans to directors and related parties) apply?"
+      - "Has a special resolution been passed within the previous 2 years?"
+    red_flags:
+      - "Section 44/45 applicable but no special resolution obtained"
+      - "Board solvency and liquidity test not performed"
+    expected_evidence:
+      - "Special resolution under Section 44/45"
+      - "Board solvency and liquidity confirmation"
+      - "Legal opinion on financial assistance"
   - question: Who are the authorized signatories for the borrower?
     priority: high
+    id: "BF-BCA-005"
+    sub_questions:
+      - "Are specimen signatures available for all authorized signatories?"
+      - "Does the signing authority match the board resolution?"
+    red_flags:
+      - "Signatory not listed in board resolution"
+    expected_evidence:
+      - "Board resolution with signatory list"
+      - "Specimen signature cards"
   - question: Are there any restrictions on granting security?
     priority: critical
+    id: "BF-BCA-006"
+    sub_questions:
+      - "Does the MOI restrict the granting of security?"
+      - "Do existing agreements contain negative pledge or similar restrictions?"
+      - "Are there any regulatory restrictions on security (e.g., Banks Act for bank borrowers)?"
+    red_flags:
+      - "MOI restricts security without board/shareholder override mechanism"
+      - "Existing negative pledge not waived"
+    expected_evidence:
+      - "MOI security-related provisions"
+      - "Existing facility negative pledge clauses"
+      - "Waiver or consent from existing lenders"
   - question: Does existing debt contain negative pledge provisions?
     priority: critical
+    id: "BF-BCA-007"
+    sub_questions:
+      - "What is the scope of the negative pledge (all assets vs specific)?"
+      - "Are there carve-outs for permitted security?"
+      - "Has a waiver been obtained from the existing lender?"
+    red_flags:
+      - "Blanket negative pledge with no permitted security carve-out"
+      - "Existing lender refuses waiver"
+    expected_evidence:
+      - "Existing facility agreement negative pledge clause"
+      - "Permitted security basket analysis"
+      - "Waiver correspondence from existing lender"
   - question: Are there any financial assistance concerns under Section 44/45?
     priority: critical
+    id: "BF-BCA-008"
+    sub_questions:
+      - "Does the guarantee structure constitute financial assistance?"
+      - "Has the solvency and liquidity test been applied by the board?"
+      - "Is there a valid special resolution within the 2-year window?"
+    red_flags:
+      - "Upstream guarantee without Section 44/45 compliance"
+      - "Board has not confirmed solvency and liquidity"
+    expected_evidence:
+      - "Section 44/45 legal analysis"
+      - "Special resolution"
+      - "Board solvency and liquidity certificate"
 - name: Existing Indebtedness
   weight: critical
   standard_questions:
   - question: What existing debt facilities are in place?
     priority: critical
+    id: "BF-EXD-001"
+    sub_questions:
+      - "What is the type, lender, and total commitment of each facility?"
+      - "What are the maturity dates and amortization schedules?"
+      - "Are there any undrawn commitments or revolving facilities?"
+    red_flags:
+      - "Undisclosed facility discovered during DD"
+      - "Facility maturity falls before proposed facility closing"
+    expected_evidence:
+      - "Schedule of all existing facilities"
+      - "Certified copy of each facility agreement"
+      - "Latest compliance certificate for each facility"
   - question: What is the outstanding balance on each facility?
     priority: critical
+    id: "BF-EXD-002"
+    sub_questions:
+      - "What is the drawn balance vs total commitment?"
+      - "What is the total accrued but unpaid interest?"
+      - "Are there any contingent liabilities (guarantees, letters of credit)?"
+    red_flags:
+      - "Outstanding balance inconsistent with AFS debt note"
+      - "Facility fully drawn with no headroom"
+    expected_evidence:
+      - "Lender statements or balance confirmations"
+      - "AFS debt note reconciliation"
+      - "Management debt schedule"
   - question: Are there any covenant breaches or events of default?
     priority: critical
+    id: "BF-EXD-003"
+    sub_questions:
+      - "Are all financial covenants currently being met?"
+      - "Are any waivers currently in place?"
+      - "Has any default notice been issued by existing lenders?"
+    red_flags:
+      - "Financial covenant breach without waiver"
+      - "Continuing event of default"
+    expected_evidence:
+      - "Latest compliance certificate"
+      - "Waiver letters"
+      - "Lender correspondence"
   - question: What security has been granted to existing lenders?
     priority: critical
+    id: "BF-EXD-004"
+    sub_questions:
+      - "What assets are encumbered and in whose favour?"
+      - "What is the ranking of existing security?"
+      - "Are there any unencumbered assets available for new security?"
+    red_flags:
+      - "All material assets already encumbered"
+      - "First-ranking security held by existing lender over proposed security assets"
+    expected_evidence:
+      - "Security register"
+      - "Deeds office search results"
+      - "CIPC security interest register"
   - question: Do existing facilities permit additional indebtedness?
     priority: critical
+    id: "BF-EXD-005"
+    sub_questions:
+      - "What is the permitted indebtedness basket and remaining capacity?"
+      - "Does the proposed facility fall within a carve-out?"
+      - "Is lender consent required for additional debt?"
+    red_flags:
+      - "No permitted indebtedness basket or basket exhausted"
+      - "Consent required but not yet obtained"
+    expected_evidence:
+      - "Existing facility permitted indebtedness clause"
+      - "Aggregate debt calculation"
+      - "Lender consent letter"
   - question: Are there any cross-default provisions?
     priority: critical
+    id: "BF-EXD-006"
+    sub_questions:
+      - "Which facilities contain cross-default or cross-acceleration provisions?"
+      - "What thresholds trigger cross-default?"
+      - "Would default under the proposed facility trigger existing facilities?"
+    red_flags:
+      - "Zero threshold cross-default across all facilities"
+      - "Existing default that would trigger proposed facility cross-default"
+    expected_evidence:
+      - "Cross-default clause from each facility agreement"
+      - "Cross-default threshold comparison schedule"
   - question: What inter-creditor arrangements exist?
     priority: high
+    id: "BF-EXD-007"
+    sub_questions:
+      - "Is there an existing intercreditor agreement?"
+      - "What are the enforcement waterfall and sharing provisions?"
+    red_flags:
+      - "No intercreditor agreement for multiple facilities sharing security"
+    expected_evidence:
+      - "Intercreditor agreement"
+      - "Security sharing deed"
   - question: Are there any subordination agreements?
     priority: high
+    id: "BF-EXD-008"
+    sub_questions:
+      - "Are shareholder loans subordinated to senior facilities?"
+      - "Are subordination terms adequate for new lender?"
+    red_flags:
+      - "Shareholder loans not subordinated — competing with facility debt service"
+    expected_evidence:
+      - "Subordination agreement"
+      - "Shareholder loan agreement"
   - question: What are the mandatory prepayment triggers?
     priority: high
+    id: "BF-EXD-009"
+    sub_questions:
+      - "What events trigger mandatory prepayment (CoC, asset disposal, insurance proceeds)?"
+      - "What is the prepayment penalty or break cost exposure?"
+    red_flags:
+      - "Mandatory prepayment triggered by proposed transaction"
+    expected_evidence:
+      - "Existing facility mandatory prepayment clause"
+      - "Break cost calculation"
   - question: Are existing facilities being refinanced or remaining in place?
     priority: critical
+    id: "BF-EXD-010"
+    sub_questions:
+      - "Is the proposed facility replacing existing debt or in addition?"
+      - "What consents are needed from existing lenders for refinancing?"
+      - "What is the refinancing cost (break costs, arrangement fees)?"
+    red_flags:
+      - "Refinancing cost exceeds 3% of facility amount"
+      - "Existing lender refuses consent to refinance"
+    expected_evidence:
+      - "Refinancing term sheet"
+      - "Break cost estimate"
+      - "Existing lender consent letter"
 - name: Security Package
   weight: critical
   standard_questions:
   - question: What assets are available as security?
     priority: critical
+    id: "BF-SEC-001"
+    sub_questions:
+      - "What immovable property is available for mortgage bond?"
+      - "What movable assets are available for notarial bond or pledge?"
+      - "What receivables and contractual rights are available for cession?"
+    red_flags:
+      - "Insufficient asset base to cover facility exposure"
+      - "Key revenue-generating assets not available as security"
+    expected_evidence:
+      - "Asset register with values"
+      - "Property title deeds"
+      - "Debtors book analysis"
   - question: Are there any existing encumbrances over the assets?
     priority: critical
+    id: "BF-SEC-002"
+    sub_questions:
+      - "Are there existing mortgage bonds registered over properties?"
+      - "Are there existing cessions or pledges in favour of other lenders?"
+      - "What is the current ranking position?"
+    red_flags:
+      - "First-ranking security already held by existing lender"
+      - "Existing encumbrances not disclosed by borrower"
+    expected_evidence:
+      - "Deeds office search results"
+      - "CIPC security register"
+      - "Existing security documents"
   - question: Are there any restrictions on creating security?
     priority: critical
+    id: "BF-SEC-003"
+    sub_questions:
+      - "Does the MOI restrict granting of security?"
+      - "Do existing facilities contain negative pledge clauses?"
+      - "Are there contractual restrictions in underlying agreements?"
+    red_flags:
+      - "Negative pledge prevents creation of proposed security"
+      - "Anti-assignment clause in key contract prevents cession"
+    expected_evidence:
+      - "MOI security provisions"
+      - "Existing negative pledge clauses"
+      - "Contract assignment clause analysis"
   - question: Is landlord or other third-party consent required?
     priority: high
+    id: "BF-SEC-004"
+    sub_questions:
+      - "Is property leasehold requiring landlord consent for security?"
+      - "Are there any regulatory consents required for security?"
+    red_flags:
+      - "Landlord consent refused or conditional"
+    expected_evidence:
+      - "Lease agreements"
+      - "Landlord consent letters"
   - question: Are there any cession or pledge restrictions in contracts?
     priority: high
+    id: "BF-SEC-005"
+    sub_questions:
+      - "Do customer contracts contain anti-cession clauses?"
+      - "Are there consent requirements for assignment of receivables?"
+    red_flags:
+      - "Material portion of receivables book subject to anti-cession clauses"
+    expected_evidence:
+      - "Contract anti-cession clause analysis"
+      - "Customer consent letters"
   - question: What is the value of the security assets?
     priority: high
+    id: "BF-SEC-006"
+    sub_questions:
+      - "Are property valuations current (within 6 months)?"
+      - "Were valuations conducted by approved valuers?"
+      - "What is the forced-sale vs market value?"
+    red_flags:
+      - "Valuations older than 12 months"
+      - "LTV ratio exceeds facility maximum"
+    expected_evidence:
+      - "Independent valuation reports"
+      - "Asset register with market and forced-sale values"
   - question: Are there any environmental issues affecting security assets?
     priority: high
+    id: "BF-SEC-007"
+    sub_questions:
+      - "Is there contamination on property offered as security?"
+      - "Are there any pending environmental compliance notices?"
+    red_flags:
+      - "Contaminated land offered as security — remediation cost affects value"
+    expected_evidence:
+      - "Environmental assessment report"
+      - "Environmental compliance correspondence"
   - question: What is the priority of the proposed security?
     priority: critical
+    id: "BF-SEC-008"
+    sub_questions:
+      - "Will the new security rank first or pari passu?"
+      - "Is an intercreditor agreement needed to regulate ranking?"
+      - "Are there any statutory preferences that rank ahead?"
+    red_flags:
+      - "Proposed security will not rank first as required"
+      - "Statutory preferences (employee claims, SARS) may rank ahead"
+    expected_evidence:
+      - "Security ranking analysis"
+      - "Intercreditor agreement terms"
+      - "Legal opinion on ranking"
   - question: Are security assets adequately insured?
     priority: medium
+    id: "BF-SEC-009"
+    expected_evidence:
+      - "Insurance policy schedule"
+      - "Certificate of insurance with loss payee endorsement"
 - name: Financial Covenants
   weight: critical
   standard_questions:
   - question: What financial covenants will apply?
     priority: critical
+    id: "BF-COV-001"
+    sub_questions:
+      - "What specific ratios apply (DSCR, interest cover, leverage, LTV)?"
+      - "How are key terms defined (EBITDA, net debt, debt service)?"
+      - "Are definitions consistent with existing facility covenants?"
+    red_flags:
+      - "Covenant definitions tighter than existing facilities"
+      - "No standard market definitions used"
+    expected_evidence:
+      - "Facility agreement covenant schedule"
+      - "Definition comparison schedule across facilities"
+      - "Term sheet covenant matrix"
   - question: What is the current covenant compliance position?
     priority: critical
+    id: "BF-COV-002"
+    sub_questions:
+      - "What are the actual ratios vs required thresholds?"
+      - "Is the borrower in compliance on all testing dates?"
+      - "Are any waivers currently in place?"
+    red_flags:
+      - "Covenant breach on most recent testing date"
+      - "Declining trend in covenant ratios"
+    expected_evidence:
+      - "Latest compliance certificate"
+      - "Covenant calculation workpapers"
+      - "Management accounts supporting calculations"
   - question: What is the projected covenant headroom?
     priority: high
+    id: "BF-COV-003"
+    sub_questions:
+      - "What is the headroom on each covenant based on current performance?"
+      - "How sensitive are ratios to revenue/cost changes?"
+    red_flags:
+      - "Headroom less than 10% on any covenant"
+    expected_evidence:
+      - "Covenant headroom analysis"
+      - "Sensitivity analysis"
   - question: What cure rights exist for covenant breaches?
     priority: high
+    id: "BF-COV-004"
+    sub_questions:
+      - "Is there a grace period for covenant curing?"
+      - "What equity cure mechanics are available?"
+    red_flags:
+      - "No cure rights — immediate event of default on breach"
+    expected_evidence:
+      - "Facility agreement cure provisions"
+      - "Equity cure mechanism terms"
   - question: Are there any equity cure mechanics?
     priority: medium
+    id: "BF-COV-005"
+    expected_evidence:
+      - "Equity cure clause in facility agreement"
   - question: What testing frequency applies?
     priority: medium
+    id: "BF-COV-006"
+    expected_evidence:
+      - "Covenant testing schedule"
 - name: Guarantees & Credit Support
   weight: high
   standard_questions:
   - question: What guarantees are being provided?
     priority: critical
+    id: "BF-GCS-001"
+    sub_questions:
+      - "What is the guarantee structure (parent, subsidiary, third party)?"
+      - "What is the guarantee amount (unlimited, capped, limited to facility amount)?"
+      - "Is the guarantee joint and several or several?"
+    red_flags:
+      - "No guarantee from key operating entity"
+      - "Guarantee capped at level insufficient to cover facility"
+    expected_evidence:
+      - "Draft guarantee document"
+      - "Group structure showing guarantor relationship"
+      - "Guarantee amount and limitation analysis"
   - question: Do guarantors have authority to provide guarantees?
     priority: critical
+    id: "BF-GCS-002"
+    sub_questions:
+      - "Does each guarantor's MOI permit guarantee issuance?"
+      - "Has each guarantor's board authorized the guarantee?"
+      - "Has Section 44/45 analysis been completed for each guarantor?"
+    red_flags:
+      - "Guarantor MOI does not permit guarantees"
+      - "Section 44/45 compliance not addressed"
+    expected_evidence:
+      - "Guarantor MOI"
+      - "Guarantor board resolution"
+      - "Section 44/45 legal analysis"
   - question: Are there any limitation language or carve-outs?
     priority: high
+    id: "BF-GCS-003"
+    sub_questions:
+      - "Are there financial assistance limitations reducing guarantee value?"
+      - "Are there carve-outs that materially reduce coverage?"
+    red_flags:
+      - "Limitation language reduces guarantee to nominal amount"
+    expected_evidence:
+      - "Guarantee limitation clause analysis"
   - question: Are there any upstream or cross-stream guarantee concerns?
     priority: high
+    id: "BF-GCS-004"
+    sub_questions:
+      - "Does the guarantee constitute upstream financial assistance?"
+      - "What is the corporate benefit to the guarantor?"
+    red_flags:
+      - "No identifiable corporate benefit to guarantor"
+      - "Upstream guarantee without Section 44/45 compliance"
+    expected_evidence:
+      - "Corporate benefit analysis"
+      - "Section 44/45 compliance documentation"
   - question: What is the financial position of each guarantor?
     priority: high
+    id: "BF-GCS-005"
+    sub_questions:
+      - "Is each guarantor solvent on a balance sheet and cash flow basis?"
+      - "What is the net asset value of each guarantor?"
+    red_flags:
+      - "Guarantor has negative net asset value"
+      - "Guarantor's own debt exceeds its asset base"
+    expected_evidence:
+      - "Guarantor AFS or management accounts"
+      - "Solvency assessment"
   - question: Are there any guarantee fees or related party issues?
     priority: medium
+    id: "BF-GCS-006"
+    expected_evidence:
+      - "Guarantee fee arrangement"
+      - "Transfer pricing analysis if intercompany"
 - name: Conditions Precedent
   weight: high
   standard_questions:
   - question: What conditions precedent must be satisfied before drawdown?
     priority: critical
+    id: "BF-CPS-001"
+    sub_questions:
+      - "What documentary CPs are required (constitutional docs, resolutions, opinions)?"
+      - "What operational CPs are required (security perfection, insurance)?"
+      - "Are there any CPs requiring regulatory action?"
+    red_flags:
+      - "CP list includes items requiring extended regulatory timelines"
+      - "Material CP cannot be satisfied by target drawdown date"
+    expected_evidence:
+      - "CP schedule from facility agreement"
+      - "CP satisfaction tracker"
+      - "Timeline assessment"
   - question: Are all CP documents available or in agreed form?
     priority: critical
+    id: "BF-CPS-002"
+    sub_questions:
+      - "Which CP documents are in final form vs agreed form vs outstanding?"
+      - "Are there any CP documents that remain under negotiation?"
+      - "Has counsel confirmed all legal opinions can be delivered?"
+    red_flags:
+      - "Material CP documents not yet in agreed form close to closing"
+      - "Legal opinion cannot be given unqualified"
+    expected_evidence:
+      - "CP document status schedule"
+      - "Draft legal opinion"
+      - "Counsel confirmation letter"
   - question: What third-party consents are required?
     priority: high
+    id: "BF-CPS-003"
+    sub_questions:
+      - "What existing lender consents are needed?"
+      - "What landlord or contractual consents are required?"
+    red_flags:
+      - "Third-party consent refused or conditional"
+    expected_evidence:
+      - "Consent register"
+      - "Consent correspondence"
   - question: What regulatory approvals are needed?
     priority: high
+    id: "BF-CPS-004"
+    sub_questions:
+      - "Is Competition Commission notification required?"
+      - "Are any banking or financial services regulatory approvals needed?"
+    red_flags:
+      - "Regulatory approval timeline extends beyond facility availability period"
+    expected_evidence:
+      - "Regulatory approval analysis"
+      - "Application status tracker"
   - question: What is the realistic timeline to satisfy all CPs?
     priority: high
+    id: "BF-CPS-005"
+    sub_questions:
+      - "What is the critical path for CP satisfaction?"
+      - "Are there any CPs with long lead times (security registration, regulatory)?"
+    red_flags:
+      - "Critical path extends beyond facility availability period"
+    expected_evidence:
+      - "CP timeline and critical path analysis"
   - question: Are there any CPs that may be waived?
     priority: medium
+    id: "BF-CPS-006"
+    expected_evidence:
+      - "Waiver provisions in facility agreement"
 - name: Representations & Warranties
   weight: medium
   standard_questions:
   - question: Can all representations be made truthfully?
     priority: high
+    id: "BF-RWA-001"
+    sub_questions:
+      - "Are there any representations that cannot be made without qualification?"
+      - "What disclosure is required against the proposed representations?"
+    red_flags:
+      - "Material representation cannot be made truthfully without disclosure"
+      - "Borrower seeks to qualify fundamental capacity representations"
+    expected_evidence:
+      - "Representation accuracy analysis"
+      - "Disclosure schedule"
   - question: Are there any matters requiring disclosure against representations?
     priority: high
+    id: "BF-RWA-002"
+    sub_questions:
+      - "What litigation, claims, or proceedings require disclosure?"
+      - "What regulatory matters require disclosure?"
+    red_flags:
+      - "Material undisclosed matter discovered during DD"
+    expected_evidence:
+      - "Disclosure letter or schedule"
+      - "Litigation register"
   - question: What is the repetition mechanism for representations?
     priority: medium
+    id: "BF-RWA-003"
+    expected_evidence:
+      - "Repeating representation clause in facility agreement"
   - question: Are any representations particularly onerous?
     priority: medium
+    id: "BF-RWA-004"
+    expected_evidence:
+      - "Representation analysis identifying non-standard provisions"
 - name: Events of Default
   weight: high
   standard_questions:
   - question: What events of default apply?
     priority: high
+    id: "BF-EOD-001"
+    sub_questions:
+      - "What is the full catalogue of events of default?"
+      - "Are the EoDs standard LMA or customized?"
+    red_flags:
+      - "Non-standard EoD provisions that could be inadvertently triggered"
+    expected_evidence:
+      - "Events of default clause"
+      - "EoD comparison to LMA standard"
   - question: Are there appropriate grace periods and thresholds?
     priority: high
+    id: "BF-EOD-002"
+    sub_questions:
+      - "What grace periods apply to payment defaults?"
+      - "What materiality thresholds apply to covenant breaches?"
+    red_flags:
+      - "No grace period for non-payment defaults"
+      - "Zero materiality threshold for cross-default"
+    expected_evidence:
+      - "Grace period and threshold schedule"
   - question: What cross-default provisions apply?
     priority: high
+    id: "BF-EOD-003"
+    sub_questions:
+      - "What is the cross-default threshold amount?"
+      - "Does it include cross-acceleration or only cross-default?"
+      - "Are there any carve-outs or exclusions?"
+    red_flags:
+      - "Cross-default threshold too low relative to business size"
+    expected_evidence:
+      - "Cross-default clause"
+      - "Threshold comparison to other facilities"
   - question: What change of control provisions apply?
     priority: critical
+    id: "BF-EOD-004"
+    sub_questions:
+      - "How is change of control defined?"
+      - "Is CoC a mandatory prepayment event or an event of default?"
+      - "Is there a negotiation period before acceleration?"
+    red_flags:
+      - "CoC definition triggered by routine corporate actions"
+      - "No negotiation period — immediate acceleration on CoC"
+    expected_evidence:
+      - "Change of control clause"
+      - "CoC definition analysis"
+      - "Mandatory prepayment vs EoD distinction"
   - question: Are there any material adverse change provisions?
     priority: high
+    id: "BF-EOD-005"
+    sub_questions:
+      - "How is MAC defined (subjective vs objective)?"
+      - "What carve-outs apply to MAC (general economic conditions, industry)?"
+    red_flags:
+      - "Subjective MAC with no carve-outs — lender discretion too broad"
+    expected_evidence:
+      - "MAC definition and carve-outs"
+      - "MAC comparison to market standard"
 deal_blockers:
 - description: Borrower lacks corporate capacity or authority to borrow
   severity: absolute
@@ -276,6 +993,192 @@ conditions_precedent_patterns:
   cp_type: Legal Opinion
 - pattern: solvency|liquidity
   cp_type: Solvency Confirmation
+
+# ============================================================================
+# ENTITY RELATIONSHIP PATTERNS
+# ============================================================================
+entity_relationship_patterns:
+  typical_structures:
+    - name: "Borrower Group"
+      description: "HoldCo/OpCo structure where borrower is operating company with holding company guarantor"
+      dd_implication: "Upstream guarantee requires Section 44/45 analysis; assess financial assistance compliance"
+    - name: "Syndicated Lending"
+      description: "Multiple lenders providing facility through agent bank and security agent"
+      dd_implication: "Intercreditor terms govern voting, enforcement, and sharing; majority lender thresholds critical"
+    - name: "SPV Project Finance"
+      description: "Ring-fenced SPV as borrower with limited recourse to sponsors"
+      dd_implication: "SPV must have independent capacity; sponsor support limited to completion guarantee or equity commitment"
+    - name: "HoldCo / OpCo Guarantee"
+      description: "Holding company borrows with operating subsidiaries as guarantors"
+      dd_implication: "Each guarantor requires independent capacity check; Section 44/45 for downstream guarantees"
+    - name: "Cross-Border Lending"
+      description: "Foreign lender to South African borrower or SA lender to foreign borrower"
+      dd_implication: "Exchange control approval under Currency and Exchanges Act; withholding tax on interest payments; cross-border security perfection"
+  entity_roles:
+    - role: "Borrower"
+      description: "Entity drawing down under the facility — must have capacity and authority to borrow"
+    - role: "Guarantor"
+      description: "Entity guaranteeing borrower obligations — Section 44/45 financial assistance analysis"
+    - role: "Security SPV"
+      description: "Special purpose vehicle holding security assets on behalf of syndicate"
+    - role: "Agent Bank"
+      description: "Administrative agent managing facility operations, communications, and cash flows"
+    - role: "Arranger"
+      description: "Mandated lead arranger responsible for structuring, pricing, and syndication"
+    - role: "Intercreditor Agent"
+      description: "Agent managing intercreditor rights, enforcement waterfalls, and lender voting"
+  common_related_parties:
+    - type: "Related Borrower / Guarantor"
+      red_flags:
+        - "Guarantor has negative net asset value"
+        - "Circular guarantee arrangements within group"
+        - "Section 44/45 approval not obtained for upstream or cross-stream guarantee"
+    - type: "Management Company"
+      red_flags:
+        - "Above-market management fees reducing debt service capacity"
+        - "Management company owned by borrower directors"
+        - "No competitive tender for management services"
+    - type: "Shareholder Lender"
+      red_flags:
+        - "Shareholder loans ranking pari passu with facility (should be subordinated)"
+        - "No formal subordination agreement in place"
+        - "Shareholder loan repayments competing with debt service"
+    - type: "Cross-Guarantee Cluster"
+      red_flags:
+        - "Multiple entities cross-guaranteeing without independent benefit analysis"
+        - "Aggregate guarantee exposure exceeds guarantor capacity"
+        - "Financial assistance approvals not obtained across group"
+
+# ============================================================================
+# MATERIALITY THRESHOLDS
+# ============================================================================
+materiality_thresholds:
+  default_when_value_unknown:
+    absolute_threshold: "R5,000,000"
+    description: "Applied when facility amount or transaction value is not known or not disclosed"
+  when_value_known:
+    tiers:
+      - percentage: 5
+        applies_to: "General findings — contracts, liabilities, exposures"
+      - percentage: 2
+        applies_to: "Financial statement items — provisions, accruals, adjustments"
+      - percentage: 1
+        applies_to: "Related party transactions — any deviation from arm's length"
+  qualitative_overrides:
+    always_material_regardless_of_amount:
+      - "Borrower insolvency or inability to pay debts as they fall due"
+      - "Negative pledge breach under existing facility"
+      - "Existing event of default or cross-default trigger"
+      - "Section 44/45 non-compliance for guarantees"
+      - "NCA reckless lending finding"
+      - "FICA violation or money laundering suspicion"
+      - "Security perfection failure — unregistered bond or unperfected cession"
+    never_immaterial_categories:
+      - category: "Capacity & Authority"
+        reason: "Borrower capacity defect renders facility unenforceable"
+      - category: "Existing Indebtedness"
+        reason: "Undisclosed debt or covenant breach affects entire credit decision"
+      - category: "Security"
+        reason: "Security defect undermines lender's recovery position"
+      - category: "Regulatory Compliance"
+        reason: "Regulatory non-compliance can result in facility unenforceability"
+
+# ============================================================================
+# CROSS-REFERENCE EXPECTATIONS
+# ============================================================================
+cross_reference_expectations:
+  - primary_document: "MOI"
+    should_reference:
+      - "Objects clause and borrowing powers"
+      - "Share classes and voting rights"
+      - "Approval thresholds for borrowing and security"
+    should_be_referenced_by:
+      - "Board Resolution — authority derived from MOI"
+      - "Legal Opinion — capacity confirmation based on MOI"
+      - "Facility Agreement — representations reference MOI"
+  - primary_document: "Facility Agreement"
+    should_reference:
+      - "Financial covenants and ratio definitions"
+      - "Security requirements and perfection timeline"
+      - "Conditions precedent schedule"
+      - "Events of default catalogue"
+      - "Representations and warranties"
+    should_be_referenced_by:
+      - "Security Documents — secured obligations defined by reference"
+      - "Guarantee — guaranteed obligations reference facility"
+      - "Intercreditor Agreement — facility ranking and sharing"
+      - "Legal Opinion — enforceability of facility agreement"
+  - primary_document: "Security Documents (Mortgage Bond)"
+    should_reference:
+      - "Property description and title deed reference"
+      - "Secured obligations and covering amount"
+      - "Ranking (first, second, or pari passu)"
+    should_be_referenced_by:
+      - "Facility Agreement — security requirements schedule"
+      - "Title Deed — registered endorsement"
+      - "Insurance Policy — mortgagee interest noted"
+  - primary_document: "Security Documents (Cession)"
+    should_reference:
+      - "Ceded rights and contracts"
+      - "Notice requirements to account debtors"
+      - "Secured obligations"
+    should_be_referenced_by:
+      - "Facility Agreement — security requirements"
+      - "Underlying contracts — no anti-cession clause"
+  - primary_document: "Security Documents (Pledge)"
+    should_reference:
+      - "Pledged assets or shares"
+      - "Secured obligations"
+      - "Voting rights during subsistence of pledge"
+    should_be_referenced_by:
+      - "Facility Agreement — security requirements"
+      - "Share Register — pledge notation"
+  - primary_document: "Guarantee"
+    should_reference:
+      - "Guaranteed obligations and facility agreement"
+      - "Guarantee amount and limitation language"
+      - "Section 44/45 compliance confirmation"
+    should_be_referenced_by:
+      - "Facility Agreement — guarantee as CP"
+      - "Board Resolution of Guarantor — authorization"
+  - primary_document: "Financial Statements"
+    should_reference:
+      - "Debt obligations and maturity profile"
+      - "Contingent liabilities and provisions"
+      - "Related party transactions"
+    should_be_referenced_by:
+      - "Facility Agreement — covenant calculations"
+      - "Compliance Certificate — ratio calculations based on AFS"
+      - "Tax Returns — consistent with AFS"
+  - primary_document: "Intercreditor Agreement"
+    should_reference:
+      - "Priority and ranking of facilities"
+      - "Enforcement waterfall and proceeds allocation"
+      - "Voting thresholds for enforcement decisions"
+    should_be_referenced_by:
+      - "Each Facility Agreement — subject to intercreditor terms"
+      - "Security Documents — security held per intercreditor terms"
+  - primary_document: "Tax Clearance Certificate"
+    should_reference:
+      - "Tax compliance status and validity period"
+    should_be_referenced_by:
+      - "Facility Agreement — CP schedule"
+      - "Compliance Certificate — annual confirmation"
+  - primary_document: "Insurance Policy"
+    should_reference:
+      - "Insured assets and values"
+      - "Loss payee and mortgagee interest endorsement"
+      - "CoC notification requirements"
+    should_be_referenced_by:
+      - "Facility Agreement — insurance covenant requirements"
+      - "Security Documents — insurance assignment clause"
+  - primary_document: "Legal Opinion"
+    should_reference:
+      - "Capacity and authority of borrower and guarantors"
+      - "Enforceability of finance documents"
+      - "Security validity and perfection"
+    should_be_referenced_by:
+      - "Facility Agreement — CP schedule (legal opinion as CP)"
 
 # ============================================================================
 # WARRANTIES & INDEMNITIES FRAMEWORK
@@ -960,28 +1863,95 @@ folder_questions:
       priority: critical
       detail: Check MOI for objects clause, borrowing powers, and any limitations
       cot_hint: Review MOI objects → check borrowing powers → identify limitations
+      id: "BF-F01-001"
+      sub_questions:
+        - "Does the MOI objects clause permit or restrict borrowing?"
+        - "Is the company validly existing and in good standing with CIPC?"
+        - "Are there any restrictions in shareholder agreements on borrowing?"
+      red_flags:
+        - "MOI does not include borrowing in objects clause"
+        - "Company not in good standing — annual returns overdue"
+      expected_evidence:
+        - "MOI objects clause"
+        - "CIPC company search"
+        - "Legal opinion on borrowing capacity"
     - question: Is there a borrowing limit in the MOI and will the facility breach it?
       priority: critical
       detail: Compare proposed facility size to any MOI borrowing restrictions
       cot_hint: Extract MOI limit → compare to facility amount → assess headroom
+      id: "BF-F01-002"
+      sub_questions:
+        - "What is the monetary borrowing limit in the MOI?"
+        - "What is the aggregate of existing borrowings plus proposed facility?"
+        - "Is MOI amendment required to accommodate the facility?"
+      red_flags:
+        - "Proposed facility causes aggregate borrowings to exceed MOI limit"
+        - "No borrowing limit clause — ambiguity on whether there is an implied limit"
+      expected_evidence:
+        - "MOI borrowing limit clause"
+        - "Aggregate borrowing calculation"
     - question: Has the board properly authorized the borrowing with correct quorum and voting?
       priority: critical
       detail: Check resolution against MOI requirements for borrowing decisions
       cot_hint: MOI requirements → resolution compliance → signing authority
+      id: "BF-F01-003"
+      sub_questions:
+        - "Was the quorum requirement met for the board meeting?"
+        - "Does the resolution authorize the specific facility amount and terms?"
+        - "Does the resolution authorize granting of security?"
+      red_flags:
+        - "Resolution does not cover full facility amount or security granting"
+        - "Quorum or voting requirements not met per MOI"
+      expected_evidence:
+        - "Board resolution"
+        - "MOI quorum and voting provisions"
+        - "Board meeting attendance register"
     - question: Are any shareholder approvals required under Section 44 or Section 45?
       priority: critical
       detail: Financial assistance provisions may require special resolution
       cot_hint: Identify if financial assistance applies → check approval mechanism
+      id: "BF-F01-004"
+      sub_questions:
+        - "Does the transaction structure involve financial assistance (guarantee, security for related party)?"
+        - "Has a special resolution been obtained within the preceding 2 years?"
+        - "Has the board applied the solvency and liquidity test?"
+      red_flags:
+        - "Financial assistance applicable but no special resolution"
+        - "Solvency and liquidity test not conducted"
+      expected_evidence:
+        - "Section 44/45 legal analysis"
+        - "Special resolution"
+        - "Board solvency and liquidity certificate"
     - question: Who are the authorized signatories and is their authority properly documented?
       priority: high
       detail: Verify signing authority for facility agreement
       cot_hint: Board resolution → signatory list → specimen signatures
+      id: "BF-F01-005"
+      sub_questions:
+        - "Are specimen signatures available?"
+        - "Does the signing authority match the board resolution?"
+      red_flags:
+        - "Signatory not listed in authorizing resolution"
+      expected_evidence:
+        - "Board resolution with signatory list"
+        - "Specimen signatures"
     # WARRANTY/INDEMNITY QUESTIONS
     - question: What capacity and authority warranties can be given/should be required?
       priority: critical
       detail: Corporate existence, borrowing power, MOI compliance, board authorization
       cot_hint: Review MOI → check authorizations → confirm warranties are accurate
+      id: "BF-F01-006"
       warranty_focus: true
+      sub_questions:
+        - "Can the borrower warrant valid incorporation and good standing?"
+        - "Can MOI borrowing limit compliance be warranted?"
+        - "Can all corporate authorization warranties be given unqualified?"
+      red_flags:
+        - "Borrower seeks to qualify fundamental capacity warranties"
+      expected_evidence:
+        - "MOI review"
+        - "Board resolutions"
+        - "CIPC search"
       suggested_warranties:
         - "W-CA-001: Borrower duly incorporated and validly existing"
         - "W-CA-002: Power to enter into Finance Documents"
@@ -993,7 +1963,18 @@ folder_questions:
       priority: critical
       detail: Guarantor capacity, financial assistance compliance, upstream guarantee issues
       cot_hint: Identify guarantors → check Section 44/45 → assess upstream concerns
+      id: "BF-F01-007"
       warranty_focus: true
+      sub_questions:
+        - "Does each guarantor have capacity and authority to guarantee?"
+        - "Has Section 44/45 compliance been completed for each guarantor?"
+      red_flags:
+        - "Guarantor capacity not verified"
+        - "Financial assistance compliance not addressed"
+      expected_evidence:
+        - "Guarantor MOIs"
+        - "Guarantor board resolutions"
+        - "Section 44/45 compliance documentation"
       suggested_warranties:
         - "W-GUAR-001: Guarantor has capacity to provide guarantee"
         - "W-GUAR-002: Guarantee is valid and enforceable"
@@ -1011,14 +1992,43 @@ folder_questions:
       priority: critical
       detail: Negative pledge in commercial contracts may prevent security package
       cot_hint: Search for 'negative pledge', 'no encumbrance', 'security restriction'
+      id: "BF-F02-001"
+      sub_questions:
+        - "Which material contracts contain negative pledge or no-lien provisions?"
+        - "Are there carve-outs for permitted security?"
+        - "Is counterparty consent required and obtainable?"
+      red_flags:
+        - "Material contract negative pledge prevents proposed security package"
+        - "Counterparty consent required but not yet obtained"
+      expected_evidence:
+        - "Contract negative pledge clause analysis"
+        - "Consent correspondence"
     - question: Are there any assignment restrictions that affect cession of receivables?
       priority: high
       detail: Customer contracts may prohibit assignment without consent
       cot_hint: Check assignment clauses → identify consent requirements
+      id: "BF-F02-002"
+      sub_questions:
+        - "Which customer contracts contain anti-cession or anti-assignment clauses?"
+        - "What percentage of the receivables book is affected?"
+      red_flags:
+        - "Material portion of receivables subject to anti-cession clauses"
+      expected_evidence:
+        - "Anti-cession clause analysis"
+        - "Receivables book composition"
     - question: What is the value of receivables available for security?
       priority: high
       detail: Assess debtor book as potential security asset
       cot_hint: Aggregate receivables value → assess concentration → quality
+      id: "BF-F02-003"
+      sub_questions:
+        - "What is the total receivables book value?"
+        - "What is the concentration risk (top 10 debtors)?"
+      red_flags:
+        - "Single debtor exceeds 25% of receivables book"
+      expected_evidence:
+        - "Debtors book aged analysis"
+        - "Concentration analysis"
     cross_doc_checks:
     - check: Receivables value vs security requirement
       related_folders:
@@ -1032,32 +2042,114 @@ folder_questions:
       priority: critical
       detail: Map all existing indebtedness including drawn and undrawn
       cot_hint: List facilities → extract balances → calculate total exposure
+      id: "BF-F03-001"
+      sub_questions:
+        - "What is the type, lender, commitment, and maturity of each facility?"
+        - "What is the drawn balance vs total commitment?"
+        - "Are there any undrawn commitments that may be cancelled?"
+      red_flags:
+        - "Undisclosed facility discovered"
+        - "AFS debt note does not reconcile to facility schedules"
+      expected_evidence:
+        - "Facility schedule with balances"
+        - "Lender balance confirmations"
+        - "AFS debt note"
     - question: Do existing facilities contain negative pledge or additional indebtedness restrictions?
       priority: critical
       detail: Existing covenants may prevent new borrowing or security
       cot_hint: Find negative pledge clauses → check permitted debt baskets
+      id: "BF-F03-002"
+      sub_questions:
+        - "What is the scope of negative pledge (all assets vs specific classes)?"
+        - "What is the permitted indebtedness basket capacity?"
+        - "Has waiver been obtained from existing lenders?"
+      red_flags:
+        - "Blanket negative pledge with no permitted security carve-out"
+        - "Permitted debt basket exhausted"
+      expected_evidence:
+        - "Negative pledge clause extracts"
+        - "Permitted debt basket calculation"
+        - "Existing lender waiver"
     - question: Are there any cross-default provisions between existing and proposed facilities?
       priority: critical
       detail: Default on one facility could trigger all facilities
       cot_hint: Identify cross-default triggers → assess cascade risk
+      id: "BF-F03-003"
+      sub_questions:
+        - "Which facilities have cross-default provisions?"
+        - "What are the cross-default thresholds?"
+        - "Would breach of proposed facility trigger existing facilities?"
+      red_flags:
+        - "Zero-threshold cross-default across multiple facilities"
+        - "Existing default that would immediately trigger proposed facility"
+      expected_evidence:
+        - "Cross-default clause comparison schedule"
+        - "Threshold analysis"
     - question: What is the current financial covenant compliance position?
       priority: critical
       detail: Existing breaches affect ability to draw new facility
       cot_hint: Extract covenant calculations → compare to thresholds
+      id: "BF-F03-004"
+      sub_questions:
+        - "What are the actual covenant ratios vs thresholds?"
+        - "What is the headroom on each covenant?"
+        - "Are any waivers in place?"
+      red_flags:
+        - "Covenant breach on most recent testing date"
+        - "Headroom less than 10%"
+      expected_evidence:
+        - "Latest compliance certificate"
+        - "Covenant calculation workpapers"
     - question: What security has been granted to existing lenders over which assets?
       priority: critical
       detail: Existing security may limit assets available for new lender
       cot_hint: Build security register → identify unencumbered assets
+      id: "BF-F03-005"
+      sub_questions:
+        - "What assets are encumbered and in whose favour?"
+        - "What is the ranking of existing security?"
+        - "What unencumbered assets are available?"
+      red_flags:
+        - "All material assets already encumbered by existing lenders"
+        - "No unencumbered assets available for new security"
+      expected_evidence:
+        - "Security register"
+        - "Deeds office search"
+        - "CIPC security interest register"
     - question: Are existing facilities being refinanced or remaining in place?
       priority: critical
       detail: Affects inter-creditor arrangements and security ranking
       cot_hint: Determine refinancing vs parallel facility structure
+      id: "BF-F03-006"
+      sub_questions:
+        - "Is the proposed facility replacing or supplementing existing debt?"
+        - "What are the refinancing costs (break costs, fees)?"
+        - "Is an intercreditor agreement required?"
+      red_flags:
+        - "Existing lender refuses consent to refinance"
+        - "Refinancing cost exceeds 3% of facility"
+      expected_evidence:
+        - "Refinancing term sheet"
+        - "Break cost estimate"
+        - "Intercreditor term sheet"
     # WARRANTY/INDEMNITY QUESTIONS
     - question: What existing indebtedness and default warranties can be given/should be required?
       priority: critical
       detail: Debt disclosure, no defaults, cross-default, existing lender consents
       cot_hint: List all debt → check for breaches → verify consent requirements → confirm warranties
+      id: "BF-F03-007"
       warranty_focus: true
+      sub_questions:
+        - "Has all indebtedness been fully disclosed?"
+        - "Are there any undisclosed defaults or potential defaults?"
+        - "Have all required existing lender consents been obtained?"
+      red_flags:
+        - "Incomplete debt disclosure"
+        - "Continuing event of default under existing facility"
+      expected_evidence:
+        - "Complete debt schedule"
+        - "Latest compliance certificates"
+        - "Consent letters"
       suggested_warranties:
         - "W-DEBT-001: Complete disclosure of existing indebtedness"
         - "W-DEBT-002: No existing default or event of default"
@@ -1068,7 +2160,19 @@ folder_questions:
       priority: critical
       detail: AFS accuracy, no MAC, no undisclosed liabilities, covenant compliance
       cot_hint: Review AFS → check for qualifications → assess MAC risk → recommend warranties
+      id: "BF-F03-008"
       warranty_focus: true
+      sub_questions:
+        - "Are the AFS free from qualification?"
+        - "Has there been any material adverse change since the accounts date?"
+        - "Are there undisclosed contingent liabilities?"
+      red_flags:
+        - "Qualified audit opinion"
+        - "Material adverse change since accounts date"
+      expected_evidence:
+        - "Audited financial statements"
+        - "Audit report"
+        - "Management accounts post-AFS"
       suggested_warranties:
         - "W-FI-001: Financial statements fairly represent position"
         - "W-FI-002: No material adverse change"
@@ -1079,7 +2183,18 @@ folder_questions:
       priority: critical
       detail: Borrower solvency, no business rescue, ability to pay debts
       cot_hint: Review financial position → assess solvency → confirm warranty accuracy
+      id: "BF-F03-009"
       warranty_focus: true
+      sub_questions:
+        - "Is the borrower commercially solvent (able to pay debts as they fall due)?"
+        - "Is the borrower factually solvent (assets exceed liabilities)?"
+      red_flags:
+        - "Going concern qualification in audit report"
+        - "Business rescue contemplated or imminent"
+      expected_evidence:
+        - "AFS balance sheet"
+        - "Cash flow forecast"
+        - "Audit report"
       suggested_warranties:
         - "W-SOL-001: Borrower is solvent"
         - "W-SOL-002: No business rescue contemplated"
@@ -1087,7 +2202,16 @@ folder_questions:
       priority: high
       detail: Undisclosed indebtedness, misrepresentation, tax gross-up
       cot_hint: Assess disclosure completeness → identify gaps → recommend indemnities
+      id: "BF-F03-010"
       indemnity_focus: true
+      sub_questions:
+        - "What is the risk of undisclosed indebtedness?"
+        - "What tax gross-up exposure exists?"
+      red_flags:
+        - "Incomplete disclosure of borrower's financial position"
+      expected_evidence:
+        - "Disclosure completeness assessment"
+        - "Tax analysis"
       suggested_indemnities:
         - "I-UL-001: Undisclosed indebtedness indemnity"
         - "I-REP-001: Representation breach indemnity"
@@ -1108,20 +2232,62 @@ folder_questions:
       priority: critical
       detail: NCA registration and compliance status
       cot_hint: Check if NCA applies → verify registration → compliance status
+      id: "BF-F04-001"
+      sub_questions:
+        - "Is the borrower a juristic person with asset value or turnover below NCA threshold?"
+        - "Is the lender registered as a credit provider with NCR?"
+        - "Has an affordability assessment been conducted where required?"
+      red_flags:
+        - "NCA applies but lender not registered — agreement potentially void"
+        - "No affordability assessment conducted — reckless credit risk"
+      expected_evidence:
+        - "NCA applicability analysis"
+        - "NCR registration certificate"
+        - "Affordability assessment documentation"
     - question: Is the borrower FICA compliant with required CDD documentation?
       priority: high
       detail: Lender will require FICA compliance confirmation
       cot_hint: Check FICA policies → verify CDD documentation
+      id: "BF-F04-002"
+      sub_questions:
+        - "Does the borrower have a current RMCP (Risk Management and Compliance Programme)?"
+        - "Is CDD/KYC documentation complete?"
+      red_flags:
+        - "FICA compliance certificate not available"
+        - "FIC enforcement notice received"
+      expected_evidence:
+        - "FICA compliance certificate"
+        - "CDD documentation"
     - question: Are there any industry-specific regulatory approvals required?
       priority: high
       detail: Sector regulators may have notification requirements
       cot_hint: Identify applicable regulators → check consent requirements
+      id: "BF-F04-003"
+      sub_questions:
+        - "Does the borrower hold a banking license, FAIS license, or other FSP registration?"
+        - "Are there notification requirements to regulators for the proposed facility?"
+      red_flags:
+        - "Required license not held or conditions not met"
+      expected_evidence:
+        - "License certificates"
+        - "Regulatory correspondence"
     # WARRANTY/INDEMNITY QUESTIONS
     - question: What regulatory compliance warranties should apply?
       priority: critical
       detail: NCA compliance, FICA compliance, industry licenses, no sanctions
       cot_hint: Check regulatory status → verify licenses → assess AML compliance → recommend warranties
+      id: "BF-F04-004"
       warranty_focus: true
+      sub_questions:
+        - "Can NCA compliance be warranted (or confirmed as not applicable)?"
+        - "Can FICA compliance be warranted?"
+        - "Are there any sanctions or AML concerns requiring disclosure?"
+      red_flags:
+        - "Regulatory non-compliance that cannot be remediated before closing"
+      expected_evidence:
+        - "Regulatory compliance assessment"
+        - "License register"
+        - "Sanctions screening report"
       suggested_warranties:
         - "W-REG-001: All regulatory authorizations in place"
         - "W-REG-002: NCA compliance (if applicable)"
@@ -1140,6 +2306,10 @@ folder_questions:
       priority: medium
       detail: Departure of key executives may be event of default
       cot_hint: Identify key persons → check contract terms
+      id: "BF-F05-001"
+      expected_evidence:
+        - "Key executive employment contracts"
+        - "Key person event of default clause in facility agreement"
     cross_doc_checks: []
   06_Property:
     display_name: Property & Security Assets
@@ -1149,24 +2319,77 @@ folder_questions:
       priority: critical
       detail: Property valuations for mortgage bond security
       cot_hint: Extract valuation amounts → compare to security required
+      id: "BF-F06-001"
+      sub_questions:
+        - "What is the market value and forced-sale value of each property?"
+        - "What is the aggregate LTV ratio against the proposed facility?"
+        - "Are valuations conducted by lender-approved valuers?"
+      red_flags:
+        - "LTV exceeds 70% for commercial property"
+        - "Valuations older than 12 months"
+      expected_evidence:
+        - "Independent valuation reports"
+        - "LTV calculation"
     - question: Are there any existing bonds or encumbrances over the properties?
       priority: critical
       detail: First-ranking security requires no prior encumbrances
       cot_hint: Check title deeds for endorsements → verify ranking
+      id: "BF-F06-002"
+      sub_questions:
+        - "Are there existing mortgage bonds registered over the properties?"
+        - "What is the ranking and covering amount of existing bonds?"
+        - "Can existing bonds be cancelled or will new bond rank second?"
+      red_flags:
+        - "Existing first-ranking bond held by another lender"
+        - "Undisclosed encumbrance discovered on title search"
+      expected_evidence:
+        - "Deeds office search results"
+        - "Title deed endorsements"
+        - "Existing bond cancellation undertaking"
     - question: Do leasehold properties require landlord consent for mortgage?
       priority: high
       detail: Leasehold consent may be required for security
       cot_hint: Identify leased vs owned → check lease consent requirements
+      id: "BF-F06-003"
+      sub_questions:
+        - "Which properties are leasehold vs freehold?"
+        - "Do lease terms permit cession or security?"
+      red_flags:
+        - "Landlord consent refused for leasehold security"
+      expected_evidence:
+        - "Lease agreements"
+        - "Landlord consent letters"
     - question: Are property valuations current and conducted by approved valuers?
       priority: high
       detail: Lender requirements for valuation standards
       cot_hint: Check valuation date → verify valuer credentials
+      id: "BF-F06-004"
+      sub_questions:
+        - "When were the valuations conducted?"
+        - "Is the valuer on the lender's approved panel?"
+      red_flags:
+        - "Valuation older than 6 months"
+      expected_evidence:
+        - "Valuation report with date"
+        - "Valuer credentials"
     # WARRANTY/INDEMNITY QUESTIONS
     - question: What security warranties should be obtained over assets?
       priority: critical
       detail: Title, no encumbrances, first-ranking priority, consents, insurance
       cot_hint: Verify title → check encumbrances → assess priority → recommend warranties
+      id: "BF-F06-005"
       warranty_focus: true
+      sub_questions:
+        - "Can borrower warrant good and marketable title to all security assets?"
+        - "Can borrower warrant no existing encumbrances other than permitted security?"
+        - "Can first-ranking status be warranted?"
+      red_flags:
+        - "Title defect identified during DD"
+        - "Encumbrance not previously disclosed"
+      expected_evidence:
+        - "Title deeds"
+        - "Deeds office search"
+        - "Asset register"
       suggested_warranties:
         - "W-SEC-001: Good title to security assets"
         - "W-SEC-002: Assets free from encumbrances"
@@ -1177,7 +2400,16 @@ folder_questions:
       priority: high
       detail: Environmental contamination affecting security, enforcement costs
       cot_hint: Assess environmental risk on secured property → recommend indemnities
+      id: "BF-F06-006"
       indemnity_focus: true
+      sub_questions:
+        - "Is there contamination risk on property offered as security?"
+        - "What enforcement cost exposure exists?"
+      red_flags:
+        - "Environmental contamination identified on secured property"
+      expected_evidence:
+        - "Environmental assessment"
+        - "Enforcement cost estimate"
       triggered_by:
         - "Property security over industrial assets"
         - "Environmental contamination risk"
@@ -1198,10 +2430,26 @@ folder_questions:
       priority: high
       detail: Lender requires insurance over secured assets
       cot_hint: Check insurance schedules → verify loss payee endorsement
+      id: "BF-F07-001"
+      sub_questions:
+        - "Are all secured assets covered by current insurance policies?"
+        - "Is the lender noted as loss payee or first mortgagee?"
+        - "Are insured values adequate (replacement vs market value)?"
+      red_flags:
+        - "Secured assets not insured or underinsured"
+        - "Lender not noted as loss payee"
+      expected_evidence:
+        - "Insurance policy schedules"
+        - "Loss payee endorsement"
+        - "Insurance broker confirmation"
     - question: Is there adequate business interruption coverage?
       priority: medium
       detail: BI coverage supports debt service capacity
       cot_hint: Compare BI limit to annual debt service requirements
+      id: "BF-F07-002"
+      expected_evidence:
+        - "BI insurance policy"
+        - "BI limit vs annual debt service comparison"
     cross_doc_checks:
     - check: Facility insurance requirements vs policy schedule
       related_folders:
@@ -1215,10 +2463,31 @@ folder_questions:
       priority: critical
       detail: Material litigation is typically an event of default
       cot_hint: Quantify exposure → assess impact on solvency
+      id: "BF-F08-001"
+      sub_questions:
+        - "What is the aggregate quantum of pending claims?"
+        - "What is the probability-weighted litigation exposure?"
+        - "Would adverse outcome constitute an event of default under the facility?"
+      red_flags:
+        - "Aggregate litigation exposure exceeds 5% of borrower net assets"
+        - "Pending claim could trigger MAC or insolvency"
+      expected_evidence:
+        - "Litigation register"
+        - "Legal opinions on pending matters"
+        - "AFS contingent liability note"
     - question: Are there any matters that would constitute a representation breach?
       priority: high
       detail: Litigation representation in facility agreement
       cot_hint: Review rep wording → identify disclosable matters
+      id: "BF-F08-002"
+      sub_questions:
+        - "What matters must be disclosed against the litigation representation?"
+        - "Are there threatened claims not yet issued?"
+      red_flags:
+        - "Material undisclosed claim that would breach representation"
+      expected_evidence:
+        - "Disclosure schedule against litigation representation"
+        - "Demand letters and threatened claim correspondence"
     cross_doc_checks:
     - check: Litigation exposure vs AFS contingent liabilities
       related_folders:
@@ -1232,10 +2501,34 @@ folder_questions:
       priority: high
       detail: Tax compliance is typically a CP and representation
       cot_hint: Check tax clearance validity → verify no disputes
+      id: "BF-F09-001"
+      sub_questions:
+        - "Is the tax clearance certificate current and valid?"
+        - "Are all income tax, VAT, and PAYE returns filed and paid?"
+        - "Will the tax clearance be valid at the facility signing date?"
+      red_flags:
+        - "Tax clearance expired or not obtainable"
+        - "Outstanding tax assessments or arrears"
+      expected_evidence:
+        - "Valid tax clearance certificate"
+        - "Tax return filing register"
+        - "SARS correspondence"
     - question: Are there any pending tax assessments or disputes?
       priority: high
       detail: Could affect creditworthiness and representations
       cot_hint: Search for SARS correspondence → quantify exposure
+      id: "BF-F09-002"
+      sub_questions:
+        - "Are there any SARS audits in progress?"
+        - "Are there objections or appeals outstanding?"
+        - "What is the quantum of disputed tax exposure?"
+      red_flags:
+        - "Material SARS assessment under dispute"
+        - "Tax indemnity required but not offered"
+      expected_evidence:
+        - "SARS audit notifications"
+        - "Objection/appeal correspondence"
+        - "Tax exposure quantification"
     cross_doc_checks:
     - check: Tax clearance validity vs facility signing date
       related_folders: []
@@ -1439,26 +2732,31 @@ statutory_framework:
           penalties:
             criminal: "Fine up to R10 million or imprisonment up to 5 years"
           criticality: critical
+          application_to_dd: "Verify borrower is registered as bank if conducting banking business; confirm license current"
         - section: "Section 35"
           description: "Minimum capital requirements"
           penalties:
             administrative: "Curatorship, license revocation"
           criticality: critical
+          application_to_dd: "Check capital adequacy ratios; assess if proposed facility impacts regulatory capital position"
         - section: "Section 52"
           description: "Restrictions on lending to related parties"
           penalties:
             administrative: "Enforcement action, fines"
           criticality: high
+          application_to_dd: "Identify related party lending; verify compliance with exposure limits and board approval"
         - section: "Section 60"
           description: "Large exposure limits"
           penalties:
             administrative: "Supervisory intervention, capital requirements"
           criticality: high
+          application_to_dd: "Calculate single borrower exposure as percentage of capital; flag if approaching 25% limit"
         - section: "Section 78"
           description: "Fit and proper requirements for management"
           penalties:
             administrative: "Disqualification, removal from office"
           criticality: critical
+          application_to_dd: "Verify key management fit and proper status; check for disqualified directors"
 
     - act: "Financial Sector Regulation Act 9 of 2017"
       acronym: "FSRA"
@@ -1470,16 +2768,19 @@ statutory_framework:
             criminal: "Fine or imprisonment"
             administrative: "License suspension or revocation"
           criticality: critical
+          application_to_dd: "Confirm borrower holds required FSP license; check for conditions or restrictions on license"
         - section: "Section 135"
           description: "Administrative penalties"
           penalties:
             administrative: "Penalty up to R10 million per contravention"
           criticality: high
+          application_to_dd: "Check for any pending or recent administrative penalties; assess impact on borrower operations"
         - section: "Section 153"
           description: "Fit and proper requirements"
           penalties:
             administrative: "Debarment, disqualification"
           criticality: critical
+          application_to_dd: "Verify directors and key persons meet fit and proper requirements; check debarment register"
 
     - act: "National Credit Act 34 of 2005"
       acronym: "NCA"
@@ -1490,22 +2791,26 @@ statutory_framework:
           penalties:
             criminal: "Fine up to R1 million or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Determine if NCA applies to facility; verify lender registration if required; check exemptions"
         - section: "Section 81"
           description: "Reckless credit prohibition"
           penalties:
             civil: "Credit agreement may be set aside"
             administrative: "Registration cancellation"
           criticality: critical
+          application_to_dd: "Assess affordability; verify lender conducted proper affordability assessment before credit extension"
         - section: "Section 100"
           description: "Maximum interest rate and fee restrictions"
           penalties:
             administrative: "Excess amounts refundable, registration action"
           criticality: high
+          application_to_dd: "Verify interest rate and fees within NCA prescribed maximums if applicable"
         - section: "Section 129"
           description: "Notice requirements before enforcement"
           penalties:
             civil: "Enforcement may be stayed"
           criticality: high
+          application_to_dd: "Confirm Section 129 notice procedures in facility agreement; assess enforcement process compliance"
 
     - act: "Financial Advisory and Intermediary Services Act 37 of 2002"
       acronym: "FAIS"
@@ -1516,16 +2821,19 @@ statutory_framework:
           penalties:
             criminal: "Fine up to R10 million or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Verify FAIS license if borrower provides financial advisory or intermediary services"
         - section: "Section 13"
           description: "Fit and proper requirements"
           penalties:
             administrative: "License withdrawal"
           criticality: critical
+          application_to_dd: "Check key individuals' fit and proper status; verify no pending FSCA disciplinary actions"
         - section: "Section 16"
           description: "General duties of provider"
           penalties:
             administrative: "Enforcement action, compensation orders"
           criticality: high
+          application_to_dd: "Review compliance with client duty of care; assess complaints register and Ombud referrals"
 
     - act: "Financial Intelligence Centre Act 38 of 2001"
       acronym: "FICA"
@@ -1537,16 +2845,19 @@ statutory_framework:
             administrative: "Fine up to R50 million"
             criminal: "Imprisonment up to 15 years"
           criticality: critical
+          application_to_dd: "Verify borrower's CDD/KYC compliance; check risk management and compliance programme"
         - section: "Section 28"
           description: "Record keeping requirements"
           penalties:
             administrative: "Fine up to R10 million"
           criticality: high
+          application_to_dd: "Confirm record-keeping policies in place; check retention periods meet 5-year FICA requirement"
         - section: "Section 29"
           description: "Suspicious transaction reporting"
           penalties:
             criminal: "Fine up to R100 million or imprisonment up to 15 years"
           criticality: critical
+          application_to_dd: "Review STR reporting procedures; check for FIC enforcement actions or compliance inspections"
 
     - act: "Consumer Protection Act 68 of 2008"
       acronym: "CPA"
@@ -1557,12 +2868,14 @@ statutory_framework:
           penalties:
             civil: "Terms may be declared void"
           criticality: high
+          application_to_dd: "Assess if facility terms may be challenged as unfair; relevant for consumer borrowers"
         - section: "Section 51"
           description: "Prohibited contract terms"
           penalties:
             civil: "Void and unenforceable"
             administrative: "Compliance notice, fines"
           criticality: high
+          application_to_dd: "Review facility agreement for prohibited terms; confirm CPA exclusion applies if juristic person"
 
     - act: "Insolvency Act 24 of 1936"
       acronym: "Insolvency Act"
@@ -1573,22 +2886,32 @@ statutory_framework:
           penalties:
             civil: "Transaction may be set aside"
           criticality: critical
+          application_to_dd: "Assess if security granted within 6 months of insolvency could be set aside as voidable preference"
         - section: "Section 29"
           description: "Undue preference disposition"
           penalties:
             civil: "Transaction set aside, recovery of property"
           criticality: critical
+          application_to_dd: "Review security and payments made to existing creditors for undue preference risk"
         - section: "Section 30"
           description: "Voidable dispositions not for value"
           penalties:
             civil: "Transaction void if within 2 years"
           criticality: high
+          application_to_dd: "Assess guarantee and security granted without direct benefit to grantor; value analysis required"
         - section: "Section 34"
           description: "Collusive dealings"
           penalties:
             civil: "Transaction void"
             criminal: "Criminal liability"
           criticality: critical
+          application_to_dd: "Check for arrangements designed to prefer certain creditors or defeat creditor claims"
+        - section: "Section 8"
+          description: "Acts of insolvency"
+          penalties:
+            civil: "Basis for sequestration application"
+          criticality: critical
+          application_to_dd: "Assess borrower for acts of insolvency; inability to pay debts as they fall due"
 
   sector_specific:
     prudential_requirements:
@@ -1607,6 +2930,90 @@ statutory_framework:
           threshold: 25
           measurement: "percentage of capital"
           consequence: "Additional capital requirements"
+
+  secondary_legislation:
+    - name: "Banks Act Regulations (GN R1029)"
+      description: "Detailed prudential and operational requirements for registered banks"
+      key_provisions:
+        - "Capital adequacy calculation methodology"
+        - "Risk-weighted asset classification"
+        - "Reporting requirements to Prudential Authority"
+    - name: "PA Prudential Standards"
+      description: "Prudential standards issued by the Prudential Authority under FSRA"
+      key_provisions:
+        - "Governance and risk management standards"
+        - "Outsourcing and third-party risk management"
+        - "Operational resilience requirements"
+    - name: "NCA Regulations (GN R489)"
+      description: "Detailed credit provider obligations and affordability assessment requirements"
+      key_provisions:
+        - "Affordability assessment methodology"
+        - "Credit life insurance requirements"
+        - "Maximum interest rate and fee tables"
+        - "Debt review procedures"
+    - name: "FICA Regulations"
+      description: "Customer due diligence and compliance requirements"
+      key_provisions:
+        - "Risk-based approach to CDD"
+        - "Enhanced due diligence for PEPs and high-risk customers"
+        - "Ongoing monitoring and record-keeping requirements"
+    - name: "Basel III Implementation (PA Directive)"
+      description: "South African implementation of Basel III capital and liquidity framework"
+      key_provisions:
+        - "Capital conservation buffer (2.5%)"
+        - "Countercyclical capital buffer (0-2.5%)"
+        - "Net Stable Funding Ratio requirements"
+        - "Leverage ratio floor"
+    - name: "Financial Services Charter"
+      description: "B-BBEE sector code for financial services industry"
+      key_provisions:
+        - "25% black ownership target for banks and insurers"
+        - "Access to financial services targets"
+        - "Empowerment financing targets"
+        - "Procurement from BEE enterprises"
+
+  regulatory_bodies:
+    - name: "Prudential Authority / South African Reserve Bank"
+      acronym: "PA / SARB"
+      relevance: "Primary prudential regulator of banks and systemically important financial institutions"
+      consent_required_for:
+        - "Banking license applications and changes"
+        - "Significant ownership changes in banks (Section 37)"
+        - "Capital structure changes"
+        - "Large exposure limit exemptions"
+    - name: "Financial Sector Conduct Authority"
+      acronym: "FSCA"
+      relevance: "Market conduct regulator for financial service providers"
+      consent_required_for:
+        - "FSP license applications and variations"
+        - "Fit and proper assessments for key individuals"
+        - "Product approval for retail financial products"
+    - name: "National Credit Regulator"
+      acronym: "NCR"
+      relevance: "Regulator of credit providers and credit agreements under NCA"
+      consent_required_for:
+        - "Credit provider registration"
+        - "Debt counsellor registration"
+        - "Enforcement action on non-compliant credit providers"
+    - name: "Financial Intelligence Centre"
+      acronym: "FIC"
+      relevance: "AML/CFT regulator and financial intelligence unit"
+      consent_required_for:
+        - "Risk management and compliance programme approval"
+        - "Suspicious transaction reporting obligations"
+        - "Administrative sanctions for non-compliance"
+    - name: "Competition Commission"
+      acronym: "CompCom"
+      relevance: "Merger control and competition regulation"
+      consent_required_for:
+        - "Merger approval if thresholds met"
+        - "Public interest conditions assessment"
+    - name: "National Consumer Commission"
+      acronym: "NCC"
+      relevance: "Consumer protection enforcement where CPA applies"
+      consent_required_for:
+        - "Compliance notices for unfair contract terms"
+        - "Consumer complaint investigation"
 
   transaction_triggers:
     change_of_control:
@@ -1628,3 +3035,429 @@ statutory_framework:
         trigger: "Default under credit agreement"
         consequence: "Section 129 notice required before enforcement"
         processing_time: "10 business days notice minimum"
+
+# ============================================================================
+# RED FLAG PATTERNS
+# ============================================================================
+red_flag_patterns:
+  capacity:
+    - id: "BF-RF-CAP-001"
+      pattern: "Borrower lacks corporate capacity to borrow"
+      indicators:
+        - "MOI objects clause does not include borrowing powers"
+        - "Borrowing limit in MOI exceeded by proposed facility"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Companies Act Section 19"
+      typical_resolution: "MOI amendment by special resolution before facility execution"
+    - id: "BF-RF-CAP-002"
+      pattern: "Board resolution defective or insufficient"
+      indicators:
+        - "Resolution does not cover full facility amount"
+        - "Quorum not met or voting requirements not satisfied"
+        - "Resolution expired or conditional"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "Companies Act Section 73"
+      typical_resolution: "New board resolution with proper quorum and authority"
+    - id: "BF-RF-CAP-003"
+      pattern: "Section 44/45 financial assistance not addressed"
+      indicators:
+        - "Upstream or cross-stream guarantee without Section 44/45 analysis"
+        - "No special resolution or board solvency confirmation"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Companies Act Sections 44, 45"
+      typical_resolution: "Obtain special resolution and board solvency/liquidity confirmation"
+  existing_debt:
+    - id: "BF-RF-EXD-001"
+      pattern: "Negative pledge in existing facility prevents new security"
+      indicators:
+        - "Negative pledge clause without carve-out for proposed security"
+        - "No waiver from existing lender obtained"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Existing Facility Agreement"
+      typical_resolution: "Obtain existing lender waiver or consent before new security"
+    - id: "BF-RF-EXD-002"
+      pattern: "Cross-default cascade risk"
+      indicators:
+        - "Multiple facilities with cross-default provisions"
+        - "Default under one facility would trigger acceleration across all"
+      severity: critical
+      action_category: disclosure_required
+      statutory_reference: "Facility Agreement"
+      typical_resolution: "Coordinated lender consent; intercreditor agreement"
+    - id: "BF-RF-EXD-003"
+      pattern: "Existing covenant breach or waiver"
+      indicators:
+        - "Financial covenant ratio outside permitted threshold"
+        - "Waiver letter from existing lender on file"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Existing Facility Agreement"
+      typical_resolution: "Lender consent and waiver confirmation; covenant reset"
+  security:
+    - id: "BF-RF-SEC-001"
+      pattern: "Security perfection defect"
+      indicators:
+        - "Mortgage bond not registered at Deeds Office"
+        - "Cession notice not served on account debtors"
+        - "Pledge not perfected by delivery"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "Security Documents"
+      typical_resolution: "Complete registration or perfection steps before drawdown"
+    - id: "BF-RF-SEC-002"
+      pattern: "Title defect over security asset"
+      indicators:
+        - "Title deed not in borrower's name"
+        - "Existing encumbrance not disclosed"
+        - "Property subject to land claim"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Deeds Registries Act"
+      typical_resolution: "Resolve title issue; alternative security"
+    - id: "BF-RF-SEC-003"
+      pattern: "Security value insufficient for LTV requirements"
+      indicators:
+        - "Property valuation below required coverage"
+        - "Valuation older than 6 months"
+        - "Valuer not on lender's approved panel"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Facility Agreement"
+      typical_resolution: "Updated valuation; additional security or margin top-up"
+  covenants:
+    - id: "BF-RF-COV-001"
+      pattern: "Covenant headroom insufficient"
+      indicators:
+        - "Actual ratio within 10% of covenant threshold"
+        - "Downward trend in financial performance"
+      severity: high
+      action_category: monitor
+      statutory_reference: "Facility Agreement"
+      typical_resolution: "Covenant reset negotiation; equity cure mechanism"
+    - id: "BF-RF-COV-002"
+      pattern: "Covenant definitions misaligned between facilities"
+      indicators:
+        - "Different EBITDA definitions across facilities"
+        - "Inconsistent testing periods"
+      severity: medium
+      action_category: disclosure_required
+      statutory_reference: "Facility Agreements"
+      typical_resolution: "Harmonize definitions in intercreditor agreement"
+  regulatory:
+    - id: "BF-RF-REG-001"
+      pattern: "NCA non-compliance risk"
+      indicators:
+        - "Credit provider not registered with NCR"
+        - "Affordability assessment not conducted"
+        - "Interest rate exceeds NCA maximum"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "NCA Sections 40, 81, 100"
+      typical_resolution: "Confirm NCA exclusion applies; if not, obtain registration and comply"
+    - id: "BF-RF-REG-002"
+      pattern: "FICA non-compliance"
+      indicators:
+        - "CDD documentation incomplete"
+        - "FIC enforcement notice received"
+        - "No Risk Management and Compliance Programme"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "FICA Sections 21, 42"
+      typical_resolution: "Complete CDD; implement RMCP; remediate FIC findings"
+    - id: "BF-RF-REG-003"
+      pattern: "Banking license condition breach"
+      indicators:
+        - "Prudential Authority directive outstanding"
+        - "Capital adequacy below minimum"
+        - "Large exposure limit exceeded"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Banks Act"
+      typical_resolution: "Remediate PA directive; capital injection; exposure reduction"
+  guarantees:
+    - id: "BF-RF-GUA-001"
+      pattern: "Guarantor capacity or solvency concern"
+      indicators:
+        - "Guarantor has negative net asset value"
+        - "Guarantor liabilities exceed assets on latest AFS"
+        - "Business rescue of guarantor contemplated"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Companies Act"
+      typical_resolution: "Alternative guarantor; additional security in lieu of guarantee"
+    - id: "BF-RF-GUA-002"
+      pattern: "Upstream guarantee financial assistance risk"
+      indicators:
+        - "Subsidiary guaranteeing parent's obligations"
+        - "No board solvency and liquidity confirmation"
+        - "No special resolution under Section 44"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "Companies Act Section 44/45"
+      typical_resolution: "Section 44/45 compliance process before guarantee execution"
+  insolvency:
+    - id: "BF-RF-INS-001"
+      pattern: "Borrower solvency concern"
+      indicators:
+        - "Liabilities exceed assets on balance sheet"
+        - "Inability to pay debts as they fall due"
+        - "Cash flow forecast shows liquidity shortfall"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Insolvency Act Section 8; Companies Act Section 128"
+      typical_resolution: "Independent solvency assessment; consider business rescue implications"
+    - id: "BF-RF-INS-002"
+      pattern: "Voidable preference risk on existing security"
+      indicators:
+        - "Security granted within 6 months of suspected insolvency"
+        - "Preferential payment to related creditor"
+      severity: high
+      action_category: warranty_required
+      statutory_reference: "Insolvency Act Sections 26, 29"
+      typical_resolution: "Legal opinion on voidable preference risk; seller/borrower indemnity"
+  tax:
+    - id: "BF-RF-TAX-001"
+      pattern: "Tax clearance expired or unavailable"
+      indicators:
+        - "Tax clearance certificate expired"
+        - "SARS audit in progress"
+        - "Tax disputes outstanding"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Tax Administration Act"
+      typical_resolution: "Obtain valid tax clearance; tax indemnity if disputes outstanding"
+    - id: "BF-RF-TAX-002"
+      pattern: "Withholding tax exposure on interest payments"
+      indicators:
+        - "Cross-border lending without DTA benefit"
+        - "Withholding tax rate not confirmed"
+      severity: high
+      action_category: disclosure_required
+      statutory_reference: "Income Tax Act Section 50D"
+      typical_resolution: "Tax gross-up clause; DTA application; tax structuring advice"
+
+# ============================================================================
+# CALCULATION FORMULAS
+# ============================================================================
+calculation_formulas:
+  exposure:
+    - id: "CALC-BF-EXP-001"
+      name: "Total Acceleration Exposure"
+      formula: "SUM(drawn_balance + accrued_interest + break_costs + fees) for all facilities with CoC or EoD trigger"
+      inputs:
+        - { name: "drawn_balance", source: "facility_agreements", type: "currency_zar" }
+        - { name: "accrued_interest", source: "facility_agreements", type: "currency_zar" }
+        - { name: "break_costs", source: "facility_agreements", type: "currency_zar" }
+        - { name: "outstanding_fees", source: "facility_agreements", type: "currency_zar" }
+      output_type: currency_zar
+      typical_red_flag: "Acceleration amount exceeds available cash and committed facilities"
+    - id: "CALC-BF-EXP-002"
+      name: "Break Cost Estimate"
+      formula: "Outstanding_balance x (Fixed_rate - Current_market_rate) x Remaining_interest_period"
+      inputs:
+        - { name: "outstanding_balance", source: "facility_agreement", type: "currency_zar" }
+        - { name: "fixed_rate", source: "facility_agreement", type: "percentage" }
+        - { name: "market_rate", source: "market_data", type: "percentage" }
+        - { name: "remaining_period", source: "facility_agreement", type: "years" }
+      output_type: currency_zar
+      typical_red_flag: "Break cost exceeds 2% of outstanding balance"
+  security:
+    - id: "CALC-BF-SEC-001"
+      name: "Security Coverage Ratio"
+      formula: "Total_security_value / Total_facility_exposure x 100"
+      inputs:
+        - { name: "security_value", source: "valuations_and_security_docs", type: "currency_zar" }
+        - { name: "facility_exposure", source: "facility_agreement", type: "currency_zar" }
+      output_type: percentage
+      typical_red_flag: "Security coverage below 130% (typical minimum for secured lending)"
+    - id: "CALC-BF-SEC-002"
+      name: "Loan-to-Value (LTV) Ratio"
+      formula: "Facility_amount / Property_market_value x 100"
+      inputs:
+        - { name: "facility_amount", source: "facility_agreement", type: "currency_zar" }
+        - { name: "property_value", source: "valuation_report", type: "currency_zar" }
+      output_type: percentage
+      typical_red_flag: "LTV exceeds 70% for commercial property or facility agreement maximum"
+  covenants:
+    - id: "CALC-BF-COV-001"
+      name: "Debt Service Cover Ratio (DSCR)"
+      formula: "Net_operating_income / Total_debt_service"
+      inputs:
+        - { name: "net_operating_income", source: "financial_statements", type: "currency_zar" }
+        - { name: "total_debt_service", source: "facility_agreements", type: "currency_zar" }
+      output_type: ratio
+      typical_red_flag: "DSCR below 1.2x (typical minimum covenant level)"
+    - id: "CALC-BF-COV-002"
+      name: "Interest Cover Ratio"
+      formula: "EBITDA / Interest_expense"
+      inputs:
+        - { name: "ebitda", source: "financial_statements", type: "currency_zar" }
+        - { name: "interest_expense", source: "financial_statements", type: "currency_zar" }
+      output_type: ratio
+      typical_red_flag: "Interest cover below 3.0x (typical minimum covenant level)"
+    - id: "CALC-BF-COV-003"
+      name: "Leverage Ratio"
+      formula: "Total_net_debt / EBITDA"
+      inputs:
+        - { name: "total_net_debt", source: "financial_statements", type: "currency_zar" }
+        - { name: "ebitda", source: "financial_statements", type: "currency_zar" }
+      output_type: ratio
+      typical_red_flag: "Leverage exceeds 3.5x (varies by sector; check facility agreement threshold)"
+    - id: "CALC-BF-COV-004"
+      name: "Permitted Debt Headroom"
+      formula: "Permitted_debt_basket - (Existing_debt + Proposed_facility)"
+      inputs:
+        - { name: "permitted_basket", source: "existing_facility_agreement", type: "currency_zar" }
+        - { name: "existing_debt", source: "financial_statements", type: "currency_zar" }
+        - { name: "proposed_facility", source: "new_facility_agreement", type: "currency_zar" }
+      output_type: currency_zar
+      typical_red_flag: "Negative headroom — proposed facility exceeds permitted debt basket"
+    - id: "CALC-BF-COV-005"
+      name: "Covenant Headroom"
+      formula: "Actual_ratio - Required_ratio (or Required_ratio - Actual_ratio for maximum covenants)"
+      inputs:
+        - { name: "actual_ratio", source: "financial_statements", type: "ratio" }
+        - { name: "required_ratio", source: "facility_agreement", type: "ratio" }
+      output_type: ratio
+      typical_red_flag: "Headroom less than 10% of required ratio — breach risk"
+  debt_service:
+    - id: "CALC-BF-DS-001"
+      name: "Refinancing Cost Estimate"
+      formula: "SUM(arrangement_fee + legal_costs + security_registration + break_costs)"
+      inputs:
+        - { name: "arrangement_fee", source: "market_estimate", type: "currency_zar" }
+        - { name: "legal_costs", source: "legal_estimate", type: "currency_zar" }
+        - { name: "security_registration", source: "deeds_office", type: "currency_zar" }
+        - { name: "break_costs", source: "CALC-BF-EXP-002", type: "currency_zar" }
+      output_type: currency_zar
+      typical_red_flag: "Refinancing cost exceeds 3% of facility amount"
+    - id: "CALC-BF-DS-002"
+      name: "Guarantee Exposure"
+      formula: "SUM(guarantee_amount for each guarantor)"
+      inputs:
+        - { name: "guarantee_amounts", source: "guarantee_documents", type: "currency_zar" }
+      output_type: currency_zar
+      typical_red_flag: "Total guarantee exposure exceeds guarantor net asset value"
+    - id: "CALC-BF-DS-003"
+      name: "BEE Dilution Post-Conversion"
+      formula: "Current_BEE_shares / (Total_shares + Conversion_shares) x 100"
+      inputs:
+        - { name: "current_bee_shares", source: "share_register", type: "number" }
+        - { name: "total_shares", source: "share_register", type: "number" }
+        - { name: "conversion_shares", source: "facility_agreement", type: "number" }
+      output_type: percentage
+      typical_red_flag: "Post-conversion BEE ownership below 26% (generic threshold) or sector-specific threshold"
+    - id: "CALC-BF-DS-004"
+      name: "Stamp Duty / Tax on Security"
+      formula: "Covering_bond_amount x Applicable_rate"
+      inputs:
+        - { name: "covering_amount", source: "security_documents", type: "currency_zar" }
+        - { name: "applicable_rate", source: "statutory_schedule", type: "percentage" }
+      output_type: currency_zar
+      typical_red_flag: "Stamp duty cost exceeds R500,000"
+    - id: "CALC-BF-DS-005"
+      name: "Total Indemnity Exposure"
+      formula: "SUM(uncapped_indemnities + capped_indemnity_amounts)"
+      inputs:
+        - { name: "uncapped_indemnities", source: "facility_agreement", type: "currency_zar" }
+        - { name: "capped_amounts", source: "facility_agreement", type: "currency_zar" }
+      output_type: currency_zar
+      typical_red_flag: "Total indemnity exposure exceeds 150% of facility amount"
+
+# ============================================================================
+# OUTPUT TEMPLATES
+# ============================================================================
+output_templates:
+  executive_summary:
+    max_items: 12
+    sections:
+      - "Transaction Overview"
+      - "Deal Blockers"
+      - "Critical Findings"
+      - "Financial Exposure Summary"
+      - "Conditions Precedent Status"
+      - "Key Recommendations"
+    required_elements:
+      - "Total quantified exposure amount"
+      - "Number of deal blockers identified"
+      - "Number of conditions precedent outstanding"
+      - "Borrower capacity confirmation (confirmed / defective / unverifiable)"
+      - "Security package status (perfected / pending / defective)"
+      - "Covenant compliance status (compliant / headroom risk / breach)"
+  full_report:
+    sections:
+      - name: "Transaction Context"
+        subsections:
+          - "Deal structure analysis"
+          - "Party identification and capacity"
+          - "Regulatory pathway"
+      - name: "Capacity & Authority"
+        subsections:
+          - "Borrower corporate capacity"
+          - "MOI borrowing limits"
+          - "Board authorization"
+          - "Section 44/45 financial assistance"
+      - name: "Existing Debt"
+        subsections:
+          - "Facility summary and balances"
+          - "Negative pledge analysis"
+          - "Cross-default mapping"
+          - "Permitted debt headroom"
+      - name: "Security"
+        subsections:
+          - "Security package description"
+          - "Title verification"
+          - "Existing encumbrances"
+          - "Ranking and priority"
+          - "Perfection status"
+      - name: "Covenants"
+        subsections:
+          - "Financial covenant compliance"
+          - "Headroom analysis"
+          - "Cure mechanics"
+      - name: "Guarantees"
+        subsections:
+          - "Guarantor capacity and authority"
+          - "Section 44/45 compliance"
+          - "Financial position of guarantors"
+      - name: "Regulatory"
+        subsections:
+          - "NCA applicability and compliance"
+          - "FICA compliance"
+          - "Banking license status"
+          - "Other regulatory approvals"
+      - name: "Conditions Precedent"
+        subsections:
+          - "CP register and satisfaction status"
+          - "Outstanding items and timeline"
+          - "Waivable vs non-waivable CPs"
+      - name: "Warranties & Indemnities"
+        subsections:
+          - "Recommended warranties by category"
+          - "Standard finance indemnities"
+          - "Cap and survival recommendations"
+          - "Negotiation matrix"
+      - name: "Tax"
+        subsections:
+          - "Compliance status"
+          - "Withholding tax exposure"
+          - "Stamp duty on security"
+      - name: "Litigation"
+        subsections:
+          - "Pending matters"
+          - "Regulatory enforcement"
+          - "Impact on representations"
+  finding_format:
+    required_fields:
+      - "finding_id"
+      - "category"
+      - "severity"
+      - "description"
+      - "statutory_reference"
+      - "financial_impact"
+      - "recommended_action"
+      - "action_category"

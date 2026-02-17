@@ -8,6 +8,58 @@ description: 'Due diligence blueprint for acquisition of mining operations, incl
 
   '
 jurisdiction: South Africa
+transaction_context:
+  deal_structures:
+    - id: share_sale
+      description: "Acquisition of shares in the mining right holder company"
+      typical_considerations:
+        - "Section 11 MPRDA consent required for change of control"
+        - "BEE ownership implications under Mining Charter III"
+        - "Change of control triggers in material contracts"
+        - "DMRE processing timeline typically 6-12 months"
+    - id: asset_sale
+      description: "Acquisition of mining assets including the mining right itself"
+      typical_considerations:
+        - "Section 11 consent required for direct transfer of mining right"
+        - "New holder must satisfy MPRDA fit and proper requirements"
+        - "Environmental liabilities transfer with the right under NEMA Section 28"
+        - "Section 197 LRA automatic transfer of employees"
+    - id: jv_acquisition
+      description: "Acquisition of participating interest in a mining joint venture"
+      typical_considerations:
+        - "JV partner pre-emptive rights and consent requirements"
+        - "BEE ownership dilution assessment at JV level"
+        - "Operatorship terms and cost-sharing implications"
+    - id: new_order_right_application
+      description: "Application for a new order mining right under MPRDA Section 22/23"
+      typical_considerations:
+        - "Environmental authorization prerequisite under NEMA"
+        - "Social and Labour Plan and mining work programme required"
+        - "30% HDSA ownership required from inception under Mining Charter III"
+        - "Financial provision for rehabilitation required before right granted"
+    - id: section_11_transfer
+      description: "Direct transfer of mining right between entities via MPRDA Section 11"
+      typical_considerations:
+        - "Ministerial consent mandatory — transfer void without it"
+        - "Transferee must independently satisfy MPRDA requirements"
+        - "BEE compliance assessed at point of transfer"
+        - "Environmental liability follows the right"
+        - "Processing time officially 60 working days, practically 6-12 months"
+  typical_parties:
+    - role: seller
+      description: "Current holder of mining right or shares in mining right holder"
+    - role: buyer
+      description: "Acquirer of mining right or shares — must satisfy DMRE requirements"
+    - role: target
+      description: "Mining company holding the mining right being acquired"
+    - role: dmre
+      description: "Department of Mineral Resources and Energy — grants Section 11 consent and regulates mining rights"
+    - role: bee_partner
+      description: "HDSA shareholder required for Mining Charter III compliance (minimum 30%)"
+    - role: lender
+      description: "Providers of debt financing, typically with security over mining assets and cession of mining right income"
+    - role: offtaker
+      description: "Purchasers of mineral product under long-term offtake or supply agreements"
 folder_structure:
   01_Corporate_Governance:
     relevance: high
@@ -25,6 +77,40 @@ folder_structure:
     - Company Registration
     - BEE Certificate
     - Mining Charter Scorecard
+    document_expectations:
+      - type: "MOI"
+        aliases: ["Memorandum of Incorporation", "Articles of Association", "Constitution"]
+        tier: critical
+        why_critical: "Constitutional document defining approval requirements and share transfer restrictions"
+        red_flags_if_missing: "Cannot verify transaction authority or transfer restrictions"
+      - type: "Shareholders Agreement"
+        aliases: ["SHA", "Shareholder Agreement", "JV Agreement"]
+        tier: critical
+        why_critical: "May contain pre-emptive rights, tag/drag provisions, BEE lock-ins"
+        red_flags_if_missing: "Unknown third-party consent requirements"
+      - type: "Board Resolution"
+        aliases: ["Directors Resolution", "Written Resolution"]
+        tier: critical
+        why_critical: "Must authorize the proposed transaction per MOI requirements"
+        red_flags_if_missing: "Transaction may lack proper corporate authority"
+      - type: "Share Certificate"
+        aliases: ["Securities Register", "Share Register"]
+        tier: critical
+        why_critical: "Proves legal ownership of sale shares"
+        red_flags_if_missing: "Title to shares cannot be verified"
+      - type: "Company Registration"
+        aliases: ["CIPC Registration", "CM29", "CoR14.3"]
+        tier: important
+        why_critical: "Confirms valid incorporation and registered details"
+      - type: "BEE Certificate"
+        aliases: ["B-BBEE Certificate", "BEE Verification Certificate", "Empowerdex Certificate"]
+        tier: critical
+        why_critical: "Proves Mining Charter ownership compliance"
+        red_flags_if_missing: "BEE status unverified — potential Section 11 refusal"
+      - type: "Mining Charter Scorecard"
+        aliases: ["Charter Scorecard", "Mining Charter III Report"]
+        tier: important
+        why_critical: "Shows compliance across all Mining Charter elements"
   02_Commercial:
     relevance: critical
     subcategories:
@@ -40,6 +126,33 @@ folder_structure:
     - Royalty Agreement
     - Toll Processing Agreement
     - Marketing Agreement
+    document_expectations:
+      - type: "Offtake Agreement"
+        aliases: ["Coal Supply Agreement", "Mineral Sales Agreement", "Off-take"]
+        tier: critical
+        why_critical: "Revenue-critical contract — CoC provisions directly impact transaction"
+        red_flags_if_missing: "Revenue sustainability cannot be assessed"
+      - type: "Supply Agreement"
+        aliases: ["Procurement Agreement", "Input Supply Contract"]
+        tier: important
+        why_critical: "Cost structure dependency and CoC exposure"
+      - type: "Joint Venture Agreement"
+        aliases: ["JV Agreement", "Consortium Agreement", "Partnership Agreement"]
+        tier: critical
+        why_critical: "Partner consent required for CoC; pre-emptive rights may apply"
+        red_flags_if_missing: "JV partner rights unknown"
+      - type: "Royalty Agreement"
+        aliases: ["Production Royalty", "Mineral Royalty Agreement"]
+        tier: important
+        why_critical: "Ongoing payment obligation reducing cash flow"
+      - type: "Toll Processing Agreement"
+        aliases: ["Processing Agreement", "Beneficiation Agreement"]
+        tier: important
+        why_critical: "Processing capacity dependency"
+      - type: "Marketing Agreement"
+        aliases: ["Sales Agency Agreement", "Marketing Services Agreement"]
+        tier: supporting
+        why_critical: "Sales channel dependency and commission exposure"
   03_Financial:
     relevance: critical
     subcategories:
@@ -57,6 +170,42 @@ folder_structure:
     - Financial Statements
     - Audit Report
     - Hedge Agreement
+    document_expectations:
+      - type: "Loan Agreement"
+        aliases: ["Credit Agreement", "Term Loan"]
+        tier: critical
+        why_critical: "Debt structure and CoC acceleration exposure"
+        red_flags_if_missing: "Debt position unknown"
+      - type: "Facility Agreement"
+        aliases: ["Revolving Credit Facility", "RCF", "Overdraft"]
+        tier: critical
+        why_critical: "Working capital facility — CoC may trigger cancellation"
+        red_flags_if_missing: "Working capital risk unknown"
+      - type: "Mortgage Bond"
+        aliases: ["Bond", "Covering Bond", "First Mortgage Bond"]
+        tier: important
+        why_critical: "Security over property — affects asset value"
+      - type: "Notarial Bond"
+        aliases: ["General Notarial Bond", "Special Notarial Bond"]
+        tier: important
+        why_critical: "Security over movables — affects equipment value"
+      - type: "Guarantee"
+        aliases: ["Bank Guarantee", "Parent Company Guarantee", "Performance Guarantee"]
+        tier: important
+        why_critical: "Contingent liability exposure"
+      - type: "Financial Statements"
+        aliases: ["AFS", "Annual Financial Statements", "Audited Accounts"]
+        tier: critical
+        why_critical: "Basis for financial assessment and warranty verification"
+        red_flags_if_missing: "Financial position cannot be verified"
+      - type: "Audit Report"
+        aliases: ["Auditor's Report", "Independent Audit"]
+        tier: critical
+        why_critical: "Qualification or emphasis of matter indicates risk"
+      - type: "Hedge Agreement"
+        aliases: ["ISDA", "Commodity Hedge", "Currency Hedge"]
+        tier: supporting
+        why_critical: "Mark-to-market exposure on CoC termination"
   04_Regulatory:
     relevance: critical
     subcategories:
@@ -74,6 +223,50 @@ folder_structure:
     - Section 11 Consent
     - Air Quality License
     - Mine Health and Safety Certificate
+    document_expectations:
+      - type: "Mining Right"
+        aliases: ["New Order Mining Right", "NOMR", "Mining License", "Mining Permit"]
+        tier: critical
+        why_critical: "Core asset — without valid mining right, no transaction"
+        red_flags_if_missing: "Transaction fundamentally blocked"
+        typical_validity: "30 years"
+        transfer_requirement: "Section 11 Ministerial consent"
+      - type: "Environmental Authorisation"
+        aliases: ["EA", "Environmental Authorization", "Record of Decision", "ROD"]
+        tier: critical
+        why_critical: "Required for lawful mining operations under NEMA"
+        red_flags_if_missing: "Operations may be unlawful — Section 24G rectification needed"
+      - type: "Environmental Management Programme"
+        aliases: ["EMPr", "EMP", "Environmental Management Plan"]
+        tier: critical
+        why_critical: "Defines environmental obligations — non-compliance triggers enforcement"
+        red_flags_if_missing: "Environmental compliance cannot be assessed"
+      - type: "Water Use License"
+        aliases: ["WUL", "Water License", "Water Use Authorisation"]
+        tier: critical
+        why_critical: "Independent of mining right — separate DWS consent for transfer"
+        red_flags_if_missing: "Water use may be unlawful"
+        typical_validity: "40 years or linked to mining right"
+        transfer_requirement: "DWS approval required"
+      - type: "Social and Labour Plan"
+        aliases: ["SLP", "Social Labour Plan"]
+        tier: critical
+        why_critical: "Non-compliance can result in mining right suspension"
+        red_flags_if_missing: "SLP status unknown — potential regulatory blocker"
+        typical_validity: "5-year cycles"
+      - type: "Section 11 Consent"
+        aliases: ["Ministerial Consent", "DMRE Transfer Consent", "S11 Consent"]
+        tier: critical
+        why_critical: "Required for transfer — transaction cannot close without it"
+        red_flags_if_missing: "Expected if transaction pending; absence for prior transfers is red flag"
+      - type: "Air Quality License"
+        aliases: ["AEL", "Atmospheric Emission License"]
+        tier: important
+        why_critical: "Required for emissions — operational risk if absent"
+      - type: "Mine Health and Safety Certificate"
+        aliases: ["MHSA Certificate", "Certificate of Fitness"]
+        tier: important
+        why_critical: "Confirms safety compliance — absence indicates regulatory risk"
   05_Employment:
     relevance: high
     subcategories:
@@ -88,6 +281,32 @@ folder_structure:
     - Pension Fund Rules
     - Medical Aid Agreement
     - Retrenchment Notice
+    document_expectations:
+      - type: "Employment Contract"
+        aliases: ["Service Agreement", "Executive Contract", "Letter of Appointment"]
+        tier: important
+        why_critical: "CoC severance triggers and key person terms"
+      - type: "Recognition Agreement"
+        aliases: ["Union Recognition", "Organisational Rights Agreement"]
+        tier: important
+        why_critical: "Union relationship framework"
+      - type: "Collective Agreement"
+        aliases: ["Wage Agreement", "Bargaining Council Agreement"]
+        tier: important
+        why_critical: "Binding wage and conditions obligations"
+      - type: "Pension Fund Rules"
+        aliases: ["Provident Fund Rules", "Retirement Fund Rules"]
+        tier: supporting
+        why_critical: "Post-retirement obligation exposure"
+      - type: "Medical Aid Agreement"
+        aliases: ["Medical Scheme Agreement", "Health Insurance"]
+        tier: supporting
+        why_critical: "Ongoing benefit obligation"
+      - type: "Retrenchment Notice"
+        aliases: ["Section 189 Notice", "189A Notice"]
+        tier: important
+        why_critical: "Pending restructuring affects transaction risk"
+        red_flags_if_missing: "Absence is positive unless restructuring expected"
   06_Property:
     relevance: critical
     subcategories:
@@ -102,6 +321,32 @@ folder_structure:
     - Notarial Lease
     - Surface Right Agreement
     - Access Agreement
+    document_expectations:
+      - type: "Surface Lease Agreement"
+        aliases: ["Surface Right Agreement", "Land Lease", "Farm Lease"]
+        tier: critical
+        why_critical: "Surface access essential for mining — CoC consent often required"
+        red_flags_if_missing: "Surface access rights unknown"
+      - type: "Title Deed"
+        aliases: ["Deed of Transfer", "Property Title"]
+        tier: critical
+        why_critical: "Proves ownership of surface property"
+      - type: "Servitude Agreement"
+        aliases: ["Right of Way", "Pipeline Servitude", "Powerline Servitude"]
+        tier: important
+        why_critical: "Infrastructure access rights"
+      - type: "Notarial Lease"
+        aliases: ["Long Lease", "Registered Lease"]
+        tier: important
+        why_critical: "Lease exceeding 10 years — registered against title"
+      - type: "Surface Right Agreement"
+        aliases: ["Surface Use Agreement", "Access Agreement"]
+        tier: important
+        why_critical: "Access to mining areas over third-party land"
+      - type: "Access Agreement"
+        aliases: ["Road Access", "Transport Corridor Agreement"]
+        tier: supporting
+        why_critical: "Logistics and transport access"
   07_Insurance:
     relevance: medium
     subcategories:
@@ -113,6 +358,23 @@ folder_structure:
     - Certificate of Insurance
     - Claims Record
     - Business Interruption Policy
+    document_expectations:
+      - type: "Insurance Policy"
+        aliases: ["Policy Schedule", "Insurance Certificate"]
+        tier: important
+        why_critical: "Coverage adequacy for mining-specific risks"
+      - type: "Certificate of Insurance"
+        aliases: ["COI", "Proof of Insurance"]
+        tier: supporting
+        why_critical: "Confirms current coverage"
+      - type: "Claims Record"
+        aliases: ["Claims History", "Loss Run"]
+        tier: supporting
+        why_critical: "Claims pattern affects insurability"
+      - type: "Business Interruption Policy"
+        aliases: ["BI Policy", "Loss of Profits Insurance"]
+        tier: important
+        why_critical: "Revenue protection during operational disruption"
   08_Litigation:
     relevance: high
     subcategories:
@@ -127,6 +389,33 @@ folder_structure:
     - Court Order
     - Legal Opinion
     - DMRE Directive
+    document_expectations:
+      - type: "Summons"
+        aliases: ["Combined Summons", "Simple Summons"]
+        tier: important
+        why_critical: "Active legal proceedings"
+      - type: "Pleadings"
+        aliases: ["Particulars of Claim", "Plea", "Counterclaim"]
+        tier: important
+        why_critical: "Defines claim and defence positions"
+      - type: "Settlement Agreement"
+        aliases: ["Deed of Settlement", "Compromise Agreement"]
+        tier: important
+        why_critical: "Ongoing obligations from settled matters"
+      - type: "Court Order"
+        aliases: ["Judgment", "Interdict", "Consent Order"]
+        tier: critical
+        why_critical: "Binding obligations — non-compliance is contempt"
+        red_flags_if_missing: "Court orders must be disclosed"
+      - type: "Legal Opinion"
+        aliases: ["Attorney Opinion", "Counsel Opinion", "Legal Memorandum"]
+        tier: supporting
+        why_critical: "Risk assessment on pending matters"
+      - type: "DMRE Directive"
+        aliases: ["Section 93 Directive", "Compliance Notice", "DMRE Notice"]
+        tier: critical
+        why_critical: "Regulatory enforcement — may block Section 11 consent"
+        red_flags_if_missing: "Positive if genuinely none; negative if not disclosed"
   09_Tax:
     relevance: medium
     subcategories:
@@ -140,6 +429,29 @@ folder_structure:
     - Mineral Royalty Return
     - Tax Clearance Certificate
     - Tax Dispute Correspondence
+    document_expectations:
+      - type: "Tax Return"
+        aliases: ["ITR14", "Income Tax Return", "Provisional Tax Return"]
+        tier: important
+        why_critical: "Tax compliance verification"
+      - type: "Tax Assessment"
+        aliases: ["ITA34", "Notice of Assessment", "Additional Assessment"]
+        tier: important
+        why_critical: "SARS determined liability"
+      - type: "Mineral Royalty Return"
+        aliases: ["Royalty Return", "MPRRA Return"]
+        tier: important
+        why_critical: "Mining-specific tax obligation"
+      - type: "Tax Clearance Certificate"
+        aliases: ["TCC", "Tax Compliance Status"]
+        tier: important
+        why_critical: "Confirms good standing with SARS"
+        red_flags_if_missing: "May indicate non-compliance"
+      - type: "Tax Dispute Correspondence"
+        aliases: ["Notice of Objection", "SARS Audit Letter", "Appeal"]
+        tier: important
+        why_critical: "Outstanding tax exposure"
+        red_flags_if_missing: "Positive if genuinely none"
   99_Needs_Review:
     relevance: n/a
     subcategories:
@@ -168,31 +480,37 @@ statutory_framework:
           penalties:
             other: "Transfer void without consent"
           criticality: critical
+          application_to_dd: "Verify consent obtained or timeline for obtaining; check if prior transfers were consented"
         - section: "Section 22"
           description: "Mining permit requirements and conditions"
           penalties:
             criminal: "Fine or imprisonment up to 2 years"
           criticality: critical
+          application_to_dd: "Confirm mining permit conditions complied with; check for DMRE enforcement"
         - section: "Section 23"
           description: "Mining right requirements and conditions"
           penalties:
             criminal: "Fine or imprisonment up to 2 years"
           criticality: critical
+          application_to_dd: "Verify mining right conditions and compliance; review mining work programme"
         - section: "Section 25"
           description: "Social and Labour Plan requirements"
           penalties:
             administrative: "Suspension or cancellation of mining right"
           criticality: high
+          application_to_dd: "Assess SLP compliance status; quantify any arrears or catch-up costs"
         - section: "Section 47"
           description: "Financial provision for rehabilitation"
           penalties:
             administrative: "Cancellation of right, criminal liability"
           criticality: critical
+          application_to_dd: "Compare financial provision to latest closure cost estimate; identify gap"
         - section: "Section 56"
           description: "Section 11 transfer consent requirements and process"
           penalties:
             other: "Transaction invalid until consent obtained"
           criticality: critical
+          application_to_dd: "Map Section 11 consent process; assess timeline risk for transaction"
 
     - act: "Mine Health and Safety Act 29 of 1996"
       acronym: "MHSA"
@@ -203,16 +521,19 @@ statutory_framework:
           penalties:
             criminal: "Fine up to R1,000,000 or imprisonment up to 5 years"
           criticality: critical
+          application_to_dd: "Review safety performance record; check for pending prosecutions"
         - section: "Section 54"
           description: "Mine closure for unsafe conditions"
           penalties:
             administrative: "Section 54 stoppage notice - complete halt of operations"
           criticality: critical
+          application_to_dd: "Check for recent Section 54 stoppages; assess operational impact"
         - section: "Section 55"
           description: "Written instructions for safety improvements"
           penalties:
             administrative: "Section 55 notice - mandatory compliance"
           criticality: high
+          application_to_dd: "Review outstanding Section 55 notices; assess compliance timeline"
 
     - act: "National Environmental Management Act 107 of 1998"
       acronym: "NEMA"
@@ -223,17 +544,20 @@ statutory_framework:
           penalties:
             criminal: "Fine up to R10,000,000 or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Verify EA obtained for all listed activities; check for unlawful commencement"
         - section: "Section 24G"
           description: "Rectification of unlawful commencement"
           penalties:
             administrative: "Fine up to R5,000,000 plus rectification costs"
           criticality: high
+          application_to_dd: "Check for pending rectification applications; quantify fine exposure"
         - section: "Section 28"
           description: "Duty of care and remediation"
           penalties:
             civil: "Unlimited remediation liability"
             criminal: "Fine up to R10,000,000"
           criticality: critical
+          application_to_dd: "Assess contamination risks; verify remediation status"
 
     - act: "National Water Act 36 of 1998"
       acronym: "NWA"
@@ -244,16 +568,19 @@ statutory_framework:
           penalties:
             criminal: "Fine or imprisonment up to 5 years"
           criticality: critical
+          application_to_dd: "Verify all water uses are licensed; check volume compliance"
         - section: "Section 25"
           description: "Existing lawful water uses"
           penalties:
             administrative: "Loss of water use rights"
           criticality: high
+          application_to_dd: "Confirm existing lawful use status; check registration"
         - section: "Section 151"
           description: "Pollution offences"
           penalties:
             criminal: "Fine up to R10,000,000 or imprisonment"
           criticality: critical
+          application_to_dd: "Check for water pollution incidents; assess remediation liability"
 
     - act: "Broad-Based Black Economic Empowerment Act 53 of 2003"
       acronym: "B-BBEE Act"
@@ -264,6 +591,7 @@ statutory_framework:
           penalties:
             criminal: "Fine up to 10% of annual turnover or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Assess fronting risk; verify BEE ownership is genuine"
 
   sector_specific:
     mining_charter:
@@ -281,6 +609,92 @@ statutory_framework:
           measurement: "percentage from SA entities"
         - requirement: "Employment equity"
           description: "Minimum representation requirements at all levels"
+
+  secondary_legislation:
+    - name: "MPRDA Regulations (GN R527)"
+      description: "Detailed procedural requirements for mining right applications and transfers"
+      key_provisions:
+        - "Regulation 10: Section 11 consent application process and required documents"
+        - "Regulation 11: Transfer of rights — prescribed forms and supporting documentation"
+        - "Regulation 14: Mining work programme requirements and reporting"
+    - name: "Financial Provision Regulations (GN R1147)"
+      description: "Requirements for financial provision for rehabilitation and closure"
+      key_provisions:
+        - "Annual assessment of rehabilitation and closure costs"
+        - "Approved mechanisms: trust, deposit, guarantee, or insurance"
+        - "Three-year review cycle with annual top-up obligation"
+        - "New regulations require operating, decommissioning, and post-closure costs"
+    - name: "NEMA EIA Regulations (GN R982)"
+      description: "Environmental impact assessment procedures and listed activities"
+      key_provisions:
+        - "Listing Notice 1: Basic assessment activities"
+        - "Listing Notice 2: Scoping and EIA activities"
+        - "Listing Notice 3: Provincial competence activities"
+        - "Post-authorization audit and compliance monitoring"
+    - name: "NWA Regulations"
+      description: "Water use licensing and management requirements"
+      key_provisions:
+        - "Section 21 water use categories (a through k)"
+        - "Water use license application and amendment procedures"
+        - "Water quality monitoring and reporting obligations"
+    - name: "MHSA Regulations"
+      description: "Detailed mine health and safety standards and procedures"
+      key_provisions:
+        - "Mandatory Code of Practice requirements"
+        - "Occupational health surveillance programmes"
+        - "Incident reporting and investigation procedures"
+        - "Emergency preparedness and response plans"
+    - name: "Mining Charter III (2018)"
+      description: "Amended B-BBEE Charter for the mining and minerals industry"
+      key_provisions:
+        - "30% HDSA ownership with meaningful economic participation"
+        - "Procurement: 70% from SA entities, 40% from BEE compliant"
+        - "Human resource development: 5% of payroll"
+        - "Mine community development: 1% of revenue"
+        - "Once Empowered Always Empowered recognition criteria"
+
+  regulatory_bodies:
+    - name: "Department of Mineral Resources and Energy"
+      acronym: "DMRE"
+      relevance: "Primary regulator of mining rights, Section 11 consents, Mining Charter compliance"
+      consent_required_for:
+        - "Transfer of mining right (Section 11)"
+        - "Mining right renewal (Section 24)"
+        - "SLP approval and amendments"
+        - "Mining Charter compliance certification"
+    - name: "Department of Forestry, Fisheries and the Environment"
+      acronym: "DFFE"
+      relevance: "Environmental authorization and EMPr approval for mining operations"
+      consent_required_for:
+        - "Environmental Authorization for listed activities"
+        - "Waste Management License"
+        - "Section 24G rectification"
+    - name: "Department of Water and Sanitation"
+      acronym: "DWS"
+      relevance: "Water use licensing and regulation"
+      consent_required_for:
+        - "Water Use License (Section 21)"
+        - "WUL amendment or transfer"
+        - "Integrated Water Use License Application (IWULA)"
+    - name: "Department of Trade, Industry and Competition"
+      acronym: "DTIC"
+      relevance: "B-BBEE compliance and competition regulation"
+      consent_required_for:
+        - "Competition Commission merger notification"
+        - "B-BBEE verification oversight"
+    - name: "Competition Commission"
+      acronym: "CompCom"
+      relevance: "Merger control — mandatory notification if thresholds met"
+      consent_required_for:
+        - "Merger approval (intermediate or large merger)"
+        - "Public interest conditions assessment"
+    - name: "Mine Health and Safety Inspectorate"
+      acronym: "MHSI"
+      relevance: "Safety regulation and enforcement under MHSA"
+      consent_required_for:
+        - "Certificate of Competency for mine manager"
+        - "Approval of Codes of Practice"
+        - "Section 54/55 compliance clearance"
 
   transaction_triggers:
     change_of_control:
@@ -319,6 +733,572 @@ reference_documents:
   - type: Social and Labour Plan
     description: SLP approved by DMRE
     required: true
+entity_relationship_patterns:
+  typical_structures:
+    - name: "HoldCo / OpCo"
+      description: "Holding company owns shares in operating company that holds the mining right"
+      dd_implication: "Section 11 triggered by share sale at HoldCo level if control changes"
+    - name: "BEE SPV Structure"
+      description: "Special purpose vehicle holds HDSA shares, often vendor-financed"
+      dd_implication: "Assess genuine economic participation vs fronting risk; check loan terms and dividend flow"
+    - name: "Joint Venture"
+      description: "Unincorporated or incorporated JV between mining partners"
+      dd_implication: "Operatorship terms, cost-sharing, pre-emptive rights on disposal, BEE at JV level"
+    - name: "Mining Right Trust"
+      description: "Mining right held in trust for beneficiaries"
+      dd_implication: "Trust deed terms govern disposal; beneficiary consent may be required"
+    - name: "Vertically Integrated"
+      description: "Mining, processing, and marketing in single group with intercompany contracts"
+      dd_implication: "Transfer pricing risk; intercompany agreements must be at arm's length; separation complexity"
+  entity_roles:
+    - role: "Mining Right Holder"
+      description: "Entity registered as holder of the mining right with DMRE"
+    - role: "Operating Entity"
+      description: "Entity conducting day-to-day mining operations (may differ from right holder)"
+    - role: "BEE SPV"
+      description: "Special purpose vehicle holding HDSA shares for Mining Charter compliance"
+    - role: "Employee Trust"
+      description: "Trust holding shares on behalf of employees for BEE ownership credits"
+    - role: "Processing Company"
+      description: "Entity that beneficiates or processes run-of-mine material"
+    - role: "Marketing Company"
+      description: "Entity responsible for selling mineral product to market"
+    - role: "Rehabilitation Trust"
+      description: "Trust holding financial provision for environmental rehabilitation"
+  common_related_parties:
+    - type: "BEE Partner"
+      red_flags:
+        - "No independent board representation"
+        - "All dividends applied to service vendor-financed loan"
+        - "No meaningful governance participation"
+    - type: "Management Company"
+      red_flags:
+        - "Above-market management fees"
+        - "No competitive tender for services"
+        - "Services overlap with in-house capability"
+    - type: "Offtake Counter-party"
+      red_flags:
+        - "Below-market pricing in offtake agreement"
+        - "Counter-party is related to seller or management"
+        - "Exclusive offtake with no arm's length price reset"
+    - type: "Vendor Finance Provider"
+      red_flags:
+        - "Non-commercial loan terms to BEE partner"
+        - "Circular funding arrangement"
+        - "Put/call options that undermine genuine ownership"
+    - type: "Rehabilitation Service Provider"
+      red_flags:
+        - "Related party providing rehabilitation services"
+        - "Significantly above or below market cost estimates"
+        - "No independent verification of rehabilitation costs"
+materiality_thresholds:
+  default_when_value_unknown:
+    absolute_threshold: "R5,000,000"
+    description: "Applied when transaction value is not known or not disclosed"
+  when_value_known:
+    tiers:
+      - percentage: 5
+        applies_to: "General findings — contracts, liabilities, exposures"
+      - percentage: 2
+        applies_to: "Financial statement items — provisions, accruals, adjustments"
+      - percentage: 1
+        applies_to: "Related party transactions — any deviation from arm's length"
+  qualitative_overrides:
+    always_material_regardless_of_amount:
+      - "Mining right validity defect or pending cancellation"
+      - "Section 11 consent refusal or significant delay risk"
+      - "BEE ownership below Mining Charter III minimum (30% HDSA)"
+      - "Environmental contamination — soil, groundwater, or surface water"
+      - "Fatality or serious safety incident under investigation"
+      - "Tailings storage facility stability concern"
+      - "DMRE directive or Section 93 compliance notice"
+      - "Criminal prosecution of company or directors"
+      - "Fronting allegation or DTIC investigation"
+    never_immaterial_categories:
+      - category: "Regulatory Compliance"
+        reason: "Mining right status underpins entire transaction value"
+      - category: "Health & Safety"
+        reason: "Section 54 stoppages halt all production; fatalities trigger investigation"
+      - category: "Environmental"
+        reason: "Rehabilitation liability can exceed transaction value; perpetual liability risk"
+      - category: "BEE & Mining Charter"
+        reason: "Non-compliance can result in mining right suspension or Section 11 refusal"
+cross_reference_expectations:
+  - primary_document: "Mining Right"
+    should_reference:
+      - "Mining work programme committed volumes"
+      - "Farm portions and coordinates of mining area"
+      - "Conditions attached by DMRE"
+    should_be_referenced_by:
+      - "EMPr — mining right number and holder"
+      - "WUL — mining right area and activities"
+      - "SLP — linked to specific mining right"
+      - "Surface Lease — mining right boundaries"
+      - "Section 11 Consent — mining right being transferred"
+  - primary_document: "EMPr"
+    should_reference:
+      - "Mining right number and holder"
+      - "Rehabilitation commitments and costs"
+      - "Environmental management actions"
+    should_be_referenced_by:
+      - "Financial Statements — rehabilitation provision amount"
+      - "Closure Cost Estimate — EMPr commitments"
+      - "Insurance Policy — environmental liability coverage"
+  - primary_document: "Water Use License"
+    should_reference:
+      - "Licensed water uses (Section 21 activities)"
+      - "Volume limits and monitoring requirements"
+      - "Conditions and reporting obligations"
+    should_be_referenced_by:
+      - "EMPr — water management plan"
+      - "Mining Right — water-related conditions"
+      - "Financial Statements — water treatment costs"
+  - primary_document: "Social and Labour Plan"
+    should_reference:
+      - "HRD commitments and budgets"
+      - "LED commitments and budgets"
+      - "Mine closure and retrenchment plan"
+    should_be_referenced_by:
+      - "Financial Statements — SLP expenditure"
+      - "Mining Right — SLP as condition"
+      - "DMRE Correspondence — SLP compliance status"
+  - primary_document: "MOI"
+    should_reference:
+      - "Share classes and rights"
+      - "Transfer restrictions and approval thresholds"
+      - "Reserved matters and special resolutions"
+    should_be_referenced_by:
+      - "SHA — must be consistent with MOI"
+      - "Board Resolution — authority derived from MOI"
+      - "Share Certificates — classes per MOI"
+  - primary_document: "Shareholders Agreement"
+    should_reference:
+      - "Pre-emptive rights and transfer restrictions"
+      - "Tag-along and drag-along rights"
+      - "BEE partner rights and obligations"
+    should_be_referenced_by:
+      - "BEE Certificate — ownership consistent with SHA"
+      - "Board Resolution — SHA consent provisions"
+  - primary_document: "Facility Agreement"
+    should_reference:
+      - "Financial covenants and ratios"
+      - "Security requirements"
+      - "Change of control provisions"
+    should_be_referenced_by:
+      - "Financial Statements — debt disclosure"
+      - "Mortgage Bond — security for facility"
+      - "Insurance Policy — lender required coverage"
+  - primary_document: "Offtake Agreement"
+    should_reference:
+      - "Volume commitments and pricing"
+      - "Quality specifications"
+      - "CoC and assignment provisions"
+    should_be_referenced_by:
+      - "Financial Statements — revenue recognition"
+      - "Mining Work Programme — production targets"
+  - primary_document: "Surface Lease"
+    should_reference:
+      - "Lease area and boundaries"
+      - "Rental and royalty terms"
+      - "CoC and assignment consent"
+    should_be_referenced_by:
+      - "Mining Right — surface access for mining area"
+      - "Insurance Policy — improvements on leased land"
+  - primary_document: "BEE Certificate"
+    should_reference:
+      - "HDSA ownership percentage"
+      - "Verification methodology"
+    should_be_referenced_by:
+      - "SHA — ownership percentages match"
+      - "Mining Charter Scorecard — ownership element"
+      - "DMRE Correspondence — BEE compliance"
+  - primary_document: "Financial Statements"
+    should_reference:
+      - "Rehabilitation provision amount"
+      - "Contingent liabilities"
+      - "Related party transactions"
+    should_be_referenced_by:
+      - "Facility Agreement — covenant calculations"
+      - "Tax Returns — consistent with AFS"
+      - "Audit Report — AFS opinion"
+  - primary_document: "Insurance Policy"
+    should_reference:
+      - "Insured values and limits"
+      - "Exclusions and conditions"
+      - "CoC notification requirements"
+    should_be_referenced_by:
+      - "Facility Agreement — lender required insurance"
+      - "Surface Lease — landlord required insurance"
+red_flag_patterns:
+  regulatory:
+    - id: "RF-REG-001"
+      pattern: "DMRE directive or compliance notice outstanding"
+      indicators:
+        - "Section 93 reference in correspondence"
+        - "Compliance notice dated within 12 months"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "MPRDA Section 93"
+      typical_resolution: "Remediation plan submission to DMRE"
+    - id: "RF-REG-002"
+      pattern: "Mining right expiry within transaction timeline"
+      indicators:
+        - "Mining right expiry date within 24 months"
+        - "No renewal application filed"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "MPRDA Section 24"
+      typical_resolution: "Urgent renewal application to DMRE"
+    - id: "RF-REG-003"
+      pattern: "Section 11 consent refusal risk factors present"
+      indicators:
+        - "BEE non-compliance flagged"
+        - "SLP arrears outstanding"
+        - "DMRE enforcement actions pending"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "MPRDA Section 11"
+      typical_resolution: "Remediate non-compliance before application"
+  environmental:
+    - id: "RF-ENV-001"
+      pattern: "Rehabilitation financial provision shortfall"
+      indicators:
+        - "Provision amount less than latest closure cost estimate"
+        - "No updated assessment in past 3 years"
+      severity: critical
+      action_category: price_adjustment
+      statutory_reference: "NEMA Section 24P, GN R1147"
+      typical_resolution: "Top-up provision to match assessed liability"
+    - id: "RF-ENV-002"
+      pattern: "Water Use License non-compliance"
+      indicators:
+        - "Water use exceeds licensed volumes"
+        - "DWS compliance notice received"
+        - "Monitoring reports show exceedance"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "NWA Section 21"
+      typical_resolution: "WUL amendment application and remediation"
+    - id: "RF-ENV-003"
+      pattern: "Contamination — soil, groundwater, or surface water"
+      indicators:
+        - "Contamination plume identified in monitoring"
+        - "AMD decant requiring treatment"
+        - "Spillage incident reports"
+      severity: critical
+      action_category: price_adjustment
+      statutory_reference: "NEMA Section 28"
+      typical_resolution: "Remediation plan and cost estimate; escrow recommendation"
+  financial:
+    - id: "RF-FIN-001"
+      pattern: "Qualified audit opinion"
+      indicators:
+        - "Audit qualification on going concern"
+        - "Limitation of scope on material items"
+      severity: critical
+      action_category: warranty_required
+      statutory_reference: "Companies Act Section 30"
+      typical_resolution: "Enhanced financial warranties and indemnities"
+    - id: "RF-FIN-002"
+      pattern: "Covenant breach or waiver in place"
+      indicators:
+        - "Actual ratio outside covenant threshold"
+        - "Waiver letter from lender on file"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Facility Agreement"
+      typical_resolution: "Lender consent and waiver for transaction"
+    - id: "RF-FIN-003"
+      pattern: "Cross-default risk across facilities"
+      indicators:
+        - "Multiple facilities with cross-default provisions"
+        - "Default under one facility would cascade"
+      severity: high
+      action_category: disclosure_required
+      statutory_reference: "Facility Agreement"
+      typical_resolution: "Coordinated lender consent process"
+  change_of_control:
+    - id: "RF-COC-001"
+      pattern: "Material contract with automatic termination on CoC"
+      indicators:
+        - "Contract terminates automatically on change of control"
+        - "No cure or waiver mechanism available"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Contract-specific"
+      typical_resolution: "Pre-closing counterparty consent or restructure"
+    - id: "RF-COC-002"
+      pattern: "Revenue concentration with CoC-exposed customer"
+      indicators:
+        - "Single customer exceeds 30% of revenue"
+        - "That customer contract has CoC termination right"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "Contract-specific"
+      typical_resolution: "Customer consent as condition precedent"
+    - id: "RF-COC-003"
+      pattern: "Debt acceleration exposure exceeds available resources"
+      indicators:
+        - "Total acceleratable debt exceeds cash and available facilities"
+        - "CoC triggers mandatory prepayment"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "Facility Agreement"
+      typical_resolution: "Lender consent or refinancing arrangement"
+  employment:
+    - id: "RF-EMP-001"
+      pattern: "Pending Section 189 retrenchment process"
+      indicators:
+        - "Section 189 notice issued"
+        - "Facilitation process underway"
+      severity: high
+      action_category: disclosure_required
+      statutory_reference: "LRA Section 189/189A"
+      typical_resolution: "Complete process before or structure as post-closing"
+    - id: "RF-EMP-002"
+      pattern: "Key executive departure risk on CoC"
+      indicators:
+        - "Executive golden parachute triggered"
+        - "Key person with short notice period"
+      severity: high
+      action_category: warranty_required
+      statutory_reference: "Employment Contract"
+      typical_resolution: "Retention arrangements with key executives"
+    - id: "RF-EMP-003"
+      pattern: "Union dispute or protected strike risk"
+      indicators:
+        - "Wage negotiations past deadline"
+        - "Dispute referral to CCMA/bargaining council"
+      severity: high
+      action_category: monitor
+      statutory_reference: "LRA"
+      typical_resolution: "Accelerate negotiation; assess production impact"
+  bee:
+    - id: "RF-BEE-001"
+      pattern: "Post-transaction HDSA below Mining Charter minimum"
+      indicators:
+        - "Non-HDSA buyer acquiring controlling stake"
+        - "No BEE co-investor or replacement partner identified"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Mining Charter III, MPRDA Section 11"
+      typical_resolution: "BEE co-investor or vendor-funded BEE structure"
+    - id: "RF-BEE-002"
+      pattern: "Fronting indicators present"
+      indicators:
+        - "BEE partner has no governance rights"
+        - "All dividends service vendor loan"
+        - "BEE partner not independently represented"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "B-BBEE Act Section 10"
+      typical_resolution: "Restructure BEE arrangement for genuine participation"
+    - id: "RF-BEE-003"
+      pattern: "SLP material arrears"
+      indicators:
+        - "SLP spend below 80% of committed amounts"
+        - "DMRE correspondence about SLP non-compliance"
+      severity: high
+      action_category: price_adjustment
+      statutory_reference: "MPRDA Section 25"
+      typical_resolution: "Quantify catch-up cost; seller indemnity for arrears"
+  property:
+    - id: "RF-PROP-001"
+      pattern: "Surface lease expires before mining right"
+      indicators:
+        - "Lease expiry date precedes mining right expiry"
+        - "No renewal option or renewal at landlord discretion"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Lease Agreement"
+      typical_resolution: "Negotiate lease extension before closing"
+    - id: "RF-PROP-002"
+      pattern: "Pending land claim affecting mining area"
+      indicators:
+        - "Land Claims Commission notice received"
+        - "Community dispute over surface rights"
+      severity: high
+      action_category: disclosure_required
+      statutory_reference: "Restitution of Land Rights Act"
+      typical_resolution: "Engage with claimant; assess impact on operations"
+  tax:
+    - id: "RF-TAX-001"
+      pattern: "SARS audit in progress or assessment disputed"
+      indicators:
+        - "SARS audit notification letter received"
+        - "Notice of objection filed against assessment"
+      severity: high
+      action_category: warranty_required
+      statutory_reference: "Tax Administration Act"
+      typical_resolution: "Tax indemnity from seller; quantify exposure"
+    - id: "RF-TAX-002"
+      pattern: "Transfer pricing exposure with related parties"
+      indicators:
+        - "Related party transactions without transfer pricing documentation"
+        - "Intercompany pricing outside arm's length range"
+      severity: high
+      action_category: warranty_required
+      statutory_reference: "Income Tax Act Section 31"
+      typical_resolution: "Transfer pricing study; seller indemnity"
+  litigation:
+    - id: "RF-LIT-001"
+      pattern: "Material litigation exceeding materiality threshold"
+      indicators:
+        - "Claim amount exceeds 5% of transaction value"
+        - "Litigation outcome uncertain"
+      severity: high
+      action_category: price_adjustment
+      statutory_reference: "Case-specific"
+      typical_resolution: "Seller indemnity for disclosed litigation; escrow if material"
+    - id: "RF-LIT-002"
+      pattern: "Occupational disease class action exposure"
+      indicators:
+        - "Silicosis or TB claims from current or former workers"
+        - "Operations in gold or coal sector with historical dust exposure"
+      severity: critical
+      action_category: warranty_required
+      statutory_reference: "Occupational Diseases in Mines and Works Act"
+      typical_resolution: "Specific indemnity with extended survival period; actuarial assessment"
+    - id: "RF-LIT-003"
+      pattern: "Environmental prosecution pending"
+      indicators:
+        - "Criminal prosecution under NEMA or NWA"
+        - "DFFE or DWS enforcement action"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "NEMA, NWA"
+      typical_resolution: "Resolution before closing; seller indemnity"
+calculation_formulas:
+  exposure:
+    - id: "CALC-EXP-001"
+      name: "Total Change of Control Financial Exposure"
+      formula: "SUM(liquidated_damages + termination_fees + acceleration_amounts + consent_fees)"
+      inputs:
+        - { name: "liquidated_damages", source: "commercial_contracts", type: "currency_zar" }
+        - { name: "termination_fees", source: "commercial_contracts", type: "currency_zar" }
+        - { name: "acceleration_amounts", source: "facility_agreements", type: "currency_zar" }
+        - { name: "consent_fees", source: "various_contracts", type: "currency_zar" }
+      output_type: currency_zar
+      typical_red_flag: "Total CoC exposure exceeds 20% of transaction value"
+    - id: "CALC-EXP-002"
+      name: "Revenue at Risk from CoC"
+      formula: "SUM(annual_revenue for contracts with CoC termination rights)"
+      inputs:
+        - { name: "contract_annual_revenue", source: "offtake_agreements", type: "currency_zar" }
+        - { name: "coc_termination_right", source: "contract_analysis", type: "boolean" }
+      output_type: currency_zar
+      typical_red_flag: "Revenue at risk exceeds 40% of total revenue"
+    - id: "CALC-EXP-003"
+      name: "Total Debt Acceleration Exposure"
+      formula: "SUM(drawn_facilities + accrued_interest + breakage_costs) where CoC triggered"
+      inputs:
+        - { name: "drawn_balance", source: "facility_agreements", type: "currency_zar" }
+        - { name: "accrued_interest", source: "facility_agreements", type: "currency_zar" }
+        - { name: "breakage_costs", source: "facility_agreements", type: "currency_zar" }
+      output_type: currency_zar
+      typical_red_flag: "Acceleration amount exceeds available cash and committed facilities"
+  bee:
+    - id: "CALC-BEE-001"
+      name: "Post-Transaction HDSA Ownership"
+      formula: "(Current_HDSA_shares - Exiting_HDSA) / (Total_shares + New_shares) x 100"
+      inputs:
+        - { name: "current_hdsa_shares", source: "share_register", type: "number" }
+        - { name: "exiting_hdsa_shares", source: "transaction_structure", type: "number" }
+        - { name: "total_shares", source: "share_register", type: "number" }
+        - { name: "new_shares", source: "transaction_structure", type: "number" }
+      output_type: percentage
+      typical_red_flag: "Post-transaction HDSA below 30% (Mining Charter III minimum)"
+    - id: "CALC-BEE-002"
+      name: "BEE Dilution Gap"
+      formula: "Mining_Charter_minimum - Post_transaction_HDSA"
+      inputs:
+        - { name: "mining_charter_minimum", source: "regulation", type: "percentage", default: 30 }
+        - { name: "post_transaction_hdsa", source: "CALC-BEE-001", type: "percentage" }
+      output_type: percentage
+      typical_red_flag: "Any positive gap indicates Mining Charter breach requiring remediation"
+  rehabilitation:
+    - id: "CALC-REHAB-001"
+      name: "Rehabilitation Liability Gap"
+      formula: "Latest_closure_cost_estimate - Current_financial_provision"
+      inputs:
+        - { name: "closure_cost_estimate", source: "specialist_assessment", type: "currency_zar" }
+        - { name: "financial_provision", source: "guarantee_or_trust", type: "currency_zar" }
+      output_type: currency_zar
+      typical_red_flag: "Gap exceeds R10,000,000 or 10% of provision amount"
+    - id: "CALC-REHAB-002"
+      name: "Annual Rehabilitation Provision Top-Up"
+      formula: "Gap / Remaining_mine_life_years"
+      inputs:
+        - { name: "gap", source: "CALC-REHAB-001", type: "currency_zar" }
+        - { name: "remaining_life", source: "mine_plan", type: "years" }
+      output_type: currency_zar_per_annum
+      typical_red_flag: "Annual top-up exceeds 5% of operating costs"
+  mine_life:
+    - id: "CALC-LIFE-001"
+      name: "Remaining Mine Life"
+      formula: "Economically_extractable_reserves / Annual_production_rate"
+      inputs:
+        - { name: "reserves", source: "competent_person_report", type: "tonnes" }
+        - { name: "annual_production", source: "mine_plan", type: "tonnes_per_annum" }
+      output_type: years
+      typical_red_flag: "Remaining life less than 10 years or less than key contract tenors"
+    - id: "CALC-LIFE-002"
+      name: "Mine Life vs Contract Tenor Mismatch"
+      formula: "Contract_remaining_term - Remaining_mine_life"
+      inputs:
+        - { name: "contract_remaining_term", source: "commercial_contracts", type: "years" }
+        - { name: "remaining_mine_life", source: "CALC-LIFE-001", type: "years" }
+      output_type: years
+      typical_red_flag: "Contract extends beyond mine life — volume shortfall risk"
+  penalties:
+    - id: "CALC-PEN-001"
+      name: "Total Regulatory Penalty Exposure"
+      formula: "SUM(statutory_maximum_penalties for each non-compliance)"
+      inputs:
+        - { name: "non_compliance_items", source: "regulatory_review", type: "list" }
+        - { name: "statutory_maximums", source: "statutory_framework", type: "currency_zar" }
+      output_type: currency_zar
+      typical_red_flag: "Total penalty exposure exceeds R5,000,000"
+    - id: "CALC-PEN-002"
+      name: "Take-or-Pay Liability"
+      formula: "SUM((Minimum_volume - Actual_volume) x Contract_price) for shortfall periods"
+      inputs:
+        - { name: "minimum_volume", source: "offtake_agreement", type: "tonnes" }
+        - { name: "actual_volume", source: "production_records", type: "tonnes" }
+        - { name: "contract_price", source: "offtake_agreement", type: "currency_zar_per_tonne" }
+      output_type: currency_zar
+      typical_red_flag: "Take-or-pay liability exceeds R10,000,000"
+  interest:
+    - id: "CALC-INT-001"
+      name: "Breakage Cost on Early Repayment"
+      formula: "Outstanding_balance x (Fixed_rate - Current_market_rate) x Remaining_term"
+      inputs:
+        - { name: "outstanding_balance", source: "facility_agreement", type: "currency_zar" }
+        - { name: "fixed_rate", source: "facility_agreement", type: "percentage" }
+        - { name: "market_rate", source: "market_data", type: "percentage" }
+        - { name: "remaining_term", source: "facility_agreement", type: "years" }
+      output_type: currency_zar
+      typical_red_flag: "Breakage cost exceeds 2% of outstanding balance"
+  covenant:
+    - id: "CALC-COV-001"
+      name: "Covenant Headroom"
+      formula: "Actual_ratio - Required_ratio"
+      inputs:
+        - { name: "actual_ratio", source: "financial_statements", type: "ratio" }
+        - { name: "required_ratio", source: "facility_agreement", type: "ratio" }
+      output_type: ratio
+      typical_red_flag: "Headroom less than 10% of required ratio — breach risk"
+  severance:
+    - id: "CALC-SEV-001"
+      name: "Total Executive Severance on CoC"
+      formula: "SUM(base_salary x multiplier + bonus_accrual + unvested_equity) per executive"
+      inputs:
+        - { name: "base_salary", source: "employment_contracts", type: "currency_zar" }
+        - { name: "multiplier", source: "employment_contracts", type: "number" }
+        - { name: "bonus_accrual", source: "employment_contracts", type: "currency_zar" }
+        - { name: "unvested_equity", source: "share_schemes", type: "currency_zar" }
+      output_type: currency_zar
+      typical_red_flag: "Total severance exceeds 5% of transaction value"
 risk_categories:
 - name: Mining Rights & Title
   weight: critical
@@ -327,33 +1307,132 @@ risk_categories:
   - question: Is the mining right valid and in good standing with DMRE?
     detail: Check registration, annual compliance, any suspensions or cancellations
     priority: critical
+    id: "MR-MRT-001"
+    sub_questions:
+      - "Has the mining right been renewed since conversion to new order right?"
+      - "Are all annual compliance submissions current with DMRE?"
+      - "Has the right holder received any Section 93 directives?"
+    red_flags:
+      - "DMRE directive or suspension notice on file"
+      - "Annual compliance submissions overdue by more than 6 months"
+    expected_evidence:
+      - "Mining right certificate with DMRE registration number"
+      - "Latest DMRE compliance status letter"
+      - "Annual compliance submission receipts"
   - question: When does the mining right expire and what renewal obligations exist?
     detail: Check Section 102 renewal timeline and requirements
     priority: critical
+    id: "MR-MRT-002"
+    sub_questions:
+      - "When was the mining right originally granted and for what term?"
+      - "Has a renewal application been filed or is one due?"
+      - "Are there conditions precedent to renewal?"
+    red_flags:
+      - "Mining right expiry within 24 months with no renewal filed"
+      - "Renewal conditions not yet satisfied"
+    expected_evidence:
+      - "Mining right certificate showing grant and expiry dates"
+      - "DMRE renewal correspondence"
+      - "Section 24 renewal application if filed"
   - question: What is the current status of Section 102 compliance?
     detail: Review compliance history, any warnings or directives
     priority: critical
+    id: "MR-MRT-003"
+    sub_questions:
+      - "Has DMRE issued any compliance notices in the past 3 years?"
+      - "Are all conditions of the mining right currently satisfied?"
+      - "Has the mine met production targets in the mining work programme?"
+    red_flags:
+      - "Outstanding Section 93 directive without remediation plan"
+      - "Pattern of repeated non-compliance notifications"
+    expected_evidence:
+      - "DMRE compliance audit reports"
+      - "Compliance status correspondence"
+      - "Mining work programme progress reports"
   - question: Are there any pending DMRE enforcement actions or directives?
     detail: Check for Section 93 directives, compliance notices
     priority: critical
+    id: "MR-MRT-004"
+    sub_questions:
+      - "Has any Section 93 directive been issued and is it outstanding?"
+      - "Are there any pending administrative actions against the right holder?"
+      - "Has the DMRE indicated intention to suspend or cancel the right?"
+    red_flags:
+      - "Active Section 93 directive with no compliance plan"
+      - "DMRE correspondence threatening suspension or cancellation"
+    expected_evidence:
+      - "DMRE correspondence register"
+      - "Section 93 directive and response documentation"
+      - "Legal opinions on enforcement risk"
   - question: Does the mining right cover all intended mining areas?
     detail: Verify coordinates and farm portions match operational areas
     priority: high
+    id: "MR-MRT-005"
+    sub_questions:
+      - "Do the farm portions listed in the mining right match current operational areas?"
+      - "Are there any areas being mined outside the mining right boundary?"
+    red_flags:
+      - "Mining operations extend beyond registered mining right boundary"
+    expected_evidence:
+      - "Mining right boundary coordinates and map"
+      - "Surveyor confirmation of operational areas"
   - question: Are there any overlapping or conflicting mineral rights?
     detail: Check for prospecting rights, other mining rights in area
     priority: high
+    id: "MR-MRT-006"
+    sub_questions:
+      - "Are there any third-party prospecting rights overlapping the mining area?"
+      - "Has a mineral rights search been conducted recently?"
+    red_flags:
+      - "Overlapping prospecting or mining right held by third party"
+    expected_evidence:
+      - "DMRE mineral rights cadastre search"
+      - "Title search confirmation"
   - question: Has the mining works programme been complied with?
     detail: Compare actual vs committed production, development
     priority: high
+    id: "MR-MRT-007"
+    sub_questions:
+      - "What are the committed production volumes vs actual production?"
+      - "Has DMRE raised any concerns about mining work programme compliance?"
+    red_flags:
+      - "Actual production consistently below 80% of committed volumes"
+    expected_evidence:
+      - "Mining work programme document"
+      - "Annual production reports to DMRE"
   - question: What Section 11 consent is required for transfer?
     detail: Understand DMRE approval process and timeline
     priority: critical
+    id: "MR-MRT-008"
+    sub_questions:
+      - "Does the transaction structure trigger Section 11 consent requirements?"
+      - "What is the current DMRE processing timeline for Section 11 applications?"
+      - "Are there any factors that could delay or prevent Section 11 consent?"
+    red_flags:
+      - "BEE non-compliance that could result in Section 11 refusal"
+      - "Pending DMRE enforcement that could delay consent processing"
+    expected_evidence:
+      - "Legal opinion on Section 11 applicability"
+      - "DMRE pre-consultation correspondence"
+      - "Section 11 application checklist"
   - question: Are there any beneficiation obligations under the mining right?
     detail: Check for local processing requirements
     priority: medium
+    id: "MR-MRT-009"
+    expected_evidence:
+      - "Mining right conditions relating to beneficiation"
   - question: What are the conditions attached to the mining right?
     detail: Review all special conditions and compliance status
     priority: high
+    id: "MR-MRT-010"
+    sub_questions:
+      - "What special conditions has DMRE attached to the mining right?"
+      - "Is there a compliance register tracking all conditions?"
+    red_flags:
+      - "Material condition not complied with and no remediation plan"
+    expected_evidence:
+      - "Mining right certificate with annexed conditions"
+      - "Compliance register or tracker"
   cross_doc_validations:
   - check: Mining right boundaries vs surface lease boundaries
     description: Verify mining right covers all leased surface areas
@@ -371,33 +1450,129 @@ risk_categories:
   - question: What is the total rehabilitation liability and financial provision?
     detail: Compare provision amount vs latest assessment, check adequacy
     priority: critical
+    id: "MR-ENV-001"
+    sub_questions:
+      - "What is the latest closure cost estimate and when was it prepared?"
+      - "What form does the financial provision take (trust, guarantee, deposit)?"
+      - "Is the provision amount compliant with GN R1147 requirements?"
+    red_flags:
+      - "Financial provision less than 80% of latest closure cost estimate"
+      - "Closure cost estimate older than 3 years without update"
+    expected_evidence:
+      - "Latest closure cost estimate by specialist"
+      - "Financial provision certificate or guarantee"
+      - "Rehabilitation trust fund balance confirmation"
   - question: Is the Environmental Management Programme (EMPr) current and complied with?
     detail: Check approval status, amendments, compliance audits
     priority: critical
+    id: "MR-ENV-002"
+    sub_questions:
+      - "When was the EMPr last approved and has it been amended?"
+      - "What does the latest environmental performance assessment report show?"
+      - "Are there any outstanding EMPr conditions not yet complied with?"
+    red_flags:
+      - "EMPr not approved or approval lapsed"
+      - "Material non-compliance identified in latest EPAR"
+    expected_evidence:
+      - "EMPr approval letter from competent authority"
+      - "Latest Environmental Performance Assessment Report"
+      - "EMPr amendment history"
   - question: Is the Water Use License (WUL) current and compliant?
     detail: Check validity, conditions, any pending renewals or amendments
     priority: critical
+    id: "MR-ENV-003"
+    sub_questions:
+      - "Is the WUL current and not expired?"
+      - "Are actual water uses within licensed volumes and activities?"
+      - "Has DWS issued any compliance notices?"
+    red_flags:
+      - "Water use exceeding licensed volumes"
+      - "DWS compliance notice outstanding"
+    expected_evidence:
+      - "Water Use License document"
+      - "Water use monitoring reports"
+      - "DWS compliance correspondence"
   - question: Are there any environmental directives or compliance notices?
     detail: Check for DFFE or DWS enforcement actions
     priority: critical
+    id: "MR-ENV-004"
+    sub_questions:
+      - "Has DFFE, DWS, or DMRE issued any environmental directives?"
+      - "Are there any pending Section 24G rectification applications?"
+      - "Have any environmental fines or penalties been imposed?"
+    red_flags:
+      - "Outstanding environmental directive without compliance plan"
+      - "Pending criminal prosecution under NEMA or NWA"
+    expected_evidence:
+      - "Regulatory correspondence register"
+      - "Directive response documentation"
+      - "Fine or penalty records"
   - question: What is the status of concurrent rehabilitation?
     detail: Compare actual vs planned rehabilitation progress
     priority: high
+    id: "MR-ENV-005"
+    sub_questions:
+      - "What percentage of disturbed areas have been rehabilitated?"
+      - "Is rehabilitation progressing on schedule per the EMPr?"
+    red_flags:
+      - "Rehabilitation backlog exceeding 3 years of planned progress"
+    expected_evidence:
+      - "Rehabilitation progress reports"
+      - "Aerial or satellite imagery of rehabilitation areas"
   - question: Are there any contaminated land or pollution issues?
     detail: Check for soil, groundwater contamination
     priority: high
+    id: "MR-ENV-006"
+    sub_questions:
+      - "Has contamination monitoring identified any exceedances?"
+      - "Are there any known contamination plumes migrating off-site?"
+    red_flags:
+      - "Groundwater contamination plume identified and not contained"
+    expected_evidence:
+      - "Groundwater monitoring reports"
+      - "Contamination assessment reports"
   - question: What is the acid mine drainage (AMD) status and management?
     detail: Review AMD risks, treatment systems, long-term liabilities
     priority: high
+    id: "MR-ENV-007"
+    sub_questions:
+      - "Is AMD being generated and what treatment systems are in place?"
+      - "What is the long-term AMD management cost estimate?"
+    red_flags:
+      - "Uncontrolled AMD decant to surface water"
+    expected_evidence:
+      - "AMD management plan"
+      - "Water treatment cost reports"
   - question: Are air quality permits and monitoring in place?
     detail: Check Atmospheric Emission License, dust management
     priority: medium
+    id: "MR-ENV-008"
+    expected_evidence:
+      - "Atmospheric Emission License"
   - question: What environmental incidents have occurred in past 5 years?
     detail: Review incident reports, penalties, remediation
     priority: high
+    id: "MR-ENV-009"
+    sub_questions:
+      - "What significant environmental incidents have been reported?"
+      - "What penalties or fines resulted from these incidents?"
+    red_flags:
+      - "Repeat incidents of same type indicating systemic failure"
+    expected_evidence:
+      - "Environmental incident register"
+      - "Incident investigation reports"
   - question: Are closure and post-closure plans adequate?
     detail: Review mine closure plan, post-closure monitoring
     priority: high
+    id: "MR-ENV-010"
+    sub_questions:
+      - "Is a mine closure plan in place and has it been approved?"
+      - "What post-closure monitoring and maintenance obligations exist?"
+    red_flags:
+      - "No approved mine closure plan despite advanced mine life"
+    expected_evidence:
+      - "Mine closure plan document"
+      - "Post-closure monitoring programme"
   cross_doc_validations:
   - check: Financial provision amount vs auditor's assessment
     description: Verify provision in AFS matches regulatory requirement
@@ -415,27 +1590,105 @@ risk_categories:
   - question: Which material contracts contain change of control provisions?
     detail: Identify all CoC triggers across contracts, leases, licenses
     priority: critical
+    id: "MR-COC-001"
+    sub_questions:
+      - "What is the exact CoC definition in each contract — does a share sale trigger it?"
+      - "Is the CoC trigger automatic or does the counterparty have a discretionary right?"
+      - "What is the threshold for triggering CoC (e.g., 50%, any change, effective control)?"
+    red_flags:
+      - "Material contract with automatic termination on CoC and no waiver mechanism"
+      - "Revenue-critical contract with CoC termination right"
+    expected_evidence:
+      - "Schedule of all contracts with CoC provisions"
+      - "Extract of CoC clause from each material contract"
+      - "Legal analysis of whether transaction structure triggers each provision"
   - question: What consents are required to complete the transaction?
     detail: Map all third-party consents needed
     priority: critical
+    id: "MR-COC-002"
+    sub_questions:
+      - "Which regulatory consents are required (Section 11, Competition Commission)?"
+      - "Which contractual consents are conditions precedent vs post-closing?"
+      - "What is the realistic timeline for obtaining each consent?"
+    red_flags:
+      - "Consent from counterparty with commercial leverage to block transaction"
+      - "Multiple consents with total timeline exceeding transaction deadline"
+    expected_evidence:
+      - "Consent requirement matrix with timelines"
+      - "Pre-approach assessment for key counterparties"
+      - "Regulatory consent application status"
   - question: What are the financial consequences of triggering CoC clauses?
     detail: Calculate liquidated damages, termination fees, acceleration
     priority: critical
+    id: "MR-COC-003"
+    sub_questions:
+      - "What is the aggregate liquidated damages exposure across all contracts?"
+      - "What debt could be accelerated on CoC?"
+      - "Are there any consent fees payable?"
+    red_flags:
+      - "Total CoC financial exposure exceeds 20% of transaction value"
+      - "Debt acceleration exceeds available cash and facilities"
+    expected_evidence:
+      - "Financial exposure schedule by contract"
+      - "Acceleration calculation from facility agreements"
+      - "Total CoC exposure summary"
   - question: Are there any termination rights upon change of control?
     detail: Identify contracts that can be terminated on CoC
     priority: critical
+    id: "MR-COC-004"
+    sub_questions:
+      - "Which contracts allow termination on CoC and is it automatic or discretionary?"
+      - "What is the commercial impact of each potential termination?"
+      - "Can counterparty be persuaded to waive termination right?"
+    red_flags:
+      - "Automatic termination of contract representing more than 20% of revenue"
+      - "No cure period or waiver mechanism available"
+    expected_evidence:
+      - "Termination right schedule with commercial impact assessment"
+      - "Counterparty relationship assessment"
+      - "Revenue impact analysis"
   - question: What notice periods apply to CoC notifications?
     detail: Map notification timelines for each contract
     priority: high
+    id: "MR-COC-005"
+    sub_questions:
+      - "What is the longest notification period across all contracts?"
+      - "Are there consequences for late notification?"
+    red_flags:
+      - "Notification period exceeds available transaction timeline"
+    expected_evidence:
+      - "Notification timeline matrix"
+      - "Critical path analysis for consents"
   - question: Can any CoC provisions be waived?
     detail: Identify waiver mechanisms and likelihood
     priority: high
+    id: "MR-COC-006"
+    sub_questions:
+      - "Which contracts have explicit waiver mechanisms for CoC?"
+      - "What is the counterparty relationship and likelihood of waiver?"
+    red_flags:
+      - "Key contract with no waiver mechanism and hostile counterparty"
+    expected_evidence:
+      - "Waiver mechanism analysis by contract"
+      - "Counterparty engagement status"
   - question: Are there any anti-embarrassment or clawback provisions?
     detail: Check for restrictions on resale, value sharing
     priority: medium
+    id: "MR-COC-007"
+    expected_evidence:
+      - "Anti-embarrassment clause extracts from relevant agreements"
   - question: Do joint venture agreements have CoC restrictions?
     detail: Review JV partner consent requirements
     priority: high
+    id: "MR-COC-008"
+    sub_questions:
+      - "Do JV agreements grant pre-emptive rights on CoC?"
+      - "Is JV partner consent required and can it be reasonably obtained?"
+    red_flags:
+      - "JV partner pre-emptive right that could derail transaction"
+    expected_evidence:
+      - "JV agreement CoC provisions"
+      - "JV partner engagement correspondence"
   cross_doc_validations:
   - check: All CoC thresholds vs transaction structure
     description: Confirm which provisions are triggered by the deal
@@ -453,27 +1706,90 @@ risk_categories:
   - question: What are the key offtake/sales agreements and their terms?
     detail: Review pricing, volumes, duration, termination rights
     priority: critical
+    id: "MR-OFC-001"
+    sub_questions:
+      - "What are the key pricing terms and how do they compare to current market?"
+      - "What are the committed volumes and remaining contract terms?"
+      - "Are there termination for convenience provisions?"
+    red_flags:
+      - "Below-market pricing locked in for long term"
+      - "Offtake with related party without arm's length pricing evidence"
+    expected_evidence:
+      - "Offtake agreement schedule with key commercial terms"
+      - "Pricing comparison to market benchmarks"
+      - "Volume and term summary"
   - question: What is the revenue concentration risk?
     detail: Calculate % of revenue from largest customers
     priority: critical
+    id: "MR-OFC-002"
+    sub_questions:
+      - "What percentage of total revenue comes from the top 3 customers?"
+      - "Do the largest customers have CoC termination rights?"
+      - "What alternative buyers exist in the market?"
+    red_flags:
+      - "Single customer exceeds 40% of revenue with CoC termination right"
+      - "Top 3 customers exceed 80% of revenue"
+    expected_evidence:
+      - "Revenue breakdown by customer"
+      - "Customer concentration analysis"
+      - "Market alternative assessment"
   - question: Do offtake agreements contain CoC or assignment provisions?
     detail: Check consent requirements for transaction
     priority: critical
+    id: "MR-OFC-003"
+    sub_questions:
+      - "Which offtake agreements have CoC or assignment restrictions?"
+      - "Is the consequence of CoC termination or consent requirement?"
+      - "What is the relationship with each offtaker and likelihood of consent?"
+    red_flags:
+      - "Revenue-critical offtake with automatic termination on CoC"
+      - "Offtaker unlikely to provide consent"
+    expected_evidence:
+      - "CoC clause extracts from each offtake agreement"
+      - "Consent strategy assessment"
+      - "Revenue at risk calculation"
   - question: What are the minimum volume or take-or-pay obligations?
     detail: Review volume commitments and consequences of shortfall
     priority: high
+    id: "MR-OFC-004"
+    sub_questions:
+      - "What are the annual minimum volume commitments?"
+      - "What are the financial consequences of volume shortfall?"
+    red_flags:
+      - "Take-or-pay obligations exceed current production capacity"
+    expected_evidence:
+      - "Minimum volume schedule by contract"
+      - "Historical delivery performance"
   - question: What pricing mechanisms apply and when do they reset?
     detail: Understand price escalation, benchmarking, review dates
     priority: high
+    id: "MR-OFC-005"
+    sub_questions:
+      - "Are prices linked to market indices or fixed?"
+      - "When is the next price review or reset date?"
+    red_flags:
+      - "Fixed pricing significantly below current market with no escalation"
+    expected_evidence:
+      - "Pricing mechanism summary by contract"
+      - "Price escalation schedule"
   - question: Are there any exclusivity or most-favored-customer provisions?
     detail: Check for restrictions on selling to others
     priority: medium
+    id: "MR-OFC-006"
+    expected_evidence:
+      - "Exclusivity clause extracts"
   - question: What quality specifications apply and what are rejection rights?
     detail: Review quality requirements and consequences of non-conformance
     priority: medium
+    id: "MR-OFC-007"
+    expected_evidence:
+      - "Quality specification schedules from offtake agreements"
   - question: What is the contract backlog and order book?
     detail: Review committed future revenue
     priority: medium
+    id: "MR-OFC-008"
+    expected_evidence:
+      - "Contract backlog summary with revenue projections"
   calculations:
   - name: Revenue at risk
     formula: Sum of annual revenue from contracts with CoC termination rights
@@ -486,33 +1802,111 @@ risk_categories:
   - question: What loan facilities exist and what are the outstanding amounts?
     detail: List all facilities, lenders, amounts drawn and available
     priority: critical
+    id: "MR-BNK-001"
+    sub_questions:
+      - "What is the total drawn and undrawn amount across all facilities?"
+      - "What are the maturity dates and amortization schedules?"
+      - "Are there any shareholder loans or inter-company facilities?"
+    red_flags:
+      - "Total debt exceeds asset value or exceeds sustainable leverage"
+      - "Facility maturing within 12 months with no refinancing plan"
+    expected_evidence:
+      - "Facility agreement schedule with key terms"
+      - "Latest balance confirmation from each lender"
+      - "Debt maturity profile"
   - question: Are there any covenant breaches or waivers in place?
     detail: Review financial covenants, current compliance, any waivers
     priority: critical
+    id: "MR-BNK-002"
+    sub_questions:
+      - "What financial covenants apply and what is the current headroom?"
+      - "Has any waiver been granted and does it remain effective?"
+      - "Are projected financials likely to trigger future breaches?"
+    red_flags:
+      - "Covenant headroom less than 10% of required ratio"
+      - "Waiver in place with conditions not yet satisfied"
+    expected_evidence:
+      - "Covenant compliance certificate (latest)"
+      - "Waiver letters from lenders"
+      - "Covenant headroom calculation"
   - question: Do loan agreements contain change of control triggers?
     detail: Review CoC definitions and consequences
     priority: critical
+    id: "MR-BNK-003"
+    sub_questions:
+      - "What is the CoC definition in each facility — does share sale trigger it?"
+      - "Is the consequence mandatory prepayment or lender discretion?"
+      - "What is the prepayment amount including breakage costs?"
+    red_flags:
+      - "Mandatory prepayment on CoC with no waiver mechanism"
+      - "Total acceleration exposure exceeds available cash"
+    expected_evidence:
+      - "CoC clause extracts from each facility"
+      - "Acceleration exposure calculation"
+      - "Lender engagement status"
   - question: What security has been granted over assets?
     detail: 'List all security: bonds, cessions, pledges'
     priority: critical
+    id: "MR-BNK-004"
+    sub_questions:
+      - "Has the mining right income been ceded to lenders?"
+      - "Are there mortgage bonds over surface property?"
+      - "What movable assets are subject to notarial bonds?"
+    red_flags:
+      - "Security over mining right income restricts transaction"
+      - "Unregistered security creating ranking risk"
+    expected_evidence:
+      - "Security schedule from facility agreement"
+      - "Bond registration confirmations"
+      - "Cession agreements"
   - question: Are there any cross-default provisions?
     detail: Check if default under one facility triggers others
     priority: high
+    id: "MR-BNK-005"
+    sub_questions:
+      - "Does default under one facility trigger cross-default in others?"
+      - "Are there cross-default thresholds or carve-outs?"
+    red_flags:
+      - "Cross-default across all facilities with no threshold"
+    expected_evidence:
+      - "Cross-default clause analysis"
+      - "Inter-creditor agreement if applicable"
   - question: What are the mandatory prepayment triggers?
     detail: Review asset sale, CoC, IPO prepayment requirements
     priority: high
+    id: "MR-BNK-006"
+    sub_questions:
+      - "What events trigger mandatory prepayment beyond CoC?"
+      - "Are there cash sweep or excess cash flow mechanisms?"
+    red_flags:
+      - "Asset disposal proceeds must be applied to prepayment"
+    expected_evidence:
+      - "Mandatory prepayment trigger schedule"
+      - "Cash sweep mechanism analysis"
   - question: Are there any subordination arrangements?
     detail: Check inter-creditor arrangements
     priority: medium
+    id: "MR-BNK-007"
+    expected_evidence:
+      - "Inter-creditor or subordination agreements"
   - question: What are the cash sweep or excess cash flow requirements?
     detail: Review mandatory debt reduction mechanisms
     priority: medium
+    id: "MR-BNK-008"
+    expected_evidence:
+      - "Cash sweep mechanism extracts from facility agreements"
   - question: Are there any financial guarantee or comfort letters?
     detail: Check for parent/shareholder support arrangements
     priority: medium
+    id: "MR-BNK-009"
+    expected_evidence:
+      - "Guarantee and comfort letter schedule"
   - question: What hedging arrangements are in place?
     detail: Review commodity, currency, interest rate hedges
     priority: medium
+    id: "MR-BNK-010"
+    expected_evidence:
+      - "Hedging position summary with mark-to-market values"
   cross_doc_validations:
   - check: Covenant calculations in loan agreement vs actual financials
     description: Verify current covenant compliance
@@ -532,27 +1926,102 @@ risk_categories:
   - question: Does the company own or lease the surface rights?
     detail: Distinguish between owned and leased properties
     priority: critical
+    id: "MR-SRP-001"
+    sub_questions:
+      - "Which properties are owned vs leased?"
+      - "Are there any title defects or encumbrances on owned property?"
+      - "Are leased properties registered with the Deeds Office?"
+    red_flags:
+      - "Key operational surface accessed under informal or expired arrangement"
+      - "Title defect on owned property"
+    expected_evidence:
+      - "Property schedule distinguishing owned vs leased"
+      - "Title deeds for owned properties"
+      - "Lease agreements for leased properties"
   - question: Are surface lease terms aligned with mining right duration?
     detail: Check lease expiry vs mining right expiry
     priority: critical
+    id: "MR-SRP-002"
+    sub_questions:
+      - "Does any lease expire before the mining right?"
+      - "Are renewal options available and on what terms?"
+      - "What is the consequence if a lease is not renewed?"
+    red_flags:
+      - "Surface lease expiry precedes mining right expiry with no renewal option"
+      - "Renewal at landlord's sole discretion"
+    expected_evidence:
+      - "Lease vs mining right expiry comparison schedule"
+      - "Renewal option terms"
+      - "Operational impact assessment if lease not renewed"
   - question: Do lease agreements require consent for CoC or assignment?
     detail: Review landlord consent requirements
     priority: critical
+    id: "MR-SRP-003"
+    sub_questions:
+      - "Which leases have CoC or assignment consent requirements?"
+      - "Is the landlord relationship positive and consent likely?"
+      - "What is the consequence of not obtaining consent?"
+    red_flags:
+      - "Landlord with history of difficult negotiations"
+      - "Consent requirement with no reasonableness standard"
+    expected_evidence:
+      - "CoC clause extracts from each lease"
+      - "Landlord engagement assessment"
+      - "Consent strategy timeline"
   - question: What are the rental and royalty payment obligations?
     detail: Review payment terms, escalations, production royalties
     priority: high
+    id: "MR-SRP-004"
+    sub_questions:
+      - "What are the annual rental payments and escalation mechanisms?"
+      - "Are there production royalties payable to landlords?"
+    red_flags:
+      - "Above-market rental or royalty terms"
+    expected_evidence:
+      - "Rental and royalty payment schedule"
+      - "Escalation mechanism summary"
   - question: What infrastructure is located on leased land?
     detail: Assess value at risk if lease terminates
     priority: high
+    id: "MR-SRP-005"
+    sub_questions:
+      - "What is the replacement value of infrastructure on leased land?"
+      - "What are the removal or reinstatement obligations on lease termination?"
+    red_flags:
+      - "High-value infrastructure on short-term lease"
+    expected_evidence:
+      - "Infrastructure location and valuation schedule"
+      - "Lease reinstatement obligation analysis"
   - question: What are the restoration/rehabilitation obligations to landlords?
     detail: Compare to regulatory rehabilitation requirements
     priority: high
+    id: "MR-SRP-006"
+    sub_questions:
+      - "Do landlord obligations exceed DMRE rehabilitation requirements?"
+      - "Is the landlord rehabilitation standard clearly defined?"
+    red_flags:
+      - "Landlord rehabilitation obligation significantly exceeds regulatory standard"
+    expected_evidence:
+      - "Lease rehabilitation obligation analysis"
+      - "Comparison to EMPr requirements"
   - question: Are there any disputes with landowners or communities?
     detail: Review relationship status, pending claims
     priority: high
+    id: "MR-SRP-007"
+    sub_questions:
+      - "Are there any pending land claims affecting the mining area?"
+      - "Are there community disputes over surface access or impact?"
+    red_flags:
+      - "Active land claim by community over mining operational area"
+    expected_evidence:
+      - "Land claims register search"
+      - "Community engagement records"
   - question: What surface use agreements exist with third parties?
     detail: Review servitudes, access rights, infrastructure rights
     priority: medium
+    id: "MR-SRP-008"
+    expected_evidence:
+      - "Schedule of servitudes and access agreements"
   cross_doc_validations:
   - check: Lease area vs mining right area
     description: Verify all mining areas are covered by surface rights
@@ -570,27 +2039,108 @@ risk_categories:
   - question: What is the current BEE ownership level?
     detail: Calculate effective HDSA ownership percentage
     priority: critical
+    id: "MR-BEE-001"
+    sub_questions:
+      - "What is the HDSA ownership percentage under Mining Charter III methodology?"
+      - "Who are the HDSA shareholders and what are their respective percentages?"
+      - "Are there any flow-through calculations required for indirect ownership?"
+    red_flags:
+      - "HDSA ownership below 30% Mining Charter III minimum"
+      - "HDSA ownership calculation relies on disputed methodology"
+    expected_evidence:
+      - "Share register showing all shareholders"
+      - "HDSA ownership calculation workpaper"
+      - "BEE verification certificate"
   - question: Is ownership compliant with Mining Charter requirements?
     detail: Check 26% minimum, recognition of historical transactions
     priority: critical
+    id: "MR-BEE-002"
+    sub_questions:
+      - "Does the 'Once Empowered Always Empowered' provision apply?"
+      - "Is the ownership recognised at the 26% transitional or 30% target level?"
+      - "Has DMRE confirmed the applicable ownership threshold?"
+    red_flags:
+      - "Reliance on OEAE without supporting documentation"
+      - "DMRE has indicated 30% applies and current ownership is between 26-30%"
+    expected_evidence:
+      - "Mining Charter compliance assessment"
+      - "DMRE correspondence on applicable threshold"
+      - "Historical BEE transaction documentation"
   - question: What BEE structures are in place?
     detail: Review trusts, SPVs, funding arrangements
     priority: high
+    id: "MR-BEE-003"
+    sub_questions:
+      - "What is the BEE ownership structure (direct, SPV, trust)?"
+      - "How is the BEE ownership funded and what are the loan terms?"
+    red_flags:
+      - "BEE SPV with no independent governance or economic participation"
+    expected_evidence:
+      - "BEE structure organogram"
+      - "BEE funding agreements and loan terms"
   - question: Are BEE partners genuine and independent?
     detail: Assess fronting risk, flow-through of benefits
     priority: high
+    id: "MR-BEE-004"
+    sub_questions:
+      - "Do BEE shareholders have independent board representation?"
+      - "Have BEE shareholders received meaningful economic benefits (dividends)?"
+    red_flags:
+      - "All dividends applied to service vendor loan with no economic flow-through"
+    expected_evidence:
+      - "BEE shareholder dividend history"
+      - "BEE partner governance participation evidence"
   - question: What happens to BEE ownership on change of control?
     detail: Review tag-along, anti-dilution, exit mechanisms
     priority: critical
+    id: "MR-BEE-005"
+    sub_questions:
+      - "Does the BEE partner have tag-along rights on the transaction?"
+      - "Are there anti-dilution provisions protecting BEE ownership?"
+      - "Will post-transaction HDSA ownership remain above Mining Charter minimum?"
+    red_flags:
+      - "Post-transaction HDSA falls below 30% with no remediation plan"
+      - "BEE partner exit without replacement partner identified"
+    expected_evidence:
+      - "SHA tag-along and anti-dilution provisions"
+      - "Post-transaction HDSA ownership calculation"
+      - "BEE partner engagement on transaction"
   - question: Is the company Mining Charter compliant across all elements?
     detail: 'Review scorecard: ownership, procurement, HR, etc.'
     priority: high
+    id: "MR-BEE-006"
+    sub_questions:
+      - "What is the Mining Charter scorecard status across all elements?"
+      - "Are there any elements significantly below target?"
+    red_flags:
+      - "Multiple Mining Charter elements below minimum compliance"
+    expected_evidence:
+      - "Latest Mining Charter scorecard submission to DMRE"
+      - "Element-by-element compliance assessment"
   - question: Are there any DMRE queries or concerns about BEE compliance?
     detail: Check for correspondence, investigations
     priority: high
+    id: "MR-BEE-007"
+    sub_questions:
+      - "Has DMRE raised any concerns about BEE ownership or fronting?"
+      - "Is there any pending DTIC investigation?"
+    red_flags:
+      - "Active DMRE or DTIC investigation into BEE compliance"
+    expected_evidence:
+      - "DMRE correspondence register on BEE matters"
+      - "DTIC investigation status if applicable"
   - question: What is the status of the Social and Labour Plan?
     detail: Review SLP commitments, compliance, next review date
     priority: high
+    id: "MR-BEE-008"
+    sub_questions:
+      - "What SLP cycle is current and what is the percentage completion?"
+      - "Are there material SLP arrears and what is the catch-up cost?"
+    red_flags:
+      - "SLP spend below 80% of committed amounts for current cycle"
+    expected_evidence:
+      - "SLP document and progress reports"
+      - "SLP expenditure vs commitment comparison"
   cross_doc_validations:
   - check: BEE certificates vs actual ownership structure
     description: Verify BEE credentials are accurate
@@ -603,30 +2153,87 @@ risk_categories:
   - question: What are the key person dependencies?
     detail: Identify critical executives and their terms
     priority: high
+    id: "MR-EMP-001"
+    sub_questions:
+      - "Which executives are critical to operations and customer relationships?"
+      - "What are their notice periods and restraint provisions?"
+    red_flags:
+      - "Key executive with 1-month notice period and no restraint of trade"
+    expected_evidence:
+      - "Key person schedule with contract terms"
+      - "Retention arrangement status"
   - question: What are the CoC provisions in executive contracts?
     detail: Review golden parachutes, accelerated vesting
     priority: high
+    id: "MR-EMP-002"
+    sub_questions:
+      - "What severance multiples apply on CoC?"
+      - "Does any equity or incentive scheme accelerate on CoC?"
+    red_flags:
+      - "Total executive severance on CoC exceeds 5% of transaction value"
+    expected_evidence:
+      - "Executive contract CoC clause extracts"
+      - "Severance calculation schedule"
   - question: What is the total severance exposure on CoC?
     detail: Calculate all payments triggered by transaction
     priority: high
+    id: "MR-EMP-003"
+    sub_questions:
+      - "What is the aggregate executive severance on CoC?"
+      - "Are there any workforce-wide CoC provisions?"
+    red_flags:
+      - "Aggregate severance creates material post-closing cash outflow"
+    expected_evidence:
+      - "Total severance exposure calculation"
+      - "Executive-by-executive breakdown"
   - question: What is the status of union relationships?
     detail: Review recognition agreements, recent disputes
     priority: high
+    id: "MR-EMP-004"
+    sub_questions:
+      - "Which unions are recognized and what is the membership level?"
+      - "Have there been any strikes or disputes in the past 3 years?"
+    red_flags:
+      - "Active wage dispute with strike notice potential"
+    expected_evidence:
+      - "Recognition agreement schedule"
+      - "Industrial relations history summary"
   - question: Are there any pending retrenchments or Section 189 processes?
     detail: Check for workforce restructuring
     priority: high
+    id: "MR-EMP-005"
+    sub_questions:
+      - "Has any Section 189 notice been issued?"
+      - "Is there a workforce restructuring plan being considered?"
+    red_flags:
+      - "Active Section 189 process with unresolved facilitation"
+    expected_evidence:
+      - "Section 189 notices if any"
+      - "Facilitation status reports"
   - question: What is the status of wage negotiations?
     detail: Review current agreements, upcoming negotiations
     priority: medium
+    id: "MR-EMP-006"
+    expected_evidence:
+      - "Current wage agreement and expiry date"
   - question: Are all statutory employment obligations met?
     detail: Check UIF, COIDA, skills levies
     priority: medium
+    id: "MR-EMP-007"
+    expected_evidence:
+      - "Statutory compliance certificates (UIF, COIDA, Skills Development)"
   - question: What employee benefit schemes are in place?
     detail: Review pension, medical aid, housing schemes
     priority: medium
+    id: "MR-EMP-008"
+    expected_evidence:
+      - "Benefit scheme summary schedule"
   - question: Are there any unfunded post-retirement obligations?
     detail: Check for medical aid continuation, pension deficits
     priority: medium
+    id: "MR-EMP-009"
+    expected_evidence:
+      - "Post-retirement benefit actuarial valuation"
   calculations:
   - name: Total CoC severance exposure
     formula: Sum of all executive severance + general workforce impact
@@ -639,21 +2246,75 @@ risk_categories:
   - question: What is the safety performance record?
     detail: Review LTIFR, fatalities, reportable incidents
     priority: critical
+    id: "MR-HSA-001"
+    sub_questions:
+      - "What is the LTIFR trend over the past 3 years?"
+      - "Have there been any fatalities in the past 5 years?"
+      - "How does safety performance compare to industry benchmarks?"
+    red_flags:
+      - "Fatality in past 12 months with investigation pending"
+      - "LTIFR significantly above industry average"
+    expected_evidence:
+      - "Safety statistics report (3-5 year trend)"
+      - "Fatality investigation reports"
+      - "Industry benchmark comparison"
   - question: Are there any pending DMR safety investigations?
     detail: Check for Section 54/55 stoppages, investigations
     priority: critical
+    id: "MR-HSA-002"
+    sub_questions:
+      - "Have any Section 54 stoppages occurred in the past 12 months?"
+      - "Are there outstanding Section 55 notices?"
+      - "Are there any pending prosecutions under MHSA?"
+    red_flags:
+      - "Active Section 54 stoppage affecting production"
+      - "MHSA prosecution pending against company or managers"
+    expected_evidence:
+      - "Section 54/55 register for past 3 years"
+      - "MHSA investigation correspondence"
+      - "Prosecution status report"
   - question: Is the Certificate of Competency current?
     detail: Verify mine manager qualifications
     priority: high
+    id: "MR-HSA-003"
+    sub_questions:
+      - "Is the appointed mine manager's certificate current and valid?"
+      - "Are all legally required competent persons appointed?"
+    red_flags:
+      - "Mine manager certificate expired or under review"
+    expected_evidence:
+      - "Certificate of Competency for mine manager"
+      - "Competent person appointment register"
   - question: What is the status of occupational health compliance?
     detail: Review medical surveillance, occupational diseases
     priority: high
+    id: "MR-HSA-004"
+    sub_questions:
+      - "Is the occupational health surveillance programme current?"
+      - "What occupational disease trends have been identified?"
+    red_flags:
+      - "Occupational health surveillance programme not current"
+    expected_evidence:
+      - "Occupational health programme documentation"
+      - "Occupational disease statistics"
   - question: Are there any pending health claims (silicosis, TB)?
     detail: Review occupational disease liability exposure
     priority: high
+    id: "MR-HSA-005"
+    sub_questions:
+      - "What is the current occupational disease claim exposure?"
+      - "Is the operation subject to any class action proceedings?"
+    red_flags:
+      - "Class action proceedings for silicosis or other occupational disease"
+    expected_evidence:
+      - "Occupational disease claims register"
+      - "Class action status report"
   - question: What safety equipment and training programs are in place?
     detail: Assess adequacy of safety systems
     priority: medium
+    id: "MR-HSA-006"
+    expected_evidence:
+      - "Safety training programme and records"
 deal_blockers:
 - description: Mining right suspended, cancelled, or under review for cancellation
   severity: absolute
@@ -814,22 +2475,79 @@ folder_questions:
       priority: critical
       detail: Check special resolution requirements, reserved matters, and approval thresholds
       cot_hint: First identify the approval mechanism, then check if conditions are met
+      id: "MR-F01-001"
+      sub_questions:
+        - "Does the MOI require shareholder or board approval for share transfers?"
+        - "Are there reserved matters that require special resolution?"
+        - "What approval thresholds apply to the proposed transaction?"
+      red_flags:
+        - "MOI requires special resolution not yet passed"
+        - "Reserved matter provisions could block transaction"
+      expected_evidence:
+        - "MOI provisions on share transfers and reserved matters"
+        - "Board or shareholder resolution authorizing transaction"
+        - "Legal opinion on MOI compliance"
     - question: Are the shareholding percentages in company records consistent with BEE certificates?
       priority: critical
       detail: Compare share register with BEE ownership verification certificates
       cot_hint: Extract percentages from each document and compare
+      id: "MR-F01-002"
+      sub_questions:
+        - "Do share register percentages match BEE verification certificate?"
+        - "Are there any unrecorded share transfers or options?"
+        - "Is the BEE certificate current (within 12 months)?"
+      red_flags:
+        - "Discrepancy between share register and BEE certificate ownership"
+        - "BEE certificate expired or outdated"
+      expected_evidence:
+        - "Current share register"
+        - "Latest BEE verification certificate"
+        - "Reconciliation of ownership percentages"
     - question: Has the Board properly authorized the transaction per MOI requirements?
       priority: critical
       detail: Check resolution wording, quorum, voting, and signing requirements
       cot_hint: Identify MOI requirements then verify resolution compliance
+      id: "MR-F01-003"
+      sub_questions:
+        - "Was the board quorate when the resolution was passed?"
+        - "Does the resolution wording cover the specific transaction?"
+        - "Were any conflicted directors excluded from voting?"
+      red_flags:
+        - "Resolution does not specifically authorize the proposed transaction"
+        - "Quorum requirements not met"
+      expected_evidence:
+        - "Board resolution with attendance record"
+        - "MOI quorum and voting provisions"
+        - "Declaration of interest register"
     - question: Do SHA provisions conflict with or supplement MOI transfer restrictions?
       priority: high
       detail: Compare pre-emptive rights, tag-along, drag-along clauses
       cot_hint: List each restriction from both documents and identify conflicts
+      id: "MR-F01-004"
+      sub_questions:
+        - "Are there pre-emptive rights in the SHA that must be followed?"
+        - "Do tag-along or drag-along provisions apply to this transaction?"
+      red_flags:
+        - "Unexercised pre-emptive right that could block transaction"
+      expected_evidence:
+        - "SHA transfer restriction provisions"
+        - "MOI vs SHA comparison analysis"
     - question: Is the company Mining Charter compliant at the ownership element?
       priority: critical
       detail: Check 26% minimum HDSA ownership for mining right validity
       cot_hint: Calculate effective HDSA % considering trusts and SPVs
+      id: "MR-F01-005"
+      sub_questions:
+        - "What is the current HDSA ownership percentage?"
+        - "Does OEAE apply to prior BEE transactions?"
+        - "Is the applicable threshold 26% (transitional) or 30% (Mining Charter III)?"
+      red_flags:
+        - "HDSA ownership below applicable Mining Charter threshold"
+        - "Dispute over whether OEAE applies"
+      expected_evidence:
+        - "HDSA ownership calculation"
+        - "Mining Charter compliance confirmation"
+        - "OEAE documentation if relied upon"
     - question: What is the POST-TRANSACTION HDSA ownership if buyer is non-HDSA?
       priority: critical
       detail: |
@@ -842,10 +2560,31 @@ folder_questions:
         Format: "[BEE Partner A] ([X]% HDSA) + [Employee Trust] ([Y]% HDSA) = [Z]% current HDSA.
         Post-transaction if [Acquirer] (non-HDSA) acquires 100%: HDSA drops to 0%.
         Gap to Mining Charter minimum (26-30%): CRITICAL REGULATORY BLOCKER requiring BEE partner or structure."
+      id: "MR-F01-006"
+      sub_questions:
+        - "What is the post-transaction HDSA ownership percentage?"
+        - "Is a BEE co-investor or replacement partner required?"
+        - "Has a BEE remediation structure been designed?"
+      red_flags:
+        - "Post-transaction HDSA below 30% with no remediation plan"
+        - "No BEE co-investor identified and transaction timeline is short"
+      expected_evidence:
+        - "Post-transaction ownership calculation"
+        - "BEE co-investor term sheet if applicable"
+        - "BEE remediation structure proposal"
     - question: What BEE partner consents are required for the transaction?
       priority: high
       detail: Check SHA consent requirements, anti-dilution provisions
       cot_hint: Identify all consent triggers in BEE-related agreements
+      id: "MR-F01-007"
+      sub_questions:
+        - "Does the BEE partner SHA contain consent requirements for this transaction?"
+        - "Are there anti-dilution protections that must be addressed?"
+      red_flags:
+        - "BEE partner consent required but relationship is adversarial"
+      expected_evidence:
+        - "BEE partner consent provisions from SHA"
+        - "BEE partner engagement status"
     cross_doc_checks:
     - check: MOI approval thresholds vs Board Resolution voting record
       related_folders: []
@@ -864,26 +2603,89 @@ folder_questions:
       priority: critical
       detail: Sum all termination fees, liquidated damages, consent fees
       cot_hint: 'For each contract: identify CoC trigger → extract financial consequence → sum all'
+      id: "MR-F02-001"
+      sub_questions:
+        - "What liquidated damages are payable on CoC termination of each contract?"
+        - "What consent fees are required to maintain contracts post-closing?"
+        - "What is the aggregate financial exposure across all commercial contracts?"
+      red_flags:
+        - "Total CoC commercial exposure exceeds 15% of transaction value"
+        - "Multiple material contracts with automatic termination on CoC"
+      expected_evidence:
+        - "CoC exposure schedule by contract"
+        - "Liquidated damages calculation"
+        - "Aggregate financial exposure summary"
     - question: Which offtake agreements contain termination rights on CoC?
       priority: critical
       detail: Focus on revenue-critical contracts first (largest customers)
       cot_hint: Sort by annual revenue, then check CoC clauses in top contracts
+      id: "MR-F02-002"
+      sub_questions:
+        - "Which offtake agreements have CoC termination rights?"
+        - "Is termination automatic or at the offtaker's discretion?"
+        - "What percentage of revenue is at risk from CoC-exposed offtakes?"
+      red_flags:
+        - "Offtake representing more than 30% of revenue has automatic CoC termination"
+        - "No alternative offtaker available in the market"
+      expected_evidence:
+        - "Offtake CoC clause analysis"
+        - "Revenue at risk calculation"
+        - "Alternative offtaker assessment"
     - question: What is the take-or-pay exposure if offtake agreements are terminated?
       priority: critical
       detail: Calculate remaining minimum purchase obligations
       cot_hint: 'For each: remaining term × annual minimum × price'
+      id: "MR-F02-003"
+      sub_questions:
+        - "What are the remaining take-or-pay obligations per contract?"
+        - "What is the total take-or-pay exposure if all CoC-affected contracts terminate?"
+        - "Has production historically met minimum volume commitments?"
+      red_flags:
+        - "Take-or-pay exposure exceeds R10,000,000"
+        - "Production consistently below minimum committed volumes"
+      expected_evidence:
+        - "Take-or-pay exposure schedule by contract"
+        - "Historical delivery vs commitment comparison"
+        - "Total take-or-pay liability calculation"
     - question: Are there any exclusivity provisions that would be breached by CoC?
       priority: high
       detail: Check customer exclusivity, supplier exclusivity, territory restrictions
       cot_hint: Identify exclusive arrangements and assess if new owner triggers breach
+      id: "MR-F02-004"
+      sub_questions:
+        - "Which contracts contain exclusivity provisions?"
+        - "Would a new owner's existing business create an exclusivity conflict?"
+      red_flags:
+        - "Buyer's existing operations conflict with target's exclusivity obligations"
+      expected_evidence:
+        - "Exclusivity provision extracts"
+        - "Conflict analysis with buyer's operations"
     - question: What is the longest consent process timeline across all commercial contracts?
       priority: high
       detail: Critical path determination for transaction timeline
       cot_hint: Extract notice periods and consent timeframes, find maximum
+      id: "MR-F02-005"
+      sub_questions:
+        - "What is the notification and consent timeline for each material contract?"
+        - "Which consent process is the critical path item?"
+      red_flags:
+        - "Consent timeline exceeds transaction completion deadline"
+      expected_evidence:
+        - "Consent timeline matrix"
+        - "Critical path analysis"
     - question: Do any contracts have anti-assignment clauses triggered by share sales?
       priority: high
       detail: Distinguish between asset assignment vs share sale restrictions
       cot_hint: Check if 'assignment' definition includes change of control
+      id: "MR-F02-006"
+      sub_questions:
+        - "Which contracts define 'assignment' to include change of control?"
+        - "Would a share sale (as opposed to asset sale) trigger assignment restrictions?"
+      red_flags:
+        - "Key contract treats share sale as assignment requiring consent"
+      expected_evidence:
+        - "Assignment clause analysis by contract"
+        - "Legal opinion on share sale vs assignment"
     cross_doc_checks:
     - check: Offtake pricing vs AFS revenue recognition
       related_folders:
@@ -905,26 +2707,83 @@ folder_questions:
       priority: critical
       detail: Distinguish automatic acceleration vs lender discretion
       cot_hint: Check exact CoC consequence language - 'shall' vs 'may'
+      id: "MR-F03-001"
+      sub_questions:
+        - "Does the CoC clause use mandatory ('shall') or discretionary ('may') language?"
+        - "Is there a waiver mechanism and what are the conditions?"
+        - "What is the lender relationship and likelihood of waiver?"
+      red_flags:
+        - "Mandatory prepayment on CoC with no waiver mechanism"
+        - "Lender relationship is adversarial"
+      expected_evidence:
+        - "CoC clause extracts from each facility agreement"
+        - "Lender engagement status"
+        - "Legal analysis of mandatory vs discretionary consequences"
     - question: What is total debt that could be accelerated on change of control?
       priority: critical
       detail: Include all facilities, bonds, guarantees, contingent liabilities
       cot_hint: 'Sum: drawn facilities + undrawn commitments + contingent + guarantees'
+      id: "MR-F03-002"
+      sub_questions:
+        - "What is the total drawn balance across all facilities with CoC triggers?"
+        - "What contingent liabilities (guarantees, letters of credit) could crystallize?"
+        - "What breakage costs would apply on early repayment?"
+      red_flags:
+        - "Total acceleration exposure exceeds available cash and committed facilities"
+        - "Breakage costs exceed 2% of outstanding balance"
+      expected_evidence:
+        - "Acceleration exposure calculation by facility"
+        - "Contingent liability schedule"
+        - "Breakage cost estimate"
     - question: Are there any financial covenant breaches or waivers currently in place?
       priority: critical
       detail: Current compliance position affects lender negotiation leverage
       cot_hint: Extract actual ratios from AFS, compare to covenant thresholds
+      id: "MR-F03-003"
+      sub_questions:
+        - "What are the actual covenant ratios vs required ratios?"
+        - "What is the headroom on each covenant?"
+        - "Are any waivers in place and what are their conditions?"
+      red_flags:
+        - "Covenant headroom less than 10% of required ratio"
+        - "Waiver conditions not yet satisfied"
+      expected_evidence:
+        - "Covenant compliance certificate"
+        - "Headroom calculation schedule"
+        - "Waiver letters and conditions"
     - question: What security package is in place and what consents are required?
       priority: high
       detail: Bonds, cessions, pledges - check release/retake requirements
       cot_hint: List all security, identify which needs consent for change
+      id: "MR-F03-004"
+      sub_questions:
+        - "What security instruments are registered and in whose favour?"
+        - "Is release and re-registration of security required for the transaction?"
+      red_flags:
+        - "Security over mining right income complicates transaction structure"
+      expected_evidence:
+        - "Security package schedule"
+        - "Bond registration confirmations"
     - question: Are there cross-default provisions between facilities?
       priority: high
       detail: Default under one could trigger cascade across all facilities
       cot_hint: Check if default under Facility A triggers Facility B
+      id: "MR-F03-005"
+      sub_questions:
+        - "Do cross-default provisions apply across all facilities?"
+        - "Are there threshold amounts or carve-outs?"
+      red_flags:
+        - "Cross-default across all facilities with no materiality threshold"
+      expected_evidence:
+        - "Cross-default clause analysis"
+        - "Inter-creditor agreement"
     - question: What are the mandatory prepayment triggers beyond CoC?
       priority: medium
       detail: Asset sales, insurance proceeds, excess cash flow sweeps
       cot_hint: List all prepayment triggers and assess transaction impact
+      id: "MR-F03-006"
+      expected_evidence:
+        - "Mandatory prepayment trigger schedule"
     cross_doc_checks:
     - check: Covenant ratios in facility agreement vs actual AFS ratios
       related_folders: []
@@ -944,26 +2803,95 @@ folder_questions:
       priority: critical
       detail: Check registration status, compliance history, any suspensions
       cot_hint: 'Verify: registered → compliant → no adverse notices'
+      id: "MR-F04-001"
+      sub_questions:
+        - "Is the mining right registered and not subject to any suspension or cancellation?"
+        - "Are all annual compliance submissions current?"
+        - "Has the DMRE issued any directives or compliance notices?"
+      red_flags:
+        - "Mining right subject to pending DMRE enforcement action"
+        - "Annual compliance submissions more than 6 months overdue"
+      expected_evidence:
+        - "Mining right certificate"
+        - "DMRE compliance status confirmation"
+        - "Annual compliance submission receipts"
     - question: What Section 11 consent timeline should be assumed?
       priority: critical
       detail: DMRE approval required for mining right transfer
       cot_hint: Current DMRE processing is 60-120 days minimum
+      id: "MR-F04-002"
+      sub_questions:
+        - "Has the DMRE been approached for pre-consultation on Section 11?"
+        - "Are there any factors that could delay processing (BEE issues, SLP arrears)?"
+        - "What is the realistic timeline given current DMRE processing capacity?"
+      red_flags:
+        - "DMRE has indicated concerns that could delay or block Section 11"
+        - "No pre-consultation conducted despite advanced transaction stage"
+      expected_evidence:
+        - "DMRE pre-consultation correspondence"
+        - "Section 11 application checklist and status"
+        - "Legal opinion on Section 11 timeline"
     - question: Is the rehabilitation financial provision adequate and current?
       priority: critical
       detail: Compare provision amount to latest specialist assessment
       cot_hint: 'Extract: current provision → latest assessment → gap analysis'
+      id: "MR-F04-003"
+      sub_questions:
+        - "What is the current financial provision amount and form?"
+        - "What is the latest closure cost estimate?"
+        - "What is the gap between provision and estimated liability?"
+      red_flags:
+        - "Financial provision less than 80% of latest closure cost estimate"
+        - "Closure cost estimate not updated in past 3 years"
+      expected_evidence:
+        - "Financial provision certificate or guarantee"
+        - "Latest closure cost estimate"
+        - "Gap analysis calculation"
     - question: What is the Water Use License status and any pending renewals?
       priority: critical
       detail: WUL is independent of mining right - separate DMRE consent
       cot_hint: Check validity dates, compliance, pending applications
+      id: "MR-F04-004"
+      sub_questions:
+        - "Is the WUL current and what is the expiry date?"
+        - "Are all water uses within licensed parameters?"
+        - "Is DWS consent required for transfer and what is the timeline?"
+      red_flags:
+        - "Water use exceeding licensed volumes"
+        - "WUL expired with renewal application pending"
+      expected_evidence:
+        - "Water Use License document"
+        - "Water use monitoring compliance reports"
+        - "DWS correspondence"
     - question: Are there any pending environmental directives or compliance notices?
       priority: critical
       detail: Unresolved environmental issues can block Section 11 consent
       cot_hint: Search for DFFE, DWS, DMRE directive references
+      id: "MR-F04-005"
+      sub_questions:
+        - "Has DFFE, DWS, or DMRE issued any environmental enforcement actions?"
+        - "Are there any pending Section 24G rectification applications?"
+        - "Could environmental non-compliance block Section 11 consent?"
+      red_flags:
+        - "Outstanding environmental directive without compliance plan"
+        - "Pending prosecution under NEMA or NWA"
+      expected_evidence:
+        - "Environmental regulatory correspondence register"
+        - "Directive response documentation"
+        - "Section 24G application status if applicable"
     - question: What is the Social and Labour Plan status and unfunded commitments?
       priority: high
       detail: SLP non-compliance can result in mining right suspension
       cot_hint: Compare SLP commitments vs actual spend/progress
+      id: "MR-F04-006"
+      sub_questions:
+        - "What is the SLP cycle completion percentage?"
+        - "Are there material arrears in HRD or LED commitments?"
+      red_flags:
+        - "SLP spend below 80% of committed amounts"
+      expected_evidence:
+        - "SLP progress reports"
+        - "SLP expenditure vs commitment schedule"
     cross_doc_checks:
     - check: Mining right area vs surface lease boundaries
       related_folders:
@@ -984,26 +2912,71 @@ folder_questions:
       priority: critical
       detail: Sum all golden parachute provisions, accelerated vesting
       cot_hint: 'For each exec: base × multiple + bonus + unvested shares'
+      id: "MR-F05-001"
+      sub_questions:
+        - "What severance multipliers apply for each executive on CoC?"
+        - "Does any equity or share scheme accelerate on CoC?"
+        - "What is the aggregate cash outflow on closing?"
+      red_flags:
+        - "Total executive severance exceeds 5% of transaction value"
+        - "Severance triggers on indirect change of control (HoldCo level)"
+      expected_evidence:
+        - "Executive severance calculation schedule"
+        - "Share scheme vesting schedule on CoC"
+        - "Aggregate severance exposure summary"
     - question: Are there key person dependencies that create operational risk?
       priority: high
       detail: Identify critical executives and their contract terms
       cot_hint: Who would operations struggle without? What are their terms?
+      id: "MR-F05-002"
+      sub_questions:
+        - "Which executives hold critical operational or customer relationships?"
+        - "What are their notice periods and restraint provisions?"
+      red_flags:
+        - "Key mine manager with 1-month notice period and no restraint"
+      expected_evidence:
+        - "Key person dependency assessment"
+        - "Contract term summary for key executives"
     - question: What is the status of union relationships and collective agreements?
       priority: high
       detail: Check recognition agreements, recent disputes, upcoming negotiations
       cot_hint: Identify unions, check agreement currency, note tensions
+      id: "MR-F05-003"
+      sub_questions:
+        - "Which unions are recognized and what is the membership level?"
+        - "When do current wage agreements expire?"
+      red_flags:
+        - "Wage agreement expiring during transaction timeline with no progress on renewal"
+      expected_evidence:
+        - "Recognition agreement schedule"
+        - "Current collective agreement with expiry date"
     - question: Are there any pending retrenchments or Section 189 processes?
       priority: high
       detail: Ongoing restructuring affects transaction risk
       cot_hint: Search for retrenchment notices, LRA Section 189 references
+      id: "MR-F05-004"
+      sub_questions:
+        - "Has any Section 189 notice been issued?"
+        - "What is the estimated severance cost of any pending retrenchment?"
+      red_flags:
+        - "Active Section 189 process with CCMA facilitation"
+      expected_evidence:
+        - "Section 189 notice if applicable"
+        - "Retrenchment cost estimate"
     - question: What restraint of trade provisions exist for key executives?
       priority: medium
       detail: Enforceability and duration affect post-transaction risk
       cot_hint: Extract restraint terms, assess reasonableness
+      id: "MR-F05-005"
+      expected_evidence:
+        - "Restraint of trade provisions from executive contracts"
     - question: Are all statutory employment obligations current?
       priority: medium
       detail: UIF, COIDA, skills levies, pension contributions
       cot_hint: Check for compliance certificates, arrears notices
+      id: "MR-F05-006"
+      expected_evidence:
+        - "Statutory compliance certificates (UIF, COIDA, Skills Development Levy)"
     cross_doc_checks:
     - check: Executive severance totals vs available covenant headroom
       related_folders:
@@ -1021,26 +2994,80 @@ folder_questions:
       priority: critical
       detail: Lease expiry before mining right exhaustion creates risk
       cot_hint: 'Compare: mining right expiry vs lease expiry dates'
+      id: "MR-F06-001"
+      sub_questions:
+        - "Does any surface lease expire before the mining right?"
+        - "Are renewal options available and on what terms?"
+        - "What is the operational consequence if a lease is not renewed?"
+      red_flags:
+        - "Surface lease expiry precedes mining right expiry by more than 5 years"
+        - "No renewal option or renewal at landlord's sole discretion"
+      expected_evidence:
+        - "Lease vs mining right expiry date comparison"
+        - "Lease renewal option provisions"
+        - "Operational impact assessment"
     - question: What landlord consents are required for change of control?
       priority: critical
       detail: Surface lease CoC provisions can block transaction
       cot_hint: Check lease assignment/CoC clauses, consent requirements
+      id: "MR-F06-002"
+      sub_questions:
+        - "Which leases require landlord consent for CoC?"
+        - "Is the consent standard 'not to be unreasonably withheld'?"
+        - "What is the landlord relationship and likelihood of consent?"
+      red_flags:
+        - "Lease with sole discretion consent and difficult landlord relationship"
+        - "Lease for critical operational area with no alternative"
+      expected_evidence:
+        - "Lease CoC clause extracts"
+        - "Landlord engagement status"
+        - "Consent strategy assessment"
     - question: What infrastructure is located on leased vs owned land?
       priority: high
       detail: Stranded asset risk if leases terminate
       cot_hint: Map infrastructure locations to property ownership
+      id: "MR-F06-003"
+      sub_questions:
+        - "What is the value of infrastructure on leased land?"
+        - "What are the removal or reinstatement obligations if leases terminate?"
+      red_flags:
+        - "High-value processing plant on lease expiring within 5 years"
+      expected_evidence:
+        - "Infrastructure location and valuation schedule"
+        - "Lease reinstatement obligations"
     - question: What are the rental escalation and royalty payment terms?
       priority: high
       detail: Future cost projections need accurate assumptions
       cot_hint: Extract escalation mechanisms, production royalty rates
+      id: "MR-F06-004"
+      sub_questions:
+        - "What are the current rental amounts and escalation mechanisms?"
+        - "Are there production royalties payable to surface owners?"
+      red_flags:
+        - "Rental escalation above CPI with no cap"
+      expected_evidence:
+        - "Rental and royalty payment schedule"
+        - "Escalation mechanism summary"
     - question: Are there any community or land claims pending?
       priority: high
       detail: Restitution claims can affect surface rights
       cot_hint: Check for land claims commission references, community agreements
+      id: "MR-F06-005"
+      sub_questions:
+        - "Has a land claims search been conducted?"
+        - "Are there any community disputes over land use or access?"
+      red_flags:
+        - "Active land claim over operational mining area"
+      expected_evidence:
+        - "Land claims register search result"
+        - "Community engagement records"
     - question: What rehabilitation obligations exist to landlords beyond regulatory?
       priority: medium
       detail: Lease may require more than EMPr stipulates
       cot_hint: Compare lease restoration obligations vs EMPr requirements
+      id: "MR-F06-006"
+      expected_evidence:
+        - "Lease rehabilitation obligation comparison to EMPr"
     cross_doc_checks:
     - check: Lease boundaries vs mining right coordinates
       related_folders:
@@ -1058,18 +3085,42 @@ folder_questions:
       priority: high
       detail: BI coverage for mining operations is critical
       cot_hint: Compare BI limit to annual revenue/EBITDA
+      id: "MR-F07-001"
+      sub_questions:
+        - "What is the BI indemnity period and limit?"
+        - "Does BI coverage adequately reflect annual revenue or EBITDA?"
+      red_flags:
+        - "BI limit less than 12 months of revenue"
+      expected_evidence:
+        - "BI policy schedule with limits"
+        - "Revenue vs BI limit comparison"
     - question: Are there any exclusions that create material uninsured risks?
       priority: high
       detail: Check tailings dam, AMD, social unrest exclusions
       cot_hint: List exclusions, assess materiality to operations
+      id: "MR-F07-002"
+      sub_questions:
+        - "Are there exclusions for tailings dam failure, AMD, or environmental contamination?"
+        - "Is social unrest or community action excluded?"
+      red_flags:
+        - "Material mining-specific risk excluded from coverage"
+      expected_evidence:
+        - "Policy exclusion schedule"
+        - "Materiality assessment of excluded risks"
     - question: Do insurance policies require notification of change of control?
       priority: medium
       detail: Failure to notify could void coverage
       cot_hint: Check policy conditions, notification requirements
+      id: "MR-F07-003"
+      expected_evidence:
+        - "Policy CoC notification provisions"
     - question: What is the claims history and effect on future premiums?
       priority: medium
       detail: Material claims affect insurability and cost
       cot_hint: Review claims register, assess pattern and severity
+      id: "MR-F07-004"
+      expected_evidence:
+        - "Claims history report (loss run)"
     cross_doc_checks:
     - check: Lender required insurance vs actual policy schedule
       related_folders:
@@ -1087,22 +3138,70 @@ folder_questions:
       priority: critical
       detail: Sum of claims, counterclaims, potential awards
       cot_hint: 'For each matter: claim amount + costs + interest potential'
+      id: "MR-F08-001"
+      sub_questions:
+        - "What is the aggregate claim amount across all pending matters?"
+        - "What is the probability-weighted exposure for each matter?"
+        - "Are there any matters with uncapped potential liability?"
+      red_flags:
+        - "Total litigation exposure exceeds 5% of transaction value"
+        - "Matter with uncapped potential liability and adverse probability"
+      expected_evidence:
+        - "Litigation register with claim amounts"
+        - "Legal counsel risk assessment per matter"
+        - "Aggregate exposure calculation"
     - question: Are there any regulatory enforcement actions pending?
       priority: critical
       detail: DMRE, DFFE, DWS, Competition Commission matters
       cot_hint: Check for pending investigations, compliance notices
+      id: "MR-F08-002"
+      sub_questions:
+        - "Are there any DMRE, DFFE, or DWS enforcement actions pending?"
+        - "Are there any pending criminal prosecutions under environmental or safety legislation?"
+        - "Could any enforcement action affect Section 11 consent?"
+      red_flags:
+        - "Pending criminal prosecution under NEMA, NWA, or MHSA"
+        - "DMRE enforcement action that could block Section 11"
+      expected_evidence:
+        - "Regulatory enforcement correspondence register"
+        - "Prosecution status report"
+        - "Legal opinion on Section 11 impact"
     - question: What litigation could affect mining right status?
       priority: critical
       detail: Environmental, community, or regulatory litigation risk
       cot_hint: Identify matters that could trigger Section 47 review
+      id: "MR-F08-003"
+      sub_questions:
+        - "Are there any matters that could result in mining right suspension or cancellation?"
+        - "Are there community challenges to the mining right?"
+        - "Is there any interdict application affecting mining operations?"
+      red_flags:
+        - "Interdict application affecting mining operations"
+        - "Community challenge to mining right validity"
+      expected_evidence:
+        - "Mining right-related litigation summary"
+        - "Interdict application status"
+        - "Community dispute register"
     - question: Are there any matters that require disclosure in transaction documents?
       priority: high
       detail: Pending or threatened claims above materiality threshold
       cot_hint: Apply disclosure threshold, list disclosable matters
+      id: "MR-F08-004"
+      sub_questions:
+        - "Which matters exceed the materiality threshold for disclosure?"
+        - "Are there any threatened but not yet instituted claims?"
+      red_flags:
+        - "Material undisclosed threatened claim"
+      expected_evidence:
+        - "Disclosure schedule draft"
+        - "Materiality threshold assessment"
     - question: What is the trend in health and safety claims?
       priority: medium
       detail: Silicosis, occupational disease exposure
       cot_hint: Review historical claims, assess future exposure
+      id: "MR-F08-005"
+      expected_evidence:
+        - "Occupational disease claims trend analysis"
     cross_doc_checks:
     - check: Disclosed litigation vs insurance claims register
       related_folders:
@@ -1120,23 +3219,62 @@ folder_questions:
       priority: critical
       detail: Unresolved assessments create liability uncertainty
       cot_hint: Check for objections, appeals, SARS correspondence
+      id: "MR-F09-001"
+      sub_questions:
+        - "Has SARS issued any additional assessments or audit notifications?"
+        - "Are there any notices of objection or appeals outstanding?"
+        - "What is the total disputed tax amount?"
+      red_flags:
+        - "SARS audit in progress with material potential adjustment"
+        - "Disputed assessment exceeding R5,000,000"
+      expected_evidence:
+        - "SARS correspondence register"
+        - "Assessment and objection documentation"
+        - "Tax exposure quantification"
     - question: Is the company compliant with mineral royalty obligations?
       priority: high
       detail: Mineral royalty is additional to income tax
       cot_hint: Review royalty returns, check for arrears
+      id: "MR-F09-002"
+      sub_questions:
+        - "Are mineral royalty returns filed and royalties paid current?"
+        - "Has SARS queried any royalty calculations?"
+      red_flags:
+        - "Mineral royalty returns overdue or royalties in arrears"
+      expected_evidence:
+        - "Mineral royalty return filing receipts"
+        - "Royalty payment confirmation"
     - question: Are there any tax losses that affect transaction structuring?
       priority: medium
       detail: Assessed losses may be lost on CoC
       cot_hint: Check assessed loss position, anti-avoidance rules
+      id: "MR-F09-003"
+      expected_evidence:
+        - "Assessed loss position from latest tax return"
     - question: Is transfer pricing documentation in place for group transactions?
       priority: medium
       detail: Related party transactions require arm's length evidence
       cot_hint: Identify related party transactions, check documentation
+      id: "MR-F09-004"
+      expected_evidence:
+        - "Transfer pricing documentation or study"
     # WARRANTY/INDEMNITY QUESTIONS
     - question: What tax indemnities are required based on the tax compliance position?
       priority: critical
       detail: Pre-closing tax liabilities, mining royalties, transfer pricing, SARS disputes
       cot_hint: Review tax returns → check SARS correspondence → identify exposure → recommend indemnities
+      id: "MR-F09-005"
+      sub_questions:
+        - "What pre-closing tax liabilities require indemnity protection?"
+        - "Is a specific mineral royalty indemnity required?"
+        - "Is transfer pricing exposure sufficient to warrant a specific indemnity?"
+      red_flags:
+        - "Unresolved SARS dispute with material exposure"
+        - "No transfer pricing documentation for material related party transactions"
+      expected_evidence:
+        - "Tax exposure quantification schedule"
+        - "SARS dispute status report"
+        - "Transfer pricing risk assessment"
       indemnity_focus: true
       triggered_by:
         - "Tax audit findings"
@@ -1164,18 +3302,60 @@ folder_questions:
       priority: critical
       detail: Mineral resources, ore reserves, Competent Person report
       cot_hint: Review CPR → check SAMREC compliance → assess resource quality
+      id: "MR-F10-001"
+      sub_questions:
+        - "Is the Competent Person Report SAMREC compliant and current?"
+        - "What are the measured, indicated, and inferred resource categories?"
+        - "What is the mineral reserve estimate supporting the mine plan?"
+      red_flags:
+        - "CPR older than 2 years without update"
+        - "Significant reliance on inferred resources for mine plan"
+      expected_evidence:
+        - "SAMREC-compliant Competent Person Report"
+        - "Resource and reserve classification summary"
+        - "Competent Person qualifications and independence confirmation"
     - question: What is the remaining life of mine and production profile?
       priority: critical
       detail: LoM plan, production schedule, expansion plans
       cot_hint: Extract LoM → review production plan → assess sustainability
+      id: "MR-F10-002"
+      sub_questions:
+        - "What is the remaining life of mine based on current reserves?"
+        - "Does remaining mine life exceed key contract tenors?"
+        - "Are there expansion or extension plans that could extend mine life?"
+      red_flags:
+        - "Remaining mine life less than 10 years"
+        - "Key contract tenors extend beyond mine life"
+      expected_evidence:
+        - "Life of Mine plan"
+        - "Production schedule"
+        - "Mine life vs contract tenor comparison"
     - question: What is the operational condition and capex requirements?
       priority: high
       detail: Plant condition, replacement capex, sustaining capex
       cot_hint: Assess condition → identify capex needs → quantify investment
+      id: "MR-F10-003"
+      sub_questions:
+        - "What is the current condition of major plant and equipment?"
+        - "What sustaining and replacement capex is required over the next 5 years?"
+      red_flags:
+        - "Major capex requirement not reflected in transaction pricing"
+      expected_evidence:
+        - "Plant condition assessment"
+        - "5-year capex budget"
     - question: What processing and metallurgical factors apply?
       priority: high
       detail: Recovery rates, head grade, metallurgical characteristics
       cot_hint: Review metallurgy → check recoveries → assess viability
+      id: "MR-F10-004"
+      sub_questions:
+        - "What are the historical recovery rates and grade trends?"
+        - "Are there any metallurgical challenges affecting production?"
+      red_flags:
+        - "Declining grades or recovery rates not reflected in projections"
+      expected_evidence:
+        - "Metallurgical performance data"
+        - "Grade and recovery trend analysis"
     cross_doc_checks:
     - check: Verify production targets match offtake commitments
       related_folders:
@@ -1189,19 +3369,64 @@ folder_questions:
       priority: critical
       detail: Closure cost estimate, NEMA financial provision
       cot_hint: Review liability estimate → check provision → calculate gap
+      id: "MR-F11-001"
+      sub_questions:
+        - "What is the latest closure cost estimate and who prepared it?"
+        - "What is the current financial provision and what form does it take?"
+        - "What is the gap between estimated liability and provision?"
+      red_flags:
+        - "Provision less than 80% of latest closure cost estimate"
+        - "Closure cost estimate not updated in past 3 years"
+      expected_evidence:
+        - "Closure cost estimate report"
+        - "Financial provision certificate"
+        - "Gap analysis calculation"
     - question: Are there any contamination or pollution issues?
       priority: critical
       detail: Acid mine drainage, tailings, groundwater contamination
       cot_hint: Identify contamination → assess remediation → quantify cost
+      id: "MR-F11-002"
+      sub_questions:
+        - "Is there soil, groundwater, or surface water contamination?"
+        - "Is AMD being generated and what treatment is in place?"
+        - "What is the estimated remediation cost?"
+      red_flags:
+        - "Uncontrolled contamination plume migrating off-site"
+        - "AMD decant to surface water without treatment"
+      expected_evidence:
+        - "Contamination assessment reports"
+        - "Groundwater monitoring reports"
+        - "Remediation cost estimate"
     - question: What is the status of tailings and waste management?
       priority: high
       detail: TSF stability, waste rock, hazardous waste
       cot_hint: Review TSF → check stability → assess risk
+      id: "MR-F11-003"
+      sub_questions:
+        - "Has a TSF stability assessment been conducted recently?"
+        - "Is the TSF operated in accordance with applicable standards?"
+      red_flags:
+        - "TSF stability concern identified in latest assessment"
+      expected_evidence:
+        - "TSF stability assessment report"
+        - "TSF monitoring records"
     # WARRANTY/INDEMNITY QUESTIONS
     - question: What environmental warranties should be obtained for EMPr, WUL, and rehabilitation?
       priority: critical
       detail: EMPr compliance, WUL compliance, rehabilitation provision, contamination, TSF stability
       cot_hint: Review EMPr status → check WUL compliance → assess rehabilitation gap → recommend warranties
+      id: "MR-F11-004"
+      sub_questions:
+        - "Which environmental warranties are essential based on DD findings?"
+        - "What should the warranty cap and survival period be for environmental warranties?"
+        - "Should environmental warranties be fundamental (uncapped, extended survival)?"
+      red_flags:
+        - "Seller resisting environmental warranties despite identified risks"
+        - "Environmental risks without adequate warranty or indemnity protection"
+      expected_evidence:
+        - "Environmental DD findings summary"
+        - "Recommended warranty schedule"
+        - "Warranty negotiation position"
       warranty_focus: true
       suggested_warranties:
         - "W-ENV-001: Environmental Management Programme approved and compliant"
@@ -1214,6 +3439,18 @@ folder_questions:
       priority: critical
       detail: Pre-closing contamination, rehabilitation gap, WUL non-compliance, TSF failure
       cot_hint: Calculate rehabilitation gap → identify contamination → assess TSF risk → recommend indemnities with escrow
+      id: "MR-F11-005"
+      sub_questions:
+        - "What is the rehabilitation liability gap requiring indemnity coverage?"
+        - "Is a pre-closing contamination indemnity required?"
+        - "Should escrow be recommended for environmental indemnities?"
+      red_flags:
+        - "Rehabilitation gap exceeding R10,000,000 without seller indemnity"
+        - "Known contamination without remediation cost estimate"
+      expected_evidence:
+        - "Rehabilitation gap calculation"
+        - "Contamination assessment summary"
+        - "Recommended indemnity schedule with caps and escrow"
       indemnity_focus: true
       triggered_by:
         - "Rehabilitation liability gap > R10M"
@@ -1244,19 +3481,64 @@ folder_questions:
       priority: critical
       detail: Mining Charter ownership, flow-through calculation
       cot_hint: Calculate HDP ownership → check Charter threshold → assess compliance
+      id: "MR-F12-001"
+      sub_questions:
+        - "What is the HDSA ownership percentage under Mining Charter III methodology?"
+        - "Are there flow-through calculations required for indirect HDSA ownership?"
+        - "Does the 'Once Empowered Always Empowered' provision apply?"
+      red_flags:
+        - "HDSA ownership below 30% Mining Charter III minimum"
+        - "Disputed methodology for HDSA calculation"
+      expected_evidence:
+        - "HDSA ownership calculation workpaper"
+        - "BEE verification certificate"
+        - "Share register with HDSA identification"
     - question: Will the transaction affect Mining Charter compliance?
       priority: critical
       detail: Impact on ownership levels, Charter thresholds
       cot_hint: Model post-transaction → compare thresholds → identify issues
+      id: "MR-F12-002"
+      sub_questions:
+        - "What is the post-transaction HDSA ownership percentage?"
+        - "Does the transaction require a BEE co-investor or replacement partner?"
+        - "Has DMRE been consulted on the BEE impact of the transaction?"
+      red_flags:
+        - "Post-transaction HDSA below 30% with no remediation plan"
+        - "No BEE co-investor identified for transaction"
+      expected_evidence:
+        - "Post-transaction ownership model"
+        - "BEE remediation structure if applicable"
+        - "DMRE pre-consultation on BEE impact"
     - question: Are there BEE lock-in or restriction provisions affecting the sale?
       priority: high
       detail: BEE shareholder consents, transfer restrictions
       cot_hint: Find restrictions → check lock-in periods → assess flexibility
+      id: "MR-F12-003"
+      sub_questions:
+        - "Are there lock-in periods preventing BEE partner disposal?"
+        - "Do anti-dilution provisions protect BEE ownership?"
+      red_flags:
+        - "BEE lock-in period has expired allowing partner exit"
+      expected_evidence:
+        - "BEE lock-in and restriction provisions"
+        - "Anti-dilution mechanism analysis"
     # WARRANTY/INDEMNITY QUESTIONS
     - question: What BEE and Mining Charter warranties and indemnities are required?
       priority: critical
       detail: HDSA ownership, Mining Charter compliance, fronting risk, scorecard accuracy
       cot_hint: Verify HDSA ownership → check Mining Charter scorecard → assess fronting risk → recommend protections
+      id: "MR-F12-004"
+      sub_questions:
+        - "Which BEE warranties are essential for buyer protection?"
+        - "Is a fronting risk indemnity required?"
+        - "Should Mining Charter non-compliance trigger a specific indemnity?"
+      red_flags:
+        - "BEE compliance uncertainty without adequate warranty protection"
+        - "Fronting indicators present without seller indemnity"
+      expected_evidence:
+        - "BEE DD findings summary"
+        - "Recommended warranty and indemnity schedule"
+        - "Fronting risk assessment"
       warranty_focus: true
       indemnity_focus: true
       suggested_warranties:
@@ -1280,6 +3562,9 @@ folder_questions:
       priority: medium
       detail: Documents requiring manual classification review
       cot_hint: Identify mining content → flag for review
+      id: "MR-F99-001"
+      expected_evidence:
+        - "Document classification assessment"
     cross_doc_checks: []
 
 # ============================================================================
@@ -2173,3 +4458,95 @@ output_requirements:
     - Warranties schedule by category with detailed wording suggestions
     - Indemnities schedule with triggers, caps, and survival periods
     - W&I negotiation matrix (critical vs negotiable items)
+output_templates:
+  executive_summary:
+    max_items: 15
+    sections:
+      - "Transaction Overview"
+      - "Deal Blockers"
+      - "Critical Findings"
+      - "Financial Exposure Summary"
+      - "Conditions Precedent"
+      - "Key Recommendations"
+    required_elements:
+      - "Total quantified exposure amount"
+      - "Number of deal blockers identified"
+      - "Number of conditions precedent"
+      - "BEE compliance status (compliant / non-compliant / at risk)"
+      - "Section 11 consent risk assessment"
+      - "Rehabilitation liability gap"
+  full_report:
+    sections:
+      - name: "Transaction Context"
+        subsections:
+          - "Deal structure analysis"
+          - "Party identification"
+          - "Regulatory pathway"
+      - name: "Mining Rights & Title"
+        subsections:
+          - "Mining right validity and status"
+          - "Section 11 consent assessment"
+          - "Mining work programme compliance"
+      - name: "Environmental"
+        subsections:
+          - "EMPr and EA status"
+          - "Water Use License"
+          - "Rehabilitation liability and provision"
+          - "Contamination and pollution"
+      - name: "BEE & Mining Charter"
+        subsections:
+          - "Current HDSA ownership"
+          - "Post-transaction ownership calculation"
+          - "Mining Charter scorecard"
+          - "Fronting risk assessment"
+      - name: "Change of Control"
+        subsections:
+          - "Contract-by-contract CoC analysis"
+          - "Consent requirements and timeline"
+          - "Financial exposure quantification"
+      - name: "Financial & Banking"
+        subsections:
+          - "Debt structure and covenants"
+          - "Acceleration exposure"
+          - "Security package"
+      - name: "Commercial Contracts"
+        subsections:
+          - "Offtake agreement analysis"
+          - "Revenue concentration"
+          - "Take-or-pay obligations"
+      - name: "Employment & Safety"
+        subsections:
+          - "Key person dependencies"
+          - "Severance exposure"
+          - "Union relationships"
+          - "Safety performance"
+      - name: "Property & Surface Rights"
+        subsections:
+          - "Lease vs mining right alignment"
+          - "Landlord consent requirements"
+          - "Community and land claims"
+      - name: "Tax"
+        subsections:
+          - "Compliance status"
+          - "Mineral royalties"
+          - "Assessed losses"
+      - name: "Litigation"
+        subsections:
+          - "Pending matters"
+          - "Regulatory enforcement"
+          - "Occupational disease exposure"
+      - name: "Warranties & Indemnities"
+        subsections:
+          - "Recommended warranties by category"
+          - "Recommended indemnities by category"
+          - "Cap and survival recommendations"
+  finding_format:
+    required_fields:
+      - "finding_id"
+      - "category"
+      - "severity"
+      - "description"
+      - "statutory_reference"
+      - "financial_impact"
+      - "recommended_action"
+      - "action_category"

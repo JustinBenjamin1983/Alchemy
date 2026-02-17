@@ -6,6 +6,57 @@ description: 'General due diligence blueprint for mergers and acquisitions of co
 
   '
 jurisdiction: South Africa
+transaction_context:
+  deal_structures:
+    - id: share_sale
+      description: "Acquisition of shares in the target company"
+      typical_considerations:
+        - "SHA pre-emptive rights and transfer restrictions"
+        - "Competition Commission notification if thresholds met"
+        - "Change of control triggers in material contracts"
+        - "Section 197 LRA does not apply to share sales"
+    - id: asset_sale_going_concern
+      description: "Acquisition of business assets as a going concern"
+      typical_considerations:
+        - "Section 112 Companies Act special resolution if greater part of assets"
+        - "Section 197 LRA automatic transfer of employees"
+        - "VAT zero-rating for going concern transfer"
+        - "Individual asset transfer and consent requirements"
+        - "Cherry-picking of assets possible but increases complexity"
+    - id: merger_amalgamation
+      description: "Statutory merger under Companies Act Section 113"
+      typical_considerations:
+        - "Court approval required"
+        - "Special resolution by each merging company"
+        - "Dissenting shareholders appraisal rights under Section 164"
+        - "Competition Commission approval mandatory"
+    - id: scheme_of_arrangement
+      description: "Court-sanctioned scheme under Companies Act Section 114"
+      typical_considerations:
+        - "TRP involvement for regulated companies"
+        - "75% shareholder approval required"
+        - "Court sanction required for scheme to become effective"
+        - "Dissenting shareholders appraisal rights"
+    - id: share_subscription
+      description: "Subscription for new shares in the target, diluting existing shareholders"
+      typical_considerations:
+        - "MOI authority to issue shares"
+        - "Pre-emptive rights waiver required"
+        - "Dilution impact on existing shareholders"
+        - "BEE ownership recalculation post-issuance"
+  typical_parties:
+    - role: seller
+      description: "Shareholder disposing of shares or company disposing of assets"
+    - role: buyer
+      description: "Acquirer of shares or assets"
+    - role: target
+      description: "Company whose shares or assets are being acquired"
+    - role: competition_commission
+      description: "Competition Commission of South Africa — mandatory merger notification"
+    - role: trp
+      description: "Takeover Regulation Panel — regulates affected transactions in regulated companies"
+    - role: shareholders
+      description: "Existing shareholders who may have pre-emptive, tag-along, or appraisal rights"
 folder_structure:
   01_Corporate_Governance:
     relevance: critical
@@ -23,6 +74,40 @@ folder_structure:
     - Company Registration
     - Annual Return
     - Group Structure Chart
+    document_expectations:
+      - type: "MOI"
+        aliases: ["Memorandum of Incorporation", "Articles of Association", "Constitution"]
+        tier: critical
+        why_critical: "Constitutional document — defines approval thresholds, transfer restrictions, reserved matters"
+        red_flags_if_missing: "Cannot verify transaction authority or share transfer mechanism"
+      - type: "Shareholders Agreement"
+        aliases: ["SHA", "Shareholder Agreement"]
+        tier: critical
+        why_critical: "May contain pre-emptive rights, tag/drag, consent requirements not in MOI"
+        red_flags_if_missing: "Unknown third-party rights that may block transaction"
+      - type: "Board Resolution"
+        aliases: ["Directors Resolution", "Written Resolution"]
+        tier: critical
+        why_critical: "Must authorize proposed transaction per MOI requirements"
+        red_flags_if_missing: "Transaction lacks corporate authority"
+      - type: "Share Certificate"
+        aliases: ["Securities Register", "Share Register"]
+        tier: critical
+        why_critical: "Proves legal ownership and valid issuance of shares"
+        red_flags_if_missing: "Title defect risk"
+      - type: "Company Registration"
+        aliases: ["CIPC Registration", "CM29", "CoR14.3"]
+        tier: important
+        why_critical: "Confirms valid incorporation and registered details"
+      - type: "Annual Return"
+        aliases: ["CIPC Annual Return", "AR Filing"]
+        tier: important
+        why_critical: "Overdue annual returns can lead to deregistration"
+        red_flags_if_missing: "Company may be in process of deregistration"
+      - type: "Group Structure Chart"
+        aliases: ["Organogram", "Corporate Structure", "Group Organogram"]
+        tier: important
+        why_critical: "Maps all subsidiaries and associated companies"
   02_Commercial:
     relevance: critical
     subcategories:
@@ -37,6 +122,34 @@ folder_structure:
     - License Agreement
     - Franchise Agreement
     - Agency Agreement
+    document_expectations:
+      - type: "Customer Agreement"
+        aliases: ["Customer Contract", "Sales Agreement", "Master Services Agreement"]
+        tier: critical
+        why_critical: "Revenue source — CoC provisions directly impact transaction"
+        red_flags_if_missing: "Revenue sustainability cannot be assessed"
+      - type: "Supply Agreement"
+        aliases: ["Supplier Contract", "Procurement Agreement"]
+        tier: important
+        why_critical: "Cost structure and supply chain dependency"
+      - type: "Distribution Agreement"
+        aliases: ["Distributor Agreement", "Channel Agreement"]
+        tier: important
+        why_critical: "Market access dependency and territory restrictions"
+      - type: "License Agreement"
+        aliases: ["IP License", "Software License", "Technology License"]
+        tier: critical
+        why_critical: "Technology or IP dependency — CoC may terminate license"
+        red_flags_if_missing: "IP dependency unknown"
+      - type: "Franchise Agreement"
+        aliases: ["Franchise License", "Master Franchise"]
+        tier: critical
+        why_critical: "Entire business model depends on franchise — franchisor CoC consent"
+        red_flags_if_missing: "Franchise terms and transferability unknown"
+      - type: "Agency Agreement"
+        aliases: ["Sales Agency", "Commission Agreement"]
+        tier: supporting
+        why_critical: "Commission obligations and termination exposure"
   03_Financial:
     relevance: critical
     subcategories:
@@ -54,6 +167,41 @@ folder_structure:
     - Audit Report
     - Management Accounts
     - Intercompany Loan Agreement
+    document_expectations:
+      - type: "Loan Agreement"
+        aliases: ["Credit Agreement", "Term Loan"]
+        tier: critical
+        why_critical: "Debt structure and CoC acceleration risk"
+        red_flags_if_missing: "Debt position unknown"
+      - type: "Facility Agreement"
+        aliases: ["Revolving Credit Facility", "RCF", "Overdraft"]
+        tier: critical
+        why_critical: "Working capital — CoC may trigger cancellation"
+      - type: "Mortgage Bond"
+        aliases: ["Bond", "Covering Bond"]
+        tier: important
+        why_critical: "Security over property"
+      - type: "Guarantee"
+        aliases: ["Bank Guarantee", "Parent Guarantee", "Performance Guarantee"]
+        tier: important
+        why_critical: "Contingent liability"
+      - type: "Financial Statements"
+        aliases: ["AFS", "Annual Financial Statements", "Audited Accounts"]
+        tier: critical
+        why_critical: "Basis for financial assessment and warranties"
+        red_flags_if_missing: "Financial position cannot be verified"
+      - type: "Audit Report"
+        aliases: ["Auditor's Report", "Independent Audit"]
+        tier: critical
+        why_critical: "Qualification indicates material risk"
+      - type: "Management Accounts"
+        aliases: ["Monthly Management Accounts", "Management Pack"]
+        tier: important
+        why_critical: "Current trading performance since last AFS"
+      - type: "Intercompany Loan Agreement"
+        aliases: ["Shareholder Loan", "Group Loan", "Related Party Loan"]
+        tier: important
+        why_critical: "Settlement or assumption on closing"
   04_Regulatory:
     relevance: high
     subcategories:
@@ -67,6 +215,30 @@ folder_structure:
     - Competition Commission Filing
     - Industry License
     - Regulatory Correspondence
+    document_expectations:
+      - type: "Business License"
+        aliases: ["Trading License", "Municipal License"]
+        tier: important
+        why_critical: "Basic operating authority"
+      - type: "Operating Permit"
+        aliases: ["Operating License", "Activity Permit"]
+        tier: critical
+        why_critical: "Industry-specific operating authority"
+        red_flags_if_missing: "Operations may be unlicensed"
+      - type: "Competition Commission Filing"
+        aliases: ["Merger Notification", "Competition Filing"]
+        tier: critical
+        why_critical: "Mandatory for intermediate/large mergers — gun-jumping risk"
+        red_flags_if_missing: "Expected if filing thresholds met"
+      - type: "Industry License"
+        aliases: ["Sector License", "FSCA License", "NGB License"]
+        tier: critical
+        why_critical: "Sector-specific authorization — loss destroys business"
+        red_flags_if_missing: "Regulatory status unknown"
+      - type: "Regulatory Correspondence"
+        aliases: ["Regulator Letters", "Compliance Notices"]
+        tier: important
+        why_critical: "Pending investigations or enforcement actions"
   05_Employment:
     relevance: high
     subcategories:
@@ -81,6 +253,32 @@ folder_structure:
     - Pension Fund Rules
     - Share Option Scheme
     - Bonus Scheme
+    document_expectations:
+      - type: "Employment Contract"
+        aliases: ["Service Agreement", "Executive Contract", "Letter of Appointment"]
+        tier: important
+        why_critical: "CoC severance triggers and notice periods"
+      - type: "HR Policy"
+        aliases: ["Employee Handbook", "Company Policies"]
+        tier: supporting
+        why_critical: "Compliance framework"
+      - type: "Recognition Agreement"
+        aliases: ["Union Recognition", "Organisational Rights Agreement"]
+        tier: important
+        why_critical: "Union relationship framework"
+      - type: "Pension Fund Rules"
+        aliases: ["Provident Fund Rules", "Retirement Fund Rules"]
+        tier: supporting
+        why_critical: "Post-retirement obligations"
+      - type: "Share Option Scheme"
+        aliases: ["ESOP", "Share Incentive Plan", "LTIP"]
+        tier: important
+        why_critical: "Accelerated vesting on CoC creates cash outflow"
+        red_flags_if_missing: "Unknown equity dilution or cash exposure"
+      - type: "Bonus Scheme"
+        aliases: ["STI Scheme", "Performance Bonus Plan"]
+        tier: supporting
+        why_critical: "Accrued but unpaid bonus liability"
   06_Property:
     relevance: medium
     subcategories:
@@ -92,6 +290,23 @@ folder_structure:
     - Lease Agreement
     - Servitude Agreement
     - Property Valuation
+    document_expectations:
+      - type: "Title Deed"
+        aliases: ["Deed of Transfer", "Property Title"]
+        tier: important
+        why_critical: "Proves property ownership"
+      - type: "Lease Agreement"
+        aliases: ["Property Lease", "Commercial Lease", "Office Lease"]
+        tier: important
+        why_critical: "Premises dependency — landlord CoC consent"
+      - type: "Servitude Agreement"
+        aliases: ["Right of Way", "Servitude Registration"]
+        tier: supporting
+        why_critical: "Access rights"
+      - type: "Property Valuation"
+        aliases: ["Valuation Report", "Market Valuation"]
+        tier: supporting
+        why_critical: "Asset value verification"
   07_Insurance:
     relevance: low
     subcategories:
@@ -102,6 +317,19 @@ folder_structure:
     - Insurance Policy
     - Certificate of Insurance
     - Claims Record
+    document_expectations:
+      - type: "Insurance Policy"
+        aliases: ["Policy Schedule", "Insurance Certificate"]
+        tier: important
+        why_critical: "Coverage adequacy"
+      - type: "Certificate of Insurance"
+        aliases: ["COI", "Proof of Insurance"]
+        tier: supporting
+        why_critical: "Confirms current coverage"
+      - type: "Claims Record"
+        aliases: ["Claims History", "Loss Run"]
+        tier: supporting
+        why_critical: "Claims pattern"
   08_Litigation:
     relevance: high
     subcategories:
@@ -116,6 +344,31 @@ folder_structure:
     - Court Order
     - Legal Opinion
     - Demand Letter
+    document_expectations:
+      - type: "Summons"
+        aliases: ["Combined Summons", "Simple Summons"]
+        tier: important
+        why_critical: "Active legal proceedings"
+      - type: "Pleadings"
+        aliases: ["Particulars of Claim", "Plea"]
+        tier: important
+        why_critical: "Claim detail and defence"
+      - type: "Settlement Agreement"
+        aliases: ["Deed of Settlement"]
+        tier: important
+        why_critical: "Ongoing obligations from settled matters"
+      - type: "Court Order"
+        aliases: ["Judgment", "Interdict", "Consent Order"]
+        tier: critical
+        why_critical: "Binding obligations"
+      - type: "Legal Opinion"
+        aliases: ["Attorney Opinion", "Counsel Opinion"]
+        tier: supporting
+        why_critical: "Risk assessment"
+      - type: "Demand Letter"
+        aliases: ["Letter of Demand", "Pre-litigation Notice"]
+        tier: important
+        why_critical: "Threatened claims"
   09_Tax:
     relevance: high
     subcategories:
@@ -129,6 +382,27 @@ folder_structure:
     - Tax Ruling
     - Tax Clearance Certificate
     - Transfer Pricing Documentation
+    document_expectations:
+      - type: "Tax Return"
+        aliases: ["ITR14", "Income Tax Return"]
+        tier: important
+        why_critical: "Tax compliance"
+      - type: "Tax Assessment"
+        aliases: ["ITA34", "Notice of Assessment"]
+        tier: important
+        why_critical: "SARS determined liability"
+      - type: "Tax Ruling"
+        aliases: ["SARS Binding Ruling", "Class Ruling"]
+        tier: supporting
+        why_critical: "Tax certainty on specific transactions"
+      - type: "Tax Clearance Certificate"
+        aliases: ["TCC", "Tax Compliance Status"]
+        tier: important
+        why_critical: "Good standing with SARS"
+      - type: "Transfer Pricing Documentation"
+        aliases: ["TP Study", "Master File", "Local File"]
+        tier: important
+        why_critical: "Related party transaction compliance"
   99_Needs_Review:
     relevance: n/a
     subcategories:
@@ -148,172 +422,1219 @@ reference_documents:
     reason: Shareholder rights and restrictions
   - pattern: Board Resolution
     reason: Transaction authorization
+entity_relationship_patterns:
+  typical_structures:
+    - name: "Simple HoldCo / OpCo"
+      description: "Holding company owns operating company shares"
+      dd_implication: "Assess whether transaction is at HoldCo or OpCo level; intercompany arrangements"
+    - name: "Multi-subsidiary Group"
+      description: "Parent with multiple trading subsidiaries"
+      dd_implication: "Group structure chart critical; shared services and intercompany pricing; subsidiary-level liabilities"
+    - name: "JV / Consortium"
+      description: "Joint venture between independent parties"
+      dd_implication: "JV agreement governs transfer; partner consent required; pre-emptive rights"
+    - name: "Franchised / Licensed"
+      description: "Business operating under franchise or license agreements"
+      dd_implication: "Franchisor/licensor consent for CoC; franchise terms transferability; territory restrictions"
+  entity_roles:
+    - role: "Target Company"
+      description: "Entity being acquired — shares or assets"
+    - role: "Subsidiary"
+      description: "Entity owned by target — liabilities may be at subsidiary level"
+    - role: "Associated Company"
+      description: "Entity in which target has significant influence (20-50%)"
+    - role: "Holding Company"
+      description: "Parent entity — may give warranties or guarantees"
+    - role: "SPV"
+      description: "Special purpose vehicle — check for ring-fencing or liability isolation"
+    - role: "BEE Partner"
+      description: "B-BBEE shareholder — check transfer restrictions and tag-along rights"
+  common_related_parties:
+    - type: "Management Company"
+      red_flags:
+        - "Above-market management fees to shareholder-related entity"
+        - "No competitive tender for management services"
+        - "Key operational functions outsourced to related party"
+    - type: "Shareholder Loan Provider"
+      red_flags:
+        - "Non-commercial interest rates on shareholder loans"
+        - "Subordination not documented"
+        - "Loan repayment priority over trade creditors"
+    - type: "Key Supplier/Customer"
+      red_flags:
+        - "Related party is sole supplier or largest customer"
+        - "Pricing significantly above or below market"
+        - "No arm's length terms documented"
+    - type: "Property Landlord"
+      red_flags:
+        - "Related party landlord with above-market rental"
+        - "No independent valuation of rental terms"
+        - "Long-term lease with no market rent review"
+materiality_thresholds:
+  default_when_value_unknown:
+    absolute_threshold: "R5,000,000"
+    description: "Applied when transaction value is not known or not disclosed"
+  when_value_known:
+    tiers:
+      - percentage: 5
+        applies_to: "General findings — contracts, liabilities, exposures"
+      - percentage: 2
+        applies_to: "Financial statement items — provisions, accruals, adjustments"
+      - percentage: 1
+        applies_to: "Related party transactions — any deviation from arm's length"
+  qualitative_overrides:
+    always_material_regardless_of_amount:
+      - "Fundamental defect in corporate existence or share issuance"
+      - "Competition Commission prohibition or unacceptable conditions"
+      - "Regulatory license suspension or revocation"
+      - "Criminal prosecution of company or directors"
+      - "Fraud or material misrepresentation by seller"
+      - "Undisclosed related party transaction"
+    never_immaterial_categories:
+      - category: "Competition Law"
+        reason: "Gun-jumping penalties up to 10% of turnover; prohibition blocks deal"
+      - category: "Regulatory Compliance"
+        reason: "License loss can destroy business value entirely"
+      - category: "Fraud & Misrepresentation"
+        reason: "Goes to root of transaction; warranty and indemnity implications"
+cross_reference_expectations:
+  - primary_document: "MOI"
+    should_reference:
+      - "Share classes and rights"
+      - "Transfer restrictions and pre-emptive rights"
+      - "Approval thresholds for fundamental transactions"
+      - "Reserved matters requiring special resolution"
+    should_be_referenced_by:
+      - "SHA — must be consistent with MOI provisions"
+      - "Board Resolution — authority derived from MOI"
+      - "Share Certificates — classes per MOI"
+  - primary_document: "Shareholders Agreement"
+    should_reference:
+      - "Pre-emptive rights and transfer mechanism"
+      - "Tag-along and drag-along rights"
+      - "Deadlock resolution provisions"
+      - "Non-compete and non-solicitation"
+    should_be_referenced_by:
+      - "Board Resolution — SHA consent obtained"
+      - "Share Register — parties match SHA"
+  - primary_document: "Financial Statements"
+    should_reference:
+      - "Accounting policies"
+      - "Contingent liabilities"
+      - "Related party transactions"
+      - "Post-balance sheet events"
+    should_be_referenced_by:
+      - "Facility Agreement — covenant calculations"
+      - "Tax Returns — consistent figures"
+      - "Audit Report — opinion on AFS"
+      - "Management Accounts — consistent trends"
+  - primary_document: "Facility Agreement"
+    should_reference:
+      - "Financial covenants and ratios"
+      - "Security requirements"
+      - "Change of control provisions"
+      - "Mandatory prepayment triggers"
+    should_be_referenced_by:
+      - "Financial Statements — debt disclosure"
+      - "Mortgage Bond — security for facility"
+      - "Insurance Policy — lender required coverage"
+  - primary_document: "Lease Agreement"
+    should_reference:
+      - "Rental terms and escalation"
+      - "Assignment and subletting restrictions"
+      - "Change of control consent requirements"
+    should_be_referenced_by:
+      - "Financial Statements — lease liability"
+      - "Insurance Policy — tenant requirements"
+  - primary_document: "Employment Contracts"
+    should_reference:
+      - "Remuneration and benefits"
+      - "Notice periods and restraint of trade"
+      - "Change of control severance provisions"
+    should_be_referenced_by:
+      - "Financial Statements — payroll costs"
+      - "Share Option Scheme — participation"
+  - primary_document: "Insurance Policy"
+    should_reference:
+      - "Insured values and limits"
+      - "Exclusions"
+      - "Change of control notification"
+    should_be_referenced_by:
+      - "Facility Agreement — lender requirements"
+      - "Lease Agreement — landlord requirements"
+  - primary_document: "Competition Commission Filing"
+    should_reference:
+      - "Parties to the merger"
+      - "Market definition and shares"
+      - "Public interest considerations"
+    should_be_referenced_by:
+      - "SPA — condition precedent"
+  - primary_document: "Tax Returns"
+    should_reference:
+      - "Taxable income computation"
+      - "Assessed losses carried forward"
+      - "Provisional tax payments"
+    should_be_referenced_by:
+      - "Financial Statements — tax note"
+      - "Tax Assessment — consistent with return"
+  - primary_document: "IP Registrations"
+    should_reference:
+      - "Registration numbers and classes"
+      - "Renewal dates"
+      - "Licensed territories"
+    should_be_referenced_by:
+      - "License Agreements — IP being licensed"
+      - "Financial Statements — intangible assets"
+red_flag_patterns:
+  corporate:
+    - id: "RF-CORP-001"
+      pattern: "Fundamental defect in corporate existence"
+      indicators:
+        - "CIPC deregistration notice or final demand"
+        - "Annual returns overdue by more than 2 years"
+        - "Invalid share issuance"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Companies Act Section 22"
+      typical_resolution: "Reinstatement application to CIPC; rectify share issuance"
+    - id: "RF-CORP-002"
+      pattern: "SHA conflict with proposed transaction"
+      indicators:
+        - "Pre-emptive rights not waived"
+        - "Tag-along rights triggered but not addressed"
+        - "Consent of minority shareholder required but not obtained"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "Shareholders Agreement"
+      typical_resolution: "Obtain shareholder waivers and consents before closing"
+  competition:
+    - id: "RF-COMP-001"
+      pattern: "Competition Commission filing obligation not assessed"
+      indicators:
+        - "Combined turnover exceeds intermediate merger threshold"
+        - "No merger filing prepared or submitted"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Competition Act Section 13A"
+      typical_resolution: "File merger notification; do not implement until approved"
+    - id: "RF-COMP-002"
+      pattern: "Significant market overlap or concentration"
+      indicators:
+        - "Combined market share exceeds 35%"
+        - "Removal of effective competitor"
+        - "Vertical integration creating foreclosure risk"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Competition Act Section 12A"
+      typical_resolution: "Competition law advice; prepare for conditions or divestiture"
+  financial:
+    - id: "RF-FIN-001"
+      pattern: "Qualified audit opinion"
+      indicators:
+        - "Going concern emphasis"
+        - "Limitation of scope on material items"
+      severity: critical
+      action_category: warranty_required
+      statutory_reference: "Companies Act Section 30"
+      typical_resolution: "Enhanced financial warranties; purchase price adjustment mechanism"
+    - id: "RF-FIN-002"
+      pattern: "Covenant breach or waiver in place"
+      indicators:
+        - "Actual ratio outside covenant threshold"
+        - "Waiver letter from lender"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Facility Agreement"
+      typical_resolution: "Lender consent for transaction"
+    - id: "RF-FIN-003"
+      pattern: "Material off-balance sheet liabilities"
+      indicators:
+        - "Guarantees not reflected in AFS"
+        - "Operating lease commitments not disclosed"
+        - "Letters of support or comfort"
+      severity: high
+      action_category: disclosure_required
+      statutory_reference: "IFRS / Companies Act Section 29"
+      typical_resolution: "Full disclosure; warranty of completeness"
+  change_of_control:
+    - id: "RF-COC-001"
+      pattern: "Material contract with automatic termination on CoC"
+      indicators:
+        - "Contract terminates without cure on change of control"
+        - "Top 5 customer or supplier contract affected"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "Contract-specific"
+      typical_resolution: "Pre-closing counterparty consent"
+    - id: "RF-COC-002"
+      pattern: "Franchise or license terminable on CoC"
+      indicators:
+        - "Franchise agreement provides for termination on CoC"
+        - "Key technology license has CoC clause"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Franchise/License Agreement"
+      typical_resolution: "Franchisor/licensor consent as condition precedent"
+  employment:
+    - id: "RF-EMP-001"
+      pattern: "Section 197 transfer applies but not structured"
+      indicators:
+        - "Asset sale but employee transfer not addressed"
+        - "Section 197 compliance not documented"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "LRA Section 197"
+      typical_resolution: "Structure employee transfer per Section 197 requirements"
+    - id: "RF-EMP-002"
+      pattern: "Key executive departure risk"
+      indicators:
+        - "Executive contracts with short notice periods"
+        - "Golden parachute triggered on CoC"
+        - "No retention arrangement in place"
+      severity: high
+      action_category: warranty_required
+      statutory_reference: "Employment Contract"
+      typical_resolution: "Retention arrangements; severance cap in SPA"
+    - id: "RF-EMP-003"
+      pattern: "Pending retrenchment or labour dispute"
+      indicators:
+        - "Section 189 consultation underway"
+        - "CCMA referral pending"
+        - "Protected strike notice served"
+      severity: high
+      action_category: disclosure_required
+      statutory_reference: "LRA"
+      typical_resolution: "Complete process; seller indemnity for pre-closing labour costs"
+  regulatory:
+    - id: "RF-REG-001"
+      pattern: "Operating license at risk"
+      indicators:
+        - "License expired or renewal pending"
+        - "Compliance notice from regulator"
+        - "License condition breach identified"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "Industry-specific legislation"
+      typical_resolution: "License renewal before closing; seller warranty on compliance"
+    - id: "RF-REG-002"
+      pattern: "Regulatory investigation pending"
+      indicators:
+        - "Regulator correspondence requesting information"
+        - "Section 205 Companies Act investigation"
+        - "FSCA investigation notice"
+      severity: high
+      action_category: disclosure_required
+      statutory_reference: "Various"
+      typical_resolution: "Full disclosure; seller indemnity for outcomes"
+  tax:
+    - id: "RF-TAX-001"
+      pattern: "SARS audit or dispute outstanding"
+      indicators:
+        - "SARS audit notification received"
+        - "Notice of objection filed"
+        - "Tax assessment disputed"
+      severity: high
+      action_category: warranty_required
+      statutory_reference: "Tax Administration Act"
+      typical_resolution: "Tax indemnity from seller; quantify maximum exposure"
+    - id: "RF-TAX-002"
+      pattern: "Assessed losses at risk on CoC"
+      indicators:
+        - "Material assessed losses carried forward"
+        - "Share sale triggers Section 103(2) anti-avoidance"
+      severity: high
+      action_category: price_adjustment
+      statutory_reference: "Income Tax Act Section 103"
+      typical_resolution: "Value assessed losses; adjust purchase price if lost"
+  ip:
+    - id: "RF-IP-001"
+      pattern: "Key IP not owned by target"
+      indicators:
+        - "Core technology licensed, not owned"
+        - "IP developed by founder not assigned to company"
+        - "Domain names registered in individual's name"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Various IP legislation"
+      typical_resolution: "IP assignment before closing; IP warranty in SPA"
+calculation_formulas:
+  exposure:
+    - id: "CALC-EXP-001"
+      name: "Total Change of Control Financial Exposure"
+      formula: "SUM(liquidated_damages + termination_fees + acceleration_amounts + consent_fees)"
+      inputs:
+        - {name: "liquidated_damages", source: "commercial_contracts", type: "currency_zar"}
+        - {name: "termination_fees", source: "commercial_contracts", type: "currency_zar"}
+        - {name: "acceleration_amounts", source: "facility_agreements", type: "currency_zar"}
+        - {name: "consent_fees", source: "various_contracts", type: "currency_zar"}
+      output_type: currency_zar
+      typical_red_flag: "Total CoC exposure exceeds 20% of transaction value"
+    - id: "CALC-EXP-002"
+      name: "Revenue at Risk from CoC"
+      formula: "SUM(annual_revenue for contracts with CoC termination rights)"
+      inputs:
+        - {name: "contract_annual_revenue", source: "commercial_contracts", type: "currency_zar"}
+        - {name: "coc_termination_right", source: "contract_analysis", type: "boolean"}
+      output_type: currency_zar
+      typical_red_flag: "Revenue at risk exceeds 40% of total revenue"
+    - id: "CALC-EXP-003"
+      name: "Total Debt Acceleration Exposure"
+      formula: "SUM(drawn_facilities + accrued_interest + breakage_costs) where CoC triggered"
+      inputs:
+        - {name: "drawn_balance", source: "facility_agreements", type: "currency_zar"}
+        - {name: "accrued_interest", source: "facility_agreements", type: "currency_zar"}
+        - {name: "breakage_costs", source: "facility_agreements", type: "currency_zar"}
+      output_type: currency_zar
+      typical_red_flag: "Acceleration exceeds available cash"
+  bee:
+    - id: "CALC-BEE-001"
+      name: "Post-Transaction BEE Ownership"
+      formula: "(Remaining_BEE_shares / Post_transaction_total_shares) x 100"
+      inputs:
+        - {name: "remaining_bee_shares", source: "share_register", type: "number"}
+        - {name: "post_transaction_total_shares", source: "transaction_structure", type: "number"}
+      output_type: percentage
+      typical_red_flag: "Post-transaction BEE below 26% (generic codes) or applicable sector threshold"
+  tax:
+    - id: "CALC-TAX-001"
+      name: "Assessed Loss at Risk on CoC"
+      formula: "Assessed_losses x Corporate_tax_rate"
+      inputs:
+        - {name: "assessed_losses", source: "tax_returns", type: "currency_zar"}
+        - {name: "corporate_tax_rate", source: "regulation", type: "percentage", default: 27}
+      output_type: currency_zar
+      typical_red_flag: "Tax value of assessed losses exceeds 5% of purchase price"
+    - id: "CALC-TAX-002"
+      name: "Capital Gains Tax on Share Disposal"
+      formula: "(Disposal_proceeds - Base_cost) x Inclusion_rate x Tax_rate"
+      inputs:
+        - {name: "disposal_proceeds", source: "transaction", type: "currency_zar"}
+        - {name: "base_cost", source: "seller_records", type: "currency_zar"}
+        - {name: "inclusion_rate", source: "regulation", type: "percentage", default: 80}
+        - {name: "tax_rate", source: "regulation", type: "percentage", default: 27}
+      output_type: currency_zar
+      typical_red_flag: "CGT exposure exceeds 10% of purchase price"
+  employment:
+    - id: "CALC-EMP-001"
+      name: "Total Executive Severance on CoC"
+      formula: "SUM(base_salary x multiplier + bonus_accrual + unvested_equity) per executive"
+      inputs:
+        - {name: "base_salary", source: "employment_contracts", type: "currency_zar"}
+        - {name: "multiplier", source: "employment_contracts", type: "number"}
+        - {name: "bonus_accrual", source: "employment_contracts", type: "currency_zar"}
+        - {name: "unvested_equity", source: "share_schemes", type: "currency_zar"}
+      output_type: currency_zar
+      typical_red_flag: "Total severance exceeds 5% of transaction value"
+    - id: "CALC-EMP-002"
+      name: "Section 197 Transfer Liability"
+      formula: "SUM(leave_accrual + bonus_accrual + notice_period_cost) for transferring employees"
+      inputs:
+        - {name: "leave_accrual", source: "payroll_records", type: "currency_zar"}
+        - {name: "bonus_accrual", source: "payroll_records", type: "currency_zar"}
+        - {name: "notice_period_cost", source: "employment_contracts", type: "currency_zar"}
+      output_type: currency_zar
+      typical_red_flag: "Transfer liability exceeds 3% of transaction value"
+  valuation:
+    - id: "CALC-VAL-001"
+      name: "Customer Concentration Index"
+      formula: "Top_customer_revenue / Total_revenue x 100"
+      inputs:
+        - {name: "top_customer_revenue", source: "commercial_contracts", type: "currency_zar"}
+        - {name: "total_revenue", source: "financial_statements", type: "currency_zar"}
+      output_type: percentage
+      typical_red_flag: "Single customer exceeds 30% of revenue"
+  covenant:
+    - id: "CALC-COV-001"
+      name: "Covenant Headroom"
+      formula: "Actual_ratio - Required_ratio"
+      inputs:
+        - {name: "actual_ratio", source: "financial_statements", type: "ratio"}
+        - {name: "required_ratio", source: "facility_agreement", type: "ratio"}
+      output_type: ratio
+      typical_red_flag: "Headroom less than 10% of required ratio"
 risk_categories:
 - name: Corporate Structure & Governance
   weight: critical
   standard_questions:
   - question: Is the company validly incorporated and in good standing?
     priority: critical
+    id: "MA-CSG-001"
+    sub_questions:
+      - "Are all annual returns filed with CIPC and current?"
+      - "Has the company ever been deregistered and reinstated?"
+      - "Are there any CIPC compliance notices outstanding?"
+    red_flags:
+      - "Annual returns overdue by more than 12 months"
+      - "CIPC deregistration proceedings initiated"
+    expected_evidence:
+      - "CIPC company search printout showing good standing"
+      - "Latest annual return filing receipt"
+      - "Company registration certificate (CoR14.3)"
   - question: What is the complete group structure including all subsidiaries?
     priority: critical
+    id: "MA-CSG-002"
+    sub_questions:
+      - "Are all subsidiaries validly incorporated?"
+      - "What percentage is held in each subsidiary and associated company?"
+      - "Are there any dormant or deregistered entities in the group?"
+    red_flags:
+      - "Unregistered or deregistered subsidiaries"
+      - "Minority holdings with no shareholder agreements"
+    expected_evidence:
+      - "Group structure chart or organogram"
+      - "CIPC search for each subsidiary"
+      - "Share certificates for subsidiary holdings"
   - question: Are all shares validly issued and fully paid?
     priority: critical
+    id: "MA-CSG-003"
+    sub_questions:
+      - "Do the share certificates match the securities register?"
+      - "Were all share issues authorized by proper resolution?"
+      - "Have all share issue payments been received and recorded?"
+    red_flags:
+      - "Discrepancy between share register and share certificates"
+      - "Shares issued without proper authorization"
+    expected_evidence:
+      - "Securities register"
+      - "Share certificates"
+      - "Board resolutions authorizing each share issue"
   - question: Are there any options, warrants, or rights to acquire shares?
     priority: critical
+    id: "MA-CSG-004"
+    sub_questions:
+      - "What share option schemes exist and what is the current pool?"
+      - "Are there convertible loans or instruments outstanding?"
+      - "Do any third parties hold warrants or subscription rights?"
+    red_flags:
+      - "Unrecorded options or warrants that dilute ownership"
+      - "Convertible instruments with near-term conversion dates"
+    expected_evidence:
+      - "Share option scheme rules"
+      - "Schedule of outstanding options and vesting dates"
+      - "Convertible instrument terms"
   - question: What are the classes of shares and their respective rights?
     priority: high
+    id: "MA-CSG-005"
+    sub_questions:
+      - "What voting, dividend, and liquidation rights attach to each class?"
+      - "Are there any preference shares with redemption obligations?"
+    red_flags:
+      - "Preference shares with mandatory redemption creating cash outflow"
+    expected_evidence:
+      - "MOI share class provisions"
+      - "Schedule of share classes and rights"
   - question: Have all statutory filings (annual returns, etc.) been made?
     priority: high
+    id: "MA-CSG-006"
+    sub_questions:
+      - "Are annual returns current for all group entities?"
+      - "Have all amendments to MOI been filed with CIPC?"
+    red_flags:
+      - "Annual returns overdue for more than one financial year"
+    expected_evidence:
+      - "CIPC filing receipts"
+      - "Annual return confirmations"
   - question: Are there any restrictions on share transfers in the MOI?
     priority: critical
+    id: "MA-CSG-007"
+    sub_questions:
+      - "Does the MOI contain pre-emptive rights on transfer?"
+      - "Are there board approval requirements for share transfers?"
+      - "Do any restrictions require amendment for the transaction to proceed?"
+    red_flags:
+      - "Transfer restrictions that would block the proposed transaction"
+      - "Pre-emptive rights not addressed in transaction structure"
+    expected_evidence:
+      - "MOI transfer restriction clauses"
+      - "Board resolution waiving restrictions if applicable"
+      - "Pre-emptive rights waiver letters"
   - question: Are there any shareholders' agreements affecting the shares?
     priority: critical
+    id: "MA-CSG-008"
+    sub_questions:
+      - "What consent requirements exist in the SHA for share transfers?"
+      - "Are there tag-along or drag-along rights?"
+      - "What reserved matters require shareholder consent?"
+    red_flags:
+      - "SHA consent not obtained for proposed transaction"
+      - "Tag-along rights creating additional buyer obligations"
+    expected_evidence:
+      - "Shareholders agreement"
+      - "Written consent or waiver from SHA parties"
+      - "Schedule of reserved matters"
   - question: Are there any disputes between shareholders?
     priority: high
+    id: "MA-CSG-009"
+    sub_questions:
+      - "Are there any pending or threatened shareholder actions?"
+      - "Is there a deadlock under any SHA?"
+    red_flags:
+      - "Active litigation between shareholders"
+    expected_evidence:
+      - "Correspondence between shareholders"
+      - "Legal proceedings if any"
   - question: What is the quorum and approval thresholds for shareholder meetings?
     priority: high
+    id: "MA-CSG-010"
+    sub_questions:
+      - "What is the quorum for ordinary and special resolutions?"
+      - "Can the required approvals be obtained with current shareholding?"
+    red_flags:
+      - "Quorum cannot be achieved due to shareholder disputes"
+    expected_evidence:
+      - "MOI quorum and voting provisions"
+      - "Recent shareholder meeting minutes"
   - question: Are board compositions and appointments compliant with MOI?
     priority: medium
+    id: "MA-CSG-011"
+    expected_evidence:
+      - "Board appointment resolutions"
   - question: Have all related party transactions been properly approved?
     priority: high
+    id: "MA-CSG-012"
+    sub_questions:
+      - "Have all Section 75 conflicts of interest been declared?"
+      - "Were related party transactions approved by disinterested directors?"
+    red_flags:
+      - "Undisclosed related party transactions"
+    expected_evidence:
+      - "Board minutes recording conflict declarations"
+      - "Independent valuations for related party transactions"
 - name: Change of Control & Consents
   weight: critical
   standard_questions:
   - question: Which contracts contain change of control provisions?
     priority: critical
+    id: "MA-COC-001"
+    sub_questions:
+      - "What is the exact CoC definition in each contract?"
+      - "Is termination automatic or at counterparty discretion?"
+      - "What is the commercial value of each affected contract?"
+    red_flags:
+      - "Material contract with automatic termination on CoC"
+      - "Top 5 revenue contract terminable without cure period"
+    expected_evidence:
+      - "Schedule of contracts with CoC provisions"
+      - "CoC clause extracts from each material contract"
+      - "Revenue or cost associated with each contract"
   - question: What third-party consents are required for the transaction?
     priority: critical
+    id: "MA-COC-002"
+    sub_questions:
+      - "Which consents are conditions precedent vs post-closing?"
+      - "What is the expected timeline for each consent?"
+      - "What leverage does each counterparty have?"
+    red_flags:
+      - "Consent required from counterparty with known resistance"
+      - "Consent timeline exceeds transaction longstop date"
+    expected_evidence:
+      - "Consent requirement schedule"
+      - "Counterparty correspondence"
+      - "Draft consent request letters"
   - question: Are there any anti-assignment provisions in key contracts?
     priority: critical
+    id: "MA-COC-003"
+    sub_questions:
+      - "Do anti-assignment clauses apply to share sales or only asset transfers?"
+      - "Is there a distinction between direct and indirect assignment?"
+      - "What is the consequence of breaching anti-assignment?"
+    red_flags:
+      - "Anti-assignment that captures share sale as deemed assignment"
+      - "Termination right triggered by indirect assignment"
+    expected_evidence:
+      - "Assignment clause extracts from key contracts"
+      - "Legal opinion on applicability to transaction structure"
   - question: What government or regulatory approvals are required?
     priority: critical
+    id: "MA-COC-004"
+    sub_questions:
+      - "Is TRP approval required for an affected transaction?"
+      - "Are there industry-specific regulatory consents needed?"
+      - "What is the timeline and process for each approval?"
+    red_flags:
+      - "Regulatory approval unlikely or subject to onerous conditions"
+      - "Multiple regulatory approvals creating extended timeline"
+    expected_evidence:
+      - "Regulatory approval requirement schedule"
+      - "Correspondence with regulators"
+      - "Legal advice on regulatory pathway"
   - question: Does the transaction require Competition Commission approval?
     priority: critical
+    id: "MA-COC-005"
+    sub_questions:
+      - "Do the parties meet intermediate or large merger thresholds?"
+      - "Are there market overlaps that could lead to conditions?"
+      - "What public interest considerations arise?"
+    red_flags:
+      - "Combined market share exceeds 35%"
+      - "Public interest employment conditions likely"
+    expected_evidence:
+      - "Turnover figures for threshold calculation"
+      - "Market share analysis"
+      - "Competition law advice"
   - question: What are the consequences of not obtaining required consents?
     priority: high
+    id: "MA-COC-006"
+    sub_questions:
+      - "What is the financial exposure from contract termination?"
+      - "Can business operations continue without each consent?"
+    red_flags:
+      - "Revenue loss from contract termination exceeds materiality"
+    expected_evidence:
+      - "Financial impact analysis per consent"
+      - "Termination consequence schedule"
   - question: What is the process and timeline for obtaining each consent?
     priority: high
+    id: "MA-COC-007"
+    sub_questions:
+      - "Are there prescribed notice periods for consent requests?"
+      - "Can consents be obtained in parallel or must they be sequential?"
+    red_flags:
+      - "Consent process exceeds transaction timeline"
+    expected_evidence:
+      - "Consent process timeline"
+      - "Draft consent letters"
   - question: Are there any consents that are likely to be refused?
     priority: high
+    id: "MA-COC-008"
+    sub_questions:
+      - "Has there been any indication of counterparty resistance?"
+      - "What alternative arrangements are available if consent refused?"
+    red_flags:
+      - "Counterparty has indicated unwillingness to consent"
+    expected_evidence:
+      - "Counterparty correspondence"
+      - "Relationship assessment from management"
 - name: Material Contracts
   weight: critical
   standard_questions:
   - question: What are the company's most material contracts by value?
     priority: critical
+    id: "MA-MCT-001"
+    sub_questions:
+      - "What are the top 10 contracts by annual revenue or cost?"
+      - "What percentage of total revenue does each represent?"
+      - "What is the remaining term and renewal mechanism?"
+    red_flags:
+      - "Single contract exceeds 30% of total revenue"
+      - "Top 3 contracts represent more than 60% of revenue"
+    expected_evidence:
+      - "Schedule of material contracts with values"
+      - "Revenue breakdown by contract"
+      - "Contract summaries with key terms"
   - question: What is the termination notice period for key contracts?
     priority: high
+    id: "MA-MCT-002"
+    sub_questions:
+      - "Are notice periods sufficient for orderly transition?"
+      - "Are there any contracts terminable on short or no notice?"
+    red_flags:
+      - "Material contract terminable on 30 days or less notice"
+    expected_evidence:
+      - "Termination provisions schedule"
+      - "Notice period summary per contract"
   - question: Are there any contracts with related parties?
     priority: high
+    id: "MA-MCT-003"
+    sub_questions:
+      - "Are related party terms at arm's length?"
+      - "Were related party contracts properly approved per Section 75?"
+    red_flags:
+      - "Above-market pricing in related party contracts"
+    expected_evidence:
+      - "Related party contract schedule"
+      - "Independent pricing benchmarks"
   - question: What exclusivity or non-compete provisions exist?
     priority: high
+    id: "MA-MCT-004"
+    sub_questions:
+      - "Could buyer's existing business conflict with exclusivity obligations?"
+      - "What is the scope and duration of non-compete provisions?"
+    red_flags:
+      - "Exclusivity obligations that conflict with buyer's operations"
+    expected_evidence:
+      - "Exclusivity and non-compete clause extracts"
+      - "Conflict analysis with buyer's business"
   - question: Are there any onerous or unusual contract terms?
     priority: high
+    id: "MA-MCT-005"
+    sub_questions:
+      - "Are there minimum volume or take-or-pay commitments?"
+      - "Are there uncapped liability or indemnity provisions?"
+    red_flags:
+      - "Uncapped indemnity obligations in material contracts"
+    expected_evidence:
+      - "Schedule of unusual terms"
+      - "Liability cap analysis"
   - question: What is the status of any contracts under dispute?
     priority: high
+    id: "MA-MCT-006"
+    sub_questions:
+      - "What is the financial exposure from disputed contracts?"
+      - "Are disputes likely to result in termination?"
+    red_flags:
+      - "Material contract in active dispute with termination risk"
+    expected_evidence:
+      - "Dispute summary and correspondence"
+      - "Legal advice on prospects"
   - question: Are there any contracts about to expire that need renewal?
     priority: medium
+    id: "MA-MCT-007"
+    expected_evidence:
+      - "Contract expiry schedule"
   - question: What warranties or guarantees has the company given?
     priority: medium
+    id: "MA-MCT-008"
+    expected_evidence:
+      - "Schedule of warranties and guarantees given"
 - name: Financial Position
   weight: critical
   standard_questions:
   - question: Are the financial statements fairly stated without qualification?
     priority: critical
+    id: "MA-FIN-001"
+    sub_questions:
+      - "What type of audit opinion was issued?"
+      - "Are there any emphasis of matter paragraphs?"
+      - "Have accounting policies been consistently applied?"
+    red_flags:
+      - "Qualified or adverse audit opinion"
+      - "Going concern emphasis of matter"
+    expected_evidence:
+      - "Audited financial statements for last 3 years"
+      - "Audit report and management letter"
+      - "Accounting policy summary"
   - question: What are the working capital trends and requirements?
     priority: high
+    id: "MA-FIN-002"
+    sub_questions:
+      - "Is working capital sufficient for current operations?"
+      - "What seasonal working capital fluctuations exist?"
+    red_flags:
+      - "Negative working capital trend over 3 periods"
+    expected_evidence:
+      - "Monthly working capital analysis"
+      - "Cash flow forecasts"
   - question: Are there any off-balance sheet liabilities or arrangements?
     priority: critical
+    id: "MA-FIN-003"
+    sub_questions:
+      - "Are there guarantees, letters of support, or comfort letters?"
+      - "Are there any VIE or SPV arrangements not consolidated?"
+      - "What operating lease commitments exist?"
+    red_flags:
+      - "Material guarantees not disclosed in AFS"
+      - "Significant off-balance sheet structures"
+    expected_evidence:
+      - "Contingent liability note from AFS"
+      - "Schedule of guarantees and comfort letters"
+      - "Off-balance sheet commitment schedule"
   - question: What is the aged analysis of receivables and payables?
     priority: high
+    id: "MA-FIN-004"
+    sub_questions:
+      - "What percentage of receivables are past due?"
+      - "Is the bad debt provision adequate?"
+    red_flags:
+      - "More than 30% of receivables past 90 days"
+    expected_evidence:
+      - "Aged debtors and creditors reports"
+      - "Bad debt provision analysis"
   - question: Are there any contingent liabilities?
     priority: high
+    id: "MA-FIN-005"
+    sub_questions:
+      - "What is the total quantified contingent exposure?"
+      - "What is the probability of crystallization?"
+    red_flags:
+      - "Contingent liabilities not adequately provisioned"
+    expected_evidence:
+      - "Contingent liability schedule"
+      - "Legal assessments of pending matters"
   - question: What inter-company balances exist and how will they be settled?
     priority: high
+    id: "MA-FIN-006"
+    sub_questions:
+      - "Are intercompany loans on commercial terms?"
+      - "Will balances be settled at closing or assumed by buyer?"
+    red_flags:
+      - "Non-commercial intercompany loan terms"
+    expected_evidence:
+      - "Intercompany balance schedule"
+      - "Intercompany loan agreements"
   - question: What is the normalized EBITDA and profit?
     priority: high
+    id: "MA-FIN-007"
+    sub_questions:
+      - "What adjustments are required to normalize earnings?"
+      - "Are there any non-recurring items in reported figures?"
+    red_flags:
+      - "Material adjustments that reduce EBITDA significantly"
+    expected_evidence:
+      - "Normalized EBITDA schedule"
+      - "Management adjustments analysis"
   - question: Are there any material post-balance sheet events?
     priority: critical
+    id: "MA-FIN-008"
+    sub_questions:
+      - "Have any material contracts been terminated since year-end?"
+      - "Have there been any significant changes in financial position?"
+      - "Are there any new claims or litigation since the balance sheet date?"
+    red_flags:
+      - "Material adverse change since last accounts date"
+      - "Loss of key customer or contract post year-end"
+    expected_evidence:
+      - "Management representation on post-balance sheet events"
+      - "Recent management accounts"
+      - "Board minutes since year-end"
   - question: What provisions and accruals may be understated?
     priority: medium
+    id: "MA-FIN-009"
+    expected_evidence:
+      - "Provision and accrual analysis"
 - name: Debt & Security
   weight: high
   standard_questions:
   - question: What is the total debt and who are the lenders?
     priority: critical
+    id: "MA-DSC-001"
+    sub_questions:
+      - "What are the drawn and undrawn amounts under each facility?"
+      - "What are the maturity dates and repayment schedules?"
+      - "Are there cross-default provisions between facilities?"
+    red_flags:
+      - "Facility maturing within 12 months of closing"
+      - "Cross-default provisions that could cascade acceleration"
+    expected_evidence:
+      - "Debt schedule with drawn/undrawn amounts"
+      - "Facility agreements"
+      - "Repayment schedules"
   - question: What security has been granted to lenders?
     priority: critical
+    id: "MA-DSC-002"
+    sub_questions:
+      - "Has all required security been properly perfected?"
+      - "Are there any negative pledge obligations?"
+      - "What assets are unencumbered?"
+    red_flags:
+      - "Security not properly perfected"
+      - "Negative pledge restricting transaction"
+    expected_evidence:
+      - "Security register"
+      - "Registered mortgage bonds and cession agreements"
+      - "Deeds office search results"
   - question: Are there any financial covenant breaches?
     priority: critical
+    id: "MA-DSC-003"
+    sub_questions:
+      - "What are the current actual ratios vs covenant requirements?"
+      - "Are there any waivers currently in place?"
+      - "What is the headroom on each covenant?"
+    red_flags:
+      - "Current covenant breach without waiver"
+      - "Headroom less than 10% on any covenant"
+    expected_evidence:
+      - "Covenant compliance certificate"
+      - "Waiver letters from lenders"
+      - "Covenant calculation workpapers"
   - question: Do debt facilities have change of control provisions?
     priority: critical
+    id: "MA-DSC-004"
+    sub_questions:
+      - "Is prepayment mandatory or at lender's election on CoC?"
+      - "What are the breakage costs and prepayment penalties?"
+      - "Can lender consent realistically be obtained?"
+    red_flags:
+      - "Mandatory prepayment on CoC without consent mechanism"
+      - "Breakage costs exceeding available cash"
+    expected_evidence:
+      - "CoC clause extracts from facility agreements"
+      - "Breakage cost calculations"
+      - "Lender relationship assessment"
   - question: What are the terms for early repayment?
     priority: high
+    id: "MA-DSC-005"
+    sub_questions:
+      - "What prepayment penalties or make-whole provisions apply?"
+      - "What notice periods are required for voluntary prepayment?"
+    red_flags:
+      - "Excessive make-whole or prepayment penalty"
+    expected_evidence:
+      - "Prepayment provisions from facility agreements"
+      - "Cost of early repayment calculation"
   - question: Are there any guarantees given to or by the company?
     priority: high
+    id: "MA-DSC-006"
+    sub_questions:
+      - "What parent or group guarantees are in place?"
+      - "What is the total contingent exposure from guarantees?"
+    red_flags:
+      - "Guarantees not disclosed in financial statements"
+    expected_evidence:
+      - "Guarantee schedule"
+      - "Guarantee agreements"
   - question: What hedging arrangements are in place?
     priority: medium
+    id: "MA-DSC-007"
+    expected_evidence:
+      - "Hedging agreement schedule"
 - name: Intellectual Property
   weight: high
   standard_questions:
   - question: What registered IP rights does the company own?
     priority: high
+    id: "MA-IPR-001"
+    sub_questions:
+      - "What trademarks, patents, designs, and copyrights are registered?"
+      - "Are all registrations in the company's name (not individual)?"
+    red_flags:
+      - "Core IP registered in founder or individual name"
+    expected_evidence:
+      - "IP register with registration numbers and renewal dates"
+      - "CIPC trademark search results"
   - question: Are all IP registrations current and maintained?
     priority: high
+    id: "MA-IPR-002"
+    sub_questions:
+      - "Are all renewal fees paid and registrations current?"
+      - "Are there any registrations at risk of lapsing?"
+    red_flags:
+      - "Key trademark or patent renewal overdue"
+    expected_evidence:
+      - "IP renewal schedule"
+      - "Payment confirmations"
   - question: Are there any IP infringement claims or disputes?
     priority: high
+    id: "MA-IPR-003"
+    sub_questions:
+      - "Are there pending infringement claims against or by the company?"
+      - "What is the financial exposure from IP disputes?"
+    red_flags:
+      - "Pending infringement claim on core business IP"
+    expected_evidence:
+      - "IP dispute correspondence"
+      - "Legal advice on IP claims"
   - question: What IP licenses does the company rely on?
     priority: high
+    id: "MA-IPR-004"
+    sub_questions:
+      - "Are core technology or brand licenses terminable on CoC?"
+      - "What is the remaining term and renewal mechanism?"
+    red_flags:
+      - "Core technology license terminable on change of control"
+    expected_evidence:
+      - "IP license agreements"
+      - "License term and CoC provision summary"
   - question: Do employment contracts assign IP to the company?
     priority: medium
+    id: "MA-IPR-005"
+    expected_evidence:
+      - "IP assignment clauses from employment contracts"
   - question: Is source code and trade secrets adequately protected?
     priority: medium
+    id: "MA-IPR-006"
+    expected_evidence:
+      - "NDA and confidentiality agreement templates"
 - name: Employment
   weight: high
   standard_questions:
   - question: What is the total headcount and payroll cost?
     priority: high
+    id: "MA-EMP-001"
+    sub_questions:
+      - "What is the monthly payroll run-rate including benefits?"
+      - "What is the breakdown by department and location?"
+    red_flags:
+      - "Payroll costs significantly above industry benchmarks"
+    expected_evidence:
+      - "Employee schedule with remuneration details"
+      - "Payroll summary reports"
   - question: Are there any pending retrenchments or restructuring?
     priority: critical
+    id: "MA-EMP-002"
+    sub_questions:
+      - "Has a Section 189 notice been issued?"
+      - "What is the status of consultation?"
+      - "What are the estimated severance costs?"
+    red_flags:
+      - "Section 189 consultation underway without buyer awareness"
+      - "Large-scale retrenchment (50+) requiring Section 189A facilitation"
+    expected_evidence:
+      - "Section 189 notice if applicable"
+      - "Consultation records"
+      - "Severance cost estimate"
   - question: What are the key executive terms and notice periods?
     priority: high
+    id: "MA-EMP-003"
+    sub_questions:
+      - "What CoC severance provisions exist in executive contracts?"
+      - "What are the notice periods and restraint of trade terms?"
+    red_flags:
+      - "Golden parachute exceeding 12 months remuneration"
+    expected_evidence:
+      - "Executive employment contracts"
+      - "Severance calculation schedule"
   - question: Are there any retention arrangements for key staff?
     priority: high
+    id: "MA-EMP-004"
+    sub_questions:
+      - "Are retention payments conditional on post-closing service?"
+      - "What is the total retention pool cost?"
+    red_flags:
+      - "No retention arrangements for key persons critical to business value"
+    expected_evidence:
+      - "Retention agreement terms"
+      - "Key person identification list"
   - question: What is the status of any union relationships?
     priority: high
+    id: "MA-EMP-005"
+    sub_questions:
+      - "Are there recognition agreements in place?"
+      - "When do current collective agreements expire?"
+    red_flags:
+      - "Upcoming wage negotiations with aggressive union demands"
+    expected_evidence:
+      - "Recognition agreements"
+      - "Current collective agreement"
   - question: Are there any pending employment disputes or claims?
     priority: high
+    id: "MA-EMP-006"
+    sub_questions:
+      - "What CCMA referrals or Labour Court matters are pending?"
+      - "What is the total quantified exposure?"
+    red_flags:
+      - "Multiple pending CCMA referrals indicating systemic issues"
+    expected_evidence:
+      - "Schedule of pending employment disputes"
+      - "CCMA referral notices"
   - question: Are all employment equity and skills development obligations met?
     priority: medium
+    id: "MA-EMP-007"
+    expected_evidence:
+      - "Employment equity plan and report"
   - question: What employee benefit schemes exist?
     priority: medium
+    id: "MA-EMP-008"
+    expected_evidence:
+      - "Benefit scheme rules and participation schedules"
 - name: Property & Assets
   weight: medium
   standard_questions:
   - question: What properties does the company own or lease?
     priority: high
+    id: "MA-PRA-001"
+    sub_questions:
+      - "What is the split between owned and leased premises?"
+      - "Are leased premises on market terms?"
+    red_flags:
+      - "Related party landlord with above-market rental"
+    expected_evidence:
+      - "Property schedule with owned vs leased breakdown"
+      - "Title deeds for owned properties"
   - question: Are there any zoning or land use restrictions?
     priority: medium
+    id: "MA-PRA-002"
+    expected_evidence:
+      - "Zoning certificates"
   - question: What is the condition of plant and equipment?
     priority: medium
+    id: "MA-PRA-003"
+    expected_evidence:
+      - "Fixed asset register"
   - question: Are there any disputes regarding property or assets?
     priority: medium
+    id: "MA-PRA-004"
+    expected_evidence:
+      - "Property dispute correspondence"
   - question: What environmental liabilities attach to properties?
     priority: high
+    id: "MA-PRA-005"
+    sub_questions:
+      - "Has an environmental assessment been conducted?"
+      - "Are there any contamination or remediation obligations?"
+    red_flags:
+      - "Known contamination without remediation plan"
+    expected_evidence:
+      - "Environmental assessment reports"
+      - "Environmental compliance certificates"
 - name: Regulatory & Compliance
   weight: high
   standard_questions:
   - question: What regulatory licenses are required for the business?
     priority: critical
+    id: "MA-RCO-001"
+    sub_questions:
+      - "What industry-specific licenses are required?"
+      - "Are there any pending license applications?"
+      - "Do any licenses have conditions that may be affected by the transaction?"
+    red_flags:
+      - "Business operating without required license"
+      - "License application pending for extended period"
+    expected_evidence:
+      - "License register with status and renewal dates"
+      - "Copies of all material licenses"
+      - "License conditions schedule"
   - question: Are all regulatory licenses current and compliant?
     priority: critical
+    id: "MA-RCO-002"
+    sub_questions:
+      - "Are all license conditions being complied with?"
+      - "Are there any compliance notices or warnings from regulators?"
+      - "When are license renewals due?"
+    red_flags:
+      - "License expired or renewal pending"
+      - "Compliance notice received from regulator"
+    expected_evidence:
+      - "License compliance certificates"
+      - "Regulatory correspondence"
+      - "Renewal application status"
   - question: Are there any pending regulatory investigations?
     priority: critical
+    id: "MA-RCO-003"
+    sub_questions:
+      - "What is the nature and status of any investigation?"
+      - "What is the potential financial and operational impact?"
+      - "Could investigations result in license suspension?"
+    red_flags:
+      - "Active regulatory investigation with potential license impact"
+      - "Multiple compliance notices from same regulator"
+    expected_evidence:
+      - "Regulatory investigation correspondence"
+      - "Legal advice on investigation outcomes"
+      - "Management response to investigations"
   - question: Is the company compliant with anti-corruption laws?
     priority: high
+    id: "MA-RCO-004"
+    sub_questions:
+      - "Does the company have an anti-bribery and corruption policy?"
+      - "Are there any investigations under PRECCA?"
+    red_flags:
+      - "No anti-corruption policy in place"
+    expected_evidence:
+      - "Anti-corruption policy"
+      - "Compliance training records"
   - question: Are there any sanctions or export control concerns?
     priority: high
+    id: "MA-RCO-005"
+    sub_questions:
+      - "Does the company trade with sanctioned jurisdictions or persons?"
+      - "Are there export control restrictions on company products?"
+    red_flags:
+      - "Trading with sanctioned persons or jurisdictions"
+    expected_evidence:
+      - "Sanctions screening results"
+      - "Export control compliance records"
   - question: Is the company compliant with industry-specific regulations?
     priority: high
+    id: "MA-RCO-006"
+    sub_questions:
+      - "What sector-specific legislation applies?"
+      - "Are there any pending changes to sector regulation?"
+    red_flags:
+      - "Non-compliance with sector-specific requirements"
+    expected_evidence:
+      - "Sector compliance assessment"
+      - "Regulatory audit reports"
 deal_blockers:
 - description: Fundamental defect in corporate existence or share issuance
   severity: absolute
@@ -345,26 +1666,95 @@ folder_questions:
       priority: critical
       detail: Check company registration, annual returns, CIPC compliance
       cot_hint: Verify registration status → check annual return dates → identify gaps
+      id: "MA-F01-001"
+      sub_questions:
+        - "Are all annual returns filed and current with CIPC?"
+        - "Has the company ever been subject to deregistration proceedings?"
+        - "Are there any outstanding CIPC compliance notices?"
+      red_flags:
+        - "Annual returns overdue by more than 12 months"
+        - "CIPC deregistration proceedings initiated"
+      expected_evidence:
+        - "CIPC company search printout"
+        - "Annual return filing receipts"
+        - "CoR14.3 registration certificate"
     - question: Does the MOI authorize the proposed transaction without special requirements?
       priority: critical
       detail: Check reserved matters, approval thresholds, special resolution requirements
       cot_hint: Identify transaction type → find relevant MOI clause → check approval threshold
+      id: "MA-F01-002"
+      sub_questions:
+        - "What approval thresholds apply to the proposed transaction?"
+        - "Are there reserved matters that require enhanced majorities?"
+        - "Does the MOI contain entrenched provisions affecting the transaction?"
+      red_flags:
+        - "Transaction requires special resolution that cannot be obtained"
+        - "Entrenched provisions requiring unanimous consent"
+      expected_evidence:
+        - "MOI approval and voting provisions"
+        - "Reserved matters schedule"
+        - "Legal opinion on MOI compliance"
     - question: Are there any SHA restrictions on share transfers that affect the transaction?
       priority: critical
       detail: Check pre-emptive rights, tag-along/drag-along, right of first refusal
       cot_hint: List all transfer restrictions → assess which apply → identify waiver requirements
+      id: "MA-F01-003"
+      sub_questions:
+        - "Have pre-emptive rights been waived or exercised?"
+        - "Are tag-along or drag-along provisions triggered?"
+        - "Is consent of other SHA parties required?"
+      red_flags:
+        - "Pre-emptive rights not addressed"
+        - "Tag-along rights requiring buyer to acquire additional shares"
+      expected_evidence:
+        - "Shareholders agreement"
+        - "Waiver letters from SHA parties"
+        - "Pre-emptive rights exercise records"
     - question: Has the Board properly authorized the transaction per MOI requirements?
       priority: critical
       detail: Check resolution wording, quorum, voting, and signing requirements
       cot_hint: Identify MOI requirements → verify resolution compliance
+      id: "MA-F01-004"
+      sub_questions:
+        - "Was the meeting quorate per MOI requirements?"
+        - "Did the resolution pass with the required majority?"
+        - "Were all conflicts of interest properly declared?"
+      red_flags:
+        - "Resolution passed without required quorum"
+        - "Conflicts of interest not declared"
+      expected_evidence:
+        - "Board resolution authorizing transaction"
+        - "Board meeting minutes showing quorum and voting"
+        - "Conflict of interest declarations"
     - question: Are all issued shares validly issued and fully paid?
       priority: critical
       detail: Review share register, payment records, issue documentation
       cot_hint: Check share register → verify payment status → identify any defects
+      id: "MA-F01-005"
+      sub_questions:
+        - "Does the securities register match the share certificates?"
+        - "Were all share issues properly authorized by board resolution?"
+        - "Have all subscription payments been received?"
+      red_flags:
+        - "Discrepancy between register and certificates"
+        - "Shares issued without proper authorization"
+      expected_evidence:
+        - "Securities register"
+        - "Share certificates"
+        - "Board resolutions for each share issue"
     - question: What is the complete group structure including all subsidiaries?
       priority: high
       detail: Map all subsidiaries, associated companies, and holdings
       cot_hint: Build organogram from corporate records
+      id: "MA-F01-006"
+      sub_questions:
+        - "Are all subsidiaries validly incorporated and in good standing?"
+        - "What percentage is held in each subsidiary?"
+      red_flags:
+        - "Unregistered or dormant entities in group"
+      expected_evidence:
+        - "Group organogram"
+        - "CIPC searches for each entity"
     cross_doc_checks:
     - check: MOI approval thresholds vs Board Resolution voting record
       related_folders: []
@@ -380,26 +1770,83 @@ folder_questions:
       priority: critical
       detail: Identify all CoC triggers, definitions, and consequences
       cot_hint: Search for 'change of control', 'change in ownership', 'assignment'
+      id: "MA-F02-001"
+      sub_questions:
+        - "What is the exact CoC definition in each contract?"
+        - "Is termination automatic or at counterparty's election?"
+        - "What cure period or notice is required?"
+      red_flags:
+        - "Material contract with automatic termination on CoC"
+        - "No cure period for CoC events"
+      expected_evidence:
+        - "CoC clause extract from each material contract"
+        - "Schedule of contracts with CoC provisions"
+        - "Annual value of each affected contract"
     - question: What is the total value at risk from contracts with CoC termination rights?
       priority: critical
       detail: Sum annual revenue from contracts that counterparty could terminate
       cot_hint: 'For each contract: annual value × probability of termination'
+      id: "MA-F02-002"
+      sub_questions:
+        - "What percentage of total revenue is at risk?"
+        - "Which contracts have the highest termination probability?"
+        - "What is the total financial exposure including penalties?"
+      red_flags:
+        - "Revenue at risk exceeds 40% of total revenue"
+        - "Liquidated damages exposure is material"
+      expected_evidence:
+        - "Revenue at risk calculation"
+        - "Contract value schedule"
+        - "Liquidated damages and penalty provisions"
     - question: What third-party consents are required for the transaction?
       priority: critical
       detail: Map all customer, supplier, licensor consents needed
       cot_hint: List contracts with consent requirements → timeline → likelihood
+      id: "MA-F02-003"
+      sub_questions:
+        - "What is the timeline for obtaining each consent?"
+        - "Which consents are conditions precedent to closing?"
+        - "What is the likelihood of each consent being granted?"
+      red_flags:
+        - "Key consent unlikely to be granted"
+        - "Consent timeline exceeds longstop date"
+      expected_evidence:
+        - "Consent requirement schedule"
+        - "Draft consent request letters"
+        - "Counterparty relationship assessment"
     - question: Are there any exclusivity or non-compete provisions that could be breached?
       priority: high
       detail: Check if buyer's existing business creates conflicts
       cot_hint: Identify exclusive arrangements → assess buyer conflict potential
+      id: "MA-F02-004"
+      sub_questions:
+        - "What are the scope and duration of exclusivity obligations?"
+        - "Could the buyer's existing operations create a conflict?"
+      red_flags:
+        - "Buyer's existing business conflicts with target's exclusivity obligations"
+      expected_evidence:
+        - "Exclusivity and non-compete clause extracts"
+        - "Buyer conflict analysis"
     - question: What is the customer concentration risk?
       priority: high
       detail: Calculate revenue dependency on top 5-10 customers
       cot_hint: Top customer revenue / total revenue × 100%
+      id: "MA-F02-005"
+      sub_questions:
+        - "What percentage does the top customer represent?"
+        - "Do the top 5 customers have CoC termination rights?"
+      red_flags:
+        - "Single customer exceeds 30% of revenue"
+      expected_evidence:
+        - "Customer revenue breakdown"
+        - "Concentration analysis"
     - question: What are the termination notice periods for key contracts?
       priority: medium
       detail: Map notice requirements for orderly exit planning
       cot_hint: Extract notice periods, assess adequacy
+      id: "MA-F02-006"
+      expected_evidence:
+        - "Termination notice period schedule"
     cross_doc_checks:
     - check: Contract revenue values vs AFS segment reporting
       related_folders:
@@ -417,26 +1864,89 @@ folder_questions:
       priority: critical
       detail: Review audit report, any qualifications, emphasis of matter
       cot_hint: Check audit opinion type → read qualifications → assess materiality
+      id: "MA-F03-001"
+      sub_questions:
+        - "What type of audit opinion was issued (unqualified, qualified, adverse)?"
+        - "Are there any emphasis of matter or other matter paragraphs?"
+        - "What issues were raised in the audit management letter?"
+      red_flags:
+        - "Qualified or adverse audit opinion"
+        - "Going concern emphasis of matter"
+      expected_evidence:
+        - "Audited financial statements for last 3 years"
+        - "Audit report"
+        - "Audit management letter and management responses"
     - question: What is total debt that could be accelerated on change of control?
       priority: critical
       detail: Include all facilities, bonds, guarantees that have CoC triggers
       cot_hint: 'Sum: drawn + undrawn + contingent with CoC clauses'
+      id: "MA-F03-002"
+      sub_questions:
+        - "Which facilities contain CoC acceleration provisions?"
+        - "What are the breakage costs and prepayment penalties?"
+        - "Is lender consent available as an alternative to acceleration?"
+      red_flags:
+        - "Total acceleration exposure exceeds available cash"
+        - "Mandatory prepayment without consent mechanism"
+      expected_evidence:
+        - "Facility agreement CoC provisions"
+        - "Drawn balance schedule"
+        - "Breakage cost calculations"
     - question: Are there any financial covenant breaches or waivers currently in place?
       priority: critical
       detail: Current compliance affects lender negotiation leverage
       cot_hint: Extract actual ratios → compare to covenants → identify breaches
+      id: "MA-F03-003"
+      sub_questions:
+        - "What are the actual ratios vs covenant requirements?"
+        - "Are there any active waiver letters from lenders?"
+        - "What is the headroom on each covenant?"
+      red_flags:
+        - "Current covenant breach without lender waiver"
+        - "Covenant headroom less than 10%"
+      expected_evidence:
+        - "Covenant compliance certificates"
+        - "Waiver letters"
+        - "Covenant calculation workpapers"
     - question: What security package is in place over company assets?
       priority: high
       detail: List all bonds, cessions, pledges, floating charges
       cot_hint: Build security register from facility agreements
+      id: "MA-F03-004"
+      sub_questions:
+        - "Has all required security been properly perfected and registered?"
+        - "Are there any negative pledge obligations?"
+      red_flags:
+        - "Security not properly perfected"
+      expected_evidence:
+        - "Security register"
+        - "Registered bond documents"
     - question: Are there any off-balance sheet liabilities or arrangements?
       priority: high
       detail: Check for guarantees, letters of support, VIEs
       cot_hint: Review notes to AFS for contingent liabilities
+      id: "MA-F03-005"
+      sub_questions:
+        - "Are there guarantees or letters of comfort not disclosed in AFS?"
+        - "What operating lease commitments exist?"
+      red_flags:
+        - "Material undisclosed off-balance sheet commitments"
+      expected_evidence:
+        - "AFS contingent liability note"
+        - "Schedule of guarantees and comfort letters"
     - question: What inter-company balances exist and how will they be settled?
       priority: high
       detail: Map all group loans, trade balances, management fees
       cot_hint: Extract from AFS related party note
+      id: "MA-F03-006"
+      sub_questions:
+        - "Are intercompany loan terms commercial?"
+        - "Will balances be settled or assumed at closing?"
+      red_flags:
+        - "Non-commercial intercompany arrangements"
+      expected_evidence:
+        - "Intercompany balance schedule"
+        - "Intercompany loan agreements"
     cross_doc_checks:
     - check: Covenant calculations in facility vs actual AFS figures
       related_folders: []
@@ -453,22 +1963,70 @@ folder_questions:
       priority: critical
       detail: List all licenses, their status, and renewal dates
       cot_hint: Identify industry → list required licenses → verify each is current
+      id: "MA-F04-001"
+      sub_questions:
+        - "What industry-specific licenses does the business require?"
+        - "Are all licenses current and renewal dates tracked?"
+        - "Are there any license conditions that could be affected by the transaction?"
+      red_flags:
+        - "Business operating without required license"
+        - "License expired or renewal overdue"
+      expected_evidence:
+        - "License register with status and renewal dates"
+        - "Copies of all material licenses"
+        - "License conditions schedule"
     - question: Does the transaction require Competition Commission approval?
       priority: critical
       detail: Assess merger thresholds, filing requirements, timeline
       cot_hint: Check turnover thresholds → determine notification level → estimate timeline
+      id: "MA-F04-002"
+      sub_questions:
+        - "Do the parties meet intermediate or large merger thresholds?"
+        - "What is the estimated filing and approval timeline?"
+        - "Are there market overlaps that could lead to conditions or prohibition?"
+      red_flags:
+        - "Merger thresholds met but no filing planned"
+        - "Significant market overlap suggesting conditions"
+      expected_evidence:
+        - "Turnover figures for threshold calculation"
+        - "Market share analysis"
+        - "Competition law advice"
     - question: Are there any pending regulatory investigations or enforcement actions?
       priority: critical
       detail: Check for correspondence with regulators, compliance notices
       cot_hint: Search for regulatory authority correspondence
+      id: "MA-F04-003"
+      sub_questions:
+        - "What is the nature and status of any investigation?"
+        - "Could the investigation result in license suspension or revocation?"
+        - "What is the potential financial exposure?"
+      red_flags:
+        - "Active investigation with potential license impact"
+        - "Compliance notice not remediated"
+      expected_evidence:
+        - "Regulatory correspondence"
+        - "Compliance notice responses"
+        - "Legal advice on investigation outcomes"
     - question: Do any licenses require notification or consent for change of control?
       priority: high
       detail: License conditions may restrict ownership changes
       cot_hint: Review license conditions for CoC requirements
+      id: "MA-F04-004"
+      sub_questions:
+        - "What notification or consent requirements exist in license conditions?"
+        - "What is the process and timeline for regulatory consent?"
+      red_flags:
+        - "License CoC consent unlikely to be granted"
+      expected_evidence:
+        - "License CoC condition extracts"
+        - "Regulatory consent application status"
     - question: Is the company compliant with POPIA and data protection requirements?
       priority: medium
       detail: Check data processing registrations, policies, breaches
       cot_hint: Review data protection policies and compliance status
+      id: "MA-F04-005"
+      expected_evidence:
+        - "POPIA compliance assessment"
     cross_doc_checks:
     - check: License conditions vs current operational compliance
       related_folders: []
@@ -481,22 +2039,70 @@ folder_questions:
       priority: critical
       detail: Sum all golden parachute provisions, accelerated vesting
       cot_hint: 'For each exec: base × multiple + bonus + unvested equity'
+      id: "MA-F05-001"
+      sub_questions:
+        - "What CoC severance multipliers exist in executive contracts?"
+        - "What is the total accelerated vesting value of share options?"
+        - "Are there any retention or stay bonuses triggered by the transaction?"
+      red_flags:
+        - "Total executive severance exceeds 5% of transaction value"
+        - "Golden parachute provisions exceeding 24 months remuneration"
+      expected_evidence:
+        - "Executive contract CoC provisions"
+        - "Severance calculation schedule per executive"
+        - "Share option vesting acceleration calculations"
     - question: Are there key person dependencies that create operational risk?
       priority: high
       detail: Identify executives critical to operations and their terms
       cot_hint: Who is irreplaceable? What are their notice periods?
+      id: "MA-F05-002"
+      sub_questions:
+        - "Which executives are critical to business continuity?"
+        - "What are their notice periods and restraint of trade terms?"
+      red_flags:
+        - "Key person with short notice period and no retention arrangement"
+      expected_evidence:
+        - "Key person assessment from management"
+        - "Executive contract notice period summary"
     - question: What is the status of union relationships and collective agreements?
       priority: high
       detail: Check recognition agreements, current negotiations, disputes
       cot_hint: Identify unions → check agreement status → note tensions
+      id: "MA-F05-003"
+      sub_questions:
+        - "Are there recognition agreements in place and are they current?"
+        - "When do current collective agreements expire?"
+      red_flags:
+        - "Upcoming wage negotiations with aggressive demands"
+      expected_evidence:
+        - "Recognition agreements"
+        - "Current collective agreements"
     - question: Are there any pending retrenchments or Section 189 processes?
       priority: high
       detail: Ongoing restructuring affects transaction risk
       cot_hint: Search for retrenchment notices, consultation records
+      id: "MA-F05-004"
+      sub_questions:
+        - "Has a Section 189 notice been issued?"
+        - "What are the estimated severance costs?"
+      red_flags:
+        - "Section 189 consultation underway without buyer awareness"
+      expected_evidence:
+        - "Section 189 notices if applicable"
+        - "Consultation records"
     - question: What share option or incentive schemes vest on change of control?
       priority: high
       detail: Accelerated vesting creates cash outflow
       cot_hint: Review scheme rules for CoC acceleration provisions
+      id: "MA-F05-005"
+      sub_questions:
+        - "What is the total value of accelerated vesting on CoC?"
+        - "Is settlement in cash or shares?"
+      red_flags:
+        - "Cash-settled accelerated vesting creating material outflow"
+      expected_evidence:
+        - "Share option scheme rules"
+        - "Outstanding option schedule with vesting dates"
     cross_doc_checks:
     - check: Executive severance totals vs acquisition budget
       related_folders:
@@ -510,18 +2116,42 @@ folder_questions:
       priority: high
       detail: Distinguish owned assets from leased to understand risk profile
       cot_hint: List properties → classify owned vs leased
+      id: "MA-F06-001"
+      sub_questions:
+        - "What is the split between owned and leased premises?"
+        - "Are leased premises on arm's length terms?"
+      red_flags:
+        - "Related party landlord with above-market rental"
+      expected_evidence:
+        - "Property schedule with owned vs leased breakdown"
+        - "Title deeds for owned properties"
     - question: Do any leases require landlord consent for change of control?
       priority: high
       detail: Lease assignment provisions may require consent
       cot_hint: Check each lease for assignment/CoC clauses
+      id: "MA-F06-002"
+      sub_questions:
+        - "What is the CoC definition in each lease?"
+        - "Can landlord withhold consent unreasonably?"
+      red_flags:
+        - "Key premises lease with landlord CoC termination right"
+      expected_evidence:
+        - "Lease CoC and assignment clause extracts"
+        - "Landlord consent status"
     - question: What is the remaining term on material leases?
       priority: medium
       detail: Short remaining terms create renewal risk
       cot_hint: Extract lease expiry dates → calculate remaining terms
+      id: "MA-F06-003"
+      expected_evidence:
+        - "Lease expiry schedule"
     - question: Are there any property disputes or claims affecting title?
       priority: medium
       detail: Check for encumbrances, claims, boundary disputes
       cot_hint: Review title deeds for endorsements, restrictions
+      id: "MA-F06-004"
+      expected_evidence:
+        - "Title deed endorsement review"
     cross_doc_checks:
     - check: Owned property values vs AFS fixed asset register
       related_folders:
@@ -535,14 +2165,23 @@ folder_questions:
       priority: medium
       detail: Check coverage types, limits, exclusions
       cot_hint: Compare coverage to business risk profile
+      id: "MA-F07-001"
+      expected_evidence:
+        - "Insurance policy schedule with coverage limits"
     - question: Do insurance policies require notification of change of control?
       priority: medium
       detail: Failure to notify could void coverage
       cot_hint: Check policy conditions for CoC notification requirements
+      id: "MA-F07-002"
+      expected_evidence:
+        - "Insurance policy CoC notification provisions"
     - question: What is the claims history and any pending claims?
       priority: low
       detail: Claims history affects future insurability and premiums
       cot_hint: Review claims register for pattern and severity
+      id: "MA-F07-003"
+      expected_evidence:
+        - "Claims history register"
     cross_doc_checks:
     - check: Lender required insurance vs actual coverage
       related_folders:
@@ -556,18 +2195,60 @@ folder_questions:
       priority: critical
       detail: Sum all claims, counterclaims, potential awards
       cot_hint: 'For each matter: claim + costs + interest potential'
+      id: "MA-F08-001"
+      sub_questions:
+        - "What is the total claim amount across all pending matters?"
+        - "What are the legal costs incurred and estimated to resolution?"
+        - "What is the probability-weighted exposure?"
+      red_flags:
+        - "Total litigation exposure exceeds materiality threshold"
+        - "Claim amount significantly exceeds AFS provision"
+      expected_evidence:
+        - "Litigation schedule with claim amounts"
+        - "Legal advice on merits and quantum"
+        - "AFS contingent liability provisions"
     - question: Are there any disputes that could affect the transaction closing?
       priority: critical
       detail: Injunction risk, restraint applications
       cot_hint: Identify matters that could block or delay closing
+      id: "MA-F08-002"
+      sub_questions:
+        - "Could any party obtain an interdict preventing the transaction?"
+        - "Are there any restraint of trade disputes that affect the target?"
+        - "Are there any disputes with shareholders that could block approvals?"
+      red_flags:
+        - "Pending application for interdict against the transaction"
+        - "Shareholder dispute that could block required approvals"
+      expected_evidence:
+        - "Legal advice on litigation risk to closing"
+        - "Court papers if applicable"
+        - "Interdict risk assessment"
     - question: What matters require disclosure in transaction documents?
       priority: high
       detail: Pending or threatened claims above materiality threshold
       cot_hint: Apply disclosure threshold → list disclosable matters
+      id: "MA-F08-003"
+      sub_questions:
+        - "Which matters exceed the materiality disclosure threshold?"
+        - "Are there threatened claims not yet formalized?"
+      red_flags:
+        - "Threatened claims not disclosed to buyer"
+      expected_evidence:
+        - "Disclosure schedule draft"
+        - "Demand letters and pre-litigation correspondence"
     - question: Are any disputes with key customers or suppliers?
       priority: high
       detail: Could affect ongoing commercial relationships
       cot_hint: Cross-reference litigants with customer/supplier list
+      id: "MA-F08-004"
+      sub_questions:
+        - "Are any top 10 customers or suppliers involved in disputes?"
+        - "Could the dispute lead to contract termination?"
+      red_flags:
+        - "Active dispute with top 5 customer or supplier"
+      expected_evidence:
+        - "Cross-reference of litigants with customer/supplier list"
+        - "Commercial relationship assessment"
     cross_doc_checks:
     - check: Disclosed litigation vs contingent liability provisions
       related_folders:
@@ -581,18 +2262,45 @@ folder_questions:
       priority: critical
       detail: Unresolved assessments create liability uncertainty
       cot_hint: Check for objections, appeals, SARS correspondence
+      id: "MA-F09-001"
+      sub_questions:
+        - "Are there any outstanding SARS audit notifications?"
+        - "Have all notices of assessment been accepted or objected to?"
+        - "What is the total disputed amount?"
+      red_flags:
+        - "SARS audit in progress with material potential adjustment"
+        - "Multiple disputed assessments indicating systemic issues"
+      expected_evidence:
+        - "SARS correspondence schedule"
+        - "Notices of assessment and objections"
+        - "Tax advisor opinion on disputed matters"
     - question: Are there any tax losses that could be lost on change of control?
       priority: high
       detail: Section 103 anti-avoidance may restrict loss utilization
       cot_hint: Calculate assessed losses → assess anti-avoidance risk
+      id: "MA-F09-002"
+      sub_questions:
+        - "What is the total assessed loss carried forward?"
+        - "Could Section 103(2) anti-avoidance apply to restrict loss usage?"
+      red_flags:
+        - "Material assessed losses at risk of forfeiture on CoC"
+      expected_evidence:
+        - "Assessed loss schedule from tax returns"
+        - "Tax advice on Section 103 anti-avoidance"
     - question: Is transfer pricing documentation adequate for related party transactions?
       priority: medium
       detail: SARS increasingly focused on transfer pricing
       cot_hint: Identify related party transactions → check documentation
+      id: "MA-F09-003"
+      expected_evidence:
+        - "Transfer pricing study or master file"
     - question: What is the capital gains tax position on the transaction?
       priority: medium
       detail: CGT on share disposal affects net proceeds
       cot_hint: Calculate potential CGT exposure for seller
+      id: "MA-F09-004"
+      expected_evidence:
+        - "CGT calculation workpapers"
     cross_doc_checks:
     - check: Tax returns vs AFS tax disclosures
       related_folders:
@@ -731,31 +2439,37 @@ statutory_framework:
           penalties:
             other: "Transaction voidable if proper approvals not obtained"
           criticality: critical
+          application_to_dd: "Check if transaction constitutes disposal of greater part — requires special resolution"
         - section: "Section 113"
           description: "Proposals for scheme of arrangement"
           penalties:
             other: "Scheme ineffective without court approval"
           criticality: critical
+          application_to_dd: "Assess if scheme of arrangement mechanism applies; check court approval requirements"
         - section: "Section 114"
           description: "Approval for amalgamation or merger"
           penalties:
             other: "Merger void without proper approvals"
           criticality: critical
+          application_to_dd: "Verify merger/amalgamation compliance; check shareholder approval obtained"
         - section: "Section 115"
           description: "Required approval for fundamental transactions"
           penalties:
             other: "Special resolution required (75% vote)"
           criticality: critical
+          application_to_dd: "Identify all fundamental transaction approvals required; verify 75% threshold met"
         - section: "Section 126"
           description: "Takeover regulations applicability"
           penalties:
             administrative: "TRP enforcement action, mandatory offer obligations"
           criticality: high
+          application_to_dd: "Determine if company is a regulated company under takeover provisions; assess TRP obligations"
         - section: "Section 164"
           description: "Dissenting shareholders' appraisal rights"
           penalties:
             civil: "Fair value buyout obligation"
           criticality: high
+          application_to_dd: "Assess dissenting shareholder exposure; calculate potential fair value buyout cost"
 
     - act: "Competition Act 89 of 1998"
       acronym: "Competition Act"
@@ -766,27 +2480,32 @@ statutory_framework:
           penalties:
             other: "Merger notification obligation triggered"
           criticality: critical
+          application_to_dd: "Determine if transaction constitutes acquisition of control; assess merger definition"
         - section: "Section 12"
           description: "Intermediate and large merger thresholds"
           penalties:
             administrative: "Mandatory pre-implementation notification"
           criticality: critical
+          application_to_dd: "Calculate if intermediate or large merger thresholds met; determine filing obligation"
         - section: "Section 13"
           description: "Small merger thresholds and voluntary notification"
           penalties:
             administrative: "May be called for review within 6 months"
           criticality: medium
+          application_to_dd: "Assess small merger position; consider voluntary notification risk"
         - section: "Section 13A"
           description: "Merger implementation prohibition pending approval"
           penalties:
             criminal: "Fine up to 10% of annual turnover"
             administrative: "Divestiture order"
           criticality: critical
+          application_to_dd: "Verify no implementation before approval; assess gun-jumping risk"
         - section: "Section 16"
           description: "Competition Commission merger investigation"
           penalties:
             administrative: "Conditions may be imposed on approval"
           criticality: high
+          application_to_dd: "Assess likely conditions; identify competition concerns and public interest issues"
 
     - act: "Labour Relations Act 66 of 1995"
       acronym: "LRA"
@@ -797,21 +2516,25 @@ statutory_framework:
           penalties:
             civil: "Unfair dismissal claims, reinstatement, compensation up to 24 months"
           criticality: high
+          application_to_dd: "Check for pending retrenchment consultations; assess Section 189 compliance"
         - section: "Section 189A"
           description: "Large-scale retrenchment requirements (50+ employees)"
           penalties:
             civil: "Facilitation process mandatory, extended consultation periods"
           criticality: high
+          application_to_dd: "Determine if large-scale retrenchment thresholds apply; check facilitation requirements"
         - section: "Section 197"
           description: "Transfer of contract of employment on transfer of business"
           penalties:
             civil: "Automatic transfer, dismissal protection, joint and several liability"
           criticality: critical
+          application_to_dd: "Assess if Section 197 transfer applies to transaction structure; identify employee liabilities"
         - section: "Section 197A"
           description: "Transfer of undertaking in insolvency"
           penalties:
             civil: "Modified transfer provisions apply"
           criticality: high
+          application_to_dd: "Relevant only in insolvency context; assess modified transfer provisions"
 
     - act: "Broad-Based Black Economic Empowerment Act 53 of 2003"
       acronym: "B-BBEE Act"
@@ -822,12 +2545,14 @@ statutory_framework:
           penalties:
             criminal: "Fine up to 10% of annual turnover or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Assess fronting risk in target's BEE structures"
         - section: "Section 13G"
           description: "Misrepresentation of B-BBEE status"
           penalties:
             criminal: "Fine up to 10% of turnover, imprisonment up to 10 years"
             administrative: "Debarment from government contracts"
           criticality: critical
+          application_to_dd: "Check for any misrepresentation of BEE status in government contracts or tenders"
 
     - act: "Financial Markets Act 19 of 2012"
       acronym: "FMA"
@@ -838,11 +2563,13 @@ statutory_framework:
           penalties:
             criminal: "Fine up to R50 million or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Relevant if target is listed; assess market manipulation risk in deal context"
         - section: "Section 82"
           description: "Insider trading prohibition"
           penalties:
             criminal: "Fine up to R50 million or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Insider trading compliance; ensure proper information barriers"
 
   transaction_triggers:
     change_of_control:
@@ -864,6 +2591,88 @@ statutory_framework:
         trigger: "Disposal of all or greater part of assets/undertaking"
         consequence: "Special resolution required"
         processing_time: "21 days notice for shareholders meeting"
+  secondary_legislation:
+    - name: "Companies Regulations (2011)"
+      description: "Detailed procedural requirements under Companies Act"
+      key_provisions:
+        - "Regulation 81: Filing requirements for fundamental transactions"
+        - "Regulation 86: Prescribed officers definition"
+        - "Regulation 90: Short-form and long-form merger notification"
+    - name: "Competition Commission Rules"
+      description: "Procedural rules for merger notifications"
+      key_provisions:
+        - "Form CC4(1): Intermediate merger notification"
+        - "Form CC4(2): Large merger notification"
+        - "Filing fees and timeline requirements"
+        - "Information requests and Phase II investigations"
+    - name: "TRP Rules"
+      description: "Takeover Regulation Panel rules for affected transactions"
+      key_provisions:
+        - "Mandatory offer thresholds and procedures"
+        - "Independent expert requirements"
+        - "Circular and fairness opinion requirements"
+        - "Squeeze-out and sell-out provisions"
+    - name: "B-BBEE Codes of Good Practice"
+      description: "Measurement and verification standards for B-BBEE"
+      key_provisions:
+        - "Generic Scorecard elements and weightings"
+        - "Ownership measurement and flow-through principles"
+        - "Verification agency requirements"
+        - "Sector code applicability and variations"
+    - name: "Employment Equity Act Regulations"
+      description: "Workforce transformation requirements"
+      key_provisions:
+        - "Employment equity plan requirements"
+        - "Reporting obligations and barriers analysis"
+        - "Income differential statement requirements"
+    - name: "Financial Markets Act Regulations"
+      description: "Securities regulation for listed entities"
+      key_provisions:
+        - "Insider trading reporting obligations"
+        - "Price sensitive information management"
+        - "Directors dealings disclosure requirements"
+  regulatory_bodies:
+    - name: "Companies and Intellectual Property Commission"
+      acronym: "CIPC"
+      relevance: "Company registration, annual returns, fundamental transaction filings"
+      consent_required_for:
+        - "Registration of MOI amendments"
+        - "Name reservation and change"
+        - "Filing of fundamental transaction documents"
+    - name: "Competition Commission / Competition Tribunal"
+      acronym: "CompCom / CompTrib"
+      relevance: "Merger control — mandatory pre-implementation notification for intermediate and large mergers"
+      consent_required_for:
+        - "Intermediate merger approval (Commission decision)"
+        - "Large merger approval (Tribunal decision)"
+        - "Compliance with public interest conditions"
+    - name: "Financial Sector Conduct Authority"
+      acronym: "FSCA"
+      relevance: "Regulates financial services providers and listed entities"
+      consent_required_for:
+        - "Change of control of FSP license holder"
+        - "JSE listing requirements compliance"
+        - "Section 14 FAIS Act transfer of license"
+    - name: "Takeover Regulation Panel"
+      acronym: "TRP"
+      relevance: "Regulates affected transactions involving regulated companies"
+      consent_required_for:
+        - "Compliance certificate for affected transactions"
+        - "Mandatory offer approval"
+        - "Independent expert appointment"
+    - name: "Department of Employment and Labour / CCMA"
+      acronym: "DEL / CCMA"
+      relevance: "Labour relations, employment equity, retrenchment oversight"
+      consent_required_for:
+        - "Section 189A large-scale retrenchment facilitation"
+        - "Employment equity compliance certification"
+        - "CCMA dispute resolution"
+    - name: "Department of Trade, Industry and Competition / B-BBEE Commission"
+      acronym: "DTIC"
+      relevance: "B-BBEE compliance oversight and fronting investigations"
+      consent_required_for:
+        - "B-BBEE verification agency accreditation"
+        - "Fronting investigation responses"
 
 # ============================================================================
 # WARRANTY CATEGORIES
@@ -1157,3 +2966,100 @@ indemnity_categories:
         typical_cap: "Specific sub-cap based on contract value"
         survival_period: "2-3 years"
         priority: high
+output_templates:
+  executive_summary:
+    max_items: 15
+    sections:
+      - "Transaction Overview"
+      - "Deal Blockers"
+      - "Critical Findings"
+      - "Financial Exposure Summary"
+      - "Conditions Precedent"
+      - "Key Recommendations"
+    required_elements:
+      - "Total quantified exposure amount"
+      - "Number of deal blockers identified"
+      - "Number of conditions precedent"
+      - "Competition Commission filing status"
+      - "BEE compliance impact"
+      - "Key contract consent status"
+  full_report:
+    sections:
+      - name: "Transaction Context"
+        subsections:
+          - "Deal structure analysis"
+          - "Party identification"
+          - "Regulatory pathway"
+      - name: "Corporate Structure & Governance"
+        subsections:
+          - "Incorporation and good standing"
+          - "Share capital and ownership"
+          - "Constitutional documents analysis"
+      - name: "Change of Control"
+        subsections:
+          - "Contract-by-contract CoC analysis"
+          - "Consent requirements and timeline"
+          - "Financial exposure quantification"
+      - name: "Material Contracts"
+        subsections:
+          - "Key contract analysis"
+          - "Customer and supplier concentration"
+          - "Termination and renewal risk"
+      - name: "Financial Position"
+        subsections:
+          - "AFS analysis and qualifications"
+          - "Working capital assessment"
+          - "Off-balance sheet exposures"
+      - name: "Debt & Security"
+        subsections:
+          - "Facility structure"
+          - "Covenant compliance"
+          - "Security package"
+          - "Acceleration exposure"
+      - name: "Employment"
+        subsections:
+          - "Key person analysis"
+          - "Severance exposure"
+          - "Union and collective agreements"
+          - "Section 197 assessment"
+      - name: "Regulatory & Competition"
+        subsections:
+          - "License status"
+          - "Competition Commission filing"
+          - "Pending investigations"
+      - name: "Property & Assets"
+        subsections:
+          - "Owned vs leased"
+          - "Lease CoC provisions"
+          - "Asset condition"
+      - name: "Intellectual Property"
+        subsections:
+          - "IP ownership verification"
+          - "License dependencies"
+          - "IP protection adequacy"
+      - name: "Tax"
+        subsections:
+          - "Compliance status"
+          - "Pending disputes"
+          - "Assessed losses"
+          - "Transaction tax structuring"
+      - name: "Litigation"
+        subsections:
+          - "Pending matters"
+          - "Quantified exposure"
+          - "Disclosure requirements"
+      - name: "Warranties & Indemnities"
+        subsections:
+          - "Recommended warranties by category"
+          - "Recommended indemnities by category"
+          - "Cap and survival recommendations"
+  finding_format:
+    required_fields:
+      - "finding_id"
+      - "category"
+      - "severity"
+      - "description"
+      - "statutory_reference"
+      - "financial_impact"
+      - "recommended_action"
+      - "action_category"

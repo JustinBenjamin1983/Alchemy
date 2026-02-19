@@ -48,6 +48,7 @@ import { useCreateAnalysisRun, useAnalysisRunsList } from "@/hooks/useAnalysisRu
 import { useOrganisationProgress, useClassifyDocuments, useOrganiseFolders, useDocumentReassign, useCancelOrganisation } from "@/hooks/useOrganisationProgress";
 import { useBlueprintRequirements } from "@/hooks/useBlueprintRequirements";
 import { useDeleteDocument } from "@/hooks/useDeleteDocument";
+import { useMutateDDUploadSingleFile } from "@/hooks/useMutateDDUploadSingleFile";
 import useEntityMapping, { useGetEntityMap, useModifyEntityMap, useConfirmEntityMap } from "@/hooks/useEntityMapping";
 import { CategoryCount, CategoryDocument } from "./FileTree/FileTree";
 import { Button } from "@/components/ui/button";
@@ -285,6 +286,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
   const documentReassign = useDocumentReassign();
   const cancelOrganisation = useCancelOrganisation();
   const deleteDocument = useDeleteDocument();
+  const uploadSingleFile = useMutateDDUploadSingleFile();
   const entityMapping = useEntityMapping();
   const modifyEntityMap = useModifyEntityMap();
   const confirmEntityMap = useConfirmEntityMap();
@@ -783,6 +785,86 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
     const displayName = category.replace(/^\d+_/, "").replace(/_/g, " ");
     addLogEntry("info", `Deleted folder: ${displayName}`);
   }, [customCategories, documentsByCategory, documentReassign, ddId, addLogEntry]);
+
+  // Handler to upload files to a specific category
+  // Documents are grouped by ai_category in classification mode, not by actual folder.
+  // So we upload to any available folder, then reassign ai_category on each new document.
+  const handleUploadFiles = useCallback(
+    async (files: File[], targetCategory?: string) => {
+      if (!ddId || !targetCategory || files.length === 0) return;
+
+      const folders = ddData?.folders || [];
+      if (folders.length === 0) {
+        addLogEntry("error", "No folders found in this project");
+        return;
+      }
+
+      // Use the first available folder for storage
+      const storageFolder = folders[0];
+
+      const displayName = targetCategory.replace(/^\d+_/, "").replace(/_/g, " ");
+      addLogEntry("info", `Uploading ${files.length} file(s) to ${displayName}...`);
+
+      let successCount = 0;
+      let failCount = 0;
+
+      for (const file of files) {
+        try {
+          // Step 1: Upload the file to storage folder
+          const result = await uploadSingleFile.mutateAsync({
+            data: {
+              dd_id: ddId,
+              folder_id: storageFolder.folder_id,
+            },
+            file,
+          });
+
+          // Step 2: Extract doc_id from response (axios response has .data with parsed JSON)
+          const responseData = result?.data;
+          const docId = typeof responseData === "string"
+            ? JSON.parse(responseData)?.doc_id
+            : responseData?.doc_id;
+
+          if (!docId) {
+            console.warn("[Upload] No doc_id in response for", file.name, "response:", result);
+            addLogEntry("warning", `Uploaded "${file.name}" but could not classify it - no document ID returned`);
+            successCount++;
+            continue;
+          }
+
+          // Step 3: Set ai_category so it appears in the right category
+          try {
+            await documentReassign.mutateAsync({
+              ddId,
+              documentId: docId,
+              targetCategory,
+              reason: `Manually uploaded to ${displayName}`,
+            });
+          } catch (reassignErr: any) {
+            console.warn("[Upload] Reassign failed for", file.name, reassignErr);
+            addLogEntry("warning", `Uploaded "${file.name}" but failed to classify: ${reassignErr?.message || "Unknown error"}`);
+          }
+
+          successCount++;
+        } catch (err: any) {
+          failCount++;
+          addLogEntry("error", `Failed to upload "${file.name}": ${err?.message || "Unknown error"}`);
+        }
+      }
+
+      if (successCount > 0) {
+        addLogEntry("success", `Uploaded ${successCount} file(s) to ${displayName}`);
+      }
+      if (failCount > 0) {
+        addLogEntry("warning", `${failCount} file(s) failed to upload`);
+      }
+
+      // Refresh data after all uploads complete
+      refetchDD();
+      refetchOrganisation();
+    },
+    [ddId, ddData?.folders, uploadSingleFile, documentReassign, addLogEntry, refetchDD, refetchOrganisation]
+  );
 
   // Function to run readability check
   // Helper to get attorney-friendly readability error message
@@ -2235,6 +2317,7 @@ export const DDProcessingDashboard: React.FC<DDProcessingDashboardProps> = ({
             ddId={ddId}
             selectedDocIds={selectedDocIds}
             onSelectionChange={handleSelectionChange}
+            onUploadFiles={handleUploadFiles}
             onRecheckReadability={runReadabilityCheck}
             isCheckingReadability={checkReadability.isPending}
             isCollapsed={isDocPanelCollapsed}

@@ -1477,7 +1477,7 @@ export function FileTree({
 
         {/* Upload with Folder Selection Dialog */}
         <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
-          <DialogContent className="sm:max-w-[450px]">
+          <DialogContent className="sm:max-w-[450px] max-h-[85vh] flex flex-col overflow-hidden">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Upload className="w-5 h-5 text-blue-600" />
@@ -1489,7 +1489,7 @@ export function FileTree({
                   : "Select the target folder and choose files to upload."}
               </DialogDescription>
             </DialogHeader>
-            <div className="py-4 space-y-4">
+            <div className="py-4 space-y-4 overflow-y-auto flex-1 min-h-0">
               <div>
                 <Label htmlFor="targetFolder" className="text-sm font-medium">
                   Target Folder
@@ -1510,7 +1510,10 @@ export function FileTree({
               <div>
                 <Label className="text-sm font-medium">Files</Label>
                 <div
-                  className="mt-1.5 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors"
+                  className={cn(
+                    "mt-1.5 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors",
+                    pendingUploadFiles.length > 0 ? "p-3" : "p-6"
+                  )}
                   onClick={() => {
                     const input = document.createElement("input");
                     input.type = "file";
@@ -1544,19 +1547,21 @@ export function FileTree({
                     }
                   }}
                 >
-                  <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                  <Upload className={cn("mx-auto mb-1 text-gray-400", pendingUploadFiles.length > 0 ? "w-5 h-5" : "w-8 h-8 mb-2")} />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Drag files here or click to browse
+                    {pendingUploadFiles.length > 0 ? "Click to add more files" : "Drag files here or click to browse"}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    PDF, DOC, DOCX, XLS, XLSX supported
-                  </p>
+                  {pendingUploadFiles.length === 0 && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      PDF, DOC, DOCX, XLS, XLSX supported
+                    </p>
+                  )}
                 </div>
                 {pendingUploadFiles.length > 0 && (
-                  <div className="mt-3 border border-gray-200 dark:border-gray-700 rounded-lg divide-y divide-gray-100 dark:divide-gray-800 max-h-[150px] overflow-y-auto">
+                  <div className="mt-3 border border-gray-200 dark:border-gray-700 rounded-lg divide-y divide-gray-100 dark:divide-gray-800 max-h-[200px] overflow-y-auto">
                     {pendingUploadFiles.map((file, i) => (
                       <div key={i} className="flex items-center justify-between px-3 py-2 text-xs hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                        <div className="flex items-center gap-2 min-w-0">
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
                           <FileText className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
                           <span className="truncate text-gray-700 dark:text-gray-300">{file.name}</span>
                         </div>
@@ -1566,7 +1571,7 @@ export function FileTree({
                             e.stopPropagation();
                             setPendingUploadFiles((prev) => prev.filter((_, idx) => idx !== i));
                           }}
-                          className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-400 hover:text-red-500 flex-shrink-0"
+                          className="ml-2 p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-400 hover:text-red-500 flex-shrink-0"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>

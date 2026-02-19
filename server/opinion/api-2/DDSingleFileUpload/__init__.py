@@ -12,33 +12,55 @@ from shared.session import transactional_session
 import uuid
 import datetime
 
+DEV_MODE = os.environ.get("DEV_MODE", "").lower() == "true"
+
+
+def write_to_local_storage(key: str, blob: bytes, meta_data: dict = None):
+    """Write file to local storage for dev mode."""
+    local_storage_path = os.environ.get("LOCAL_STORAGE_PATH", "/tmp/dd_storage")
+    docs_path = os.path.join(local_storage_path, "docs")
+    os.makedirs(docs_path, exist_ok=True)
+
+    file_path = os.path.join(docs_path, key)
+    with open(file_path, "wb") as f:
+        f.write(blob)
+
+    if meta_data:
+        meta_path = f"{file_path}.meta.json"
+        with open(meta_path, "w") as f:
+            json.dump(meta_data, f)
+
+    logging.info(f"[DEV MODE] Saved file to {file_path}")
+    return file_path
+
+
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    
-    if req.headers.get('function-key') != os.environ["FUNCTION_KEY"]:
+
+    if not DEV_MODE and req.headers.get('function-key') != os.environ.get("FUNCTION_KEY"):
         logging.info("no matching value in header")
         return func.HttpResponse("", status_code=401)
-    
+
     try:
         user_is_member_of_dd = False
         dd_id = req.form.get("dd_id")
         folder_id = req.form.get("folder_id")
-        
+
         email, err = auth_get_email(req)
         if err:
             return err
-        
+
         content_type = req.headers.get("content-type")
         if not content_type or "multipart/form-data" not in content_type.lower():
             return func.HttpResponse("Expected multipart/form-data", status_code=400)
-        
+
         safe_filename, extension, uploaded_file_content = extract_file(req)
         safe_filename = sanitize_string(safe_filename)
 
         logging.info(f"uploading {safe_filename} {len(uploaded_file_content)}")
-        
+
         with transactional_session() as session:
             doc_id = uuid.uuid4()
-               
+
             doc = Document(
                 id=doc_id,
                 type=extension,
@@ -58,22 +80,33 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 action_at=datetime.datetime.utcnow()
             ))
 
-            logging.info("writing to blob - single file")
-            write_to_blob_storage(
-                os.environ["DD_DOCS_BLOB_STORAGE_CONNECTION_STRING"], 
-                os.environ["DD_DOCS_STORAGE_CONTAINER_NAME"], 
-                str(doc_id), 
-                uploaded_file_content, 
-                {
-                    "original_file_name" : doc.original_file_name, 
-                    "extension" : doc.type,
-                    "is_dd": "True",
-                    "doc_id": str(doc_id),
-                    "dd_id": str(dd_id),
-                    "next_chunk_to_process" : "0",
-                    "single_file": "True"
-                },
-                overwrite=True)
+            file_metadata = {
+                "original_file_name" : doc.original_file_name,
+                "extension" : doc.type,
+                "is_dd": "True",
+                "doc_id": str(doc_id),
+                "dd_id": str(dd_id),
+                "next_chunk_to_process" : "0",
+                "single_file": "True"
+            }
+
+            if DEV_MODE:
+                logging.info("writing to local storage - single file (dev mode)")
+                write_to_local_storage(
+                    str(doc_id),
+                    uploaded_file_content,
+                    file_metadata
+                )
+            else:
+                logging.info("writing to blob - single file")
+                write_to_blob_storage(
+                    os.environ["DD_DOCS_BLOB_STORAGE_CONNECTION_STRING"],
+                    os.environ["DD_DOCS_STORAGE_CONTAINER_NAME"],
+                    str(doc_id),
+                    uploaded_file_content,
+                    file_metadata,
+                    overwrite=True)
+
             member = session.query(DueDiligenceMember).filter(
                     DueDiligenceMember.dd_id == dd_id,
                     DueDiligenceMember.member_email == email
@@ -83,7 +116,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             session.add(doc)
             session.commit()
 
-        if user_is_member_of_dd:
+        if not DEV_MODE and user_is_member_of_dd:
             logging.info("send to eventgrid")
             send_custom_event_to_eventgrid(os.environ["INDEXING_DD_DOC_METADATA_CHANGED_TOPIC_ENDPOINT"],
                     topic_key = os.environ["INDEXING_DD_DOC_METADATA_CHANGED_TOPIC_KEY"],
@@ -91,14 +124,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     data = {"doc_id":str(doc_id), "dd_id": str(dd_id), "email": email},
                     event_type = "AIShop.DD.BlobMetadataUpdated")
         else:
-            logging.info(f"user {email} is not member of DD, not starting ProcessRisk")
+            logging.info(f"user {email} is not member of DD or dev mode, skipping event grid")
 
         logging.info("done")
 
         return func.HttpResponse(json.dumps({
             "doc_id": str(doc_id),
         }), mimetype="application/json", status_code=200)
-           
+
 
     except Exception as e:
         logging.info(e)

@@ -6,6 +6,65 @@ description: 'Due diligence blueprint for competition law and regulatory complia
 
   '
 jurisdiction: South Africa
+
+# ============================================================================
+# TRANSACTION CONTEXT
+# ============================================================================
+transaction_context:
+  deal_structures:
+    - id: merger_notification_intermediate
+      description: "Intermediate merger requiring Competition Commission approval"
+      typical_considerations:
+        - "Combined turnover/assets > R600 million AND target > R100 million"
+        - "Commission must approve within 20 business days (extendable to 60)"
+        - "No implementation before approval — gun-jumping risk"
+        - "Advisory Committee and Minister may make public interest representations"
+    - id: merger_notification_large
+      description: "Large merger requiring Competition Tribunal approval on Commission recommendation"
+      typical_considerations:
+        - "Combined turnover/assets > R6.6 billion OR target > R190 million"
+        - "Commission recommends to Tribunal within 40 business days (extendable to 120)"
+        - "Tribunal must hold hearing; affected parties may intervene"
+        - "Higher probability of conditions — employment, BEE, competition, public interest"
+    - id: joint_venture_merger
+      description: "Full-function joint venture constituting a merger under the Competition Act"
+      typical_considerations:
+        - "JV must perform on lasting basis all functions of an autonomous economic entity"
+        - "Parent company market overlaps assessed as horizontal merger"
+        - "Vertical relationships between parents and JV assessed for foreclosure"
+        - "Section 12A public interest factors apply"
+    - id: section_12a_exemption
+      description: "Application for exemption from certain Competition Act provisions"
+      typical_considerations:
+        - "Section 10 allows exemption for agreements that promote exports, SMEs, or BEE"
+        - "Must demonstrate pro-competitive or public interest justification"
+        - "Exemption may be conditional and time-limited"
+        - "Does not exempt from merger notification requirements"
+    - id: prohibited_practice_overlay
+      description: "Competition compliance assessment overlaid on any transaction type"
+      typical_considerations:
+        - "Historical cartel or collusion conduct exposure assessment"
+        - "Abuse of dominance risk where target holds dominant position"
+        - "Vertical restraint analysis for supply/distribution arrangements"
+        - "Information exchange risk during pre-merger integration planning"
+  typical_parties:
+    - role: merging_parties
+      description: "Acquiring firm and target firm — primary parties to the merger notification"
+    - role: competition_commission
+      description: "Competition Commission — investigates and recommends on mergers; enforces prohibited practices"
+    - role: competition_tribunal
+      description: "Competition Tribunal — adjudicates large mergers and contested intermediate mergers"
+    - role: competition_appeal_court
+      description: "Competition Appeal Court — hears appeals from Tribunal decisions"
+    - role: affected_competitors
+      description: "Competitors who may be affected by the merger and may make representations to Commission"
+    - role: affected_customers
+      description: "Customers and suppliers who may be affected and may make submissions"
+    - role: trade_unions
+      description: "Trade unions representing employees of merging parties — statutory right to participate in merger proceedings"
+    - role: government_departments
+      description: "DTIC, sector regulators, and Minister — may make public interest representations"
+
 primary_legislation:
 - Competition Act 89 of 1998
 - Competition Amendment Act 18 of 2018
@@ -17,105 +76,708 @@ reference_documents:
     reason: Control analysis
   - pattern: Financial Statements
     reason: Turnover calculations
+
+# ============================================================================
+# FOLDER STRUCTURE
+# ============================================================================
+folder_structure:
+  01_Corporate_Governance:
+    relevance: critical
+    subcategories:
+    - Constitutional
+    - Governance
+    - Shareholding
+    - Group Structure
+    expected_documents:
+    - MOI
+    - Shareholders Agreement
+    - Board Resolution
+    - Share Certificate
+    - Company Registration
+    - Group Structure Chart
+    document_expectations:
+      - type: "MOI"
+        aliases: ["Memorandum of Incorporation", "Articles of Association", "Constitution"]
+        tier: critical
+        why_critical: "Defines control provisions relevant to merger definition under Section 12(1)"
+        red_flags_if_missing: "Cannot determine whether transaction constitutes acquisition of control"
+      - type: "Shareholders Agreement"
+        aliases: ["SHA", "Shareholder Agreement", "JV Agreement"]
+        tier: critical
+        why_critical: "May contain control provisions, pre-emptive rights, and voting arrangements affecting merger analysis"
+        red_flags_if_missing: "Control analysis incomplete — merger categorisation at risk"
+      - type: "Group Structure Chart"
+        aliases: ["Organogram", "Corporate Structure", "Group Diagram"]
+        tier: critical
+        why_critical: "Required for identifying all entities under common control for turnover/asset aggregation"
+        red_flags_if_missing: "Cannot aggregate turnover for threshold calculation"
+      - type: "Board Resolution"
+        aliases: ["Directors Resolution", "Written Resolution"]
+        tier: important
+        why_critical: "Confirms corporate authority for the merger transaction"
+      - type: "Share Certificate"
+        aliases: ["Securities Register", "Share Register"]
+        tier: important
+        why_critical: "Establishes ownership and control for merger notification form"
+  02_Commercial:
+    relevance: critical
+    subcategories:
+    - Supply Agreements
+    - Distribution Agreements
+    - Competitor Arrangements
+    - JV Agreements
+    - Non-Compete Agreements
+    expected_documents:
+    - Supply Agreement
+    - Distribution Agreement
+    - JV Agreement
+    - Non-Compete Agreement
+    - Exclusive Dealing Agreement
+    - Information Sharing Protocol
+    document_expectations:
+      - type: "Supply Agreement"
+        aliases: ["Procurement Agreement", "Input Supply Contract"]
+        tier: critical
+        why_critical: "Exclusive supply arrangements may raise vertical foreclosure concerns under Section 8(d)(iv)"
+        red_flags_if_missing: "Vertical effects assessment incomplete"
+      - type: "Distribution Agreement"
+        aliases: ["Distributor Agreement", "Agency Agreement", "Reseller Agreement"]
+        tier: critical
+        why_critical: "Exclusive distribution may constitute market division or vertical restraint"
+        red_flags_if_missing: "Market access assessment incomplete"
+      - type: "JV Agreement"
+        aliases: ["Joint Venture Agreement", "Consortium Agreement"]
+        tier: critical
+        why_critical: "JV may itself constitute a notifiable merger; competitor JV may raise Section 4 concerns"
+        red_flags_if_missing: "Potential prior merger notification obligation not assessed"
+      - type: "Non-Compete Agreement"
+        aliases: ["Restraint of Trade", "Non-Competition Agreement"]
+        tier: important
+        why_critical: "Must be ancillary and proportionate; excessive scope may constitute market division"
+      - type: "Information Sharing Protocol"
+        aliases: ["Clean Team Agreement", "Information Barrier Protocol"]
+        tier: important
+        why_critical: "Pre-merger information exchange may constitute prohibited horizontal practice"
+  03_Financial:
+    relevance: critical
+    subcategories:
+    - Financial Statements
+    - Turnover Data
+    - Asset Valuations
+    - Market Share Data
+    expected_documents:
+    - Financial Statements
+    - Audit Report
+    - Turnover Certificate
+    - Asset Schedule
+    - Market Share Analysis
+    - Revenue Breakdown
+    document_expectations:
+      - type: "Financial Statements"
+        aliases: ["AFS", "Annual Financial Statements", "Audited Accounts"]
+        tier: critical
+        why_critical: "South African turnover and asset figures determine merger notification category"
+        red_flags_if_missing: "Cannot calculate merger thresholds — filing category unknown"
+      - type: "Turnover Certificate"
+        aliases: ["Revenue Certificate", "Turnover Declaration"]
+        tier: critical
+        why_critical: "Certified SA turnover figures required for merger notification form"
+        red_flags_if_missing: "Threshold calculation unsubstantiated"
+      - type: "Market Share Analysis"
+        aliases: ["Market Study", "Market Share Report", "Industry Analysis"]
+        tier: critical
+        why_critical: "Market shares above 35% raise prima facie competition concerns under Section 12A"
+        red_flags_if_missing: "Competition assessment cannot be completed"
+      - type: "Revenue Breakdown"
+        aliases: ["Segmental Revenue", "Product Line Revenue", "Geographic Revenue Split"]
+        tier: important
+        why_critical: "Required for product and geographic market definition"
+  04_Regulatory:
+    relevance: critical
+    subcategories:
+    - Competition History
+    - Compliance Programme
+    - Prior Merger Approvals
+    - Commission Correspondence
+    expected_documents:
+    - Prior Merger Approval
+    - Competition Compliance Programme
+    - Commission Correspondence
+    - Leniency Application
+    - Compliance Certificate
+    - Dawn Raid Records
+    document_expectations:
+      - type: "Prior Merger Approval"
+        aliases: ["Merger Approval Letter", "Commission Approval", "Tribunal Order"]
+        tier: critical
+        why_critical: "Existing conditions from prior mergers may affect current transaction"
+        red_flags_if_missing: "Unknown prior condition obligations — breach risk"
+      - type: "Competition Compliance Programme"
+        aliases: ["Compliance Manual", "Competition Law Policy", "Antitrust Programme"]
+        tier: important
+        why_critical: "Indicates awareness of competition obligations; absence is a risk indicator"
+      - type: "Commission Correspondence"
+        aliases: ["Competition Commission Letters", "CC Correspondence", "Investigation Notices"]
+        tier: critical
+        why_critical: "May reveal pending investigations, complaints, or information requests"
+        red_flags_if_missing: "Cannot confirm no pending competition matters"
+      - type: "Leniency Application"
+        aliases: ["Corporate Leniency Application", "CLP Application"]
+        tier: critical
+        why_critical: "Indicates participation in cartel conduct — critical risk factor"
+        red_flags_if_missing: "Not necessarily expected unless cartel indicators present"
+  05_Employment:
+    relevance: high
+    subcategories:
+    - Headcount Data
+    - Retrenchment Plans
+    - Employment Conditions
+    expected_documents:
+    - Employment Schedule
+    - Retrenchment Plan
+    - Employment Equity Report
+    - Union Agreements
+    document_expectations:
+      - type: "Employment Schedule"
+        aliases: ["Staff List", "Headcount Report", "Employee Register"]
+        tier: critical
+        why_critical: "Employment impact is primary public interest factor under Section 12A(3)(b)"
+        red_flags_if_missing: "Public interest assessment on employment incomplete"
+      - type: "Retrenchment Plan"
+        aliases: ["Restructuring Plan", "Integration Plan", "Synergy Plan"]
+        tier: critical
+        why_critical: "Planned retrenchments must be disclosed in merger notification form"
+        red_flags_if_missing: "If retrenchments planned but undisclosed, filing may be defective"
+  06_Property:
+    relevance: low
+    subcategories:
+    - Facilities
+    - Operational Premises
+    expected_documents:
+    - Property Schedule
+    - Lease Agreements
+    document_expectations:
+      - type: "Property Schedule"
+        aliases: ["Premises List", "Facility Register"]
+        tier: supporting
+        why_critical: "Facility rationalisation may affect employment public interest factor"
+  07_Insurance:
+    relevance: low
+    subcategories:
+    - Competition Liability Coverage
+    expected_documents:
+    - D&O Insurance Policy
+    document_expectations:
+      - type: "D&O Insurance Policy"
+        aliases: ["Directors and Officers Insurance", "D&O Policy"]
+        tier: supporting
+        why_critical: "May include competition law defense cost coverage"
+  08_Litigation:
+    relevance: critical
+    subcategories:
+    - Competition Proceedings
+    - Cartel Investigations
+    - Abuse of Dominance
+    - Private Damages Claims
+    expected_documents:
+    - Competition Tribunal Orders
+    - Commission Investigation Notices
+    - Cartel Investigation Records
+    - Private Damages Claims
+    - Consent Orders
+    document_expectations:
+      - type: "Competition Tribunal Orders"
+        aliases: ["Tribunal Decision", "Tribunal Order", "Tribunal Ruling"]
+        tier: critical
+        why_critical: "Prior adverse findings affect Commission's view of current merger"
+        red_flags_if_missing: "If prior matters exist but orders not available, compliance status uncertain"
+      - type: "Commission Investigation Notices"
+        aliases: ["Section 49B Notice", "Complaint Referral", "Investigation Notice"]
+        tier: critical
+        why_critical: "Active investigations represent material risk — may result in penalties up to 10% of turnover"
+        red_flags_if_missing: "Cannot confirm no active investigations"
+      - type: "Consent Orders"
+        aliases: ["Consent Agreement", "Settlement Agreement", "Agreed Order"]
+        tier: important
+        why_critical: "Outstanding consent order obligations may affect current transaction"
+  09_Tax:
+    relevance: low
+    subcategories:
+    - Competition Penalties
+    expected_documents:
+    - Penalty Assessment Records
+    document_expectations:
+      - type: "Penalty Assessment Records"
+        aliases: ["Administrative Penalty Notice", "Fine Assessment"]
+        tier: supporting
+        why_critical: "Competition fines are not tax deductible — affects financial position"
+  10_Competition:
+    relevance: critical
+    subcategories:
+    - Market Definition
+    - Market Shares
+    - HHI Analysis
+    - Competitive Assessment
+    - Remedies
+    expected_documents:
+    - Merger Notification Form
+    - Market Share Analysis
+    - HHI Calculation
+    - Competitor Analysis
+    - Industry Report
+    - Remedy Proposal
+    document_expectations:
+      - type: "Merger Notification Form"
+        aliases: ["CC4(1) Form", "Merger Filing Form", "Notification Form"]
+        tier: critical
+        why_critical: "Central document for merger notification — contains all required transaction and market information"
+        red_flags_if_missing: "Merger notification cannot proceed"
+      - type: "HHI Calculation"
+        aliases: ["Herfindahl-Hirschman Index", "Concentration Analysis", "Market Concentration"]
+        tier: critical
+        why_critical: "HHI delta above 50 in concentrated market (>2500) raises presumption of competitive harm"
+        red_flags_if_missing: "Concentration assessment incomplete"
+      - type: "Competitor Analysis"
+        aliases: ["Competitive Landscape", "Competitor Map", "Competitive Assessment"]
+        tier: important
+        why_critical: "Required to assess barriers to entry, countervailing power, and import competition"
+  11_Public_Interest:
+    relevance: high
+    subcategories:
+    - Employment Impact
+    - BEE Assessment
+    - Industrial Policy
+    - SME Impact
+    expected_documents:
+    - Employment Impact Assessment
+    - BEE Certificate
+    - BEE Ownership Analysis
+    - SME Impact Assessment
+    - Industrial Policy Submission
+    document_expectations:
+      - type: "Employment Impact Assessment"
+        aliases: ["Employment Analysis", "Job Impact Study"]
+        tier: critical
+        why_critical: "Section 12A(3)(b) requires assessment of effect on employment"
+        red_flags_if_missing: "Public interest submission on employment incomplete"
+      - type: "BEE Certificate"
+        aliases: ["B-BBEE Certificate", "BEE Verification Certificate"]
+        tier: important
+        why_critical: "Impact on HDSA ownership is Section 12A(3)(c) public interest factor"
+      - type: "BEE Ownership Analysis"
+        aliases: ["HDSA Impact Assessment", "BEE Dilution Analysis"]
+        tier: important
+        why_critical: "Post-merger impact on HDSA ownership levels must be assessed"
+  99_Needs_Review:
+    relevance: low
+    subcategories:
+    - Unclassified
+    expected_documents:
+    - Unclassified Document
+    document_expectations:
+      - type: "Unclassified Document"
+        aliases: ["Unknown", "Miscellaneous"]
+        tier: supporting
+        why_critical: "Documents requiring manual review for competition relevance"
+
 risk_categories:
 - name: Merger Notification
   weight: critical
   standard_questions:
   - question: Does the transaction constitute a merger under the Competition Act?
     priority: critical
+    id: "CR-MNT-001"
+    sub_questions:
+      - "Does the transaction involve acquisition of control as defined in Section 12(1)?"
+      - "Is there a change in the nature or quality of control?"
+      - "Could this be characterised as an internal restructuring exempt from notification?"
+    red_flags:
+      - "Transaction structured as series of steps to avoid single notifiable merger"
+      - "Control acquired through contractual arrangements rather than shareholding"
+    expected_evidence:
+      - "Transaction agreement (SPA, share subscription, JV agreement)"
+      - "Group structure chart showing pre- and post-transaction control"
+      - "Legal opinion on merger definition"
   - question: What are the combined South African turnover figures?
     priority: critical
+    id: "CR-MNT-002"
+    sub_questions:
+      - "What is each party's South African turnover for the most recent financial year?"
+      - "Are there any controlled entities whose turnover must be aggregated?"
+    red_flags:
+      - "Turnover figures not supported by audited financial statements"
+      - "Discrepancies between reported turnover and AFS figures"
+    expected_evidence:
+      - "Audited annual financial statements for all merging parties"
+      - "Turnover certificate or declaration"
+      - "Group structure showing controlled entities for aggregation"
   - question: What are the combined asset values in South Africa?
     priority: critical
+    id: "CR-MNT-003"
+    sub_questions:
+      - "What is the total value of South African assets for each party?"
+      - "Are intangible assets and goodwill included in the calculation?"
+    red_flags:
+      - "Asset values appear understated to avoid higher threshold"
+    expected_evidence:
+      - "Audited balance sheets showing South African asset values"
+      - "Asset schedule with breakdown"
   - question: Is this an intermediate or large merger?
     priority: critical
+    id: "CR-MNT-004"
+    sub_questions:
+      - "Do combined turnover/assets exceed R600m AND target turnover/assets exceed R100m (intermediate)?"
+      - "Do combined turnover/assets exceed R6.6bn AND target turnover/assets exceed R190m (large)?"
+    red_flags:
+      - "Transaction falls just below large merger threshold — Commission may scrutinise"
+      - "Threshold calculation excludes entities that should be included"
+    expected_evidence:
+      - "Threshold calculation worksheet"
+      - "Financial statements supporting the calculation"
   - question: What is the applicable merger filing threshold?
     priority: critical
+    id: "CR-MNT-005"
+    expected_evidence:
+      - "Current gazetted threshold figures"
+      - "Calculation applying thresholds to parties' figures"
   - question: Has the transaction been structured to avoid notification?
     priority: high
+    id: "CR-MNT-006"
+    sub_questions:
+      - "Are there sequential transactions that individually fall below thresholds?"
+      - "Has turnover been artificially reduced through pre-transaction restructuring?"
+    red_flags:
+      - "Multi-step transaction where individual steps avoid thresholds"
+      - "Recent corporate restructuring reducing turnover/assets before transaction"
+    expected_evidence:
+      - "Transaction term sheet showing all steps"
+      - "Historical corporate restructuring records"
   - question: Are there any exemptions that might apply?
     priority: high
+    id: "CR-MNT-007"
+    expected_evidence:
+      - "Legal analysis of potential exemptions"
+      - "Section 10 exemption application if applicable"
   - question: What is the expected timeline for approval?
     priority: high
+    id: "CR-MNT-008"
+    expected_evidence:
+      - "Filing timeline plan"
+      - "Precedent approval timelines for similar transactions"
 - name: Market Definition & Shares
   weight: critical
   standard_questions:
   - question: What are the relevant product markets?
     priority: critical
+    id: "CR-MDS-001"
+    sub_questions:
+      - "What products do the merging parties supply in common?"
+      - "What is the degree of demand-side substitutability between products?"
+      - "Is there supply-side substitutability from adjacent products?"
+    red_flags:
+      - "Parties define markets narrowly to minimise apparent overlap"
+      - "Internal documents suggest different market definition than presented"
+    expected_evidence:
+      - "Market definition analysis with SSNIP test methodology"
+      - "Internal strategic documents discussing competitive landscape"
+      - "Industry reports on market segmentation"
   - question: What are the relevant geographic markets?
     priority: critical
+    id: "CR-MDS-002"
+    sub_questions:
+      - "Is the market national, regional, or local?"
+      - "Are there import constraints affecting geographic scope?"
+    red_flags:
+      - "Geographic market defined too broadly to dilute market share"
+    expected_evidence:
+      - "Geographic sales data and customer locations"
+      - "Transport cost analysis"
+      - "Import/export data"
   - question: What are the parties' market shares in each market?
     priority: critical
+    id: "CR-MDS-003"
+    sub_questions:
+      - "What is the basis for market share calculation (revenue, volume, capacity)?"
+      - "How have market shares trended over the past 3-5 years?"
+    red_flags:
+      - "Market share data from different time periods or using different metrics"
+      - "Internal documents show higher shares than presented"
+    expected_evidence:
+      - "Market share calculations with data sources"
+      - "Third-party market reports"
+      - "Internal sales data"
   - question: What is the combined market share post-transaction?
     priority: critical
+    id: "CR-MDS-004"
+    sub_questions:
+      - "Does the combined share exceed 35% in any market?"
+      - "What is the increment (target's market share added to acquirer's)?"
+    red_flags:
+      - "Combined share exceeds 35% — dominance presumption"
+      - "Significant increment in already concentrated market"
+    expected_evidence:
+      - "Combined market share calculation"
+      - "Pre- and post-merger market share comparison"
   - question: What is the change in HHI concentration?
     priority: high
+    id: "CR-MDS-005"
+    sub_questions:
+      - "What is the pre-merger HHI in each relevant market?"
+    red_flags:
+      - "Post-merger HHI above 2500 with delta above 150"
+    expected_evidence:
+      - "HHI calculation worksheet showing all competitors"
+      - "Pre- and post-merger HHI comparison"
   - question: Are there any markets where combined share exceeds 35%?
     priority: critical
+    id: "CR-MDS-006"
+    sub_questions:
+      - "In how many markets does the combined share exceed 35%?"
+      - "What is the share of the next largest competitor in those markets?"
+    red_flags:
+      - "Combined share above 45% — dominance threshold"
+      - "Combined share above 35% with significant gap to next competitor"
+    expected_evidence:
+      - "Market-by-market share analysis highlighting >35% overlaps"
   - question: Who are the main competitors and their market shares?
     priority: high
+    id: "CR-MDS-007"
+    expected_evidence:
+      - "Competitor analysis with market share estimates"
+      - "Customer switching analysis"
   - question: Are there any vertical relationships between the parties?
     priority: high
+    id: "CR-MDS-008"
+    sub_questions:
+      - "Does one party supply inputs to the other?"
+      - "Does one party distribute products for the other?"
+    red_flags:
+      - "Significant vertical relationship with potential for foreclosure"
+    expected_evidence:
+      - "Supply chain mapping between merging parties"
+      - "Vertical relationship analysis"
 - name: Competitive Effects
   weight: critical
   standard_questions:
   - question: Does the merger raise horizontal competition concerns?
     priority: critical
+    id: "CR-CEF-001"
+    sub_questions:
+      - "Will the merger eliminate a close competitor?"
+      - "What are the diversion ratios between the merging parties?"
+      - "Could the merged entity profitably raise prices?"
+    red_flags:
+      - "Internal documents identify target as key competitive constraint"
+      - "Close competitor elimination in concentrated market"
+    expected_evidence:
+      - "Unilateral effects analysis"
+      - "Diversion ratio estimates"
+      - "Internal strategic documents on competitive dynamics"
   - question: Are there vertical foreclosure concerns?
     priority: high
+    id: "CR-CEF-002"
+    sub_questions:
+      - "Does the merged entity have ability and incentive to foreclose rivals?"
+    red_flags:
+      - "Merged entity controls critical input with limited alternatives"
+    expected_evidence:
+      - "Vertical foreclosure analysis"
+      - "Input supply market structure assessment"
   - question: Could the merger facilitate coordinated conduct?
     priority: high
+    id: "CR-CEF-003"
+    sub_questions:
+      - "Does the merger increase market symmetry among remaining competitors?"
+      - "Are there existing factors conducive to coordination?"
+    red_flags:
+      - "Post-merger market structure conducive to tacit coordination"
+    expected_evidence:
+      - "Coordinated effects analysis"
+      - "Market structure assessment (symmetry, transparency, stability)"
   - question: What barriers to entry exist?
     priority: high
+    id: "CR-CEF-004"
+    sub_questions:
+      - "Are there regulatory, financial, or technical barriers?"
+      - "Have there been any recent market entries or exits?"
+    red_flags:
+      - "High barriers to entry with no recent new entry"
+    expected_evidence:
+      - "Barrier to entry analysis"
+      - "History of entry and exit in relevant markets"
   - question: What countervailing buyer power exists?
     priority: medium
+    id: "CR-CEF-005"
+    expected_evidence:
+      - "Customer concentration analysis"
+      - "Assessment of buyer switching costs"
   - question: What efficiency gains will the merger generate?
     priority: medium
+    id: "CR-CEF-006"
+    expected_evidence:
+      - "Efficiency claims with supporting evidence"
+      - "Synergy analysis showing verifiable, merger-specific efficiencies"
   - question: Is there a failing firm defense available?
     priority: medium
+    id: "CR-CEF-007"
+    expected_evidence:
+      - "Financial evidence of imminent failure"
+      - "Evidence of unsuccessful alternative acquisition attempts"
   - question: What remedies might address competition concerns?
     priority: high
+    id: "CR-CEF-008"
+    sub_questions:
+      - "Are structural remedies (divestiture) feasible?"
+      - "Would behavioural remedies be sufficient to address concerns?"
+    red_flags:
+      - "No viable remedy available to address identified concerns"
+    expected_evidence:
+      - "Remedies analysis"
+      - "Viable divestiture package identification"
 - name: Public Interest
   weight: high
   standard_questions:
   - question: What impact will the merger have on employment?
     priority: critical
+    id: "CR-PBI-001"
+    sub_questions:
+      - "How many jobs are at risk from integration or rationalisation?"
+      - "What mitigation measures are proposed (redeployment, retraining)?"
+      - "What employment moratorium duration is appropriate?"
+    red_flags:
+      - "Planned retrenchments exceeding 10% of combined workforce"
+      - "No mitigation plan for employment losses"
+    expected_evidence:
+      - "Employment impact assessment"
+      - "Integration plan with headcount projections"
+      - "Retrenchment mitigation proposal"
   - question: Are any retrenchments planned post-merger?
     priority: critical
+    id: "CR-PBI-002"
+    sub_questions:
+      - "What is the number and timing of planned retrenchments?"
+      - "Have trade unions been consulted?"
+    red_flags:
+      - "Undisclosed retrenchment plans found in internal documents"
+    expected_evidence:
+      - "Retrenchment plan or confirmation of no planned retrenchments"
+      - "Union consultation records"
   - question: What is the impact on small business and BEE?
     priority: high
+    id: "CR-PBI-003"
+    sub_questions:
+      - "Does the merger affect HDSA ownership levels?"
+      - "What is the impact on SME suppliers and competitors?"
+    red_flags:
+      - "HDSA ownership reduction without mitigation"
+    expected_evidence:
+      - "BEE ownership analysis pre- and post-transaction"
+      - "SME impact assessment"
   - question: Does the merger affect a particular industrial sector?
     priority: high
+    id: "CR-PBI-004"
+    expected_evidence:
+      - "Sector impact analysis"
+      - "Industrial policy submissions"
   - question: Is the target South African owned or controlled?
     priority: high
+    id: "CR-PBI-005"
+    expected_evidence:
+      - "Ownership analysis showing SA vs foreign control"
+      - "BEE certificate"
   - question: What is the impact on international competitiveness?
     priority: medium
+    id: "CR-PBI-006"
+    expected_evidence:
+      - "Export capability analysis"
   - question: Will there be technology transfer benefits?
     priority: medium
+    id: "CR-PBI-007"
+    expected_evidence:
+      - "Technology transfer analysis"
 - name: Historical Compliance
   weight: high
   standard_questions:
   - question: Have the parties been involved in prior competition matters?
     priority: high
+    id: "CR-HCO-001"
+    sub_questions:
+      - "What was the nature and outcome of prior matters?"
+      - "Are there any ongoing conditions or obligations from prior matters?"
+    red_flags:
+      - "Multiple prior competition matters indicating compliance culture concerns"
+    expected_evidence:
+      - "Schedule of prior competition matters with outcomes"
+      - "Prior consent orders or Tribunal orders"
   - question: Are there any pending competition investigations?
     priority: critical
+    id: "CR-HCO-002"
+    sub_questions:
+      - "Has the company received any Section 49B notices or information requests?"
+      - "Is the company aware of any Commission investigation?"
+    red_flags:
+      - "Active investigation not disclosed to transaction team"
+      - "Section 49B notice received within past 12 months"
+    expected_evidence:
+      - "Confirmation letter regarding pending investigations"
+      - "Commission correspondence register"
   - question: Have any cartel or abuse of dominance penalties been imposed?
     priority: critical
+    id: "CR-HCO-003"
+    sub_questions:
+      - "What was the quantum of any administrative penalties?"
+      - "Is the company a repeat offender (25% penalty threshold)?"
+    red_flags:
+      - "Prior cartel fine indicating systemic compliance failure"
+      - "Repeat offender status — next penalty up to 25% of turnover"
+    expected_evidence:
+      - "Penalty assessment records"
+      - "Tribunal orders imposing penalties"
   - question: Are there any outstanding compliance obligations?
     priority: high
+    id: "CR-HCO-004"
+    expected_evidence:
+      - "Prior merger conditions register"
+      - "Consent order compliance reports"
   - question: Are there any leniency applications in progress?
     priority: critical
+    id: "CR-HCO-005"
+    sub_questions:
+      - "Has the company applied for or received corporate leniency?"
+      - "What conduct does the leniency application relate to?"
+    red_flags:
+      - "Active leniency application — confirms cartel participation"
+    expected_evidence:
+      - "Leniency application records (if disclosable)"
+      - "Legal privilege confirmation"
 - name: Foreign Filings
   weight: medium
   standard_questions:
   - question: Are merger filings required in other jurisdictions?
     priority: high
+    id: "CR-FFI-001"
+    sub_questions:
+      - "In which jurisdictions do the merging parties have turnover or assets?"
+      - "Which jurisdictions have mandatory pre-merger notification?"
+    expected_evidence:
+      - "Multi-jurisdictional filing analysis"
+      - "Geographic revenue breakdown"
   - question: What is the timeline for international approvals?
     priority: high
+    id: "CR-FFI-002"
+    expected_evidence:
+      - "Filing timeline comparison across jurisdictions"
+      - "Long-stop date analysis"
   - question: Are there any inter-agency coordination requirements?
     priority: medium
+    id: "CR-FFI-003"
+    expected_evidence:
+      - "Agency cooperation assessment"
   - question: Could foreign conditions affect South African implementation?
     priority: medium
+    id: "CR-FFI-004"
+    expected_evidence:
+      - "Foreign condition compatibility analysis"
 deal_blockers:
 - description: Merger prohibited by Competition Commission/Tribunal
   severity: absolute
@@ -132,6 +794,501 @@ conditions_precedent_patterns:
   cp_type: Competition Approval
 - pattern: merger condition|competition condition
   cp_type: Competition Condition
+
+# ============================================================================
+# ENTITY RELATIONSHIP PATTERNS
+# ============================================================================
+entity_relationship_patterns:
+  typical_structures:
+    - name: "Horizontal Merger"
+      description: "Acquisition between competitors in the same relevant market"
+      dd_implication: "Combined market share and HHI delta are primary metrics; assess unilateral and coordinated effects"
+    - name: "Vertical Merger"
+      description: "Acquisition between firms in upstream/downstream relationship"
+      dd_implication: "Assess input foreclosure (upstream) and customer foreclosure (downstream); examine vertical contracts"
+    - name: "Conglomerate / Portfolio Acquisition"
+      description: "Acquisition of firm in adjacent or unrelated market"
+      dd_implication: "Assess portfolio effects, bundling/tying risks, and conglomerate market power extension"
+    - name: "Full-Function Joint Venture"
+      description: "Creation of autonomous JV performing all functions of independent business"
+      dd_implication: "Treated as merger — assess parent overlaps horizontally and vertically; JV must operate independently"
+    - name: "Group Reorganization"
+      description: "Internal restructuring within same economic group"
+      dd_implication: "May qualify for small merger exemption if no change in ultimate control; verify common control chain"
+  entity_roles:
+    - role: "Acquiring Firm"
+      description: "Entity acquiring control through share purchase, asset acquisition, or JV formation"
+    - role: "Target Firm"
+      description: "Entity over which control is being acquired — its turnover/assets used for threshold calculation"
+    - role: "Common Shareholder"
+      description: "Entity with shareholding in both merging parties — relevant for existing horizontal overlap"
+    - role: "Competitor"
+      description: "Third-party competitor in relevant market — may be affected party entitled to make representations"
+    - role: "Upstream/Downstream Party"
+      description: "Supplier or customer of merging parties — relevant for vertical effects and foreclosure assessment"
+    - role: "JV Parent"
+      description: "Parent entity contributing assets or activities to a joint venture — overlaps assessed as horizontal merger"
+  common_related_parties:
+    - type: "Common Competitor Shareholder"
+      red_flags:
+        - "Shareholding in two or more competitors in same market"
+        - "Board representation across competing firms"
+        - "Information flow risk between competitors through common shareholder"
+    - type: "Vertically Integrated Entity"
+      red_flags:
+        - "Upstream monopoly combined with downstream acquisition"
+        - "Self-supply preference reducing downstream competition"
+        - "Price squeeze between wholesale and retail levels"
+    - type: "Industry Association"
+      red_flags:
+        - "Association facilitating information exchange between competitors"
+        - "Joint pricing or market allocation through association"
+        - "Coordinated lobbying masking cartel conduct"
+
+# ============================================================================
+# MATERIALITY THRESHOLDS
+# ============================================================================
+materiality_thresholds:
+  default_when_value_unknown:
+    absolute_threshold: "R5,000,000"
+    description: "Applied when transaction value is not known or not disclosed"
+  when_value_known:
+    tiers:
+      - percentage: 5
+        applies_to: "General findings — contracts, liabilities, exposures"
+      - percentage: 2
+        applies_to: "Market overlap findings — any overlap market share exceeding 2% warrants disclosure"
+      - percentage: 1
+        applies_to: "HHI delta — any delta above 100 in concentrated market (HHI > 2500) is material"
+  qualitative_overrides:
+    always_material_regardless_of_amount:
+      - "Competition Commission prohibition recommendation or order"
+      - "Gun-jumping — implementation before approval"
+      - "Active cartel investigation involving merging party"
+      - "Abuse of dominance finding or ongoing investigation"
+      - "Breach of prior merger approval conditions"
+      - "Combined market share exceeding 35% in any relevant market"
+    never_immaterial_categories:
+      - category: "Cartel Conduct"
+        reason: "Per se prohibited under Section 4(1)(b); criminal liability for directors; fine up to 10% of turnover"
+      - category: "Gun-Jumping"
+        reason: "Section 13A prohibition on implementation before approval; fine up to 10% of turnover"
+      - category: "Merger Prohibition"
+        reason: "Prohibition renders entire transaction void — absolute deal blocker"
+      - category: "Public Interest Conditions"
+        reason: "Employment, BEE, and industrial policy conditions routinely imposed; non-compliance is contempt of Tribunal"
+
+# ============================================================================
+# CROSS-REFERENCE EXPECTATIONS
+# ============================================================================
+cross_reference_expectations:
+  - primary_document: "Merger Notification Form"
+    should_reference:
+      - "Transaction Agreement — consideration, conditions, structure"
+      - "Market share data and sources"
+      - "Turnover and asset figures per threshold calculation"
+      - "Employment data and planned retrenchments"
+    should_be_referenced_by:
+      - "SPA — merger notification as condition precedent"
+      - "Market Share Analysis — consistent market definitions"
+      - "Financial Statements — turnover figures match"
+  - primary_document: "Market Share Analysis"
+    should_reference:
+      - "Data sources and methodology"
+      - "Product and geographic market definitions"
+      - "Competitor identification and shares"
+    should_be_referenced_by:
+      - "Merger Notification Form — market shares cited"
+      - "HHI Calculation — share inputs"
+      - "Competitor Analysis — consistent market picture"
+  - primary_document: "SPA / Transaction Agreement"
+    should_reference:
+      - "Competition approval as condition precedent"
+      - "Competition warranties and indemnities"
+      - "Pre-closing conduct restrictions (gun-jumping prevention)"
+    should_be_referenced_by:
+      - "Merger Notification Form — transaction terms"
+      - "Board Resolution — authority for transaction"
+  - primary_document: "Prior Merger Approval"
+    should_reference:
+      - "Conditions imposed by Commission or Tribunal"
+      - "Duration and monitoring requirements"
+      - "Compliance reporting obligations"
+    should_be_referenced_by:
+      - "Compliance Programme — condition compliance tracking"
+      - "Commission Correspondence — compliance reporting"
+      - "Current Merger Notification — disclosure of prior conditions"
+  - primary_document: "Compliance Programme"
+    should_reference:
+      - "Competition Act provisions and penalties"
+      - "Dawn raid procedures"
+      - "Leniency policy awareness"
+      - "Training schedule and records"
+    should_be_referenced_by:
+      - "Board Resolution — compliance programme adoption"
+      - "Prior Merger Approval — condition compliance"
+  - primary_document: "Commission Correspondence"
+    should_reference:
+      - "Investigation details and information requests"
+      - "Complaint referrals and section 49B notices"
+      - "Merger review timeline communications"
+    should_be_referenced_by:
+      - "Litigation Schedule — active competition matters"
+      - "Regulatory Compliance Report — pending matters"
+  - primary_document: "Employment Data"
+    should_reference:
+      - "Headcount by location and job category"
+      - "Planned retrenchments post-merger"
+      - "Employment moratorium commitments"
+    should_be_referenced_by:
+      - "Merger Notification Form — employment section"
+      - "Public Interest Submission — employment impact"
+  - primary_document: "BEE Certificate"
+    should_reference:
+      - "HDSA ownership percentage and methodology"
+      - "Verification agency and date"
+    should_be_referenced_by:
+      - "Public Interest Submission — HDSA impact"
+      - "Merger Notification Form — ownership disclosure"
+
+# ============================================================================
+# RED FLAG PATTERNS
+# ============================================================================
+red_flag_patterns:
+  cartel:
+    - id: "CR-RF-CAR-001"
+      pattern: "Evidence of price fixing or coordination with competitors"
+      indicators:
+        - "Competitor pricing correspondence"
+        - "Industry association price discussions"
+        - "Parallel pricing patterns without independent explanation"
+        - "References to 'market discipline' or 'orderly markets'"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Competition Act Section 4(1)(b)(i)"
+      typical_resolution: "Leniency application assessment; enhanced due diligence; seller indemnity"
+    - id: "CR-RF-CAR-002"
+      pattern: "Market division or customer allocation agreement"
+      indicators:
+        - "Geographic territory agreements with competitors"
+        - "Customer allocation arrangements"
+        - "Bid rigging or cover pricing"
+        - "References to 'gentleman's agreement' or 'understanding'"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Competition Act Section 4(1)(b)(ii)"
+      typical_resolution: "Full investigation; leniency assessment; transaction structure review"
+    - id: "CR-RF-CAR-003"
+      pattern: "Competitively sensitive information exchange"
+      indicators:
+        - "Sharing of pricing, volumes, or capacity data with competitors"
+        - "Competitor benchmarking without aggregation or anonymisation"
+        - "Joint sales or marketing arrangements with competitors"
+      severity: critical
+      action_category: warranty_required
+      statutory_reference: "Competition Act Section 4(1)(a)"
+      typical_resolution: "Information barrier protocols; compliance programme enhancement"
+    - id: "CR-RF-CAR-004"
+      pattern: "Active leniency or immunity application"
+      indicators:
+        - "Corporate leniency programme application filed"
+        - "Marker granted by Competition Commission"
+        - "Cooperation with Commission investigation"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Competition Commission Corporate Leniency Policy"
+      typical_resolution: "Full disclosure; assess impact on transaction; enhanced indemnity"
+  merger_control:
+    - id: "CR-RF-MRG-001"
+      pattern: "Gun-jumping — pre-approval implementation"
+      indicators:
+        - "Integration activities before merger approval"
+        - "Joint pricing or marketing before closing"
+        - "Appointing directors to target board before approval"
+        - "Exercising veto rights over target's competitive decisions"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Competition Act Section 13A"
+      typical_resolution: "Cease implementation immediately; self-report to Commission; penalty mitigation"
+    - id: "CR-RF-MRG-002"
+      pattern: "Transaction structured to avoid notification"
+      indicators:
+        - "Artificial structuring to fall below thresholds"
+        - "Sequential small transactions achieving same outcome"
+        - "Use of intermediate entities to reduce aggregated turnover"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Competition Act Section 12"
+      typical_resolution: "Restructure transaction for proper notification; Commission may call in small merger"
+    - id: "CR-RF-MRG-003"
+      pattern: "Prior merger conditions not complied with"
+      indicators:
+        - "Monitoring report shows non-compliance"
+        - "Commission correspondence about condition breach"
+        - "Employment moratorium violated"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "Competition Act Section 15"
+      typical_resolution: "Remediate breach before new filing; disclose in current notification"
+    - id: "CR-RF-MRG-004"
+      pattern: "Foreign filing obligations outstanding"
+      indicators:
+        - "Multi-jurisdictional transaction without parallel filings"
+        - "Foreign authority imposed conditions affecting SA transaction"
+        - "Inconsistent remedies across jurisdictions"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Foreign competition legislation"
+      typical_resolution: "Identify all filing jurisdictions; coordinate timelines; harmonise remedies"
+  market_concentration:
+    - id: "CR-RF-MKT-001"
+      pattern: "Combined market share exceeds 35% in relevant market"
+      indicators:
+        - "Post-merger combined share above 35%"
+        - "Market leader status post-transaction"
+        - "Significant increment to already leading position"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "Competition Act Section 7 (dominance threshold)"
+      typical_resolution: "Prepare robust efficiency defense; consider structural or behavioural remedies"
+    - id: "CR-RF-MKT-002"
+      pattern: "Highly concentrated market — HHI above 2500 with significant delta"
+      indicators:
+        - "Post-merger HHI exceeds 2500"
+        - "HHI delta exceeds 150"
+        - "Merger to effective duopoly"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "Commission merger guidelines"
+      typical_resolution: "Detailed competitive effects analysis; remedies proposal"
+    - id: "CR-RF-MKT-003"
+      pattern: "Elimination of close competitor"
+      indicators:
+        - "Target is closest competitive substitute for acquirer"
+        - "Diversion ratios indicate significant competitive overlap"
+        - "Internal documents refer to target as key competitive constraint"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Competition Act Section 12A(2)"
+      typical_resolution: "Unilateral effects analysis; efficiency evidence; remedy design"
+  abuse_of_dominance:
+    - id: "CR-RF-ABD-001"
+      pattern: "Existing dominant position with exclusionary conduct"
+      indicators:
+        - "Market share above 45% in relevant market"
+        - "Exclusive dealing arrangements with key customers"
+        - "Loyalty rebates or conditional discounts"
+      severity: critical
+      action_category: warranty_required
+      statutory_reference: "Competition Act Section 8"
+      typical_resolution: "Compliance programme review; contract restructuring; seller indemnity"
+    - id: "CR-RF-ABD-002"
+      pattern: "Predatory pricing or margin squeeze"
+      indicators:
+        - "Pricing below average variable cost"
+        - "Vertically integrated entity squeezing downstream margin"
+        - "Selective price cuts to eliminate competitor"
+      severity: high
+      action_category: warranty_required
+      statutory_reference: "Competition Act Section 8(d)(iv)"
+      typical_resolution: "Pricing policy review; cost analysis; compliance monitoring"
+    - id: "CR-RF-ABD-003"
+      pattern: "Excessive pricing investigation"
+      indicators:
+        - "Commission market inquiry into sector pricing"
+        - "Consumer complaints about pricing levels"
+        - "Gross margins significantly above industry norm"
+      severity: high
+      action_category: disclosure_required
+      statutory_reference: "Competition Act Section 8(a)"
+      typical_resolution: "Pricing justification analysis; monitor market inquiry outcomes"
+  public_interest:
+    - id: "CR-RF-PBI-001"
+      pattern: "Significant planned retrenchments post-merger"
+      indicators:
+        - "Integration plan with headcount reduction targets"
+        - "Overlapping functions identified for elimination"
+        - "Synergy targets based on labour cost savings"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "Competition Act Section 12A(3)(b)"
+      typical_resolution: "Employment moratorium proposal; retrenchment mitigation plan"
+    - id: "CR-RF-PBI-002"
+      pattern: "Transaction reduces HDSA ownership or control"
+      indicators:
+        - "Non-HDSA acquirer taking control from HDSA entity"
+        - "BEE ownership dilution below sector threshold"
+        - "Loss of HDSA board representation"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Competition Act Section 12A(3)(c)"
+      typical_resolution: "BEE condition proposal; HDSA participation in post-merger entity"
+    - id: "CR-RF-PBI-003"
+      pattern: "Transaction affects SME access to market"
+      indicators:
+        - "Merger creates buyer power affecting SME suppliers"
+        - "Vertical integration foreclosing SME competitors"
+        - "Procurement consolidation excluding SME participation"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Competition Act Section 12A(3)(c)"
+      typical_resolution: "SME procurement commitment; supplier development programme"
+    - id: "CR-RF-PBI-004"
+      pattern: "Strategic sector acquisition by foreign entity"
+      indicators:
+        - "Foreign acquirer of South African strategic asset"
+        - "Technology or intellectual property transfer out of SA"
+        - "Loss of local decision-making authority"
+      severity: high
+      action_category: disclosure_required
+      statutory_reference: "Competition Act Section 12A(3)(a) and (d)"
+      typical_resolution: "Local management commitments; technology retention undertakings"
+  vertical_foreclosure:
+    - id: "CR-RF-VTF-001"
+      pattern: "Input foreclosure risk — dominant upstream position"
+      indicators:
+        - "Acquiring firm controls critical input"
+        - "Post-merger incentive to raise rivals' costs"
+        - "Limited alternative input sources"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Competition Act Section 12A(2)"
+      typical_resolution: "Open access condition; arms-length supply obligation"
+    - id: "CR-RF-VTF-002"
+      pattern: "Customer foreclosure risk — dominant downstream position"
+      indicators:
+        - "Acquiring firm controls key distribution channel"
+        - "Post-merger self-preferencing incentive"
+        - "Upstream competitors lose critical customer"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Competition Act Section 12A(2)"
+      typical_resolution: "Non-discrimination obligation; fair access condition"
+    - id: "CR-RF-VTF-003"
+      pattern: "Diagonal merger — data or platform advantage"
+      indicators:
+        - "Merger combines data sets creating competitive advantage"
+        - "Platform merger enabling leveraging across markets"
+        - "Digital market with network effects"
+      severity: high
+      action_category: disclosure_required
+      statutory_reference: "Competition Act Section 12A(2)"
+      typical_resolution: "Data access conditions; interoperability requirements"
+  regulatory_non_compliance:
+    - id: "CR-RF-RNC-001"
+      pattern: "No competition compliance programme in place"
+      indicators:
+        - "No compliance policy document"
+        - "No staff training on competition law"
+        - "No dawn raid procedures"
+      severity: high
+      action_category: warranty_required
+      statutory_reference: "Competition Commission guidelines"
+      typical_resolution: "Post-closing compliance programme implementation"
+    - id: "CR-RF-RNC-002"
+      pattern: "Outstanding Commission information requests"
+      indicators:
+        - "Section 49A or 49B notice not fully responded to"
+        - "Commission follow-up correspondence unanswered"
+        - "Document production incomplete"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Competition Act Section 49A/49B"
+      typical_resolution: "Complete response before merger filing"
+    - id: "CR-RF-RNC-003"
+      pattern: "Consent order or settlement non-compliance"
+      indicators:
+        - "Conditions from prior consent order not met"
+        - "Reporting obligations under settlement not fulfilled"
+        - "Monitoring trustee reports non-compliance"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "Competition Act Section 49D/58"
+      typical_resolution: "Remediate before filing; disclose to Commission; seller indemnity"
+
+# ============================================================================
+# CALCULATION FORMULAS
+# ============================================================================
+calculation_formulas:
+  concentration:
+    - id: "CALC-HHI-001"
+      name: "Pre-Merger HHI"
+      formula: "SUM(market_share_i^2) for all firms i in relevant market"
+      inputs:
+        - { name: "market_shares", source: "market_share_analysis", type: "percentage_list" }
+      output_type: index
+      typical_red_flag: "Pre-merger HHI above 2500 indicates highly concentrated market"
+    - id: "CALC-HHI-002"
+      name: "Post-Merger HHI and Delta"
+      formula: "Pre_HHI + 2 x (share_acquirer x share_target)"
+      inputs:
+        - { name: "pre_merger_hhi", source: "CALC-HHI-001", type: "index" }
+        - { name: "acquirer_share", source: "market_share_analysis", type: "percentage" }
+        - { name: "target_share", source: "market_share_analysis", type: "percentage" }
+      output_type: index
+      typical_red_flag: "Post-merger HHI > 2500 with delta > 150 raises strong presumption of harm"
+    - id: "CALC-HHI-003"
+      name: "Combined Market Share"
+      formula: "Acquirer_share + Target_share"
+      inputs:
+        - { name: "acquirer_share", source: "market_share_analysis", type: "percentage" }
+        - { name: "target_share", source: "market_share_analysis", type: "percentage" }
+      output_type: percentage
+      typical_red_flag: "Combined share above 35% triggers dominance assessment"
+  thresholds:
+    - id: "CALC-THR-001"
+      name: "Intermediate Merger Threshold Test"
+      formula: "(Combined_SA_turnover > R600m OR Combined_SA_assets > R600m) AND (Target_SA_turnover > R100m OR Target_SA_assets > R100m)"
+      inputs:
+        - { name: "combined_sa_turnover", source: "financial_statements", type: "currency_zar" }
+        - { name: "combined_sa_assets", source: "financial_statements", type: "currency_zar" }
+        - { name: "target_sa_turnover", source: "financial_statements", type: "currency_zar" }
+        - { name: "target_sa_assets", source: "financial_statements", type: "currency_zar" }
+      output_type: boolean
+      typical_red_flag: "Threshold met — mandatory notification to Commission before implementation"
+    - id: "CALC-THR-002"
+      name: "Large Merger Threshold Test"
+      formula: "(Combined_SA_turnover > R6.6bn OR Combined_SA_assets > R6.6bn) AND (Target_SA_turnover > R190m OR Target_SA_assets > R190m)"
+      inputs:
+        - { name: "combined_sa_turnover", source: "financial_statements", type: "currency_zar" }
+        - { name: "combined_sa_assets", source: "financial_statements", type: "currency_zar" }
+        - { name: "target_sa_turnover", source: "financial_statements", type: "currency_zar" }
+        - { name: "target_sa_assets", source: "financial_statements", type: "currency_zar" }
+      output_type: boolean
+      typical_red_flag: "Threshold met — Commission must refer to Tribunal; hearing required"
+  penalty_exposure:
+    - id: "CALC-PEN-001"
+      name: "Maximum Administrative Penalty — First Offence"
+      formula: "Annual_SA_turnover x 0.10"
+      inputs:
+        - { name: "annual_sa_turnover", source: "financial_statements", type: "currency_zar" }
+      output_type: currency_zar
+      typical_red_flag: "Penalty exposure — 10% of annual SA turnover for first contravention"
+    - id: "CALC-PEN-002"
+      name: "Maximum Administrative Penalty — Repeat Offence"
+      formula: "Annual_SA_turnover x 0.25"
+      inputs:
+        - { name: "annual_sa_turnover", source: "financial_statements", type: "currency_zar" }
+      output_type: currency_zar
+      typical_red_flag: "Penalty exposure — 25% of annual SA turnover for repeat contravention"
+  public_interest:
+    - id: "CALC-PBI-001"
+      name: "Employment Impact Calculation"
+      formula: "Pre_merger_headcount - Post_merger_planned_headcount"
+      inputs:
+        - { name: "pre_merger_headcount", source: "employment_data", type: "number" }
+        - { name: "post_merger_headcount", source: "integration_plan", type: "number" }
+      output_type: number
+      typical_red_flag: "Any net job losses will attract Commission scrutiny; moratorium likely"
+    - id: "CALC-PBI-002"
+      name: "BEE Ownership Dilution"
+      formula: "Pre_transaction_HDSA_percentage - Post_transaction_HDSA_percentage"
+      inputs:
+        - { name: "pre_hdsa", source: "bee_certificate", type: "percentage" }
+        - { name: "post_hdsa", source: "transaction_structure", type: "percentage" }
+      output_type: percentage
+      typical_red_flag: "Any reduction in HDSA ownership triggers public interest concern"
+
 folder_questions:
   01_Corporate_Governance:
     display_name: Corporate & Governance
@@ -141,14 +1298,41 @@ folder_questions:
       priority: critical
       detail: Competition analysis requires understanding of all controlled entities
       cot_hint: Map group structure → identify all entities → determine control
+      id: "CR-F01-001"
+      sub_questions:
+        - "Which entities are under common control for turnover aggregation purposes?"
+        - "Are there any minority shareholdings in competitors?"
+      red_flags:
+        - "Shareholdings in competitors not disclosed in merger notification"
+        - "Complex holding structure designed to obscure control"
+      expected_evidence:
+        - "Group structure chart with ownership percentages"
+        - "CIPC company search results for all entities"
     - question: Are there any existing joint ventures or consortia?
       priority: high
       detail: JVs may constitute mergers requiring prior notification
       cot_hint: List JVs → assess control → determine if mergers
+      id: "CR-F01-002"
+      sub_questions:
+        - "Were any existing JVs notified as mergers when formed?"
+      red_flags:
+        - "JV with competitor not previously notified as merger"
+      expected_evidence:
+        - "JV agreements"
+        - "Prior merger notification records"
     - question: What are the voting and control mechanisms in governance documents?
       priority: critical
       detail: MOI and SHA provisions affecting control determination
       cot_hint: Review MOI/SHA → identify control provisions → determine control
+      id: "CR-F01-003"
+      sub_questions:
+        - "What constitutes 'control' under the MOI — voting, veto rights, board appointment?"
+        - "Are there any provisions creating negative control (veto over strategic decisions)?"
+      red_flags:
+        - "Veto rights that may constitute control under Section 12(2)"
+      expected_evidence:
+        - "MOI with marked control provisions"
+        - "Shareholders agreement with decision-making provisions"
     cross_doc_checks:
     - check: Verify corporate structure matches group chart
       related_folders:
@@ -162,26 +1346,65 @@ folder_questions:
       priority: critical
       detail: Exclusive arrangements may raise vertical foreclosure concerns
       cot_hint: List exclusives → assess duration → identify foreclosure risk
+      id: "CR-F02-001"
+      sub_questions:
+        - "What is the duration and scope of the exclusivity?"
+        - "Does the exclusivity foreclose a significant portion of the market?"
+      red_flags:
+        - "Exclusive arrangement covering >30% of relevant market"
+        - "Long-term exclusivity (>3 years) with dominant party"
+      expected_evidence:
+        - "Exclusive supply/distribution agreements"
+        - "Market share of parties to exclusive arrangements"
     - question: Are there any long-term contracts that could lock in customers?
       priority: high
       detail: Long-term contracts may constitute barriers to entry
       cot_hint: Identify long-term contracts → check termination → assess lock-in
+      id: "CR-F02-002"
+      red_flags:
+        - "Contracts exceeding 5 years with high switching costs"
+      expected_evidence:
+        - "Long-term contract schedule with expiry dates"
     - question: Are there any minimum purchase or requirements contracts?
       priority: high
       detail: May constitute exclusionary conduct if dominant
       cot_hint: Find requirements contracts → assess exclusivity → check market position
+      id: "CR-F02-003"
+      red_flags:
+        - "Requirements contracts covering >50% of customer's needs from dominant supplier"
+      expected_evidence:
+        - "Requirements contracts with volume obligations"
     - question: Are there any most-favored customer clauses?
       priority: medium
       detail: MFN clauses can facilitate coordination or foreclose competition
       cot_hint: Identify MFN clauses → assess competitive effect
+      id: "CR-F02-004"
+      expected_evidence:
+        - "Contracts containing MFN provisions"
     - question: Are there any information sharing arrangements with competitors?
       priority: critical
       detail: Information exchange may constitute prohibited horizontal practice
       cot_hint: Identify info sharing → assess competitive sensitivity → evaluate risk
+      id: "CR-F02-005"
+      sub_questions:
+        - "What type of information is shared (pricing, volumes, costs, customers)?"
+        - "Is the information exchange aggregated/anonymised or firm-specific?"
+      red_flags:
+        - "Competitor-specific pricing or volume information shared"
+        - "No aggregation or time lag in information exchange"
+      expected_evidence:
+        - "Information sharing agreements or protocols"
+        - "Industry association data exchange arrangements"
     - question: Are there any non-compete agreements with former competitors?
       priority: high
       detail: Non-competes must be ancillary and proportionate
       cot_hint: Find non-competes → assess scope → check reasonableness
+      id: "CR-F02-006"
+      red_flags:
+        - "Non-compete duration exceeding 3 years"
+        - "Geographic scope broader than necessary"
+      expected_evidence:
+        - "Non-compete or restraint of trade agreements"
     cross_doc_checks:
     - check: Cross-reference supplier agreements with market share data
       related_folders:
@@ -195,22 +1418,55 @@ folder_questions:
       priority: critical
       detail: Turnover thresholds determine filing category (small/intermediate/large)
       cot_hint: Extract SA turnover → apply thresholds → determine filing category
+      id: "CR-F03-001"
+      sub_questions:
+        - "Does the turnover include all controlled entities' SA turnover?"
+        - "Has turnover been calculated per the Commission's methodology?"
+      red_flags:
+        - "Turnover calculation excludes related entity revenue"
+        - "Discrepancy between AFS revenue and reported turnover"
+      expected_evidence:
+        - "Audited financial statements with SA revenue figure"
+        - "Turnover calculation worksheet"
     - question: What is the value of South African assets?
       priority: critical
       detail: Asset thresholds are alternative to turnover thresholds
       cot_hint: Extract SA assets → check threshold → confirm filing category
+      id: "CR-F03-002"
+      expected_evidence:
+        - "Balance sheet showing SA assets"
+        - "Asset schedule"
     - question: What is the market share in each relevant product market?
       priority: critical
       detail: Market shares above 35% raise prima facie concerns
       cot_hint: Calculate market share → compare to 35% threshold → assess risk
+      id: "CR-F03-003"
+      sub_questions:
+        - "What data sources support the market share calculation?"
+        - "Are shares calculated by revenue, volume, or capacity?"
+      red_flags:
+        - "Market share based on unverified internal estimates"
+        - "Combined share exceeds 35% in any market"
+      expected_evidence:
+        - "Market share analysis with supporting data"
+        - "Third-party market reports"
     - question: What is the revenue breakdown by product line and geography?
       priority: high
       detail: Required for market definition and competitive assessment
       cot_hint: Segment revenue → map to markets → assess concentration
+      id: "CR-F03-004"
+      expected_evidence:
+        - "Segmental revenue analysis"
+        - "Geographic revenue breakdown"
     - question: What are the combined turnover/assets post-transaction?
       priority: critical
       detail: Combined figures determine notification obligation
       cot_hint: Calculate combined → check thresholds → confirm notification
+      id: "CR-F03-005"
+      red_flags:
+        - "Combined figures just below threshold — possible avoidance"
+      expected_evidence:
+        - "Combined threshold calculation"
     cross_doc_checks:
     - check: Verify turnover figures match merger filing calculations
       related_folders: []
@@ -226,26 +1482,73 @@ folder_questions:
       priority: critical
       detail: Prior matters affect risk assessment and Commission scrutiny
       cot_hint: Search for investigations → list outcomes → assess implications
+      id: "CR-F04-001"
+      sub_questions:
+        - "What was the outcome of each investigation?"
+        - "Were any penalties imposed?"
+      red_flags:
+        - "Multiple prior investigations suggesting compliance culture issues"
+        - "Prior cartel finding — repeat offender risk (25% penalty)"
+      expected_evidence:
+        - "Competition matter history schedule"
+        - "Tribunal or Commission orders"
     - question: Are there any pending Competition Commission or Tribunal matters?
       priority: critical
       detail: Pending matters may delay or complicate merger approval
       cot_hint: Identify pending matters → assess status → determine impact
+      id: "CR-F04-002"
+      sub_questions:
+        - "What stage is each pending matter at?"
+        - "What is the potential penalty exposure?"
+      red_flags:
+        - "Pending cartel investigation — potential 10% turnover penalty"
+        - "Matter not disclosed to transaction team"
+      expected_evidence:
+        - "Commission or Tribunal correspondence"
+        - "Legal advisors' status reports on pending matters"
     - question: Has the company ever applied for or received leniency?
       priority: critical
       detail: Leniency applications indicate cartel involvement
       cot_hint: Check for leniency → assess implications → evaluate risk
+      id: "CR-F04-003"
+      red_flags:
+        - "Active leniency application — confirms cartel participation"
+      expected_evidence:
+        - "Leniency application records (subject to legal privilege)"
     - question: Are there any conditions from prior merger approvals still in effect?
       priority: high
       detail: Existing conditions may affect new transaction
       cot_hint: List prior conditions → check ongoing obligations → assess conflict
+      id: "CR-F04-004"
+      sub_questions:
+        - "What are the unexpired conditions from prior mergers?"
+        - "Does the current transaction conflict with any prior condition?"
+      red_flags:
+        - "Prior condition prohibiting further acquisitions in market"
+      expected_evidence:
+        - "Prior merger approval letters and conditions"
+        - "Condition compliance reports"
     - question: Is there a competition compliance program in place?
       priority: high
       detail: Compliance program indicates awareness of competition obligations
       cot_hint: Find compliance program → assess adequacy → check training records
+      id: "CR-F04-005"
+      expected_evidence:
+        - "Competition compliance programme document"
+        - "Training records and attendance"
     - question: Have there been any dawn raids or information requests?
       priority: critical
       detail: Dawn raids indicate active investigation
       cot_hint: Check for inspections → assess scope → evaluate exposure
+      id: "CR-F04-006"
+      sub_questions:
+        - "What was the scope and subject of the dawn raid?"
+        - "What documents were seized or copied?"
+      red_flags:
+        - "Dawn raid within past 24 months — active investigation likely"
+      expected_evidence:
+        - "Dawn raid records and warrant"
+        - "Post-raid correspondence with Commission"
     cross_doc_checks:
     - check: Cross-reference compliance declarations with litigation history
       related_folders:
@@ -259,18 +1562,45 @@ folder_questions:
       priority: critical
       detail: Required for public interest assessment on employment
       cot_hint: Extract headcount → segment by location → prepare employment analysis
+      id: "CR-F05-001"
+      sub_questions:
+        - "What is the total headcount for each merging party?"
+        - "How is the workforce distributed geographically?"
+      red_flags:
+        - "Employment data not available or incomplete"
+      expected_evidence:
+        - "Employee headcount schedule by location and category"
+        - "Organogram showing reporting structures"
     - question: Are any retrenchments planned post-transaction?
       priority: critical
       detail: Retrenchments are a key public interest factor
       cot_hint: Identify planned retrenchments → calculate number → assess mitigation
+      id: "CR-F05-002"
+      sub_questions:
+        - "How many positions are at risk?"
+        - "What mitigation measures are proposed?"
+      red_flags:
+        - "Internal integration plan shows significant headcount reduction not disclosed in filing"
+      expected_evidence:
+        - "Retrenchment plan or written confirmation of no planned retrenchments"
+        - "Integration plan with headcount impact"
     - question: What employment commitments or moratoriums might be required?
       priority: high
       detail: Commission often imposes employment conditions
       cot_hint: Assess job security risk → consider moratorium → prepare proposal
+      id: "CR-F05-003"
+      expected_evidence:
+        - "Precedent employment conditions in similar transactions"
+        - "Employment moratorium proposal"
     - question: Will the transaction result in any operational integration affecting jobs?
       priority: high
       detail: Integration synergies often involve job losses
       cot_hint: Map synergies → identify job impact → prepare mitigation
+      id: "CR-F05-004"
+      red_flags:
+        - "Synergy plan identifies labour cost savings without mitigation"
+      expected_evidence:
+        - "Integration or synergy plan"
     cross_doc_checks:
     - check: Verify employment figures match financial statements
       related_folders:
@@ -284,6 +1614,9 @@ folder_questions:
       priority: medium
       detail: Facility closures may affect employment public interest
       cot_hint: Identify facility plans → assess job impact → evaluate
+      id: "CR-F06-001"
+      expected_evidence:
+        - "Facility rationalisation plan"
     cross_doc_checks: []
   07_Insurance:
     display_name: Insurance
@@ -293,6 +1626,9 @@ folder_questions:
       priority: low
       detail: Some D&O policies include competition law coverage
       cot_hint: Check D&O policy → identify competition coverage
+      id: "CR-F07-001"
+      expected_evidence:
+        - "D&O insurance policy with competition coverage schedule"
     cross_doc_checks: []
   08_Litigation:
     display_name: Litigation & Disputes
@@ -302,22 +1638,54 @@ folder_questions:
       priority: critical
       detail: Competition Tribunal, CAC, or High Court matters
       cot_hint: List competition matters → assess status → quantify exposure
+      id: "CR-F08-001"
+      sub_questions:
+        - "What is the current status of each proceeding?"
+        - "What is the potential financial exposure (penalty up to 10% of turnover)?"
+      red_flags:
+        - "Pending Tribunal hearing with potential prohibition or penalty"
+        - "Threatened referral by Commission"
+      expected_evidence:
+        - "Schedule of competition proceedings with status"
+        - "Legal opinion on exposure"
     - question: Are there any cartel or collusion investigations?
       priority: critical
       detail: Cartel involvement is a serious red flag
       cot_hint: Identify cartel investigations → assess exposure → evaluate risk
+      id: "CR-F08-002"
+      sub_questions:
+        - "What is the scope and stage of the investigation?"
+        - "Has a leniency application been considered?"
+      red_flags:
+        - "Active cartel investigation — maximum penalty 10% of turnover, criminal liability for directors"
+      expected_evidence:
+        - "Investigation correspondence"
+        - "Legal advisor assessment"
     - question: Are there any abuse of dominance complaints or investigations?
       priority: critical
       detail: Section 8 or 9 investigations indicate dominance concerns
       cot_hint: Find dominance matters → assess claims → evaluate defenses
+      id: "CR-F08-003"
+      red_flags:
+        - "Active Section 8 investigation with potential divestiture remedy"
+      expected_evidence:
+        - "Commission complaint referral"
+        - "Market position analysis"
     - question: Have there been any private competition damages claims?
       priority: high
       detail: Follow-on damages claims from competition breaches
       cot_hint: Identify claims → assess quantum → check insurance
+      id: "CR-F08-004"
+      expected_evidence:
+        - "Damages claims schedule"
+        - "Insurance coverage analysis"
     - question: Are there any warranty or disclosure breaches in prior deals?
       priority: medium
       detail: Prior deal representations may be relevant
       cot_hint: Review prior SPA disclosures → check for competition claims
+      id: "CR-F08-005"
+      expected_evidence:
+        - "Prior SPA competition warranty provisions"
     cross_doc_checks:
     - check: Cross-reference Competition Commission matters with regulatory disclosures
       related_folders:
@@ -331,6 +1699,10 @@ folder_questions:
       priority: medium
       detail: Competition fines are not tax deductible
       cot_hint: Check for competition penalties → assess tax treatment
+      id: "CR-F09-001"
+      expected_evidence:
+        - "Competition penalty assessment records"
+        - "Tax advisor confirmation on non-deductibility"
     cross_doc_checks: []
   10_Competition:
     display_name: Competition Analysis
@@ -340,30 +1712,73 @@ folder_questions:
       priority: critical
       detail: Product market definition for merger analysis
       cot_hint: Apply SSNIP test → define substitutes → delineate market
+      id: "CR-F10-001"
+      sub_questions:
+        - "What substitution analysis has been conducted?"
+        - "What product boundaries has the Commission accepted in prior decisions?"
+      red_flags:
+        - "Market definition significantly narrower or broader than Commission precedent"
+      expected_evidence:
+        - "Market definition analysis"
+        - "Commission precedent decisions on market definition"
     - question: What are the relevant geographic market definitions?
       priority: critical
       detail: Geographic scope of competition
       cot_hint: Assess supply patterns → check transport costs → define geography
+      id: "CR-F10-002"
+      red_flags:
+        - "Geographic market claimed as national when evidence suggests regional"
+      expected_evidence:
+        - "Geographic market analysis"
+        - "Customer location and supply radius data"
     - question: What is the pre- and post-merger HHI concentration?
       priority: high
       detail: HHI measures market concentration
       cot_hint: Calculate HHI → compare pre/post → assess delta
+      id: "CR-F10-003"
+      sub_questions:
+        - "What is the HHI delta attributable to the merger?"
+      red_flags:
+        - "Post-merger HHI > 2500 with delta > 150"
+      expected_evidence:
+        - "HHI calculation with all competitor shares"
     - question: Are there any vertical relationships between the merging parties?
       priority: high
       detail: Vertical mergers may raise foreclosure concerns
       cot_hint: Map vertical links → assess foreclosure → identify concerns
+      id: "CR-F10-004"
+      red_flags:
+        - "Vertical relationship with potential to foreclose rivals"
+      expected_evidence:
+        - "Supply chain mapping between parties"
     - question: What barriers to entry exist in the relevant markets?
       priority: high
       detail: Barriers affect likely competitive effects
       cot_hint: List barriers → assess significance → evaluate constraint
+      id: "CR-F10-005"
+      expected_evidence:
+        - "Barrier to entry analysis"
+        - "History of market entry and exit"
     - question: Are there any efficiency justifications for the merger?
       priority: medium
       detail: Efficiencies may offset competitive concerns
       cot_hint: Identify efficiencies → check verifiability → assess pass-through
+      id: "CR-F10-006"
+      expected_evidence:
+        - "Efficiency analysis with verifiable, merger-specific claims"
     - question: What remedies might be required to address concerns?
       priority: high
       detail: Behavioral or structural remedies to address concerns
       cot_hint: Assess concerns → design remedies → evaluate effectiveness
+      id: "CR-F10-007"
+      sub_questions:
+        - "Is a structural remedy (divestiture) feasible?"
+        - "Would behavioural remedies be monitorable and effective?"
+      red_flags:
+        - "No viable remedy to address identified competition concern"
+      expected_evidence:
+        - "Remedies analysis"
+        - "Divestiture package identification"
     cross_doc_checks:
     - check: Verify market data matches industry reports
       related_folders:
@@ -377,22 +1792,46 @@ folder_questions:
       priority: critical
       detail: Section 12A(3)(b) employment effect
       cot_hint: Assess job impact → document mitigation → prepare commitments
+      id: "CR-F11-001"
+      sub_questions:
+        - "What is the net employment impact (jobs created vs lost)?"
+        - "What moratorium duration should be proposed?"
+      red_flags:
+        - "Net job losses without adequate mitigation plan"
+      expected_evidence:
+        - "Employment impact assessment"
+        - "Moratorium proposal"
     - question: What is the impact on small business and BEE?
       priority: high
       detail: Section 12A(3)(c) competitive ability of small business/HDSA
       cot_hint: Assess supplier impact → check BEE levels → evaluate effect
+      id: "CR-F11-002"
+      red_flags:
+        - "Transaction reduces HDSA ownership without BEE condition"
+      expected_evidence:
+        - "BEE impact analysis"
+        - "SME supplier impact assessment"
     - question: Is the target historically disadvantaged owned or controlled?
       priority: high
       detail: HDSA ownership affects public interest assessment
       cot_hint: Check ownership → assess HDSA status → evaluate impact
+      id: "CR-F11-003"
+      expected_evidence:
+        - "Ownership analysis and BEE certificate"
     - question: Are there any technology transfer or local content benefits?
       priority: medium
       detail: Section 12A(3)(e) industrial sector factors
       cot_hint: Identify tech transfer → assess local content → document benefits
+      id: "CR-F11-004"
+      expected_evidence:
+        - "Technology transfer plan"
     - question: Does the merger affect any designated sectors?
       priority: medium
       detail: Special consideration for strategic sectors
       cot_hint: Check sector → apply special factors → assess impact
+      id: "CR-F11-005"
+      expected_evidence:
+        - "Sector designation analysis"
     cross_doc_checks:
     - check: Verify BEE credentials match ownership records
       related_folders:
@@ -406,6 +1845,9 @@ folder_questions:
       priority: medium
       detail: Documents requiring manual classification review
       cot_hint: Identify competition content → flag for review
+      id: "CR-F99-001"
+      expected_evidence:
+        - "Document flagged for competition law review"
     cross_doc_checks: []
 bee_analysis:
   sector_threshold: 26%
@@ -519,67 +1961,80 @@ statutory_framework:
             administrative: "Fine up to 10% of annual turnover"
             criminal: "Directors: imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Review all competitor arrangements, information exchanges, and industry association activities for cartel indicators"
         - section: "Section 5"
           description: "Restrictive vertical practices"
           penalties:
             administrative: "Fine up to 10% of turnover"
           criticality: high
+          application_to_dd: "Assess all exclusive supply, distribution, and minimum resale price arrangements"
         - section: "Section 8"
           description: "Abuse of dominance"
           penalties:
             administrative: "Fine up to 10% of turnover, divestiture"
           criticality: critical
+          application_to_dd: "Where target holds >45% market share, review all pricing, exclusivity, and refusal to deal conduct"
         - section: "Section 9"
           description: "Price discrimination"
           penalties:
             administrative: "Fine up to 10% of turnover"
           criticality: high
+          application_to_dd: "Where target is dominant, review pricing policies for differential treatment of equivalent customers"
         - section: "Section 11"
           description: "Merger definition and control"
           penalties:
             administrative: "Implementation prohibition, unwinding order"
           criticality: critical
+          application_to_dd: "Determine whether transaction constitutes a merger — acquisition of shares, assets, or ability to materially influence policy"
         - section: "Section 12"
           description: "Intermediate and large merger thresholds"
           penalties:
             administrative: "Mandatory notification before implementation"
           criticality: critical
+          application_to_dd: "Calculate combined and target turnover/assets to determine filing category and notification obligation"
         - section: "Section 12A"
           description: "Merger evaluation criteria"
           penalties:
             administrative: "Approval, conditional approval, or prohibition"
           criticality: critical
+          application_to_dd: "Assess competition effects (market definition, shares, concentration) and public interest factors (employment, BEE, SME, industrial policy)"
         - section: "Section 13"
           description: "Small merger thresholds"
           penalties:
             administrative: "May be called for review within 6 months"
           criticality: medium
+          application_to_dd: "Even if below thresholds, assess whether Commission may call in the merger under Section 13(3)"
         - section: "Section 13A"
           description: "Implementation prohibition"
           penalties:
             criminal: "Fine up to 10% of turnover"
             administrative: "Divestiture order"
           criticality: critical
+          application_to_dd: "Verify no implementation before approval — review integration activities, joint pricing, director appointments"
         - section: "Section 14"
           description: "Merger notification requirements"
           penalties:
             administrative: "Notification rejection, invalid filing"
           criticality: high
+          application_to_dd: "Ensure all required information gathered for CC4(1) merger notification form"
         - section: "Section 15"
           description: "Consideration of merger"
           penalties:
             administrative: "Conditional approval, prohibition"
           criticality: high
+          application_to_dd: "Assess likelihood and nature of conditions Commission may impose"
         - section: "Section 16"
           description: "Competition Commission investigation"
           penalties:
             administrative: "Conditions may be imposed"
           criticality: high
+          application_to_dd: "Prepare for Commission's Phase II investigation — identify information requests and third-party submissions"
         - section: "Section 59"
           description: "Administrative penalties"
           penalties:
             administrative: "Fine up to 10% of turnover, repeat 25%"
           criticality: critical
+          application_to_dd: "Calculate maximum penalty exposure for any identified contravention; check for repeat offender status"
 
     - act: "Competition Amendment Act 18 of 2018"
       acronym: "Competition Amendment Act"
@@ -590,16 +2045,19 @@ statutory_framework:
           penalties:
             administrative: "Merger conditions, prohibition"
           criticality: high
+          application_to_dd: "Assess enhanced public interest factors including broader employment, ownership diversity, and spread of ownership"
         - section: "Section 8"
           description: "Expanded abuse of dominance provisions"
           penalties:
             administrative: "Price regulation, market inquiry"
           criticality: high
+          application_to_dd: "Assess buyer power provisions and excessive pricing risk in concentrated markets"
         - section: "Section 12A(3)"
           description: "Enhanced public interest assessment"
           penalties:
             administrative: "Broader conditions available"
           criticality: high
+          application_to_dd: "Assess expanded public interest grounds including ability to compete internationally and spread of ownership"
 
     - act: "Consumer Protection Act 68 of 2008"
       acronym: "CPA"
@@ -610,22 +2068,26 @@ statutory_framework:
           penalties:
             administrative: "Fine up to 10% of turnover"
           criticality: high
+          application_to_dd: "Review customer-facing practices for unconscionable conduct that may attract CPA enforcement overlapping with competition concerns"
         - section: "Section 41"
           description: "False or misleading representations"
           penalties:
             criminal: "Fine or imprisonment"
             administrative: "Compliance notice"
           criticality: high
+          application_to_dd: "Assess marketing and advertising practices for misleading claims that may also indicate unfair business practices"
         - section: "Section 48"
           description: "Unfair contract terms"
           penalties:
             civil: "Terms void and unenforceable"
           criticality: high
+          application_to_dd: "Review standard terms for unfairness that may indicate market power abuse"
         - section: "Section 51"
           description: "Prohibited contract terms"
           penalties:
             civil: "Terms void"
           criticality: high
+          application_to_dd: "Check customer contracts for prohibited terms that may expose target to enforcement action"
 
     - act: "Broad-Based Black Economic Empowerment Act 53 of 2003"
       acronym: "B-BBEE Act"
@@ -636,6 +2098,7 @@ statutory_framework:
           penalties:
             criminal: "Fine up to 10% of turnover"
           criticality: critical
+          application_to_dd: "Assess BEE ownership structures for fronting indicators — genuine economic participation and governance rights required"
 
     - act: "National Regulator for Compulsory Specifications Act 5 of 2008"
       acronym: "NRCS Act"
@@ -647,6 +2110,7 @@ statutory_framework:
             criminal: "Fine or imprisonment"
             administrative: "Product recall, prohibition"
           criticality: high
+          application_to_dd: "Where target produces regulated goods, verify compulsory specifications compliance — non-compliance may affect competitive position"
 
     - act: "International Trade Administration Act 71 of 2002"
       acronym: "ITAA"
@@ -657,16 +2121,62 @@ statutory_framework:
           penalties:
             administrative: "Additional duties imposed"
           criticality: high
+          application_to_dd: "Check if target is subject to or beneficiary of anti-dumping duties — affects competitive dynamics and import competition assessment"
         - section: "Section 23"
           description: "Countervailing duties"
           penalties:
             administrative: "Additional duties imposed"
           criticality: high
+          application_to_dd: "Assess whether any subsidies exist that may trigger countervailing action — relevant to competitive analysis"
         - section: "Section 26"
           description: "Safeguard measures"
           penalties:
             administrative: "Quotas or tariff increases"
           criticality: high
+          application_to_dd: "Evaluate whether safeguard measures affect import competition in relevant markets"
+
+  secondary_legislation:
+    - name: "Competition Commission Rules"
+      description: "Procedural rules for merger notification, complaint procedures, and investigation processes"
+      application_to_dd: "Follow prescribed merger notification form (CC4) and filing procedures"
+    - name: "Competition Tribunal Rules"
+      description: "Procedural rules for Tribunal hearings, interventions, and orders"
+      application_to_dd: "Understand hearing procedures for large mergers and contested intermediate mergers"
+    - name: "Competition Commission Guidelines on the Assessment of Public Interest Provisions"
+      description: "Guidelines on how public interest factors are assessed in merger proceedings"
+      application_to_dd: "Structure public interest analysis per Commission guidelines — employment, HDSA, SME, industrial policy"
+    - name: "Consumer Protection Regulations"
+      description: "Regulations under the CPA governing unfair practices and consumer rights"
+      application_to_dd: "Where target has consumer-facing operations, assess CPA compliance as part of regulatory risk"
+    - name: "B-BBEE Codes of Good Practice"
+      description: "Codes defining B-BBEE compliance measurement and verification"
+      application_to_dd: "Verify BEE ownership and scorecard compliance using prescribed Codes methodology"
+
+  regulatory_bodies:
+    - name: "Competition Commission"
+      abbreviation: "CC"
+      role: "Investigates mergers, enforces prohibited practice provisions, refers matters to Tribunal"
+      relevance: "Primary regulator — reviews all intermediate and large mergers; investigates cartels and abuse of dominance"
+    - name: "Competition Tribunal"
+      abbreviation: "CT"
+      role: "Adjudicates large mergers, hears contested intermediate mergers, imposes penalties"
+      relevance: "Decision-maker for large mergers — holds hearings, imposes conditions, may prohibit"
+    - name: "Competition Appeal Court"
+      abbreviation: "CAC"
+      role: "Hears appeals from Tribunal decisions on mergers and prohibited practices"
+      relevance: "Appeal forum — parties dissatisfied with Tribunal decision may appeal on law or fact"
+    - name: "National Consumer Commission"
+      abbreviation: "NCC"
+      role: "Enforces Consumer Protection Act, investigates unfair practices"
+      relevance: "Consumer protection enforcement may overlap with competition concerns in consumer-facing markets"
+    - name: "B-BBEE Commission"
+      abbreviation: "B-BBEE Commission"
+      role: "Oversees B-BBEE compliance, investigates fronting, coordinates with Competition Commission"
+      relevance: "BEE compliance is public interest factor in mergers; fronting investigations may affect transaction"
+    - name: "International Trade Administration Commission"
+      abbreviation: "ITAC"
+      role: "Administers trade remedies including anti-dumping, countervailing duties, and safeguards"
+      relevance: "Trade measures affect import competition assessment in merger analysis"
 
   sector_specific:
     merger_thresholds:
@@ -743,3 +2253,582 @@ statutory_framework:
         trigger: "Merger affecting public interest factors"
         consequence: "Conditions may be imposed"
         timeline: "Part of merger approval process"
+
+# ============================================================================
+# WARRANTIES & INDEMNITIES FRAMEWORK
+# ============================================================================
+
+warranty_categories:
+  # ---------------------------------------------------------------------------
+  # TITLE & CAPACITY WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Title & Capacity"
+    description: "Warranties relating to share ownership, corporate capacity, and authority to transact"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-TC-001"
+        description: "Seller has full legal and beneficial ownership of the sale shares"
+        detailed_wording: "The Seller is the sole legal and beneficial owner of the Sale Shares, free from any encumbrances, liens, charges, pledges, or third-party rights whatsoever"
+        typical_cap: "Purchase price"
+        survival_period: "3 years from Closing Date"
+        priority: critical
+        dd_triggers:
+          - "Share certificate review"
+          - "Securities register check"
+          - "CIPC records verification"
+      - id: "W-TC-002"
+        description: "Seller has full power and authority to enter into and perform the transaction"
+        detailed_wording: "The Seller has full corporate power and authority to enter into this Agreement and to perform its obligations hereunder, and all necessary corporate approvals have been obtained"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-TC-003"
+        description: "Transaction does not conflict with constitutional documents or material agreements"
+        detailed_wording: "The execution, delivery, and performance of this Agreement will not result in a breach of, or constitute a default under, the MOI, any shareholders agreement, or any material contract to which the Seller or Target is a party"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # COMPETITION COMPLIANCE WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Competition Compliance"
+    description: "Warranties specific to competition law compliance history and current status"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    competition_specific: true
+    standard_warranties:
+      - id: "W-CC-001"
+        description: "No participation in cartel conduct"
+        detailed_wording: "Neither the Target nor any of its directors, officers, or employees has engaged in or been a party to any agreement, arrangement, or concerted practice prohibited by Section 4 of the Competition Act, including price fixing, market division, bid rigging, or collusive tendering"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "Competition compliance programme review"
+          - "Competitor correspondence"
+          - "Industry association records"
+        red_flags:
+          - "Competitor pricing discussions"
+          - "Industry association data exchange"
+          - "Parallel pricing patterns"
+      - id: "W-CC-002"
+        description: "No abuse of dominance"
+        detailed_wording: "The Target has not engaged in any conduct prohibited by Sections 8 or 9 of the Competition Act, including excessive pricing, refusing to supply, exclusionary acts, or price discrimination"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Market share analysis"
+          - "Pricing policy review"
+          - "Exclusive dealing arrangements"
+      - id: "W-CC-003"
+        description: "No pending or threatened competition investigations"
+        detailed_wording: "There are no pending or threatened investigations, complaints, or proceedings by the Competition Commission, Competition Tribunal, or any other competition authority relating to the Target, and no circumstances exist which may give rise to such"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Commission correspondence review"
+          - "Legal advisor competition matter register"
+      - id: "W-CC-004"
+        description: "No leniency applications pending or contemplated"
+        detailed_wording: "No corporate leniency application has been made or is contemplated in respect of any conduct by the Target, and the Target has not been granted immunity or leniency by any competition authority"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+      - id: "W-CC-005"
+        description: "Competition compliance programme in place and effective"
+        detailed_wording: "The Target has implemented and maintains a competition compliance programme that includes regular training, dawn raid procedures, and monitoring of commercial conduct for competition risks"
+        typical_cap: "25% of purchase price"
+        survival_period: "2 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # MERGER NOTIFICATION WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Merger Notification"
+    description: "Warranties relating to prior merger notifications and compliance with notification requirements"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    competition_specific: true
+    standard_warranties:
+      - id: "W-MN-001"
+        description: "All prior notifiable mergers were properly notified"
+        detailed_wording: "All mergers involving the Target that were required to be notified under the Competition Act have been duly notified and approved, and no merger has been implemented without required approval"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "Prior merger approval records"
+          - "Transaction history review"
+      - id: "W-MN-002"
+        description: "All conditions from prior merger approvals complied with"
+        detailed_wording: "All conditions imposed by the Competition Commission or Competition Tribunal in connection with any prior merger approval have been fully complied with, and no breach or non-compliance has occurred"
+        typical_cap: "Purchase price"
+        survival_period: "Duration of conditions"
+        priority: critical
+        dd_triggers:
+          - "Prior condition compliance reports"
+          - "Commission monitoring correspondence"
+      - id: "W-MN-003"
+        description: "No gun-jumping has occurred in respect of the current transaction"
+        detailed_wording: "No steps constituting implementation of the transaction contemplated by this Agreement have been taken prior to obtaining the required competition approval, and no competitively sensitive information has been exchanged outside of a clean team protocol"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # PUBLIC INTEREST WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Public Interest"
+    description: "Warranties relating to public interest factors relevant to competition approval"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    competition_specific: true
+    standard_warranties:
+      - id: "W-PI-001"
+        description: "Employment information provided is accurate and complete"
+        detailed_wording: "The employment information disclosed for purposes of the merger notification, including headcount, location, categories, and planned changes, is accurate and complete as at the date of this Agreement"
+        typical_cap: "25% of purchase price"
+        survival_period: "2 years"
+        priority: critical
+        dd_triggers:
+          - "Employment schedule review"
+          - "Integration plan review"
+      - id: "W-PI-002"
+        description: "No undisclosed retrenchments planned"
+        detailed_wording: "No retrenchments, redundancies, or operational changes resulting in job losses are planned, contemplated, or under consideration other than as disclosed in the merger notification"
+        typical_cap: "Quantified retrenchment cost"
+        survival_period: "2 years"
+        priority: critical
+      - id: "W-PI-003"
+        description: "BEE ownership status accurately represented"
+        detailed_wording: "The BEE ownership status and levels of the Target as represented in the merger notification are accurate, no fronting arrangements exist, and the BEE certificate is valid and correct"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: high
+        dd_triggers:
+          - "BEE certificate review"
+          - "Shareholder register"
+
+  # ---------------------------------------------------------------------------
+  # FINANCIAL WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Financial"
+    description: "Warranties relating to financial statements and position"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-FIN-001"
+        description: "Financial statements fairly present the financial position"
+        detailed_wording: "The audited financial statements for the financial year ended [date] have been prepared in accordance with IFRS and fairly present the financial position, results of operations, and cash flows of the Target"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Audited AFS"
+          - "Audit report"
+      - id: "W-FIN-002"
+        description: "Turnover and asset figures for threshold calculation are accurate"
+        detailed_wording: "The South African turnover and asset figures provided for purposes of the merger threshold calculation are accurate, complete, and calculated in accordance with the Competition Commission's methodology"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # MATERIAL CONTRACTS WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Material Contracts"
+    description: "Warranties relating to key commercial contracts with competition implications"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-MC-001"
+        description: "All material contracts have been disclosed"
+        detailed_wording: "Complete and accurate copies of all Material Contracts have been disclosed, including all agreements with competitors, exclusive arrangements, and agreements containing non-compete restrictions"
+        typical_cap: "Value of undisclosed contracts"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-MC-002"
+        description: "No material contracts contain anti-competitive provisions"
+        detailed_wording: "No Material Contract to which the Target is a party contains provisions that contravene or may contravene the Competition Act, including agreements on pricing, market division, or exclusionary arrangements"
+        typical_cap: "Contract value at risk"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # LITIGATION WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Litigation"
+    description: "Warranties relating to competition litigation and proceedings"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-LIT-001"
+        description: "No pending competition proceedings"
+        detailed_wording: "There are no pending or threatened proceedings before the Competition Tribunal, Competition Appeal Court, or any court relating to competition matters involving the Target"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-LIT-002"
+        description: "No private competition damages claims"
+        detailed_wording: "No private damages claim has been instituted or threatened against the Target arising from any competition law contravention"
+        typical_cap: "Claim quantum"
+        survival_period: "3 years"
+        priority: high
+
+# ============================================================================
+# INDEMNITY CATEGORIES
+# ============================================================================
+
+indemnity_categories:
+  # ---------------------------------------------------------------------------
+  # COMPETITION PENALTY INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Competition Penalty"
+    description: "Indemnities for competition law penalties arising from pre-closing conduct"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    competition_specific: true
+    triggers:
+      - "Cartel investigation identified during DD"
+      - "Abuse of dominance complaint discovered"
+      - "Prior competition breach identified"
+    standard_indemnities:
+      - id: "I-CP-001"
+        description: "Pre-closing cartel penalty"
+        detailed_wording: "The Seller shall indemnify the Buyer against any administrative penalty, fine, or damages award imposed on the Target arising from any cartel conduct or prohibited horizontal practice occurring prior to the Closing Date"
+        typical_cap: "Unlimited or 100% of purchase price"
+        survival_period: "5 years"
+        priority: critical
+        escrow_recommendation: "10-15% of purchase price in escrow if cartel risk identified"
+        calculation_basis: "Maximum 10% of annual turnover (25% for repeat offence)"
+      - id: "I-CP-002"
+        description: "Pre-closing abuse of dominance penalty"
+        detailed_wording: "The Seller shall indemnify the Buyer against any administrative penalty or divestiture order arising from abuse of dominance by the Target occurring prior to Closing"
+        typical_cap: "10% of annual turnover exposure"
+        survival_period: "5 years"
+        priority: critical
+      - id: "I-CP-003"
+        description: "Criminal liability for competition offences"
+        detailed_wording: "The Seller shall indemnify the Buyer against all costs arising from criminal prosecution of current or former directors for competition offences committed prior to Closing, including legal fees and any fines imposed"
+        typical_cap: "As negotiated"
+        survival_period: "5 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # MERGER CONDITIONS INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Merger Conditions"
+    description: "Indemnities for costs arising from prior merger condition breach or current merger conditions"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    competition_specific: true
+    triggers:
+      - "Prior merger conditions not fully complied with"
+      - "Risk of conditions on current transaction"
+    standard_indemnities:
+      - id: "I-MC-001"
+        description: "Prior merger condition breach"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any breach of conditions imposed in connection with prior merger approvals that occurred before Closing, including any penalty, compliance cost, or revocation order"
+        typical_cap: "Quantified condition compliance cost"
+        survival_period: "Duration of conditions"
+        priority: critical
+      - id: "I-MC-002"
+        description: "Costs of complying with conditions imposed on current merger"
+        detailed_wording: "The Seller shall bear [X]% of the cost of complying with any employment moratorium, divestiture, or other condition imposed by the competition authorities in connection with the merger contemplated by this Agreement, to the extent such costs exceed [threshold]"
+        typical_cap: "As negotiated"
+        survival_period: "Duration of conditions"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # PUBLIC INTEREST INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Public Interest"
+    description: "Indemnities for public interest costs arising from merger conditions"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    competition_specific: true
+    triggers:
+      - "Employment moratorium condition"
+      - "BEE condition imposed"
+    standard_indemnities:
+      - id: "I-PI-001"
+        description: "Employment moratorium costs"
+        detailed_wording: "The Seller shall indemnify the Buyer against incremental costs of maintaining employment levels during any moratorium period imposed as a condition of the merger approval, to the extent such costs exceed budgeted employment costs"
+        typical_cap: "Quantified incremental cost"
+        survival_period: "Duration of moratorium"
+        priority: high
+        calculation_basis: "Incremental salary cost for moratorium duration"
+      - id: "I-PI-002"
+        description: "BEE restructuring costs"
+        detailed_wording: "The Seller shall indemnify the Buyer against costs of restructuring BEE ownership to comply with conditions imposed by the competition authorities in connection with the merger"
+        typical_cap: "BEE restructuring cost"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # TAX INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Tax"
+    description: "Indemnities for tax liabilities arising from pre-closing periods"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Tax audit findings"
+      - "Uncertain tax positions identified"
+    standard_indemnities:
+      - id: "I-TAX-001"
+        description: "Pre-closing tax liabilities"
+        detailed_wording: "The Seller shall indemnify the Buyer against any tax liability of the Target relating to any period ending on or before the Closing Date, to the extent not provided for in the Closing Accounts"
+        typical_cap: "Unlimited for tax"
+        survival_period: "5 years (statute of limitations)"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # EMPLOYMENT INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Employment"
+    description: "Indemnities for employment claims arising from pre-closing matters"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Pre-closing retrenchment liability"
+      - "Employment disputes"
+    standard_indemnities:
+      - id: "I-EMP-001"
+        description: "Pre-closing retrenchment liabilities"
+        detailed_wording: "The Seller shall indemnify the Buyer against any severance or retrenchment costs arising from any Section 189 process initiated prior to Closing or required due to pre-Closing decisions"
+        typical_cap: "Quantified severance exposure"
+        survival_period: "2 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # LITIGATION INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Litigation"
+    description: "Indemnities for competition litigation and claims"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Pending competition proceedings"
+      - "Private damages claims"
+    standard_indemnities:
+      - id: "I-LIT-001"
+        description: "Undisclosed competition proceedings"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any competition proceedings that were pending or threatened as at Closing but not disclosed in the Disclosure Schedule"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "5 years"
+        priority: critical
+      - id: "I-LIT-002"
+        description: "Private damages claims arising from pre-closing competition breach"
+        detailed_wording: "The Seller shall indemnify the Buyer against any private damages claim arising from competition law contraventions by the Target occurring prior to Closing, including follow-on damages from Commission findings"
+        typical_cap: "As negotiated"
+        survival_period: "5 years"
+        priority: high
+
+# ============================================================================
+# WARRANTY & INDEMNITY DETECTION PATTERNS
+# ============================================================================
+
+warranty_indemnity_patterns:
+  warranty_patterns:
+    - pattern: "represents and warrants|seller warrants|vendor warrants"
+      type: warranty
+      category: General
+    - pattern: "warranted that|representation that"
+      type: warranty
+      category: General
+    - pattern: "title to|ownership of|free from encumbrance|unencumbered"
+      type: warranty
+      category: "Title & Capacity"
+    - pattern: "competition.*compli|antitrust.*compli|no.*cartel"
+      type: warranty
+      category: "Competition Compliance"
+    - pattern: "merger.*notif|merger.*approv|competition.*approv"
+      type: warranty
+      category: "Merger Notification"
+    - pattern: "no.*investigation|no.*complaint|no.*proceeding.*competition"
+      type: warranty
+      category: "Competition Compliance"
+    - pattern: "public interest|employment.*impact|retrenchment"
+      type: warranty
+      category: "Public Interest"
+    - pattern: "market share|market definition|HHI|concentration"
+      type: warranty
+      category: "Competition Compliance"
+    - pattern: "financial statements.*fair|prepared in accordance"
+      type: warranty
+      category: Financial
+    - pattern: "no.*undisclosed.*liabilit"
+      type: warranty
+      category: Financial
+    - pattern: "HDSA.*ownership|BEE.*compli|BEE.*certificate"
+      type: warranty
+      category: "Public Interest"
+    - pattern: "tax.*return.*filed|taxes.*paid"
+      type: warranty
+      category: Tax
+    - pattern: "no.*litigation|no.*claims.*pending"
+      type: warranty
+      category: Litigation
+    - pattern: "leniency.*application|dawn.*raid|cartel.*investigation"
+      type: warranty
+      category: "Competition Compliance"
+
+  indemnity_patterns:
+    - pattern: "indemnify|hold harmless|indemnification"
+      type: indemnity
+      category: General
+    - pattern: "shall indemnify.*against"
+      type: indemnity
+      category: General
+    - pattern: "competition.*indemnity|cartel.*indemnity|antitrust.*indemnity"
+      type: indemnity
+      category: "Competition Penalty"
+    - pattern: "merger.*condition.*indemnity|condition.*compliance.*indemnity"
+      type: indemnity
+      category: "Merger Conditions"
+    - pattern: "employment.*indemnity|retrenchment.*indemnity|moratorium.*indemnity"
+      type: indemnity
+      category: "Public Interest"
+    - pattern: "tax.*indemnity|pre-closing.*tax"
+      type: indemnity
+      category: Tax
+    - pattern: "damages.*claim.*indemnity|follow-on.*indemnity"
+      type: indemnity
+      category: Litigation
+
+# ============================================================================
+# OUTPUT REQUIREMENTS
+# ============================================================================
+
+output_requirements:
+  must_include:
+    - Merger filing status and notification category determination
+    - Market definition and competitive assessment
+    - Public interest analysis (employment, BEE, SME, industrial policy)
+    - Deal blocker identification with full reasoning
+    - Financial exposure quantification (penalty, condition costs)
+    - Conditions precedent register
+    - Key risk summary
+    - Recommendations
+    - Warranties register (recommended warranties for client protection)
+    - Indemnities register (recommended indemnities based on DD findings)
+    - W&I structuring recommendations (caps, baskets, survival periods)
+  format:
+    - Executive summary (1-2 pages)
+    - Competition assessment with market analysis
+    - Public interest analysis
+    - Detailed findings by category with reasoning
+    - Financial exposure schedule
+    - CP checklist
+    - Warranties schedule by category with detailed wording suggestions
+    - Indemnities schedule with triggers, caps, and survival periods
+    - W&I negotiation matrix (critical vs negotiable items)
+
+# ============================================================================
+# OUTPUT TEMPLATES
+# ============================================================================
+
+output_templates:
+  executive_summary:
+    max_items: 15
+    sections:
+      - "Transaction Overview"
+      - "Filing Category & Timeline"
+      - "Deal Blockers"
+      - "Critical Competition Findings"
+      - "Public Interest Summary"
+      - "Key Recommendations"
+    required_elements:
+      - "Merger filing category (small/intermediate/large)"
+      - "Combined market share in each overlap market"
+      - "HHI delta in most concentrated market"
+      - "Public interest risk assessment (employment, BEE, SME)"
+      - "Number of deal blockers identified"
+      - "Total penalty exposure amount"
+  full_report:
+    sections:
+      - name: "Transaction Context"
+        subsections:
+          - "Deal structure and merger definition analysis"
+          - "Party identification and group structure"
+          - "Filing category and threshold calculation"
+          - "Notification timeline"
+      - name: "Market Definition & Competitive Assessment"
+        subsections:
+          - "Product market definition"
+          - "Geographic market definition"
+          - "Market shares and concentration (HHI)"
+          - "Unilateral and coordinated effects"
+          - "Barriers to entry"
+          - "Efficiencies"
+      - name: "Competitive Effects"
+        subsections:
+          - "Horizontal overlap analysis"
+          - "Vertical foreclosure assessment"
+          - "Conglomerate and portfolio effects"
+          - "Remedies analysis"
+      - name: "Public Interest"
+        subsections:
+          - "Employment impact and moratorium proposal"
+          - "HDSA ownership and BEE impact"
+          - "SME and small business impact"
+          - "Industrial policy and international competitiveness"
+      - name: "Historical Compliance"
+        subsections:
+          - "Prior competition matters"
+          - "Pending investigations"
+          - "Compliance programme assessment"
+          - "Leniency status"
+      - name: "Regulatory Filings"
+        subsections:
+          - "South African filing requirements"
+          - "Foreign filing requirements"
+          - "Inter-agency coordination"
+          - "Timeline and long-stop date analysis"
+      - name: "Warranties & Indemnities"
+        subsections:
+          - "Recommended warranties by category"
+          - "Recommended indemnities by category"
+          - "Cap and survival recommendations"
+          - "W&I negotiation matrix"
+  finding_format:
+    required_fields:
+      - "finding_id"
+      - "category"
+      - "severity"
+      - "description"
+      - "statutory_reference"
+      - "financial_impact"
+      - "recommended_action"
+      - "action_category"

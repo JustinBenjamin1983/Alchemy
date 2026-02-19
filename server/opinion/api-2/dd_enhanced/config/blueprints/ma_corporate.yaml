@@ -2966,6 +2966,83 @@ indemnity_categories:
         typical_cap: "Specific sub-cap based on contract value"
         survival_period: "2-3 years"
         priority: high
+
+# ============================================================================
+# WARRANTY & INDEMNITY DETECTION PATTERNS
+# Regex patterns for identifying warranty and indemnity provisions in M&A documents
+# ============================================================================
+warranty_indemnity_patterns:
+  warranty_patterns:
+    - pattern: "warrant(s|ies|y)?\\s+(that|as follows)"
+      description: "General warranty clause introduction"
+    - pattern: "title\\s+to\\s+(shares|assets|business)"
+      description: "Title warranty"
+    - pattern: "(duly\\s+incorporated|validly\\s+existing|good\\s+standing)"
+      description: "Corporate status warranty"
+    - pattern: "(financial\\s+statements?|AFS|annual\\s+financial)\\s+(are|were|have been)\\s+(prepared|fairly|true)"
+      description: "Financial statements warranty"
+    - pattern: "(material\\s+contract|agreement|arrangement).*?(breach|default|termination|compliance)"
+      description: "Contracts warranty"
+    - pattern: "(employment|employee|labour|labor).*?(compliance|obligation|dispute|claim)"
+      description: "Employment warranty"
+    - pattern: "(tax|SARS|revenue).*?(complian|return|assessment|dispute|liability)"
+      description: "Tax warranty"
+    - pattern: "(litigation|claim|proceeding|dispute|arbitration).*?(pending|threatened|outstanding)"
+      description: "Litigation warranty"
+    - pattern: "(intellectual\\s+property|IP|patent|trademark|copyright).*?(own|register|valid|infringe)"
+      description: "IP warranty"
+    - pattern: "(environmental|pollution|contamination|waste).*?(comply|breach|liability|remediat)"
+      description: "Environmental warranty"
+    - pattern: "(BEE|B-BBEE|broad-based).*?(compliance|level|status|certificate)"
+      description: "BEE compliance warranty"
+    - pattern: "(competition|antitrust|merger\\s+control).*?(filing|notification|approval|compliance)"
+      description: "Competition law warranty"
+  indemnity_patterns:
+    - pattern: "indemnif(y|ies|ication).*?(against|from|in respect of)"
+      description: "General indemnity clause"
+    - pattern: "(tax|SARS).*?indemnif"
+      description: "Tax indemnity"
+    - pattern: "(environment|contamination|pollution).*?indemnif"
+      description: "Environmental indemnity"
+    - pattern: "(employ|labour|retrenchment|section\\s+197).*?indemnif"
+      description: "Employment indemnity"
+    - pattern: "(litigation|claim|proceeding).*?indemnif"
+      description: "Litigation indemnity"
+    - pattern: "(change\\s+of\\s+control|CoC|consent).*?indemnif"
+      description: "Change of control indemnity"
+    - pattern: "(breach\\s+of\\s+warranty|warranty\\s+claim).*?(cap|limit|basket|threshold)"
+      description: "Warranty claim limitation"
+
+# ============================================================================
+# OUTPUT REQUIREMENTS
+# Required elements and format for M&A due diligence reports
+# ============================================================================
+output_requirements:
+  must_include:
+    - "Deal blockers and showstoppers with recommended mitigations"
+    - "Total quantified financial exposure with breakdown by category"
+    - "Conditions precedent register with status and responsible parties"
+    - "Consent matrix for material contracts, leases, and regulatory approvals"
+    - "Key risk register ranked by severity and financial impact"
+    - "Prioritised recommendations with timelines and cost estimates"
+    - "Warranty register with recommended scope, caps, and survival periods"
+    - "Indemnity register with recommended triggers, caps, and coverage"
+  format:
+    - section: "Executive Summary"
+      description: "High-level overview of critical findings, deal blockers, and financial exposure"
+    - section: "Detailed Findings"
+      description: "Category-by-category analysis with statutory references and evidence"
+    - section: "Financial Exposure Schedule"
+      description: "Tabulated quantification of all identified exposures and contingent liabilities"
+    - section: "Conditions Precedent Checklist"
+      description: "Status tracker for all CPs with responsibility matrix and longstop dates"
+    - section: "Warranty Schedule"
+      description: "Recommended warranties organised by category with suggested wording"
+    - section: "Indemnity Schedule"
+      description: "Recommended indemnities with triggers, caps, and survival periods"
+    - section: "Consent Matrix"
+      description: "All required third-party consents with status and risk if not obtained"
+
 output_templates:
   executive_summary:
     max_items: 15

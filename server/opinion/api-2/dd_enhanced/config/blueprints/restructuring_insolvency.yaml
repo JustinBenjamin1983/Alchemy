@@ -7,6 +7,437 @@ description: 'Due diligence blueprint for distressed situations including busine
   Chapter 6 requirements, creditor rights, and insolvency law considerations.
 
   '
+jurisdiction: South Africa
+transaction_context:
+  deal_structures:
+    - id: business_rescue_sale
+      description: "Acquisition of business or assets from a company in business rescue proceedings"
+      typical_considerations:
+        - "BRP consent and creditor approval required"
+        - "Section 134 protection of property interests"
+        - "Post-commencement finance super-priority (Section 135)"
+        - "Section 136 effect on employees and contracts"
+        - "Moratorium on legal proceedings (Section 133)"
+        - "Business rescue plan must provide for better outcome than liquidation"
+    - id: going_concern_sale
+      description: "Sale of business as going concern during rescue or liquidation proceedings"
+      typical_considerations:
+        - "Section 197 LRA automatic transfer of employees"
+        - "VAT zero-rating for going concern transfer"
+        - "Successor liability analysis required"
+        - "Asset identification and encumbrance verification"
+        - "Trade creditor and supplier continuity"
+        - "Intellectual property and licence transferability"
+    - id: scheme_of_arrangement
+      description: "Compromise with creditors under Section 155 or scheme of arrangement"
+      typical_considerations:
+        - "75% creditor approval threshold"
+        - "Court sanction required"
+        - "Fair and equitable treatment of creditor classes"
+        - "Implementation and monitoring mechanisms"
+        - "Cramdown provisions for dissenting creditors"
+    - id: section_155_compromise
+      description: "Statutory compromise with creditors outside of business rescue"
+      typical_considerations:
+        - "Board resolution and special resolution required"
+        - "Court approval and creditor meeting"
+        - "Impact on existing security arrangements"
+        - "Tax implications of debt forgiveness"
+        - "Employee claims must be addressed"
+    - id: liquidation_acquisition
+      description: "Acquisition of assets from a company in liquidation"
+      typical_considerations:
+        - "Master and court approval for asset sales"
+        - "No going concern warranties available"
+        - "Voetstoots (as-is) sale terms typical"
+        - "Section 197A modified employee transfer in insolvency"
+        - "Environmental liability and contamination risk"
+        - "Limited recourse against insolvent seller"
+  typical_parties:
+    - role: distressed_company
+      description: "The company in financial distress or formal proceedings"
+      typical_interests:
+        - "Maximising value for stakeholders"
+        - "Preserving the business or orderly wind-down"
+        - "Protecting employees where possible"
+    - role: business_rescue_practitioner
+      description: "Court or board-appointed practitioner managing rescue proceedings"
+      typical_interests:
+        - "Developing viable business rescue plan"
+        - "Managing moratorium and stakeholder expectations"
+        - "Investigating voidable transactions and director conduct"
+    - role: secured_creditors
+      description: "Creditors holding security over company assets"
+      typical_interests:
+        - "Protecting security interests"
+        - "Maximising recovery through enforcement or rescue"
+        - "Priority ranking preservation"
+    - role: unsecured_creditors
+      description: "Concurrent and preferent creditors without security"
+      typical_interests:
+        - "Maximising dividend or recovery rate"
+        - "Rescue plan providing better outcome than liquidation"
+        - "Fair treatment across creditor classes"
+    - role: employees_unions
+      description: "Employees and their representative trade unions"
+      typical_interests:
+        - "Job preservation and severance entitlements"
+        - "Section 189 consultation compliance"
+        - "Pension and provident fund obligations"
+    - role: master_of_court
+      description: "Master of the High Court overseeing insolvency proceedings"
+      typical_interests:
+        - "Statutory compliance and proper procedure"
+        - "Protection of creditor interests"
+        - "Orderly administration of proceedings"
+    - role: post_commencement_funder
+      description: "Provider of post-commencement finance during business rescue"
+      typical_interests:
+        - "Super-priority ranking for PCF claims"
+        - "Adequate security and monitoring rights"
+        - "Business rescue plan viability"
+
+primary_legislation:
+  - "Companies Act 71 of 2008 - Chapter 6 (Business Rescue)"
+  - "Insolvency Act 24 of 1936"
+  - "Companies Act 71 of 2008 - Chapter 2 (Reckless Trading, Director Duties)"
+  - "Labour Relations Act 66 of 1995 (Sections 189, 197)"
+  - "Close Corporations Act 69 of 1984"
+
+reference_documents:
+  always_include:
+    - pattern: "business rescue plan"
+      description: "Published business rescue plan and any amendments"
+    - pattern: "creditor register|claims register|proof of claim"
+      description: "Verified creditor claims register and proof of claims"
+    - pattern: "BRP report|practitioner report|business rescue practitioner"
+      description: "BRP reports to creditors and court"
+    - pattern: "PCF agreement|post-commencement|funding agreement"
+      description: "Post-commencement finance agreements and terms"
+    - pattern: "moratorium|stay of proceedings"
+      description: "Moratorium notices and enforcement records"
+    - pattern: "liquidation account|distribution account"
+      description: "Liquidation and distribution account"
+    - pattern: "solvency.*assessment|going concern"
+      description: "Solvency and going concern assessments"
+
+# ============================================================================
+# FOLDER STRUCTURE
+# Standard data room folder layout for restructuring & insolvency due diligence
+# ============================================================================
+folder_structure:
+  01_Corporate_Governance:
+    display_name: "Corporate & Governance"
+    relevance: critical
+    subcategories:
+      - "Constitutional documents"
+      - "Board resolutions"
+      - "Director records"
+      - "CIPC filings"
+      - "BRP appointment documents"
+    expected_documents:
+      - "Memorandum of Incorporation"
+      - "Certificate of Incorporation"
+      - "Board resolutions for business rescue"
+      - "Director register and declarations"
+      - "CIPC annual returns"
+      - "BRP appointment letter"
+      - "BRP CIPC registration"
+      - "BRP independence declaration"
+      - "Delinquency orders (if any)"
+    document_expectations:
+      - doc_type: "Memorandum of Incorporation"
+        expected_content: ["company name", "share capital", "director powers", "special provisions"]
+        priority: critical
+      - doc_type: "BRP Appointment"
+        expected_content: ["practitioner name", "CIPC registration", "date of appointment", "independence confirmation"]
+        priority: critical
+      - doc_type: "Board Resolutions"
+        expected_content: ["resolution to commence business rescue", "director declarations", "Section 129 compliance"]
+        priority: critical
+
+  02_Commercial:
+    display_name: "Commercial Contracts"
+    relevance: critical
+    subcategories:
+      - "Customer contracts"
+      - "Supplier contracts"
+      - "Service agreements"
+      - "Lease agreements"
+      - "Guarantees and suretyships"
+    expected_documents:
+      - "Material contract register"
+      - "Key customer agreements"
+      - "Key supplier agreements"
+      - "Lease agreements"
+      - "Guarantee register"
+      - "Suretyship agreements"
+      - "Ipso facto clause analysis"
+      - "Contract continuation/termination register"
+    document_expectations:
+      - doc_type: "Material Contract Register"
+        expected_content: ["contract parties", "value", "termination provisions", "ipso facto clauses", "continuation recommendation"]
+        priority: critical
+      - doc_type: "Ipso Facto Analysis"
+        expected_content: ["contract", "insolvency trigger clause", "status", "counterparty position", "cure provisions"]
+        priority: critical
+      - doc_type: "Guarantee Register"
+        expected_content: ["guarantor", "beneficiary", "amount", "trigger events", "called status"]
+        priority: high
+
+  03_Financial:
+    display_name: "Financial & Banking"
+    relevance: critical
+    subcategories:
+      - "Financial statements"
+      - "Management accounts"
+      - "Cash flow analysis"
+      - "Banking facilities"
+      - "Creditor schedules"
+      - "Post-commencement finance"
+    expected_documents:
+      - "Audited financial statements (3 years)"
+      - "Management accounts (latest)"
+      - "Cash flow projections"
+      - "Solvency and liquidity assessment"
+      - "Bank facility agreements"
+      - "Creditor claims register"
+      - "Secured creditor schedule"
+      - "Preferent creditor schedule"
+      - "Concurrent creditor schedule"
+      - "PCF agreement and terms"
+      - "Intercompany loan schedule"
+      - "Security register"
+    document_expectations:
+      - doc_type: "Creditor Claims Register"
+        expected_content: ["creditor name", "claim amount", "priority ranking", "security held", "verification status", "disputed indicator"]
+        priority: critical
+      - doc_type: "PCF Agreement"
+        expected_content: ["funder", "amount", "terms", "security", "super-priority confirmation", "drawdown conditions"]
+        priority: critical
+      - doc_type: "Solvency Assessment"
+        expected_content: ["balance sheet test", "cash flow test", "going concern opinion", "director certification"]
+        priority: critical
+      - doc_type: "Security Register"
+        expected_content: ["creditor", "asset secured", "registration details", "value", "enforcement status"]
+        priority: critical
+
+  04_Regulatory:
+    display_name: "Regulatory & Compliance"
+    relevance: high
+    subcategories:
+      - "CIPC filings"
+      - "Regulatory licences"
+      - "Compliance certificates"
+      - "Master notifications"
+    expected_documents:
+      - "CIPC filing register"
+      - "Master of Court notifications"
+      - "Regulatory licences"
+      - "Publication notices"
+      - "Moratorium notices"
+      - "Court orders"
+      - "Statutory compliance certificate"
+    document_expectations:
+      - doc_type: "Moratorium Notices"
+        expected_content: ["date of commencement", "scope of moratorium", "excluded proceedings", "enforcement attempts"]
+        priority: critical
+      - doc_type: "CIPC Filings"
+        expected_content: ["business rescue filing", "BRP appointment notice", "annual returns", "status compliance"]
+        priority: high
+
+  05_Employment:
+    display_name: "Employment & Labour"
+    relevance: critical
+    subcategories:
+      - "Employment contracts"
+      - "Retrenchment documents"
+      - "Union agreements"
+      - "Pension and provident funds"
+    expected_documents:
+      - "Employee liability schedule"
+      - "Employment contract register"
+      - "Section 189 notices"
+      - "CCMA referrals and awards"
+      - "Collective agreements"
+      - "Pension fund certificates"
+      - "Provident fund certificates"
+      - "Leave pay calculations"
+      - "Key employee retention agreements"
+      - "Section 197 analysis (if going concern sale)"
+    document_expectations:
+      - doc_type: "Employee Liability Schedule"
+        expected_content: ["total employee count", "salary exposure", "severance calculation", "leave pay", "pension arrears", "total liability"]
+        priority: critical
+      - doc_type: "Section 189 Notices"
+        expected_content: ["date issued", "number of employees affected", "consultation status", "CCMA involvement"]
+        priority: critical
+      - doc_type: "Pension Fund Certificates"
+        expected_content: ["fund name", "contribution status", "arrears", "surplus/deficit", "withdrawal benefits"]
+        priority: high
+
+  06_Property:
+    display_name: "Property & Assets"
+    relevance: high
+    subcategories:
+      - "Immovable property"
+      - "Movable assets"
+      - "Asset valuations"
+      - "Security and encumbrances"
+    expected_documents:
+      - "Asset register"
+      - "Valuation reports"
+      - "Title deeds"
+      - "Property lease agreements"
+      - "PPSA registrations"
+      - "Retention of title claims"
+      - "Physical verification report"
+      - "Voidable transaction analysis"
+    document_expectations:
+      - doc_type: "Asset Register"
+        expected_content: ["asset description", "book value", "market value", "encumbrances", "location", "condition"]
+        priority: critical
+      - doc_type: "Voidable Transaction Analysis"
+        expected_content: ["transaction date", "parties", "value", "lookback period", "avoidance ground", "recovery potential"]
+        priority: critical
+      - doc_type: "Valuation Reports"
+        expected_content: ["valuation date", "methodology", "going concern value", "liquidation value", "forced sale value"]
+        priority: high
+
+  07_Insurance:
+    display_name: "Insurance"
+    relevance: medium
+    subcategories:
+      - "Insurance policies"
+      - "D&O insurance"
+      - "Claims history"
+    expected_documents:
+      - "Insurance policy schedule"
+      - "D&O insurance policy"
+      - "Claims notification register"
+      - "Coverage adequacy analysis"
+      - "Premium payment status"
+    document_expectations:
+      - doc_type: "D&O Insurance"
+        expected_content: ["insured directors", "coverage amount", "exclusions", "claims notifications", "premium status"]
+        priority: high
+      - doc_type: "Insurance Schedule"
+        expected_content: ["policy type", "insurer", "coverage", "expiry", "premium status", "claims history"]
+        priority: medium
+
+  08_Litigation:
+    display_name: "Litigation & Disputes"
+    relevance: high
+    subcategories:
+      - "Pending litigation"
+      - "Stayed proceedings"
+      - "Director claims"
+      - "Voidable transactions"
+    expected_documents:
+      - "Litigation register"
+      - "Stayed proceedings schedule"
+      - "Director conduct investigation"
+      - "Reckless trading assessment"
+      - "Preference payment analysis"
+      - "Related party transaction review"
+      - "Legal opinions"
+    document_expectations:
+      - doc_type: "Reckless Trading Assessment"
+        expected_content: ["trading period", "solvency position", "director knowledge", "liability exposure", "D&O coverage"]
+        priority: critical
+      - doc_type: "Litigation Register"
+        expected_content: ["matter description", "parties", "quantum", "moratorium status", "likelihood of success"]
+        priority: high
+
+  09_Tax:
+    display_name: "Tax"
+    relevance: high
+    subcategories:
+      - "SARS compliance"
+      - "Tax disputes"
+      - "Tax consequences of restructuring"
+    expected_documents:
+      - "Tax compliance status"
+      - "SARS claims schedule"
+      - "Outstanding assessments"
+      - "Tax opinion on restructuring"
+      - "Debt forgiveness tax analysis"
+      - "Reorganisation relief analysis"
+      - "Employees' tax and UIF compliance"
+    document_expectations:
+      - doc_type: "SARS Claims Schedule"
+        expected_content: ["tax type", "period", "amount claimed", "priority ranking", "dispute status", "penalty and interest"]
+        priority: critical
+      - doc_type: "Tax Restructuring Opinion"
+        expected_content: ["structure", "tax consequences", "debt forgiveness", "capital gains", "relief available"]
+        priority: high
+
+  10_Transaction:
+    display_name: "Transaction Structure"
+    relevance: critical
+    subcategories:
+      - "Transaction documents"
+      - "Structure memoranda"
+      - "Stakeholder consents"
+    expected_documents:
+      - "Transaction structure memorandum"
+      - "Sale agreement (draft/final)"
+      - "Legal opinions on structure"
+      - "Stakeholder consent register"
+      - "Regulatory approval applications"
+      - "Successor liability analysis"
+      - "Implementation timeline"
+    document_expectations:
+      - doc_type: "Structure Memorandum"
+        expected_content: ["proposed structure", "parties", "consideration", "conditions", "regulatory requirements", "implementation steps"]
+        priority: critical
+      - doc_type: "Successor Liability Analysis"
+        expected_content: ["liability categories", "assumed liabilities", "excluded liabilities", "indemnity requirements"]
+        priority: critical
+
+  11_Rescue:
+    display_name: "Business Rescue Plan"
+    relevance: critical
+    subcategories:
+      - "Business rescue plan"
+      - "BRP reports"
+      - "Creditor meetings"
+      - "Implementation tracking"
+    expected_documents:
+      - "Published business rescue plan"
+      - "Plan amendments"
+      - "BRP reports to creditors"
+      - "BRP reports to court"
+      - "Creditor meeting notices"
+      - "Creditor meeting minutes"
+      - "Voting analysis"
+      - "Plan adoption certificate"
+      - "Implementation progress reports"
+      - "Viability analysis"
+      - "Comparative outcome analysis (rescue vs liquidation)"
+    document_expectations:
+      - doc_type: "Business Rescue Plan"
+        expected_content: ["background", "proposals", "creditor treatment", "funding", "implementation timeline", "conditions precedent", "projected outcomes"]
+        priority: critical
+      - doc_type: "Comparative Outcome Analysis"
+        expected_content: ["liquidation scenario", "rescue scenario", "creditor recovery comparison", "timeline comparison"]
+        priority: critical
+      - doc_type: "BRP Reports"
+        expected_content: ["progress update", "financial position", "stakeholder engagement", "recommendations"]
+        priority: high
+
+  99_Needs_Review:
+    display_name: "Needs Review"
+    relevance: low
+    subcategories:
+      - "Unclassified documents"
+    expected_documents:
+      - "Documents requiring manual classification"
+    document_expectations:
+      - doc_type: "Unclassified Documents"
+        expected_content: ["content requiring review for restructuring relevance"]
+        priority: low
+
 risk_categories:
 - name: Insolvency Status & Proceedings
   description: Current insolvency status, proceedings, and statutory compliance
@@ -742,20 +1173,446 @@ deal_blockers:
   condition: SARS preferent claim exceeds asset value
   severity: high
   mitigation: SARS engagement, instalment arrangements, compromise discussions
+
+# ============================================================================
+# CONDITIONS PRECEDENT PATTERNS
+# Common conditions precedent in restructuring and insolvency transactions
+# ============================================================================
+conditions_precedent_patterns:
+  - pattern: "business rescue plan.*adopt|plan adoption|creditor.*approv"
+    description: "Business rescue plan adoption by required creditor majority"
+    typical_timeline: "25 business days from commencement (extendable)"
+  - pattern: "court.*approv|court.*sanction|court.*order"
+    description: "Court approval or sanction of plan or transaction"
+    typical_timeline: "4-8 weeks from application"
+  - pattern: "creditor.*consent|creditor.*approv|75%.*creditor"
+    description: "Required creditor consents and voting thresholds"
+    typical_timeline: "Per plan timeline"
+  - pattern: "post-commencement.*fund|PCF.*fund|rescue.*fund"
+    description: "Post-commencement funding commitment and drawdown"
+    typical_timeline: "Prior to plan publication"
+  - pattern: "regulat.*approv|licen.*transfer|CIPC.*approv"
+    description: "Regulatory approvals and licence transfers"
+    typical_timeline: "Variable, 4-12 weeks"
+  - pattern: "competition.*approv|merger.*filing"
+    description: "Competition Commission approval if thresholds met"
+    typical_timeline: "20-60 business days"
+  - pattern: "section.*197.*consult|employee.*consult|union.*consult"
+    description: "Employee consultation and Section 197 compliance"
+    typical_timeline: "30-60 days minimum"
+
+# ============================================================================
+# ENTITY RELATIONSHIP PATTERNS
+# Common entity structures and roles in restructuring transactions
+# ============================================================================
+entity_relationship_patterns:
+  typical_structures:
+    - id: distressed_holdco_opco
+      description: "Distressed holding company with operating subsidiaries"
+      key_considerations:
+        - "Intercompany claims and guarantees"
+        - "Separate insolvency proceedings per entity"
+        - "Substantive consolidation analysis"
+        - "Asset and liability allocation"
+    - id: group_business_rescue
+      description: "Multiple group companies in simultaneous business rescue"
+      key_considerations:
+        - "Coordinated rescue plans"
+        - "Intercompany claim treatment"
+        - "Common BRP appointment"
+        - "Cross-default and cross-guarantee provisions"
+    - id: going_concern_sale
+      description: "Sale of business as going concern from distressed entity"
+      key_considerations:
+        - "Asset vs share sale structure"
+        - "Section 197 employee transfer"
+        - "Successor liability ring-fencing"
+        - "Cherry-picking of assets and contracts"
+    - id: pre_pack
+      description: "Pre-packaged sale arranged before formal proceedings"
+      key_considerations:
+        - "Fairness and transparency requirements"
+        - "Connected party transaction scrutiny"
+        - "Independent valuation required"
+        - "Creditor challenge risk"
+    - id: creditor_led_restructuring
+      description: "Restructuring driven by major creditor group"
+      key_considerations:
+        - "Intercreditor agreement and standstill"
+        - "Debt-to-equity conversion"
+        - "BEE implications of ownership change"
+        - "Minority creditor protection"
+  entity_roles:
+    - role: "Distressed Company"
+      typical_documents: ["MOI", "Board minutes", "Financial statements", "CIPC records"]
+      key_relationships: ["BRP", "Creditors", "Employees", "Shareholders"]
+    - role: "Business Rescue Practitioner"
+      typical_documents: ["Appointment letter", "CIPC registration", "BRP reports", "Business rescue plan"]
+      key_relationships: ["Distressed Company", "Creditors", "Court", "Master"]
+    - role: "Secured Creditor"
+      typical_documents: ["Facility agreement", "Security documents", "Proof of claim", "PPSA registration"]
+      key_relationships: ["Distressed Company", "Other creditors", "BRP"]
+    - role: "PCF Provider"
+      typical_documents: ["PCF agreement", "Security documents", "Drawdown conditions", "Monitoring reports"]
+      key_relationships: ["Distressed Company", "BRP", "Existing creditors"]
+    - role: "Purchaser"
+      typical_documents: ["Sale agreement", "Due diligence reports", "Funding proof", "Regulatory approvals"]
+      key_relationships: ["BRP", "Distressed Company", "Creditors"]
+    - role: "Liquidator"
+      typical_documents: ["Liquidation order", "Asset register", "Claims register", "Distribution account"]
+      key_relationships: ["Master of Court", "Creditors", "Distressed Company"]
+  common_related_parties:
+    - type: "Director-Connected Buyer"
+      red_flags: ["Below market value", "Limited marketing process", "Pre-existing relationship", "Information asymmetry"]
+      required_analysis: "Independent valuation and fair process confirmation"
+    - type: "Related Party Creditor"
+      red_flags: ["Large intercompany claims", "Subordination avoidance", "Preferential treatment", "Circular arrangements"]
+      required_analysis: "Arm's length verification and subordination analysis"
+    - type: "Group Company Funder"
+      red_flags: ["Super-priority for related entity", "Circular funding", "Disguised equity", "Unfair terms"]
+      required_analysis: "Commercial terms verification and independent review"
+
+# ============================================================================
+# MATERIALITY THRESHOLDS
+# Materiality standards for restructuring & insolvency due diligence
+# ============================================================================
+materiality_thresholds:
+  default_when_value_unknown:
+    threshold: "R1,000,000"
+    rationale: "Lower threshold appropriate for distressed entities where small amounts may be material to recovery"
+  when_value_known:
+    tiers:
+      - level: "high_materiality"
+        percentage: "5% of total verified creditor claims"
+        description: "Material to overall creditor recovery"
+      - level: "medium_materiality"
+        percentage: "2% of total verified creditor claims"
+        description: "Significant enough to affect creditor class outcomes"
+      - level: "low_materiality"
+        percentage: "1% of total verified creditor claims"
+        description: "Relevant to individual creditor recovery rates"
+    restructuring_specific:
+      - metric: "PCF exposure"
+        threshold: "Any amount — super-priority claims always material"
+      - metric: "Preferent creditor claims"
+        threshold: "5% of total claims — affects concurrent creditor dividend"
+      - metric: "Voidable transaction recovery"
+        threshold: "R500,000 — potential clawback value"
+  qualitative_overrides:
+    always_material:
+      - "Reckless trading by directors (Section 22)"
+      - "Voidable dispositions within lookback period (Sections 26-31)"
+      - "BRP conflict of interest or qualification defect"
+      - "Moratorium breach or enforcement attempt"
+      - "PCF super-priority dispute"
+      - "Business rescue plan non-compliance"
+      - "Undisclosed creditor or claim"
+    never_immaterial:
+      - category: "Reckless Trading"
+        reason: "Personal liability of directors regardless of quantum"
+      - category: "Voidable Transactions"
+        reason: "Clawback potential and conduct implications"
+      - category: "BRP Qualification"
+        reason: "Validity of entire proceedings at stake"
+      - category: "PCF Priority"
+        reason: "Super-priority ranking affects all other creditors"
+
+# ============================================================================
+# CROSS-REFERENCE EXPECTATIONS
+# Expected cross-references between key restructuring documents
+# ============================================================================
+cross_reference_expectations:
+  - primary_document: "Business Rescue Plan"
+    must_cross_reference:
+      - document: "Claims Register"
+        check: "Creditor amounts in plan match verified claims"
+        discrepancy_action: "Flag as critical — plan accuracy compromised"
+      - document: "Asset Valuations"
+        check: "Asset values in plan match independent valuations"
+        discrepancy_action: "Flag as high — recovery projections unreliable"
+      - document: "Financial Projections"
+        check: "Plan projections supported by management accounts"
+        discrepancy_action: "Flag as high — viability case undermined"
+      - document: "PCF Agreement"
+        check: "Funding requirements in plan match committed PCF"
+        discrepancy_action: "Flag as critical — funding gap"
+  - primary_document: "Claims Register"
+    must_cross_reference:
+      - document: "Security Register"
+        check: "Secured claims match security documentation"
+        discrepancy_action: "Flag as critical — priority ranking affected"
+      - document: "SARS Statements"
+        check: "Tax claims match SARS assessments"
+        discrepancy_action: "Flag as high — preferent claim disputed"
+      - document: "Employee Records"
+        check: "Employee claims match payroll and statutory calculations"
+        discrepancy_action: "Flag as high — employee preferent claims affected"
+  - primary_document: "BRP Reports"
+    must_cross_reference:
+      - document: "Business Rescue Plan"
+        check: "BRP recommendations reflected in plan"
+        discrepancy_action: "Flag as medium — plan may not address key issues"
+      - document: "Director Conduct Review"
+        check: "BRP investigation findings actioned"
+        discrepancy_action: "Flag as high — potential claims not pursued"
+  - primary_document: "PCF Agreement"
+    must_cross_reference:
+      - document: "Business Rescue Plan"
+        check: "PCF terms consistent with plan provisions"
+        discrepancy_action: "Flag as critical — funding mismatch"
+      - document: "Security Register"
+        check: "PCF security properly registered"
+        discrepancy_action: "Flag as high — super-priority at risk"
+  - primary_document: "Financial Statements"
+    must_cross_reference:
+      - document: "Solvency Assessment"
+        check: "Financial position supports solvency conclusions"
+        discrepancy_action: "Flag as critical — insolvency determination affected"
+      - document: "Director Declarations"
+        check: "Going concern disclosures match actual position"
+        discrepancy_action: "Flag as critical — potential reckless trading"
+  - primary_document: "Asset Register"
+    must_cross_reference:
+      - document: "Security Register"
+        check: "Secured assets identified and encumbrances noted"
+        discrepancy_action: "Flag as high — unencumbered asset pool affected"
+      - document: "Valuation Reports"
+        check: "Book values reconcile to independent valuations"
+        discrepancy_action: "Flag as medium — recovery estimates affected"
+  - primary_document: "Employee Liability Schedule"
+    must_cross_reference:
+      - document: "Payroll Records"
+        check: "Employee count and salary data consistent"
+        discrepancy_action: "Flag as high — liability quantification unreliable"
+      - document: "Section 189 Notices"
+        check: "Affected employees match retrenchment plans"
+        discrepancy_action: "Flag as high — consultation process defective"
+  - primary_document: "Security Register"
+    must_cross_reference:
+      - document: "PPSA Registrations"
+        check: "Security registrations current and valid"
+        discrepancy_action: "Flag as critical — security may be unenforceable"
+      - document: "Facility Agreements"
+        check: "Security matches facility terms"
+        discrepancy_action: "Flag as high — creditor priority affected"
+
+# ============================================================================
+# RED FLAG PATTERNS
+# Patterns indicating significant risk in restructuring & insolvency matters
+# ============================================================================
+red_flag_patterns:
+  reckless_trading:
+    - id: RI-RF-RT-001
+      pattern: "Trading while insolvent"
+      description: "Company continued trading after directors knew or should have known of insolvency"
+      severity: critical
+      statutory_reference: "Companies Act Section 22"
+      consequence: "Personal liability of directors for company debts"
+    - id: RI-RF-RT-002
+      pattern: "No solvency assessment before distribution"
+      description: "Distributions made without required solvency and liquidity test"
+      severity: critical
+      statutory_reference: "Companies Act Section 4(1)"
+      consequence: "Directors personally liable, distribution may be clawed back"
+    - id: RI-RF-RT-003
+      pattern: "New debt incurred when insolvent"
+      description: "Company incurred additional debt despite knowledge of insolvency"
+      severity: high
+      statutory_reference: "Companies Act Section 22(1)"
+      consequence: "Directors may be liable for additional debt"
+  voidable_transactions:
+    - id: RI-RF-VT-001
+      pattern: "Disposition at undervalue"
+      description: "Asset disposed of at below market value within lookback period"
+      severity: critical
+      statutory_reference: "Insolvency Act Section 26"
+      consequence: "Transaction set aside, asset or value recovered"
+    - id: RI-RF-VT-002
+      pattern: "Voidable preference"
+      description: "Payment to creditor preferring them over others within 6 months"
+      severity: critical
+      statutory_reference: "Insolvency Act Section 29"
+      consequence: "Payment recovered for benefit of all creditors"
+    - id: RI-RF-VT-003
+      pattern: "Undue preference"
+      description: "Creditor preferred when company known to be insolvent"
+      severity: critical
+      statutory_reference: "Insolvency Act Section 30"
+      consequence: "Preference set aside"
+    - id: RI-RF-VT-004
+      pattern: "Collusive dealing"
+      description: "Arrangement to prefer or prejudice creditors"
+      severity: critical
+      statutory_reference: "Insolvency Act Section 31"
+      consequence: "Criminal offence, transaction void"
+  brp_conduct:
+    - id: RI-RF-BRP-001
+      pattern: "BRP conflict of interest"
+      description: "Business rescue practitioner has undisclosed conflict"
+      severity: critical
+      statutory_reference: "Companies Act Section 138"
+      consequence: "Appointment may be set aside, proceedings invalidated"
+    - id: RI-RF-BRP-002
+      pattern: "BRP not registered with CIPC"
+      description: "Practitioner not properly registered or qualified"
+      severity: critical
+      statutory_reference: "Companies Act Section 138(1)"
+      consequence: "Appointment invalid, proceedings at risk"
+    - id: RI-RF-BRP-003
+      pattern: "Plan not published within prescribed period"
+      description: "Business rescue plan not published within 25 business days"
+      severity: high
+      statutory_reference: "Companies Act Section 150(5)"
+      consequence: "Proceedings may terminate, liquidation may follow"
+  creditor_priority:
+    - id: RI-RF-CP-001
+      pattern: "Security registration defect"
+      description: "Security interest not properly registered or perfected"
+      severity: critical
+      statutory_reference: "Insolvency Act Section 98"
+      consequence: "Secured creditor loses priority, becomes concurrent"
+    - id: RI-RF-CP-002
+      pattern: "PCF super-priority dispute"
+      description: "Dispute over post-commencement finance ranking"
+      severity: critical
+      statutory_reference: "Companies Act Section 135"
+      consequence: "PCF provider may withdraw, rescue fails"
+    - id: RI-RF-CP-003
+      pattern: "Preferent claim miscalculation"
+      description: "Statutory preferent claims incorrectly ranked or calculated"
+      severity: high
+      statutory_reference: "Insolvency Act Section 96"
+      consequence: "Distribution challenged, liquidator personally liable"
+  asset_stripping:
+    - id: RI-RF-AS-001
+      pattern: "Asset transfer to related party"
+      description: "Assets transferred to connected persons at undervalue"
+      severity: critical
+      statutory_reference: "Insolvency Act Sections 26, 29-31"
+      consequence: "Transaction set aside, personal liability"
+    - id: RI-RF-AS-002
+      pattern: "Intellectual property transferred pre-rescue"
+      description: "IP or key intangibles moved out of company before proceedings"
+      severity: critical
+      statutory_reference: "Insolvency Act Section 26"
+      consequence: "Transfer voidable, IP recovered"
+    - id: RI-RF-AS-003
+      pattern: "Cash extraction before proceedings"
+      description: "Unusual cash withdrawals or payments before formal proceedings"
+      severity: critical
+      statutory_reference: "Insolvency Act Sections 29-30"
+      consequence: "Payments recoverable as preferences"
+  employee:
+    - id: RI-RF-EMP-001
+      pattern: "Section 189 non-compliance"
+      description: "Retrenchment process commenced without proper consultation"
+      severity: high
+      statutory_reference: "LRA Section 189"
+      consequence: "Unfair dismissal claims, compensation up to 12 months"
+    - id: RI-RF-EMP-002
+      pattern: "Pension fund arrears"
+      description: "Employer contributions to pension/provident funds in arrears"
+      severity: high
+      statutory_reference: "Pension Funds Act"
+      consequence: "Preferent claim, potential criminal liability"
+    - id: RI-RF-EMP-003
+      pattern: "Section 197 avoidance"
+      description: "Transaction structured to circumvent automatic employee transfer"
+      severity: high
+      statutory_reference: "LRA Section 197"
+      consequence: "Employees can claim unfair dismissal from old and new employer"
+  pcf:
+    - id: RI-RF-PCF-001
+      pattern: "Uncommitted PCF"
+      description: "Post-commencement funding indicated but not committed"
+      severity: critical
+      statutory_reference: "Companies Act Section 135"
+      consequence: "Rescue plan unachievable without funding"
+    - id: RI-RF-PCF-002
+      pattern: "PCF secured by unencumbered assets"
+      description: "PCF provider taking security over assets needed for rescue"
+      severity: high
+      statutory_reference: "Companies Act Section 134"
+      consequence: "Other creditors prejudiced, plan may be challenged"
+    - id: RI-RF-PCF-003
+      pattern: "PCF from connected party on non-arm's length terms"
+      description: "Related party providing PCF on uncommercial terms"
+      severity: high
+      statutory_reference: "Companies Act Section 135"
+      consequence: "Terms may be challenged, super-priority disputed"
+
+# ============================================================================
+# CALCULATION FORMULAS
+# Standard calculations for restructuring & insolvency analysis
+# ============================================================================
+calculation_formulas:
+  solvency:
+    - name: "Balance Sheet Test"
+      formula: "Total Assets (fair value) - Total Liabilities = Net Asset Position"
+      inputs: ["Total assets at fair value", "Total liabilities including contingent"]
+      interpretation: "Negative = factually insolvent (balance sheet insolvent)"
+      statutory_reference: "Companies Act Section 4(1)(a)"
+    - name: "Cash Flow Test"
+      formula: "Projected Cash Inflows - Projected Cash Outflows over 12 months"
+      inputs: ["Monthly cash inflows", "Monthly cash outflows", "Debt maturities"]
+      interpretation: "Unable to pay debts as they fall due = commercially insolvent"
+      statutory_reference: "Companies Act Section 4(1)(b)"
+  recovery:
+    - name: "Liquidation Dividend"
+      formula: "(Realisable Assets - Secured Claims - Preferent Claims - Liquidation Costs) / Concurrent Claims"
+      inputs: ["Realisable asset value", "Secured claims", "Preferent claims", "Estimated costs", "Concurrent claims"]
+      interpretation: "Cents in the rand recovery for concurrent creditors in liquidation"
+      statutory_reference: "Insolvency Act Section 89-99"
+    - name: "Rescue Dividend"
+      formula: "(Going Concern Value + PCF - Implementation Costs - Secured Claims - Preferent Claims) / Concurrent Claims"
+      inputs: ["Going concern value", "PCF available", "Implementation costs", "Secured claims", "Preferent claims", "Concurrent claims"]
+      interpretation: "Cents in the rand recovery for concurrent creditors under rescue plan"
+      statutory_reference: "Companies Act Section 128(1)(b)(iii)"
+    - name: "Comparative Analysis"
+      formula: "Rescue Dividend - Liquidation Dividend = Net Benefit of Rescue"
+      inputs: ["Rescue dividend calculation", "Liquidation dividend calculation"]
+      interpretation: "Positive = rescue provides better outcome (statutory requirement)"
+      statutory_reference: "Companies Act Section 128(1)(b)(iii)"
+  clawback:
+    - name: "Voidable Transaction Lookback"
+      formula: "Transaction Date vs Sequestration Date: Within 6 months (disposition), 6 months (preference), 2 years (collusive)"
+      inputs: ["Transaction date", "Sequestration/rescue date", "Transaction value", "Market value"]
+      interpretation: "Within lookback = potentially voidable, outside = generally safe"
+      statutory_reference: "Insolvency Act Sections 26, 29, 31"
+    - name: "Preference Period Calculation"
+      formula: "Date of Payment - Date of Sequestration: ≤ 6 months = voidable if preference shown"
+      inputs: ["Payment date", "Sequestration date", "Payment amount", "Creditor identity"]
+      interpretation: "Payment within 6 months to creditor who received more than pro rata share"
+      statutory_reference: "Insolvency Act Section 29-30"
+  employee:
+    - name: "Severance Exposure"
+      formula: "Number of Affected Employees × (1 week remuneration per completed year of service)"
+      inputs: ["Affected employee count", "Individual remuneration", "Years of service"]
+      interpretation: "Minimum statutory severance per Section 41 of BCEA"
+      statutory_reference: "BCEA Section 41"
+    - name: "Preferent Employee Claim"
+      formula: "Salary (max 3 months) + Leave Pay + Severance = Employee Preferent Claim"
+      inputs: ["Monthly salary", "Accrued leave", "Severance entitlement"]
+      interpretation: "Employee preferent claim ranking per Insolvency Act"
+      statutory_reference: "Insolvency Act Section 98A"
+
 folder_questions:
   01_Corporate_Governance:
     display_name: Corporate & Governance
     relevance: critical
     questions:
-    - question: What is the current insolvency status and are there formal proceedings?
+    - id: RI-F01-001
+      question: What is the current insolvency status and are there formal proceedings?
       priority: critical
       detail: Business rescue, liquidation, scheme of arrangement
       cot_hint: Check status → identify proceedings → verify filings
-    - question: Has a business rescue practitioner been properly appointed?
+    - id: RI-F01-002
+      question: Has a business rescue practitioner been properly appointed?
       priority: critical
       detail: BRP appointment, CIPC registration, independence
       cot_hint: Verify appointment → check qualifications → assess conflicts
-    - question: Have directors complied with duties including reckless trading?
+    - id: RI-F01-003
+      question: Have directors complied with duties including reckless trading?
       priority: critical
       detail: Director duties, Section 22, reckless trading liability
       cot_hint: Review conduct → assess compliance → identify exposure
@@ -767,15 +1624,18 @@ folder_questions:
     display_name: Commercial Contracts
     relevance: critical
     questions:
-    - question: Which contracts should be continued, terminated, or renegotiated?
+    - id: RI-F02-001
+      question: Which contracts should be continued, terminated, or renegotiated?
       priority: critical
       detail: Contract analysis, onerous contracts, essential services
       cot_hint: Categorize contracts → assess value → recommend treatment
-    - question: Are there ipso facto clauses that have been triggered?
+    - id: RI-F02-002
+      question: Are there ipso facto clauses that have been triggered?
       priority: critical
       detail: Insolvency triggers, termination rights, cure provisions
       cot_hint: Identify ipso facto → assess triggers → evaluate impact
-    - question: What key supplier and customer contracts are required for continuation?
+    - id: RI-F02-003
+      question: What key supplier and customer contracts are required for continuation?
       priority: high
       detail: Critical contracts, supply chain, revenue dependencies
       cot_hint: List critical contracts → assess continuation → negotiate
@@ -788,19 +1648,23 @@ folder_questions:
     display_name: Financial & Banking
     relevance: critical
     questions:
-    - question: Is the company commercially or factually insolvent?
+    - id: RI-F03-001
+      question: Is the company commercially or factually insolvent?
       priority: critical
       detail: Balance sheet test, cash flow test, solvency assessment
       cot_hint: Apply tests → assess position → determine status
-    - question: What is the total creditor exposure and priority ranking?
+    - id: RI-F03-002
+      question: What is the total creditor exposure and priority ranking?
       priority: critical
       detail: Secured, preferent, concurrent claims
       cot_hint: List claims → apply rankings → calculate recovery
-    - question: What post-commencement funding is available or required?
+    - id: RI-F03-003
+      question: What post-commencement funding is available or required?
       priority: critical
       detail: PCF terms, super-priority, funding commitments
       cot_hint: Assess funding needs → identify sources → structure PCF
-    - question: What is the expected recovery rate compared to liquidation?
+    - id: RI-F03-004
+      question: What is the expected recovery rate compared to liquidation?
       priority: critical
       detail: Comparative analysis, going concern value, liquidation value
       cot_hint: Compare outcomes → calculate dividends → demonstrate benefit
@@ -813,15 +1677,18 @@ folder_questions:
     display_name: Regulatory & Compliance
     relevance: high
     questions:
-    - question: Are all statutory filing and notification requirements being met?
+    - id: RI-F04-001
+      question: Are all statutory filing and notification requirements being met?
       priority: critical
       detail: CIPC filings, Master notifications, publication
       cot_hint: Check filings → verify notifications → confirm compliance
-    - question: Has the moratorium on legal proceedings been properly implemented?
+    - id: RI-F04-002
+      question: Has the moratorium on legal proceedings been properly implemented?
       priority: high
       detail: Moratorium scope, excluded proceedings, enforcement
       cot_hint: Review moratorium → check enforcement → identify exceptions
-    - question: Are there any sector-specific regulatory approvals required?
+    - id: RI-F04-003
+      question: Are there any sector-specific regulatory approvals required?
       priority: high
       detail: Licence transfers, regulatory consents
       cot_hint: Identify regulators → check requirements → plan approvals
@@ -830,19 +1697,23 @@ folder_questions:
     display_name: Employment & Labour
     relevance: critical
     questions:
-    - question: What is the total employee exposure including statutory and contractual?
+    - id: RI-F05-001
+      question: What is the total employee exposure including statutory and contractual?
       priority: critical
       detail: Employee claims, severance, leave pay, pension
       cot_hint: Calculate claims → identify statutory → quantify exposure
-    - question: Are there pending or required Section 189/189A processes?
+    - id: RI-F05-002
+      question: Are there pending or required Section 189/189A processes?
       priority: critical
       detail: Retrenchment consultations, CCMA referrals
       cot_hint: Check for notices → assess status → plan process
-    - question: What are the pension and provident fund obligations?
+    - id: RI-F05-003
+      question: What are the pension and provident fund obligations?
       priority: high
       detail: Fund contributions, arrears, withdrawal benefits
       cot_hint: Check fund status → identify arrears → calculate liability
-    - question: Are there Section 197 transfer considerations?
+    - id: RI-F05-004
+      question: Are there Section 197 transfer considerations?
       priority: high
       detail: Transfer of undertaking, automatic transfer
       cot_hint: Assess transfer → identify employees → plan consultation
@@ -855,15 +1726,18 @@ folder_questions:
     display_name: Property & Assets
     relevance: high
     questions:
-    - question: Have all assets been identified and properly valued?
+    - id: RI-F06-001
+      question: Have all assets been identified and properly valued?
       priority: critical
       detail: Asset register, valuations, physical verification
       cot_hint: Verify assets → check valuations → identify discrepancies
-    - question: Are there assets subject to security or retention of title?
+    - id: RI-F06-002
+      question: Are there assets subject to security or retention of title?
       priority: critical
       detail: Secured assets, ROT claims, PPSA registrations
       cot_hint: List secured assets → verify registrations → assess priority
-    - question: Are there any assets subject to clawback or avoidance?
+    - id: RI-F06-003
+      question: Are there any assets subject to clawback or avoidance?
       priority: critical
       detail: Dispositions at undervalue, preferences, voidable transactions
       cot_hint: Review transactions → apply tests → identify voidable
@@ -876,11 +1750,13 @@ folder_questions:
     display_name: Insurance
     relevance: medium
     questions:
-    - question: Is D&O insurance in place and adequate?
+    - id: RI-F07-001
+      question: Is D&O insurance in place and adequate?
       priority: high
       detail: D&O coverage, claims notifications, coverage adequacy
       cot_hint: Check D&O → notify claims → assess coverage
-    - question: Have claims been notified to insurers?
+    - id: RI-F07-002
+      question: Have claims been notified to insurers?
       priority: high
       detail: Claims notification, policy triggers, coverage analysis
       cot_hint: List claims → notify insurers → preserve coverage
@@ -889,15 +1765,18 @@ folder_questions:
     display_name: Litigation & Disputes
     relevance: high
     questions:
-    - question: What litigation is stayed by the moratorium?
+    - id: RI-F08-001
+      question: What litigation is stayed by the moratorium?
       priority: high
       detail: Stayed proceedings, excluded claims, secured creditor enforcement
       cot_hint: List proceedings → check moratorium → identify exceptions
-    - question: Are there potential claims against directors?
+    - id: RI-F08-002
+      question: Are there potential claims against directors?
       priority: critical
       detail: Reckless trading, breach of duty, personal liability
       cot_hint: Assess conduct → identify claims → evaluate recourse
-    - question: Are there any related party transactions to investigate?
+    - id: RI-F08-003
+      question: Are there any related party transactions to investigate?
       priority: high
       detail: Related party dispositions, preferences, uncommercial transactions
       cot_hint: Review transactions → identify related parties → assess voidable
@@ -910,15 +1789,18 @@ folder_questions:
     display_name: Tax
     relevance: high
     questions:
-    - question: What are the outstanding SARS claims and priority?
+    - id: RI-F09-001
+      question: What are the outstanding SARS claims and priority?
       priority: critical
       detail: SARS preferent claims, VAT, PAYE arrears
       cot_hint: Quantify SARS claims → confirm priority → assess impact
-    - question: What are the tax implications of the restructuring?
+    - id: RI-F09-002
+      question: What are the tax implications of the restructuring?
       priority: high
       detail: Debt forgiveness, CGT on disposals, reorganization relief
       cot_hint: Analyze structure → identify triggers → optimize treatment
-    - question: Can any corporate reorganization tax relief be utilized?
+    - id: RI-F09-003
+      question: Can any corporate reorganization tax relief be utilized?
       priority: medium
       detail: Section 41-47 relief, SARS rulings
       cot_hint: Check qualifying requirements → apply for relief
@@ -931,15 +1813,18 @@ folder_questions:
     display_name: Transaction Structure
     relevance: critical
     questions:
-    - question: What is the proposed transaction structure and is it legally effective?
+    - id: RI-F10-001
+      question: What is the proposed transaction structure and is it legally effective?
       priority: critical
       detail: Structure design, legal opinions, implementation steps
       cot_hint: Review structure → check legal validity → plan implementation
-    - question: Are all required stakeholder consents obtainable?
+    - id: RI-F10-002
+      question: Are all required stakeholder consents obtainable?
       priority: critical
       detail: Creditor consents, shareholder approval, regulatory consents
       cot_hint: Identify consents → assess likelihood → plan approach
-    - question: Have successor liability issues been addressed?
+    - id: RI-F10-003
+      question: Have successor liability issues been addressed?
       priority: high
       detail: Assumption of liabilities, indemnities, ring-fencing
       cot_hint: Analyze liability → structure protection → document indemnities
@@ -952,23 +1837,28 @@ folder_questions:
     display_name: Business Rescue Plan
     relevance: critical
     questions:
-    - question: Has a business rescue plan been published and adopted?
+    - id: RI-F11-001
+      question: Has a business rescue plan been published and adopted?
       priority: critical
       detail: Plan publication, creditor vote, adoption
       cot_hint: Check plan status → verify vote → confirm adoption
-    - question: Does the plan demonstrate reasonable prospect of rescue?
+    - id: RI-F11-002
+      question: Does the plan demonstrate reasonable prospect of rescue?
       priority: critical
       detail: Viability analysis, turnaround strategy, projections
       cot_hint: Assess viability → review strategy → evaluate prospects
-    - question: Does the plan provide better returns than liquidation?
+    - id: RI-F11-003
+      question: Does the plan provide better returns than liquidation?
       priority: critical
       detail: Comparative analysis, dividend projections
       cot_hint: Compare outcomes → calculate dividends → demonstrate benefit
-    - question: Are funding arrangements adequate and committed?
+    - id: RI-F11-004
+      question: Are funding arrangements adequate and committed?
       priority: critical
       detail: Funding commitments, conditions, security
       cot_hint: Check funding → verify commitments → assess conditionality
-    - question: Are all conditions precedent achievable?
+    - id: RI-F11-005
+      question: Are all conditions precedent achievable?
       priority: high
       detail: CP schedule, longstop dates, waiver provisions
       cot_hint: List CPs → assess achievability → plan satisfaction
@@ -981,7 +1871,8 @@ folder_questions:
     display_name: Needs Review
     relevance: low
     questions:
-    - question: What restructuring or insolvency issues does this document raise?
+    - id: RI-F99-001
+      question: What restructuring or insolvency issues does this document raise?
       priority: medium
       detail: Documents requiring manual classification review
       cot_hint: Identify restructuring content → flag for review
@@ -1099,71 +1990,85 @@ statutory_framework:
           penalties:
             administrative: "Proceedings may be set aside"
           criticality: critical
+          application_to_dd: "Verify company meets definition of 'financially distressed' and proceedings properly commenced"
         - section: "Section 129"
           description: "Company resolution to begin business rescue"
           penalties:
             administrative: "Filing requirements, notification"
           criticality: critical
+          application_to_dd: "Confirm board resolution valid, CIPC filing made, and all affected persons notified within 5 business days"
         - section: "Section 130"
           description: "Objections to company resolution"
           penalties:
             administrative: "Court may set aside resolution"
           criticality: high
+          application_to_dd: "Check for any objection applications filed and their status"
         - section: "Section 131"
           description: "Court order to begin business rescue"
           penalties:
             administrative: "Court discretion"
           criticality: critical
+          application_to_dd: "If court-initiated, verify court order terms, conditions, and any reporting requirements"
         - section: "Section 133"
           description: "General moratorium on legal proceedings"
           penalties:
             administrative: "Proceedings stayed"
           criticality: critical
+          application_to_dd: "Map all existing proceedings, confirm moratorium in effect, identify excluded proceedings"
         - section: "Section 134"
           description: "Protection of property interests"
           penalties:
             civil: "Property rights suspended"
           criticality: high
+          application_to_dd: "Identify any property disposed of during rescue and confirm BRP consent obtained"
         - section: "Section 135"
           description: "Post-commencement finance super-priority"
           penalties:
             civil: "PCF ranks ahead of all unsecured claims"
           criticality: critical
+          application_to_dd: "Verify PCF arrangements, confirm super-priority ranking, assess impact on existing creditors"
         - section: "Section 136"
           description: "Effect on employees and contracts"
           penalties:
             civil: "Employee contracts continue"
           criticality: critical
+          application_to_dd: "Confirm employee contracts continue, assess any suspensions, verify compliance with LRA"
         - section: "Section 138"
           description: "Qualification and appointment of BRP"
           penalties:
             administrative: "Appointment may be challenged"
           criticality: critical
+          application_to_dd: "Verify BRP CIPC registration, qualifications, independence, and no grounds for removal"
         - section: "Section 141"
           description: "Investigation of affairs of company"
           penalties:
             criminal: "Offence to obstruct"
           criticality: high
+          application_to_dd: "Review BRP investigation findings, especially regarding director conduct and voidable transactions"
         - section: "Section 145"
           description: "Meetings to determine future of company"
           penalties:
             administrative: "Procedural requirements"
           criticality: critical
+          application_to_dd: "Verify first meeting held within 10 days, proper notice given, quorum met"
         - section: "Section 150"
           description: "Contents of business rescue plan"
           penalties:
             administrative: "Plan must comply or rejected"
           criticality: critical
+          application_to_dd: "Verify plan published within 25 business days and contains all prescribed elements"
         - section: "Section 152"
           description: "Approval of business rescue plan"
           penalties:
             administrative: "75% voting threshold"
           criticality: critical
+          application_to_dd: "Confirm voting process compliant, 75% threshold achieved, no procedural challenges"
         - section: "Section 153"
           description: "Failure to adopt business rescue plan"
           penalties:
             administrative: "Liquidation may follow"
           criticality: critical
+          application_to_dd: "If plan rejected, assess liquidation risk and any alternative proposals"
 
     - act: "Insolvency Act 24 of 1936"
       acronym: "Insolvency Act"
@@ -1174,46 +2079,55 @@ statutory_framework:
           penalties:
             civil: "Sequestration application"
           criticality: critical
+          application_to_dd: "Identify which acts of insolvency are present and whether sequestration application is likely"
         - section: "Section 12"
           description: "Compulsory sequestration"
           penalties:
             civil: "Estate vests in Master/Trustee"
           criticality: critical
+          application_to_dd: "Assess whether grounds for compulsory sequestration exist and advantage to creditors"
         - section: "Section 26"
           description: "Voidable dispositions"
           penalties:
             civil: "Transaction set aside"
           criticality: critical
+          application_to_dd: "Review all dispositions within 2 years for undervalue, identify recovery potential"
         - section: "Section 29"
           description: "Voidable preferences"
           penalties:
             civil: "Payment recovered"
           criticality: critical
+          application_to_dd: "Review all payments within 6 months for preferential treatment, quantify clawback potential"
         - section: "Section 30"
           description: "Undue preference to creditors"
           penalties:
             civil: "Preference set aside"
           criticality: critical
+          application_to_dd: "Identify payments made when company known to be insolvent that preferred certain creditors"
         - section: "Section 31"
           description: "Collusive dealings before sequestration"
           penalties:
             criminal: "Fine or imprisonment"
           criticality: critical
+          application_to_dd: "Investigate any arrangements with creditors designed to defraud other creditors"
         - section: "Section 89"
           description: "Ranking of claims"
           penalties:
             administrative: "Prescribed order of preference"
           criticality: critical
+          application_to_dd: "Verify creditor ranking follows statutory order, identify any ranking disputes"
         - section: "Section 96"
           description: "Preferent claims"
           penalties:
             administrative: "Prescribed preferences"
           criticality: critical
+          application_to_dd: "Quantify all preferent claims (employee, SARS, landlord) and assess impact on concurrent creditors"
         - section: "Section 98"
           description: "Secured creditors"
           penalties:
             administrative: "Security enforcement rights"
           criticality: critical
+          application_to_dd: "Verify all security registrations, assess enforcement rights, confirm priority ranking"
 
     - act: "Companies Act 71 of 2008 - Chapter 2"
       acronym: "Companies Act"
@@ -1224,16 +2138,19 @@ statutory_framework:
           penalties:
             civil: "Personal liability of directors"
           criticality: critical
+          application_to_dd: "Analyse trading history post-insolvency, assess director knowledge, quantify personal liability exposure"
         - section: "Section 76"
           description: "Standards of directors' conduct"
           penalties:
             civil: "Personal liability"
           criticality: critical
+          application_to_dd: "Review director conduct against statutory standards, identify breaches and potential claims"
         - section: "Section 77"
           description: "Liability of directors"
           penalties:
             civil: "Personal liability for losses"
           criticality: critical
+          application_to_dd: "Quantify potential director liability claims and assess recoverability including D&O coverage"
 
     - act: "Labour Relations Act 66 of 1995"
       acronym: "LRA"
@@ -1244,21 +2161,25 @@ statutory_framework:
           penalties:
             civil: "Compensation up to 12 months"
           criticality: critical
+          application_to_dd: "Verify consultation process initiated, proper notice given, alternatives considered"
         - section: "Section 189A"
           description: "Large-scale retrenchments (50+)"
           penalties:
             civil: "Facilitation, extended consultation"
           criticality: critical
+          application_to_dd: "If 50+ employees affected, verify CCMA facilitation process and extended 60-day consultation"
         - section: "Section 197"
           description: "Transfer of contract on business transfer"
           penalties:
             civil: "Automatic transfer of employees"
           criticality: critical
+          application_to_dd: "For going concern sales, confirm automatic employee transfer, assess buyer's assumption of obligations"
         - section: "Section 197A"
           description: "Transfer in insolvency"
           penalties:
             civil: "Modified transfer provisions"
           criticality: high
+          application_to_dd: "In insolvency context, assess modified transfer terms and employee claim treatment"
 
     - act: "Close Corporations Act 69 of 1984"
       acronym: "CC Act"
@@ -1269,11 +2190,13 @@ statutory_framework:
           penalties:
             civil: "Personal liability for reckless conduct"
           criticality: critical
+          application_to_dd: "For CC entities, assess member conduct and potential personal liability for reckless trading"
         - section: "Section 68"
           description: "Winding up of close corporations"
           penalties:
             administrative: "Insolvency Act applies"
           criticality: high
+          application_to_dd: "Confirm Insolvency Act procedures apply to CC wind-up and member obligations"
 
     - act: "Cross-Border Insolvency Act 42 of 2000"
       acronym: "CBIA"
@@ -1284,11 +2207,44 @@ statutory_framework:
           penalties:
             administrative: "Recognition discretionary"
           criticality: high
+          application_to_dd: "For cross-border matters, assess whether foreign proceedings require recognition in SA"
         - section: "Section 14"
           description: "Relief upon recognition"
           penalties:
             administrative: "Stay of proceedings, asset protection"
           criticality: high
+          application_to_dd: "If foreign proceedings recognised, assess impact on SA assets and proceedings"
+
+  secondary_legislation:
+    - name: "Insolvency Regulations"
+      description: "Rules governing insolvency proceedings, claims process, and distributions"
+      application_to_dd: "Verify procedural compliance with prescribed forms, timelines, and notification requirements"
+    - name: "Business Rescue Practice Standards"
+      description: "CIPC and professional body standards for business rescue practitioners"
+      application_to_dd: "Verify BRP compliance with practice standards, reporting obligations, and ethical requirements"
+    - name: "Companies Regulations 2011"
+      description: "Regulations under the Companies Act including business rescue forms"
+      application_to_dd: "Verify correct forms used (CoR 123.1, CoR 123.2, etc.) and filing compliance"
+    - name: "CCMA Rules and Guidelines"
+      description: "Rules governing retrenchment consultation facilitation processes"
+      application_to_dd: "For large-scale retrenchments, verify CCMA facilitation process compliance"
+
+  regulatory_bodies:
+    - body: "CIPC (Companies and Intellectual Property Commission)"
+      role: "Company registration, business rescue filings, BRP registration"
+      dd_relevance: "Verify all statutory filings, BRP registration, and company status"
+    - body: "Master of the High Court"
+      role: "Oversight of insolvency proceedings, liquidator appointment, estate administration"
+      dd_relevance: "Verify Master notifications, liquidation account approval, distribution compliance"
+    - body: "Courts (High Court / Companies Tribunal)"
+      role: "Business rescue orders, plan sanction, liquidation orders, dispute resolution"
+      dd_relevance: "Check court orders, pending applications, and appeal status"
+    - body: "CCMA (Commission for Conciliation, Mediation and Arbitration)"
+      role: "Labour dispute resolution, retrenchment facilitation"
+      dd_relevance: "Verify Section 189A facilitation compliance and pending labour disputes"
+    - body: "BRP Regulatory Board"
+      role: "Oversight of business rescue practitioner conduct and standards"
+      dd_relevance: "Verify BRP standing, complaints history, and professional compliance"
 
   sector_specific:
     business_rescue:
@@ -1343,4 +2299,477 @@ statutory_framework:
       - statute: "Insolvency Act Section 26-31"
         trigger: "Disposition within 6 months/2 years of sequestration"
         consequence: "Transaction may be set aside"
-        timeline: "Lookback period from sequestration
+        timeline: "Lookback period from sequestration"
+
+# ============================================================================
+# WARRANTY CATEGORIES
+# Warranties specific to restructuring and insolvency transactions
+# ============================================================================
+warranty_categories:
+  - category: "Title & Capacity"
+    description: "Warranties regarding authority to transact and title to assets"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Business rescue sale or going concern disposal"
+      - "Asset purchase from distressed entity"
+      - "Questions about BRP authority"
+    standard_warranties:
+      - id: "RI-W-TC-001"
+        description: "BRP has authority to sell under business rescue plan"
+        detailed_wording: "The BRP warrants that the sale is authorised under the adopted Business Rescue Plan and all required creditor approvals have been obtained"
+        typical_qualification: "Limited to BRP's knowledge and scope of appointment"
+        priority: critical
+      - id: "RI-W-TC-002"
+        description: "Good and marketable title to assets being transferred"
+        detailed_wording: "The Seller warrants that it has good and marketable title to the Assets, free from all encumbrances other than Permitted Encumbrances"
+        typical_qualification: "Subject to disclosed security interests and retention of title claims"
+        priority: critical
+      - id: "RI-W-TC-003"
+        description: "No undisclosed claims or encumbrances on assets"
+        detailed_wording: "The Seller warrants that there are no claims, liens, or encumbrances against the Assets other than those disclosed in the Disclosure Schedule"
+        typical_qualification: "Knowledge qualifier — to BRP's best knowledge after reasonable enquiry"
+        priority: critical
+
+  - category: "Business Rescue Compliance"
+    description: "Warranties that business rescue process has been properly conducted"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Acquisition during or after business rescue"
+      - "Concerns about procedural compliance"
+      - "Challenge risk from dissenting creditors"
+    standard_warranties:
+      - id: "RI-W-BRC-001"
+        description: "Business rescue plan properly adopted by required majority"
+        detailed_wording: "The BRP warrants that the Business Rescue Plan was adopted in accordance with Section 152 of the Companies Act with the required 75% creditor voting threshold"
+        typical_qualification: "Documentary evidence of voting process"
+        priority: critical
+      - id: "RI-W-BRC-002"
+        description: "All affected persons properly notified"
+        detailed_wording: "The BRP warrants that all affected persons were notified and had opportunity to participate in accordance with the Companies Act"
+        typical_qualification: "Based on BRP's notification records"
+        priority: high
+      - id: "RI-W-BRC-003"
+        description: "No pending challenges to business rescue proceedings"
+        detailed_wording: "The BRP warrants that no application to set aside the business rescue proceedings or challenge the plan adoption is pending or threatened"
+        typical_qualification: "To BRP's knowledge as at Warranty Date"
+        priority: critical
+      - id: "RI-W-BRC-004"
+        description: "Post-commencement finance properly structured"
+        detailed_wording: "The BRP warrants that all post-commencement finance has been obtained in accordance with Section 135 and properly disclosed to creditors"
+        typical_qualification: "Based on PCF documentation provided"
+        priority: high
+
+  - category: "Creditor Claims"
+    description: "Warranties regarding completeness and accuracy of creditor information"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Risk of undisclosed creditors"
+      - "Successor liability concerns"
+      - "Incomplete claims register"
+    standard_warranties:
+      - id: "RI-W-CC-001"
+        description: "Claims register is complete and accurate"
+        detailed_wording: "The BRP warrants that the Claims Register represents a complete and accurate record of all known claims against the Company as at the Effective Date"
+        typical_qualification: "Based on claims verification process and BRP investigation"
+        priority: critical
+      - id: "RI-W-CC-002"
+        description: "No undisclosed preferent or secured creditors"
+        detailed_wording: "The Seller warrants that there are no preferent or secured creditors other than those disclosed in the Claims Register and Security Schedule"
+        typical_qualification: "To BRP's best knowledge after reasonable enquiry"
+        priority: critical
+      - id: "RI-W-CC-003"
+        description: "Inter-company claims accurately stated"
+        detailed_wording: "The Seller warrants that all intercompany claims are as reflected in the Disclosure Schedule and no additional intercompany obligations exist"
+        typical_qualification: "Based on company records reviewed by BRP"
+        priority: high
+
+  - category: "Assets"
+    description: "Warranties regarding the assets being acquired"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Going concern sale"
+      - "Asset cherry-picking"
+      - "Valuation concerns"
+    standard_warranties:
+      - id: "RI-W-ASS-001"
+        description: "Asset register is complete and accurate"
+        detailed_wording: "The Seller warrants that the Asset Register represents a complete record of all material assets of the Business"
+        typical_qualification: "As verified by BRP and subject to physical verification"
+        priority: high
+      - id: "RI-W-ASS-002"
+        description: "No voidable transactions affecting assets"
+        detailed_wording: "The BRP warrants that no assets have been disposed of in transactions that are voidable under Sections 26-31 of the Insolvency Act that have not been disclosed"
+        typical_qualification: "Based on BRP investigation to date"
+        priority: critical
+      - id: "RI-W-ASS-003"
+        description: "No environmental contamination on properties"
+        detailed_wording: "The Seller warrants that to its knowledge, no environmental contamination exists on the properties that has not been disclosed"
+        typical_qualification: "Knowledge qualifier — limited environmental assessments in distressed context"
+        priority: high
+
+  - category: "Financial"
+    description: "Warranties regarding financial position and records"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Financial information reliability concerns"
+      - "Distressed entity record-keeping"
+    standard_warranties:
+      - id: "RI-W-FIN-001"
+        description: "Financial statements fairly present position at date"
+        detailed_wording: "The Seller warrants that the Financial Statements fairly present the financial position of the Company as at their respective dates"
+        typical_qualification: "Subject to going concern qualifications and audit disclaimers"
+        priority: high
+      - id: "RI-W-FIN-002"
+        description: "No material undisclosed liabilities"
+        detailed_wording: "The Seller warrants that there are no material liabilities other than those reflected in the Financial Statements or disclosed in the Disclosure Schedule"
+        typical_qualification: "To BRP's knowledge — distressed context limits verification"
+        priority: high
+
+  - category: "Employment"
+    description: "Warranties regarding employee matters in restructuring context"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Section 197 transfer"
+      - "Retrenchment processes"
+      - "Employee claim exposure"
+    standard_warranties:
+      - id: "RI-W-EMP-001"
+        description: "Employee liability schedule is complete"
+        detailed_wording: "The Seller warrants that the Employee Liability Schedule is complete and accurately reflects all employee obligations including accrued leave, severance, and pension contributions"
+        typical_qualification: "Based on payroll records and statutory calculations"
+        priority: critical
+      - id: "RI-W-EMP-002"
+        description: "Section 189 process properly conducted"
+        detailed_wording: "The Seller warrants that all retrenchment processes have been conducted in compliance with Sections 189 and 189A of the LRA"
+        typical_qualification: "Based on consultation records maintained"
+        priority: high
+
+  - category: "Contracts"
+    description: "Warranties regarding contracts being assumed or transferred"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Contract assignment or assumption"
+      - "Ipso facto clause concerns"
+      - "Key contract continuity"
+    standard_warranties:
+      - id: "RI-W-CON-001"
+        description: "Assigned contracts are valid and enforceable"
+        detailed_wording: "The Seller warrants that the Assigned Contracts are valid, binding, and enforceable and have not been terminated by counterparties"
+        typical_qualification: "Subject to ipso facto analysis provided"
+        priority: high
+      - id: "RI-W-CON-002"
+        description: "No material breaches of assigned contracts"
+        detailed_wording: "The Seller warrants that there are no material breaches of the Assigned Contracts other than those arising from the financial distress or business rescue proceedings"
+        typical_qualification: "Distress-related breaches excluded"
+        priority: high
+
+# ============================================================================
+# INDEMNITY CATEGORIES
+# Indemnities specific to restructuring and insolvency transactions
+# ============================================================================
+indemnity_categories:
+  - category: "Voidable Transactions"
+    description: "Indemnities for clawback risk from voidable transactions"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Assets acquired may be subject to avoidance claims"
+      - "Preference payment risk on consideration"
+      - "Lookback period transactions identified"
+    standard_indemnities:
+      - id: "RI-I-VT-001"
+        description: "Indemnity against voidable disposition claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any claim that the sale of the Assets constitutes a voidable disposition under Section 26 of the Insolvency Act"
+        typical_cap: "Purchase price"
+        survival_period: "3 years (aligned to prescription)"
+        priority: critical
+      - id: "RI-I-VT-002"
+        description: "Indemnity against preference claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any claim that payments made constitute voidable preferences under Sections 29-30 of the Insolvency Act"
+        typical_cap: "Amount of payments at risk"
+        survival_period: "3 years"
+        priority: critical
+      - id: "RI-I-VT-003"
+        description: "Indemnity for third-party clawback on transferred assets"
+        detailed_wording: "The Seller shall indemnify the Buyer against Losses where transferred Assets are subject to successful clawback claims by liquidator or creditors"
+        typical_cap: "Value of affected assets"
+        survival_period: "3 years"
+        priority: critical
+
+  - category: "Reckless Trading"
+    description: "Indemnities for liability arising from pre-acquisition reckless trading"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Section 22 liability exposure identified"
+      - "Director conduct concerns"
+      - "Successor liability risk"
+    standard_indemnities:
+      - id: "RI-I-RT-001"
+        description: "Indemnity against reckless trading claims"
+        detailed_wording: "The Seller and/or Directors shall indemnify the Buyer against Losses arising from any Section 22 reckless trading claim relating to the period prior to the Effective Date"
+        typical_cap: "Uncapped — directors' personal liability"
+        survival_period: "3 years"
+        priority: critical
+      - id: "RI-I-RT-002"
+        description: "Indemnity for director conduct claims"
+        detailed_wording: "The Directors shall indemnify the Buyer against Losses arising from breaches of fiduciary duties under Sections 76-77 prior to the Effective Date"
+        typical_cap: "D&O insurance limit"
+        survival_period: "3 years"
+        priority: critical
+
+  - category: "Pre-Rescue Liabilities"
+    description: "Indemnities for pre-existing liabilities not assumed"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Excluded liabilities may surface post-closing"
+      - "Successor liability risk"
+      - "Incomplete creditor disclosure"
+    standard_indemnities:
+      - id: "RI-I-PRL-001"
+        description: "Indemnity for undisclosed pre-rescue liabilities"
+        detailed_wording: "The Seller shall indemnify the Buyer against Losses arising from any pre-Rescue Date liabilities not disclosed in the Claims Register or Disclosure Schedule"
+        typical_cap: "Purchase price"
+        survival_period: "2 years"
+        priority: high
+      - id: "RI-I-PRL-002"
+        description: "Indemnity for successor liability claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against Losses arising from any claim that the Buyer is a successor to liabilities of the Seller not expressly assumed"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: high
+
+  - category: "Tax"
+    description: "Indemnities for pre-existing tax liabilities"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "SARS claims outstanding"
+      - "Tax compliance concerns"
+    standard_indemnities:
+      - id: "RI-I-TAX-001"
+        description: "Indemnity for pre-acquisition SARS claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against SARS claims and assessments relating to periods prior to the Effective Date"
+        typical_cap: "Specific sub-cap based on SARS exposure"
+        survival_period: "5 years (prescription period for SARS)"
+        priority: high
+
+  - category: "Employment"
+    description: "Indemnities for employee-related liabilities in restructuring"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Section 197 transfer liabilities"
+      - "Unfair dismissal claims from retrenchment"
+      - "Pension fund arrears"
+    standard_indemnities:
+      - id: "RI-I-EMP-001"
+        description: "Indemnity for pre-transfer employee claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against employee claims arising from events prior to the Section 197 Transfer Date"
+        typical_cap: "Quantified employee liability"
+        survival_period: "3 years"
+        priority: high
+      - id: "RI-I-EMP-002"
+        description: "Indemnity for retrenchment process defects"
+        detailed_wording: "The Seller shall indemnify the Buyer against Losses arising from defects in the Section 189 consultation process conducted prior to the Effective Date"
+        typical_cap: "12 months compensation per affected employee"
+        survival_period: "2 years"
+        priority: high
+
+  - category: "Environmental"
+    description: "Indemnities for environmental contamination and remediation"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Property acquisition from distressed entity"
+      - "Environmental contamination identified"
+    standard_indemnities:
+      - id: "RI-I-ENV-001"
+        description: "Indemnity for pre-existing environmental contamination"
+        detailed_wording: "The Seller shall indemnify the Buyer against Losses arising from environmental contamination existing prior to the Effective Date"
+        typical_cap: "Specific sub-cap or uncapped"
+        survival_period: "5 years (environmental claims have long tail)"
+        priority: high
+
+# ============================================================================
+# WARRANTY & INDEMNITY DETECTION PATTERNS
+# Regex patterns for identifying warranty and indemnity provisions in restructuring documents
+# ============================================================================
+warranty_indemnity_patterns:
+  warranty_patterns:
+    - pattern: "business rescue plan|BRP.*warrant"
+      description: "Business rescue plan compliance warranty"
+    - pattern: "reckless trading|section 22|trading while insolvent"
+      description: "Reckless trading related warranty"
+    - pattern: "voidable|preference|disposition.*undervalue"
+      description: "Voidable transaction warranty"
+    - pattern: "post-commencement|PCF|super-priority"
+      description: "Post-commencement finance warranty"
+    - pattern: "moratorium|stay of proceedings"
+      description: "Moratorium compliance warranty"
+    - pattern: "creditor.*claim|claims register|proof of claim"
+      description: "Creditor claims warranty"
+    - pattern: "BRP.*appoint|practitioner.*qualif"
+      description: "BRP appointment warranty"
+    - pattern: "title.*asset|encumbrance|security interest"
+      description: "Asset title warranty"
+    - pattern: "employee.*liab|section 197|transfer.*employee"
+      description: "Employee transfer warranty"
+    - pattern: "insolvency|insolvent|sequestrat"
+      description: "Insolvency status warranty"
+  indemnity_patterns:
+    - pattern: "voidable.*indemnif|indemnif.*voidable"
+      description: "Voidable transaction indemnity"
+    - pattern: "reckless.*indemnif|indemnif.*section 22"
+      description: "Reckless trading indemnity"
+    - pattern: "successor.*liab|indemnif.*pre-rescue"
+      description: "Successor liability indemnity"
+    - pattern: "(SARS|tax).*indemnif"
+      description: "Tax indemnity"
+    - pattern: "(employee|section 197|retrenchment).*indemnif"
+      description: "Employment indemnity"
+    - pattern: "(environment|contamination).*indemnif"
+      description: "Environmental indemnity"
+    - pattern: "(clawback|preference.*payment).*indemnif"
+      description: "Clawback indemnity"
+
+# ============================================================================
+# OUTPUT REQUIREMENTS
+# Required elements and format for restructuring & insolvency DD reports
+# ============================================================================
+output_requirements:
+  must_include:
+    - "Insolvency status determination (factual and/or commercial)"
+    - "Creditor analysis with priority ranking and recovery projections"
+    - "Business rescue plan assessment and viability analysis"
+    - "Comparative recovery analysis (rescue vs liquidation)"
+    - "Voidable transaction analysis with clawback potential"
+    - "Director conduct assessment and reckless trading exposure"
+    - "Employee liability quantification and Section 189/197 compliance"
+    - "Warranty register with recommended scope and qualifications"
+    - "Indemnity register with triggers, caps, and survival periods"
+  format:
+    - section: "Executive Summary"
+      description: "Distress assessment, deal blockers, critical findings, and recovery overview"
+    - section: "Distress Assessment"
+      description: "Solvency analysis, insolvency status, business rescue proceeding status"
+    - section: "Creditor Waterfall"
+      description: "Priority ranking of all claims with secured, preferent, PCF, and concurrent analysis"
+    - section: "Detailed Findings"
+      description: "Category-by-category analysis with statutory references"
+    - section: "Warranty Schedule"
+      description: "Recommended warranties with restructuring-specific qualifications"
+    - section: "Indemnity Schedule"
+      description: "Recommended indemnities with clawback, reckless trading, and successor liability focus"
+
+# ============================================================================
+# OUTPUT TEMPLATES
+# Report structure templates for restructuring & insolvency DD reports
+# ============================================================================
+output_templates:
+  executive_summary:
+    max_items: 15
+    sections:
+      - "Transaction Overview"
+      - "Insolvency Status"
+      - "Deal Blockers"
+      - "Recovery Analysis"
+      - "Critical Findings"
+      - "Key Recommendations"
+    required_elements:
+      - "Rescue vs liquidation recovery comparison"
+      - "Creditor recovery rate by class"
+      - "PCF status and super-priority exposure"
+      - "Total identified financial exposure"
+      - "Number of deal blockers"
+      - "Voidable transaction exposure"
+      - "Director liability exposure"
+  full_report:
+    sections:
+      - name: "Insolvency Status"
+        subsections:
+          - "Solvency assessment (balance sheet and cash flow)"
+          - "Formal proceedings status"
+          - "BRP appointment and conduct"
+          - "Moratorium compliance"
+      - name: "Creditor Analysis"
+        subsections:
+          - "Secured creditor claims and security"
+          - "Preferent creditor claims (employees, SARS)"
+          - "PCF claims and super-priority"
+          - "Concurrent creditor claims and recovery"
+          - "Intercompany and related party claims"
+      - name: "Business Rescue Plan"
+        subsections:
+          - "Plan status and adoption"
+          - "Viability assessment"
+          - "Comparative outcome analysis"
+          - "Funding arrangements"
+          - "Conditions precedent"
+      - name: "Asset Analysis"
+        subsections:
+          - "Asset identification and valuation"
+          - "Security and encumbrances"
+          - "Voidable transaction analysis"
+          - "Going concern sale considerations"
+      - name: "Director Conduct"
+        subsections:
+          - "Reckless trading assessment"
+          - "Breach of duty analysis"
+          - "Related party transactions"
+          - "D&O insurance coverage"
+      - name: "Employment"
+        subsections:
+          - "Employee liability schedule"
+          - "Section 189 compliance"
+          - "Section 197 transfer analysis"
+          - "Pension and provident fund status"
+      - name: "Warranties & Indemnities"
+        subsections:
+          - "Recommended warranties by category"
+          - "Recommended indemnities by category"
+          - "Cap, survival, and qualification recommendations"
+  finding_format:
+    required_fields:
+      - "finding_id"
+      - "category"
+      - "severity"
+      - "description"
+      - "statutory_reference"
+      - "financial_impact"
+      - "recommended_action"
+      - "action_category"

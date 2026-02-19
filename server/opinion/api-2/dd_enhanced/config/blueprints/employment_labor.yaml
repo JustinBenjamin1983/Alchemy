@@ -6,138 +6,423 @@ description: 'Due diligence blueprint for employment and labor matters in transa
 
   '
 jurisdiction: South Africa
+transaction_context:
+  deal_structures:
+    - type: share_sale
+      description: Share sale with workforce transfer implications
+      key_considerations:
+        - Employment contracts remain with entity (no Section 197)
+        - Executive CoC provisions may trigger
+        - BEE management control element affected
+        - Union consultation may be required
+    - type: asset_sale
+      description: Business transfer as going concern triggering Section 197
+      key_considerations:
+        - Automatic transfer of employees under Section 197
+        - Terms and conditions transfer on existing basis
+        - Old and new employer joint liability for 12 months
+        - Union consultation requirements
+    - type: restructuring
+      description: Post-acquisition restructuring or retrenchment
+      key_considerations:
+        - Section 189/189A consultation requirements
+        - Severance liability calculation
+        - Union engagement and potential industrial action
+        - Employment Equity plan impact
+    - type: outsourcing
+      description: Outsourcing of business function with workforce implications
+      key_considerations:
+        - Section 197 may apply to outsourcing
+        - Labour broker regulation under Section 198
+        - Deemed employment provisions after 3 months
+        - TUPE-equivalent protections
+  typical_parties:
+    - role: employer
+      description: Current employer of affected workforce
+    - role: transferee
+      description: New employer receiving transferred employees
+    - role: employee
+      description: Affected employee or group of employees
+    - role: trade_union
+      description: Recognized trade union representing employees
+    - role: ccma
+      description: Commission for Conciliation, Mediation and Arbitration
+    - role: bargaining_council
+      description: Industry bargaining council with jurisdiction
 primary_legislation:
 - Labour Relations Act 66 of 1995
 - Basic Conditions of Employment Act 75 of 1997
 - Employment Equity Act 55 of 1998
 - Skills Development Act 97 of 1998
+- Occupational Health and Safety Act 85 of 1993
+- Compensation for Occupational Injuries and Diseases Act 130 of 1993
+- Pension Funds Act 24 of 1956
+- Unemployment Insurance Act 63 of 2001
+reference_documents:
+  always_include:
+    - pattern: "employment contract|service agreement"
+      document_type: "Employment Contract"
+    - pattern: "collective agreement|recognition agreement|wage agreement"
+      document_type: "Collective Agreement"
+    - pattern: "employment equity|EE plan|EE report"
+      document_type: "Employment Equity Plan"
+    - pattern: "retrenchment|Section 189|severance"
+      document_type: "Section 189 Notice"
+    - pattern: "pension fund|provident fund|retirement"
+      document_type: "Pension Fund Rules"
+    - pattern: "payroll|salary schedule|remuneration"
+      document_type: "Payroll Records"
+    - pattern: "CCMA|Labour Court|arbitration"
+      document_type: "Labour Dispute Records"
+folder_structure:
+  01_Corporate_Governance:
+    relevance: high
+    subcategories:
+    - HR Policies
+    - Delegations
+    expected_documents:
+    - HR Policy Manual
+    - Disciplinary Code
+    - Grievance Procedure
+    document_expectations:
+      - document: "HR Policy Manual"
+        expected_content: "Comprehensive HR policies covering all employment matters"
+        key_fields: ["recruitment", "discipline", "grievance", "leave", "benefits", "termination"]
+        cross_reference: ["Employment Contract", "Collective Agreement"]
+      - document: "Disciplinary Code"
+        expected_content: "Company disciplinary code and procedure"
+        key_fields: ["offences", "sanctions", "procedure", "appeal mechanism"]
+        cross_reference: ["HR Policy Manual"]
+  02_Commercial:
+    relevance: high
+    subcategories:
+    - Contractor Agreements
+    - Outsourcing
+    - Labour Brokers
+    expected_documents:
+    - Independent Contractor Agreement
+    - Outsourcing Agreement
+    - Labour Broker Agreement
+    document_expectations:
+      - document: "Independent Contractor Agreement"
+        expected_content: "Agreement with independent contractor (assess deemed employment risk)"
+        key_fields: ["scope", "control indicators", "tax treatment", "exclusivity", "tools/equipment"]
+        cross_reference: ["Payroll Records"]
+      - document: "Labour Broker Agreement"
+        expected_content: "Temporary employment service agreement per Section 198 LRA"
+        key_fields: ["workers provided", "duration", "rate", "deemed employment provisions"]
+        cross_reference: ["Employment Contract"]
+  03_Financial:
+    relevance: high
+    subcategories:
+    - Payroll
+    - Pension Liabilities
+    - Severance Provisions
+    expected_documents:
+    - Payroll Records
+    - Pension Fund Valuation
+    - Actuarial Valuation
+    - Financial Statements
+    document_expectations:
+      - document: "Payroll Records"
+        expected_content: "Complete payroll records showing all employment costs"
+        key_fields: ["headcount", "basic salary", "allowances", "employer contributions", "total cost"]
+        cross_reference: ["Financial Statements", "Employment Contract"]
+      - document: "Pension Fund Valuation"
+        expected_content: "Latest valuation of pension or provident fund"
+        key_fields: ["fund type", "asset value", "liability", "surplus/deficit", "valuation date"]
+        cross_reference: ["Financial Statements", "Actuarial Valuation"]
+  04_Regulatory:
+    relevance: high
+    subcategories:
+    - Employment Equity
+    - Skills Development
+    - OHS
+    - UIF/COIDA
+    expected_documents:
+    - Employment Equity Plan
+    - EE Annual Report
+    - Skills Development Plan
+    - OHS Compliance Certificate
+    document_expectations:
+      - document: "Employment Equity Plan"
+        expected_content: "EE plan filed with Department of Employment and Labour"
+        key_fields: ["designated employer status", "numerical targets", "timeframes", "affirmative action measures"]
+        cross_reference: ["EE Annual Report", "Management Demographics"]
+      - document: "OHS Compliance Certificate"
+        expected_content: "Occupational health and safety compliance documentation"
+        key_fields: ["H&S representatives", "incident reports", "risk assessments", "compliance status"]
+        cross_reference: ["COIDA Registration"]
+  05_Employment:
+    relevance: critical
+    subcategories:
+    - Executive Contracts
+    - Collective Agreements
+    - Section 197
+    - Retrenchment
+    expected_documents:
+    - Executive Employment Contract
+    - Standard Employment Contract
+    - Collective Agreement
+    - Section 189 Notice
+    - Section 197 Transfer Agreement
+    document_expectations:
+      - document: "Executive Employment Contract"
+        expected_content: "Senior executive employment contract with key terms"
+        key_fields: ["remuneration", "notice period", "restraint of trade", "CoC provisions", "golden parachute"]
+        cross_reference: ["Financial Statements", "Payroll Records"]
+      - document: "Collective Agreement"
+        expected_content: "Collective agreement with recognized trade union"
+        key_fields: ["parties", "scope", "wages", "working conditions", "dispute resolution", "expiry date"]
+        cross_reference: ["Employment Contract"]
+      - document: "Section 189 Notice"
+        expected_content: "Notice of contemplated retrenchment under Section 189 LRA"
+        key_fields: ["reasons", "number affected", "selection criteria", "alternatives considered", "severance"]
+        cross_reference: ["Payroll Records", "Financial Statements"]
+  06_Property:
+    relevance: low
+    subcategories:
+    - Workplace Sites
+    expected_documents:
+    - Workplace Register
+    document_expectations:
+      - document: "Workplace Register"
+        expected_content: "Register of workplaces and site-specific arrangements"
+        key_fields: ["site locations", "headcount per site", "site-specific agreements"]
+        cross_reference: ["Employment Contract"]
+  07_Insurance:
+    relevance: medium
+    subcategories:
+    - D&O Insurance
+    - Group Benefits
+    expected_documents:
+    - D&O Insurance Policy
+    - Group Life Policy
+    - Disability Cover
+    document_expectations:
+      - document: "D&O Insurance Policy"
+        expected_content: "Directors and officers liability insurance"
+        key_fields: ["insurer", "limit", "employment claims coverage", "exclusions"]
+        cross_reference: ["Employment Contract"]
+      - document: "Group Life Policy"
+        expected_content: "Group life and disability insurance for employees"
+        key_fields: ["insurer", "cover amount", "eligibility", "premium"]
+        cross_reference: ["Employment Contract", "Payroll Records"]
+  08_Litigation:
+    relevance: high
+    subcategories:
+    - CCMA Matters
+    - Labour Court
+    - Industrial Action
+    expected_documents:
+    - CCMA Referral
+    - Labour Court Pleadings
+    - Strike Notice
+    document_expectations:
+      - document: "CCMA Referral"
+        expected_content: "CCMA referral for conciliation or arbitration"
+        key_fields: ["applicant", "respondent", "dispute type", "relief sought", "status"]
+        cross_reference: ["Employment Contract", "Disciplinary Code"]
+  09_Tax:
+    relevance: medium
+    subcategories:
+    - Payroll Tax
+    - Benefits Tax
+    expected_documents:
+    - PAYE Reconciliation
+    - UIF Returns
+    - SDL Returns
+    document_expectations:
+      - document: "PAYE Reconciliation"
+        expected_content: "Annual PAYE reconciliation submitted to SARS"
+        key_fields: ["total remuneration", "PAYE deducted", "reconciliation status"]
+        cross_reference: ["Payroll Records", "Financial Statements"]
+  99_Needs_Review:
+    relevance: n/a
+    subcategories:
+    - Unclassified
+    - Low Confidence
+    expected_documents: []
 risk_categories:
 - name: Workforce Composition
   weight: high
   standard_questions:
-  - question: What is the total headcount by category?
+  - id: EL-WFC-001
+    question: What is the total headcount by category?
     priority: critical
-  - question: What is the breakdown of permanent vs fixed-term vs temporary?
+  - id: EL-WFC-002
+    question: What is the breakdown of permanent vs fixed-term vs temporary?
     priority: high
-  - question: What is the total monthly payroll cost?
+  - id: EL-WFC-003
+    question: What is the total monthly payroll cost?
     priority: critical
-  - question: What is the age and tenure profile of the workforce?
+  - id: EL-WFC-004
+    question: What is the age and tenure profile of the workforce?
     priority: medium
-  - question: Are there any employees on suspension or final warning?
+  - id: EL-WFC-005
+    question: Are there any employees on suspension or final warning?
     priority: medium
-  - question: What is the staff turnover rate?
+  - id: EL-WFC-006
+    question: What is the staff turnover rate?
     priority: medium
-  - question: Are there any labor brokers or outsourced services?
+  - id: EL-WFC-007
+    question: Are there any labor brokers or outsourced services?
     priority: high
-  - question: What is the geographic distribution of employees?
+  - id: EL-WFC-008
+    question: What is the geographic distribution of employees?
     priority: medium
 - name: Section 197 Transfer
   weight: critical
   standard_questions:
-  - question: Does Section 197 of the LRA apply to the transaction?
+  - id: EL-S97-001
+    question: Does Section 197 of the LRA apply to the transaction?
     priority: critical
-  - question: Will there be a transfer of business as a going concern?
+  - id: EL-S97-002
+    question: Will there be a transfer of business as a going concern?
     priority: critical
-  - question: What employees will transfer automatically?
+  - id: EL-S97-003
+    question: What employees will transfer automatically?
     priority: critical
-  - question: What are the terms and conditions that transfer?
+  - id: EL-S97-004
+    question: What are the terms and conditions that transfer?
     priority: critical
-  - question: Are there any pension/provident fund transfer issues?
+  - id: EL-S97-005
+    question: Are there any pension/provident fund transfer issues?
     priority: high
-  - question: Will leave balances and accruals transfer?
+  - id: EL-S97-006
+    question: Will leave balances and accruals transfer?
     priority: high
-  - question: How will years of service be treated?
+  - id: EL-S97-007
+    question: How will years of service be treated?
     priority: high
-  - question: Are there any employee objections to transfer?
+  - id: EL-S97-008
+    question: Are there any employee objections to transfer?
     priority: high
 - name: Union Relations
   weight: high
   standard_questions:
-  - question: What trade unions are recognized?
+  - id: EL-UNI-001
+    question: What trade unions are recognized?
     priority: critical
-  - question: What is the union membership percentage?
+  - id: EL-UNI-002
+    question: What is the union membership percentage?
     priority: high
-  - question: What collective agreements are in place?
+  - id: EL-UNI-003
+    question: What collective agreements are in place?
     priority: critical
-  - question: When do current wage agreements expire?
+  - id: EL-UNI-004
+    question: When do current wage agreements expire?
     priority: high
-  - question: Has there been any recent industrial action?
+  - id: EL-UNI-005
+    question: Has there been any recent industrial action?
     priority: high
-  - question: What is the history of labor relations?
+  - id: EL-UNI-006
+    question: What is the history of labor relations?
     priority: medium
-  - question: Are there any pending disputes at CCMA or Labour Court?
+  - id: EL-UNI-007
+    question: Are there any pending disputes at CCMA or Labour Court?
     priority: critical
-  - question: What consultation obligations apply to the transaction?
+  - id: EL-UNI-008
+    question: What consultation obligations apply to the transaction?
     priority: critical
 - name: Employment Contracts
   weight: high
   standard_questions:
-  - question: Are there written contracts for all employees?
+  - id: EL-ECO-001
+    question: Are there written contracts for all employees?
     priority: high
-  - question: What are the key executive terms and notice periods?
+  - id: EL-ECO-002
+    question: What are the key executive terms and notice periods?
     priority: critical
-  - question: Are there any change of control provisions in contracts?
+  - id: EL-ECO-003
+    question: Are there any change of control provisions in contracts?
     priority: critical
-  - question: What restraint of trade provisions exist?
+  - id: EL-ECO-004
+    question: What restraint of trade provisions exist?
     priority: high
-  - question: Are there any retention or incentive schemes?
+  - id: EL-ECO-005
+    question: Are there any retention or incentive schemes?
     priority: high
-  - question: What leave entitlements exceed statutory minimums?
+  - id: EL-ECO-006
+    question: What leave entitlements exceed statutory minimums?
     priority: medium
-  - question: Are there any unusual benefits or allowances?
+  - id: EL-ECO-007
+    question: Are there any unusual benefits or allowances?
     priority: medium
-  - question: Do contracts properly assign IP to the employer?
+  - id: EL-ECO-008
+    question: Do contracts properly assign IP to the employer?
     priority: high
 - name: Restructuring & Retrenchments
   weight: critical
   standard_questions:
-  - question: Are any retrenchments planned post-transaction?
+  - id: EL-RET-001
+    question: Are any retrenchments planned post-transaction?
     priority: critical
-  - question: Have Section 189/189A consultations commenced?
+  - id: EL-RET-002
+    question: Have Section 189/189A consultations commenced?
     priority: critical
-  - question: What is the estimated retrenchment cost?
+  - id: EL-RET-003
+    question: What is the estimated retrenchment cost?
     priority: critical
-  - question: What severance terms apply?
+  - id: EL-RET-004
+    question: What severance terms apply?
     priority: high
-  - question: Are there any pending retrenchment disputes?
+  - id: EL-RET-005
+    question: Are there any pending retrenchment disputes?
     priority: critical
-  - question: What selection criteria will be applied?
+  - id: EL-RET-006
+    question: What selection criteria will be applied?
     priority: high
-  - question: What alternatives to retrenchment have been considered?
+  - id: EL-RET-007
+    question: What alternatives to retrenchment have been considered?
     priority: medium
 - name: Employee Benefits
   weight: high
   standard_questions:
-  - question: What pension/provident fund arrangements exist?
+  - id: EL-BEN-001
+    question: What pension/provident fund arrangements exist?
     priority: critical
-  - question: Are there any defined benefit pension obligations?
+  - id: EL-BEN-002
+    question: Are there any defined benefit pension obligations?
     priority: critical
-  - question: What is the status of fund valuations?
+  - id: EL-BEN-003
+    question: What is the status of fund valuations?
     priority: high
-  - question: What medical aid arrangements are in place?
+  - id: EL-BEN-004
+    question: What medical aid arrangements are in place?
     priority: high
-  - question: Are there any post-retirement medical obligations?
+  - id: EL-BEN-005
+    question: Are there any post-retirement medical obligations?
     priority: critical
-  - question: What group life and disability cover exists?
+  - id: EL-BEN-006
+    question: What group life and disability cover exists?
     priority: medium
-  - question: Are there any share or option schemes?
+  - id: EL-BEN-007
+    question: Are there any share or option schemes?
     priority: high
-  - question: What will happen to benefits on transaction?
+  - id: EL-BEN-008
+    question: What will happen to benefits on transaction?
     priority: critical
 - name: Statutory Compliance
   weight: high
   standard_questions:
-  - question: Is the company Employment Equity compliant?
+  - id: EL-STC-001
+    question: Is the company Employment Equity compliant?
     priority: high
-  - question: Has the EE Plan been submitted?
+  - id: EL-STC-002
+    question: Has the EE Plan been submitted?
     priority: high
-  - question: Is Skills Development levy compliance up to date?
+  - id: EL-STC-003
+    question: Is Skills Development levy compliance up to date?
     priority: medium
-  - question: Is UIF registration and payment compliant?
+  - id: EL-STC-004
+    question: Is UIF registration and payment compliant?
     priority: high
-  - question: Is COIDA registration compliant?
+  - id: EL-STC-005
+    question: Is COIDA registration compliant?
     priority: high
-  - question: Are payroll deductions handled correctly?
+  - id: EL-STC-006
+    question: Are payroll deductions handled correctly?
     priority: medium
 deal_blockers:
 - description: Pending mass retrenchment with union opposition
@@ -148,6 +433,250 @@ deal_blockers:
   severity: conditional
 - description: Protected strike threatened over transaction
   severity: conditional
+entity_relationship_patterns:
+  typical_structures:
+    - name: Single Employer
+      description: One employing entity with direct employment relationships
+      key_relationships: [Employer, Employees, Trade Union, Bargaining Council]
+      dd_focus: Employment contracts, collective agreements, compliance status
+    - name: Group Employment
+      description: Multiple entities in group with shared services or secondments
+      key_relationships: [HoldCo, Subsidiaries, Shared Services, Seconded Employees]
+      dd_focus: True employer identification, intercompany arrangements, Section 197 scope
+    - name: Labour Broker / TES
+      description: Temporary employment services arrangement
+      key_relationships: [Client, Labour Broker, Placed Workers, Department of Labour]
+      dd_focus: Section 198 compliance, deemed employment after 3 months, joint liability
+    - name: Outsourced Function
+      description: Business function outsourced to service provider
+      key_relationships: [Principal, Service Provider, Transferred Workers, Union]
+      dd_focus: Section 197 applicability, worker protections, service agreement terms
+    - name: Multi-Union Workplace
+      description: Workplace with multiple recognized trade unions
+      key_relationships: [Employer, Majority Union, Minority Unions, Shop Stewards, CCMA]
+      dd_focus: Recognition thresholds, organizational rights, consultation obligations
+  entity_roles:
+    - role: Employer
+      description: Entity bearing employment obligations
+    - role: Employee
+      description: Person employed under contract of employment
+    - role: Trade Union
+      description: Registered trade union representing employees
+    - role: CCMA
+      description: Dispute resolution body for employment disputes
+    - role: Bargaining Council
+      description: Industry body for collective bargaining
+    - role: Labour Broker
+      description: Temporary employment service provider
+  common_related_parties:
+    - type: Group Company as Co-Employer
+      risk: Joint employment, piercing corporate veil, Section 197 scope
+    - type: Director as Employee
+      risk: Dual capacity, executive contract vs directorship
+    - type: Labour Broker as Deemed Employer
+      risk: Section 198 deemed employment, joint and several liability
+    - type: Outsource Provider with Transferred Staff
+      risk: Section 197 transfer, ongoing obligations
+materiality_thresholds:
+  default_when_value_unknown: "R500,000"
+  when_value_known:
+    - threshold: "5% of annual payroll cost"
+      applies_to: "Individual employment claim, single benefit liability"
+    - threshold: "2% of annual payroll cost"
+      applies_to: "Aggregate compliance costs, training obligations"
+    - threshold: "1 month total payroll"
+      applies_to: "Retrenchment severance exposure"
+  qualitative_overrides:
+    always_material:
+      - "Pending mass retrenchment (50+ employees)"
+      - "Unresolved strike action or threatened industrial action"
+      - "Unfunded defined benefit pension liability"
+      - "Section 197 transfer dispute"
+      - "Automatically unfair dismissal claims"
+      - "CCMA class action or group referral"
+      - "Executive CoC golden parachute triggers"
+      - "Employment Equity non-compliance notice"
+      - "Labour broker deemed employment exposure"
+    never_immaterial:
+      - "Section 197 Transfer"
+      - "Restructuring & Retrenchments"
+      - "Union Relations"
+      - "Employee Benefits (pension/medical)"
+      - "Executive Employment Terms"
+cross_reference_expectations:
+  primary_documents:
+    - document: "Employment Contract"
+      must_cross_reference:
+        - target: "Payroll Records"
+          fields: ["remuneration", "benefits", "deductions"]
+          validation: "Contract terms must match actual payroll payments"
+        - target: "Collective Agreement"
+          fields: ["minimum wages", "working conditions", "leave"]
+          validation: "Individual terms must meet collective agreement minimums"
+    - document: "Collective Agreement"
+      must_cross_reference:
+        - target: "Employment Contract"
+          fields: ["wages", "hours", "leave", "benefits"]
+          validation: "Individual contracts must comply with collective terms"
+        - target: "Payroll Records"
+          fields: ["wage rates", "overtime", "allowances"]
+          validation: "Actual payments must meet agreed rates"
+    - document: "Payroll Records"
+      must_cross_reference:
+        - target: "Financial Statements"
+          fields: ["total staff costs", "pension contributions"]
+          validation: "Payroll totals must match AFS staff cost disclosures"
+        - target: "PAYE Reconciliation"
+          fields: ["total remuneration", "tax deducted"]
+          validation: "PAYE submissions must match payroll records"
+    - document: "Employment Equity Plan"
+      must_cross_reference:
+        - target: "Payroll Records"
+          fields: ["workforce demographics", "headcount by level"]
+          validation: "EE statistics must match actual workforce composition"
+        - target: "B-BBEE Scorecard"
+          fields: ["management control scores"]
+          validation: "EE data must support BEE management control element"
+    - document: "Pension Fund Valuation"
+      must_cross_reference:
+        - target: "Financial Statements"
+          fields: ["pension provision", "contribution expense"]
+          validation: "AFS pension disclosures must match fund valuation"
+        - target: "Payroll Records"
+          fields: ["employer contributions", "employee contributions"]
+          validation: "Contribution rates must match fund rules"
+red_flag_patterns:
+  categories:
+    - category: section_197
+      patterns:
+        - id: EL-RF-197-001
+          pattern: "Section 197|transfer of business|going concern"
+          severity: critical
+          description: "Automatic transfer of employees may apply"
+          action: "Assess Section 197 applicability and identify transferring employees"
+        - id: EL-RF-197-002
+          pattern: "employee objection|refuse to transfer"
+          severity: high
+          description: "Employees objecting to Section 197 transfer"
+          action: "Assess legal position on employee objections"
+        - id: EL-RF-197-003
+          pattern: "joint liability|old employer|new employer"
+          severity: high
+          description: "Joint and several liability for 12 months post-transfer"
+          action: "Quantify potential liability and obtain indemnities"
+    - category: retrenchment
+      patterns:
+        - id: EL-RF-RET-001
+          pattern: "Section 189|retrenchment|operational requirements"
+          severity: critical
+          description: "Pending or contemplated retrenchments"
+          action: "Assess consultation status, severance exposure, and union position"
+        - id: EL-RF-RET-002
+          pattern: "mass retrenchment|189A|50 employees"
+          severity: critical
+          description: "Large-scale retrenchment triggering Section 189A"
+          action: "Assess facilitation requirements and strike risk"
+        - id: EL-RF-RET-003
+          pattern: "severance|package|VRP|voluntary"
+          severity: high
+          description: "Severance liability exposure"
+          action: "Calculate statutory and contractual severance exposure"
+    - category: union_industrial
+      patterns:
+        - id: EL-RF-UNI-001
+          pattern: "strike|industrial action|work stoppage"
+          severity: critical
+          description: "Strike action or threatened industrial action"
+          action: "Assess protected/unprotected status and business impact"
+        - id: EL-RF-UNI-002
+          pattern: "wage dispute|collective bargaining|deadlock"
+          severity: high
+          description: "Unresolved wage dispute"
+          action: "Assess dispute status and potential for industrial action"
+        - id: EL-RF-UNI-003
+          pattern: "union opposition|consultation refusal"
+          severity: high
+          description: "Union opposing transaction or consultation"
+          action: "Assess consultation obligations and union engagement strategy"
+    - category: compliance
+      patterns:
+        - id: EL-RF-COM-001
+          pattern: "EE non-compliance|employment equity|DG Review"
+          severity: high
+          description: "Employment Equity Act non-compliance"
+          action: "Assess compliance status and fine exposure (up to 2% turnover)"
+        - id: EL-RF-COM-002
+          pattern: "unfair dismissal|automatically unfair|discrimination"
+          severity: critical
+          description: "Unfair dismissal or discrimination claim"
+          action: "Assess claim merits and quantify exposure (up to 24 months)"
+        - id: EL-RF-COM-003
+          pattern: "deemed employment|Section 198|labour broker"
+          severity: high
+          description: "Labour broker workers may be deemed employees"
+          action: "Assess Section 198 compliance and deemed employment risk"
+    - category: benefits
+      patterns:
+        - id: EL-RF-BEN-001
+          pattern: "unfunded pension|defined benefit|actuarial deficit"
+          severity: critical
+          description: "Unfunded defined benefit pension liability"
+          action: "Obtain actuarial valuation and quantify deficit"
+        - id: EL-RF-BEN-002
+          pattern: "post-retirement medical|PRMA|legacy"
+          severity: critical
+          description: "Post-retirement medical aid obligations"
+          action: "Obtain actuarial valuation of PRMA liability"
+        - id: EL-RF-BEN-003
+          pattern: "golden parachute|change of control|acceleration"
+          severity: high
+          description: "Executive CoC provisions triggering enhanced payments"
+          action: "Quantify total CoC payment exposure across all executives"
+calculation_formulas:
+  categories:
+    - name: severance
+      formulas:
+        - formula: "Statutory Severance = Years of Service × 1 Week Remuneration"
+          variables: ["years_of_service", "weekly_remuneration"]
+          description: "Minimum severance per Section 41 BCEA"
+        - formula: "Total Retrenchment Cost = Severance + Notice Pay + Leave Pay + Pro-rata Bonus"
+          variables: ["severance", "notice_pay", "leave_balance", "pro_rata_bonus"]
+          description: "Total cost per retrenched employee"
+        - formula: "Mass Retrenchment Exposure = Σ(Individual Retrenchment Cost) for all affected"
+          variables: ["individual_costs", "headcount_affected"]
+          description: "Aggregate retrenchment liability"
+    - name: payroll
+      formulas:
+        - formula: "Total Employment Cost = Basic Salary + Allowances + Employer Contributions + Benefits"
+          variables: ["basic_salary", "allowances", "employer_contributions", "benefits"]
+          description: "Total cost to company per employee"
+        - formula: "Payroll Cost Ratio = Total Staff Cost / Revenue × 100"
+          variables: ["total_staff_cost", "revenue"]
+          description: "Staff cost as percentage of revenue"
+    - name: pension
+      formulas:
+        - formula: "Pension Deficit = Actuarial Liability - Fund Assets"
+          variables: ["actuarial_liability", "fund_assets"]
+          description: "Unfunded defined benefit pension obligation"
+        - formula: "PRMA Liability = NPV of future medical subsidies for retired and eligible employees"
+          variables: ["retired_members", "eligible_employees", "subsidy_rate", "discount_rate"]
+          description: "Post-retirement medical aid actuarial liability"
+    - name: litigation
+      formulas:
+        - formula: "Unfair Dismissal Max = 12 months remuneration (24 for automatically unfair)"
+          variables: ["monthly_remuneration", "dismissal_type"]
+          description: "Maximum compensation for unfair dismissal"
+        - formula: "Total Labour Litigation Exposure = Σ(Individual Claim × Probability)"
+          variables: ["individual_claims", "probability_assessments"]
+          description: "Expected value of all pending labour disputes"
+    - name: bee
+      formulas:
+        - formula: "Management Control Score = f(Board %, ExCo %, Senior Mgmt %, Other Mgmt %)"
+          variables: ["board_black_pct", "exco_black_pct", "senior_mgmt_pct", "other_mgmt_pct"]
+          description: "BEE management control element scoring"
+        - formula: "EE Compliance Gap = EE Target % - Actual % by category and level"
+          variables: ["ee_targets", "actual_demographics"]
+          description: "Employment equity gap analysis"
 conditions_precedent_patterns:
 - pattern: Section 189|consultation|retrenchment
   cp_type: Labor Consultation
@@ -160,11 +689,13 @@ folder_questions:
     display_name: Corporate & Governance
     relevance: high
     questions:
-    - question: Does the company have proper HR policies and employment frameworks in place?
+    - id: EL-F01-001
+      question: Does the company have proper HR policies and employment frameworks in place?
       priority: high
       detail: Check employment policies, codes of conduct, disciplinary procedures
       cot_hint: Review HR policies → assess compliance → identify gaps
-    - question: Are HR delegations of authority properly documented?
+    - id: EL-F01-002
+      question: Are HR delegations of authority properly documented?
       priority: medium
       detail: Who can hire, fire, and set remuneration levels
       cot_hint: Identify authority limits → check documentation
@@ -176,15 +707,18 @@ folder_questions:
     display_name: Commercial Contracts
     relevance: high
     questions:
-    - question: Are independent contractor arrangements properly structured to avoid deemed employment?
+    - id: EL-F02-001
+      question: Are independent contractor arrangements properly structured to avoid deemed employment?
       priority: high
       detail: Check for indicators of employment relationship in contractor agreements
       cot_hint: Apply SARS/DOL tests → identify risk factors → assess exposure
-    - question: Do outsourcing/labour broker arrangements comply with Section 198 of the LRA?
+    - id: EL-F02-002
+      question: Do outsourcing/labour broker arrangements comply with Section 198 of the LRA?
       priority: critical
       detail: Check for temporary employment service compliance
       cot_hint: Identify TES arrangements → check duration → assess deemed employment risk
-    - question: Are there any service level agreements with staffing agencies?
+    - id: EL-F02-003
+      question: Are there any service level agreements with staffing agencies?
       priority: high
       detail: Labour broker relationships and compliance
       cot_hint: Review agency agreements → check Section 198 compliance
@@ -196,19 +730,23 @@ folder_questions:
     display_name: Financial & Banking
     relevance: high
     questions:
-    - question: What is the total monthly payroll cost including all benefits?
+    - id: EL-F03-001
+      question: What is the total monthly payroll cost including all benefits?
       priority: critical
       detail: Basic salary, allowances, employer contributions, bonuses
       cot_hint: Extract salary costs → add benefits → calculate total cost
-    - question: Are there any defined benefit pension liabilities?
+    - id: EL-F03-002
+      question: Are there any defined benefit pension liabilities?
       priority: critical
       detail: Unfunded pension obligations are significant liabilities
       cot_hint: Check fund type → review valuation → calculate shortfall
-    - question: What are the contingent liabilities for retrenchment severance?
+    - id: EL-F03-003
+      question: What are the contingent liabilities for retrenchment severance?
       priority: critical
       detail: Calculate potential severance exposure
       cot_hint: Headcount × average tenure × weeks per year of service
-    - question: What share incentive or equity participation schemes exist and what is the accounting impact?
+    - id: EL-F03-004
+      question: What share incentive or equity participation schemes exist and what is the accounting impact?
       priority: high
       detail: IFRS 2 share-based payment obligations
       cot_hint: Identify schemes → review valuation → check vesting conditions
@@ -223,23 +761,28 @@ folder_questions:
     display_name: Regulatory & Compliance
     relevance: high
     questions:
-    - question: Is the company compliant with Employment Equity Act requirements?
+    - id: EL-F04-001
+      question: Is the company compliant with Employment Equity Act requirements?
       priority: high
       detail: EE Plan, annual reports, affirmative action measures
       cot_hint: Check EE Plan → verify submissions → assess compliance
-    - question: Is Skills Development levy and reporting compliance current?
+    - id: EL-F04-002
+      question: Is Skills Development levy and reporting compliance current?
       priority: medium
       detail: SDL payments, WSP submissions, ATR reporting
       cot_hint: Verify levy payments → check SETA submissions
-    - question: Is the company compliant with Occupational Health and Safety Act?
+    - id: EL-F04-003
+      question: Is the company compliant with Occupational Health and Safety Act?
       priority: high
       detail: OHS policies, incident reporting, H&S representatives
       cot_hint: Review OHS policies → check incident records → verify compliance
-    - question: Is UIF registration and payment compliant?
+    - id: EL-F04-004
+      question: Is UIF registration and payment compliant?
       priority: high
       detail: UIF registration, monthly declarations and payments
       cot_hint: Check registration → verify payments current
-    - question: Is COIDA registration compliant and are assessments paid?
+    - id: EL-F04-005
+      question: Is COIDA registration compliant and are assessments paid?
       priority: high
       detail: Compensation fund registration and assessments
       cot_hint: Check registration → verify assessment payments
@@ -252,43 +795,53 @@ folder_questions:
     display_name: Employment & Labour
     relevance: critical
     questions:
-    - question: Do executive employment contracts contain change of control or golden parachute provisions?
+    - id: EL-F05-001
+      question: Do executive employment contracts contain change of control or golden parachute provisions?
       priority: critical
       detail: Acceleration clauses, enhanced severance on CoC
       cot_hint: Review exec contracts → identify CoC clauses → calculate exposure
-    - question: Are restraint of trade clauses reasonable and enforceable?
+    - id: EL-F05-002
+      question: Are restraint of trade clauses reasonable and enforceable?
       priority: high
       detail: Duration, geographic scope, activity restrictions
       cot_hint: Assess reasonableness → check enforceability factors
-    - question: What collective agreements are in place and what are the key terms?
+    - id: EL-F05-003
+      question: What collective agreements are in place and what are the key terms?
       priority: critical
       detail: Recognition agreements, wage agreements, procedural agreements
       cot_hint: Identify agreements → extract key terms → note expiry dates
-    - question: What is the potential retrenchment liability under Section 189/189A of the LRA?
+    - id: EL-F05-004
+      question: What is the potential retrenchment liability under Section 189/189A of the LRA?
       priority: critical
       detail: Calculate severance based on statutory minimum and contract terms
       cot_hint: Headcount × weeks per year × average weekly wage
-    - question: Are there any pending or threatened CCMA/Labour Court matters?
+    - id: EL-F05-005
+      question: Are there any pending or threatened CCMA/Labour Court matters?
       priority: high
       detail: Referrals, arbitrations, reviews, appeals
       cot_hint: List pending matters → quantify exposure
-    - question: What share incentive or equity participation schemes exist and how are they affected by the transaction?
+    - id: EL-F05-006
+      question: What share incentive or equity participation schemes exist and how are they affected by the transaction?
       priority: high
       detail: Share options, SARs, forfeitable shares, phantom schemes
       cot_hint: Identify schemes → review CoC provisions → calculate vesting
-    - question: Does Section 197 of the LRA apply to this transaction (automatic transfer of employment)?
+    - id: EL-F05-007
+      question: Does Section 197 of the LRA apply to this transaction (automatic transfer of employment)?
       priority: critical
       detail: Transfer of business as going concern transfers employees automatically
       cot_hint: Assess if going concern → identify transferring employees → review terms
-    - question: Are there recognition agreements with trade unions and what consultation obligations exist?
+    - id: EL-F05-008
+      question: Are there recognition agreements with trade unions and what consultation obligations exist?
       priority: high
       detail: Union recognition, consultation requirements for transaction
       cot_hint: Identify recognized unions → check consultation requirements
-    - question: What are the key person dependencies and their contract terms?
+    - id: EL-F05-009
+      question: What are the key person dependencies and their contract terms?
       priority: high
       detail: Critical employees, notice periods, retention arrangements
       cot_hint: Identify key persons → review contract terms → assess retention risk
-    - question: Are there any pending retrenchments or Section 189 processes?
+    - id: EL-F05-010
+      question: Are there any pending retrenchments or Section 189 processes?
       priority: critical
       detail: Ongoing restructuring affects transaction and integration
       cot_hint: Check for Section 189 notices → assess status → quantify liability
@@ -307,7 +860,8 @@ folder_questions:
     display_name: Property & Assets
     relevance: low
     questions:
-    - question: Are there any workplace-specific employment arrangements at different sites?
+    - id: EL-F06-001
+      question: Are there any workplace-specific employment arrangements at different sites?
       priority: medium
       detail: Site-specific agreements, shift arrangements, allowances
       cot_hint: Identify sites → check local arrangements
@@ -316,11 +870,13 @@ folder_questions:
     display_name: Insurance
     relevance: medium
     questions:
-    - question: Is there adequate D&O insurance covering employment claims?
+    - id: EL-F07-001
+      question: Is there adequate D&O insurance covering employment claims?
       priority: medium
       detail: Directors liability for employment law breaches
       cot_hint: Check D&O policy → verify employment exclusions
-    - question: Are employee benefits adequately insured (group life, disability)?
+    - id: EL-F07-002
+      question: Are employee benefits adequately insured (group life, disability)?
       priority: medium
       detail: Group schemes, premium payments, claim status
       cot_hint: Verify cover in place → check premiums current
@@ -329,15 +885,18 @@ folder_questions:
     display_name: Litigation & Disputes
     relevance: high
     questions:
-    - question: What is the total employment litigation exposure?
+    - id: EL-F08-001
+      question: What is the total employment litigation exposure?
       priority: critical
       detail: CCMA matters, Labour Court cases, class actions
       cot_hint: List matters → quantify exposure → assess probability
-    - question: Are there any discrimination, harassment, or unfair dismissal claims?
+    - id: EL-F08-002
+      question: Are there any discrimination, harassment, or unfair dismissal claims?
       priority: high
       detail: EEA claims, automatically unfair dismissals
       cot_hint: Identify claims → review merits → quantify exposure
-    - question: Is there any history of industrial action?
+    - id: EL-F08-003
+      question: Is there any history of industrial action?
       priority: high
       detail: Strikes, lockouts, protest action
       cot_hint: Review strike history → assess current relations
@@ -350,11 +909,13 @@ folder_questions:
     display_name: Tax
     relevance: medium
     questions:
-    - question: Are payroll taxes (PAYE, UIF, SDL) correctly calculated and paid?
+    - id: EL-F09-001
+      question: Are payroll taxes (PAYE, UIF, SDL) correctly calculated and paid?
       priority: high
       detail: SARS compliance for employment taxes
       cot_hint: Verify calculations → check payments current
-    - question: Are employee benefits correctly taxed (fringe benefits, allowances)?
+    - id: EL-F09-002
+      question: Are employee benefits correctly taxed (fringe benefits, allowances)?
       priority: medium
       detail: Seventh Schedule compliance
       cot_hint: Review benefit taxation → identify exposures
@@ -367,7 +928,8 @@ folder_questions:
     display_name: Needs Review
     relevance: low
     questions:
-    - question: What employment-related issues does this document raise?
+    - id: EL-F99-001
+      question: What employment-related issues does this document raise?
       priority: medium
       detail: Documents requiring manual classification review
       cot_hint: Identify employment content → flag for review
@@ -470,6 +1032,177 @@ cot_questions:
   - What share incentive schemes exist and what is the impact of CoC?
 
 # ============================================================================
+# WARRANTY & INDEMNITY FRAMEWORK
+# W&I analysis categories, patterns, and output requirements
+# ============================================================================
+warranty_categories:
+  - category: Workforce & Headcount
+    warranties:
+      - "Complete and accurate employee list has been provided"
+      - "Total payroll cost is as represented"
+      - "No employees on suspension or facing disciplinary action undisclosed"
+      - "Contractor arrangements correctly classified"
+  - category: Section 197 Transfer
+    warranties:
+      - "Section 197 applicability assessment is accurate"
+      - "All transferring employees have been identified"
+      - "Terms and conditions of employment are as disclosed"
+      - "No employee has objected to transfer"
+  - category: Union & Collective Agreements
+    warranties:
+      - "All recognition and collective agreements have been disclosed"
+      - "No pending wage negotiations or disputes"
+      - "No industrial action threatened or pending"
+      - "Consultation obligations have been identified"
+  - category: Employment Contracts
+    warranties:
+      - "Written contracts exist for all employees"
+      - "Executive terms are as disclosed"
+      - "All CoC and golden parachute provisions disclosed"
+      - "Restraint of trade provisions are as represented"
+      - "All retention and incentive schemes disclosed"
+  - category: Retrenchment
+    warranties:
+      - "No retrenchments planned unless disclosed"
+      - "Section 189 consultation requirements identified"
+      - "Severance exposure correctly calculated"
+      - "No pending retrenchment disputes"
+  - category: Employee Benefits
+    warranties:
+      - "Pension and provident fund arrangements are as disclosed"
+      - "No unfunded defined benefit obligations unless disclosed"
+      - "Post-retirement medical obligations are as stated"
+      - "All share schemes and their CoC impact disclosed"
+  - category: Statutory Compliance
+    warranties:
+      - "Employment Equity Act compliance is current"
+      - "Skills Development levy is paid up to date"
+      - "UIF and COIDA registrations are current"
+      - "OHS compliance is as represented"
+      - "No compliance notices or orders outstanding"
+
+indemnity_categories:
+  - category: Retrenchment
+    typical_indemnities:
+      - "Indemnity for severance costs arising from pre-transaction decisions"
+      - "Indemnity for Section 189 procedural non-compliance"
+      - "Indemnity for unfair retrenchment claims"
+  - category: Labour Disputes
+    typical_indemnities:
+      - "Indemnity for pending CCMA and Labour Court matters"
+      - "Indemnity for unfair dismissal claims arising pre-transaction"
+      - "Indemnity for industrial action losses pre-transaction"
+  - category: Employee Benefits
+    typical_indemnities:
+      - "Indemnity for unfunded pension deficit"
+      - "Indemnity for post-retirement medical obligations"
+      - "Indemnity for share scheme acceleration costs on CoC"
+  - category: Compliance
+    typical_indemnities:
+      - "Indemnity for Employment Equity Act fines"
+      - "Indemnity for payroll tax underpayments"
+      - "Indemnity for OHS penalties and claims"
+  - category: Section 197
+    typical_indemnities:
+      - "Indemnity for Section 197 joint liability claims"
+      - "Indemnity for transferred employee claims arising pre-transfer"
+      - "Indemnity for pension fund transfer disputes"
+
+warranty_indemnity_patterns:
+  warranty_patterns:
+    - pattern: "warrant|represent|confirm"
+      context: "employee|headcount|payroll|workforce"
+      maps_to: "Workforce & Headcount"
+    - pattern: "warrant|represent|confirm"
+      context: "Section 197|transfer|going concern"
+      maps_to: "Section 197 Transfer"
+    - pattern: "warrant|represent|confirm"
+      context: "union|collective agreement|recognition|industrial action"
+      maps_to: "Union & Collective Agreements"
+    - pattern: "warrant|represent|confirm"
+      context: "employment contract|executive|notice period|restraint|CoC"
+      maps_to: "Employment Contracts"
+    - pattern: "warrant|represent|confirm"
+      context: "retrenchment|Section 189|severance|operational requirements"
+      maps_to: "Retrenchment"
+    - pattern: "warrant|represent|confirm"
+      context: "pension|provident|medical|share scheme|benefit"
+      maps_to: "Employee Benefits"
+    - pattern: "warrant|represent|confirm"
+      context: "employment equity|UIF|COIDA|SDL|OHS|compliance"
+      maps_to: "Statutory Compliance"
+  indemnity_patterns:
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "retrenchment|severance|Section 189"
+      maps_to: "Retrenchment"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "CCMA|Labour Court|dismissal|dispute"
+      maps_to: "Labour Disputes"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "pension|medical|share scheme|benefit"
+      maps_to: "Employee Benefits"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "employment equity|payroll tax|OHS|compliance"
+      maps_to: "Compliance"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "Section 197|transfer|joint liability"
+      maps_to: "Section 197"
+
+cot_questions_warranty_indemnity:
+  workforce:
+    - "Is the employee list warranted as complete and accurate?"
+    - "Is total payroll cost warranted?"
+    - "Are contractor classifications warranted as correct?"
+  section_197:
+    - "Is Section 197 applicability warranted?"
+    - "Are transferring employee terms warranted?"
+    - "Is there an indemnity for joint liability claims?"
+  union_relations:
+    - "Are all collective agreements warranted as disclosed?"
+    - "Is there a warranty that no industrial action is pending?"
+    - "Are consultation obligations adequately warranted?"
+  contracts_retrenchment:
+    - "Are executive CoC provisions fully warranted?"
+    - "Is retrenchment exposure warranted as calculated?"
+    - "Is there an indemnity for pre-transaction dismissal claims?"
+  benefits:
+    - "Are pension arrangements warranted as disclosed?"
+    - "Is there an indemnity for unfunded pension deficit?"
+    - "Is post-retirement medical liability warranted?"
+  compliance:
+    - "Is statutory compliance warranted across all legislation?"
+    - "Is there an indemnity for EE Act fines?"
+    - "Is payroll tax compliance warranted?"
+
+output_requirements:
+  warranties_register:
+    required_columns:
+      - "warranty_reference"
+      - "category"
+      - "warranty_text"
+      - "warrantor"
+      - "beneficiary"
+      - "limitation_period"
+      - "cap_amount"
+      - "dd_finding_reference"
+      - "risk_assessment"
+    grouping: "by_category"
+    sort_order: "by_risk_level"
+  indemnities_register:
+    required_columns:
+      - "indemnity_reference"
+      - "category"
+      - "indemnity_text"
+      - "indemnifier"
+      - "beneficiary"
+      - "trigger_event"
+      - "cap_amount"
+      - "time_limitation"
+      - "dd_finding_reference"
+    grouping: "by_category"
+    sort_order: "by_exposure_value"
+
+# ============================================================================
 # STATUTORY FRAMEWORK
 # Detailed statutory citation framework for employment and labour findings
 # ============================================================================
@@ -484,51 +1217,61 @@ statutory_framework:
           penalties:
             civil: "Reinstatement or compensation up to 24 months remuneration"
           criticality: critical
+          application_to_dd: "Assess risk of unfair dismissal claims from workforce changes"
         - section: "Section 186"
           description: "Definition of dismissal and unfair labour practice"
           penalties:
             civil: "Compensation, reinstatement"
           criticality: critical
+          application_to_dd: "Classify any contemplated dismissals or labour practice changes"
         - section: "Section 187"
           description: "Automatically unfair dismissals"
           penalties:
             civil: "Compensation up to 24 months (no cap for discrimination)"
           criticality: critical
+          application_to_dd: "Identify any automatically unfair dismissal risk (e.g., transfer refusal)"
         - section: "Section 188"
           description: "Fair reasons and procedure for dismissal"
           penalties:
             civil: "Reinstatement or compensation up to 12 months"
           criticality: critical
+          application_to_dd: "Verify fair reason and procedure for any contemplated or recent dismissals"
         - section: "Section 189"
           description: "Dismissal for operational requirements (retrenchment)"
           penalties:
             civil: "Procedural unfairness: compensation up to 12 months"
           criticality: critical
+          application_to_dd: "Assess Section 189 consultation requirements for operational requirement dismissals"
         - section: "Section 189A"
           description: "Large-scale retrenchments (50+ employees)"
           penalties:
             civil: "Facilitation mandatory, extended consultation, strike rights"
           criticality: critical
+          application_to_dd: "Assess large-scale retrenchment procedures if 50+ employees affected"
         - section: "Section 197"
           description: "Transfer of contract of employment on transfer of business"
           penalties:
             civil: "Automatic transfer, old/new employer joint liability"
           criticality: critical
+          application_to_dd: "Determine whether transaction triggers automatic transfer of employees"
         - section: "Section 197A"
           description: "Transfer of business in insolvency"
           penalties:
             civil: "Modified transfer provisions"
           criticality: high
+          application_to_dd: "Assess modified transfer provisions if insolvency involved"
         - section: "Section 23"
           description: "Collective agreements - binding nature"
           penalties:
             civil: "Breach of collective agreement enforceable"
           criticality: high
+          application_to_dd: "Identify binding collective agreements and their impact on transaction"
         - section: "Section 64"
           description: "Strike and lock-out procedures"
           penalties:
             civil: "Unprotected strike: dismissal, interdict, damages"
           criticality: high
+          application_to_dd: "Assess risk of protected strike action in response to transaction"
 
     - act: "Basic Conditions of Employment Act 75 of 1997"
       acronym: "BCEA"
@@ -539,31 +1282,37 @@ statutory_framework:
           penalties:
             criminal: "Fine or imprisonment"
           criticality: high
+          application_to_dd: "Verify compliance with ordinary hours of work provisions"
         - section: "Section 10"
           description: "Overtime"
           penalties:
             criminal: "Fine, back-pay"
           criticality: high
+          application_to_dd: "Verify overtime payments comply with statutory requirements"
         - section: "Section 20"
           description: "Annual leave"
           penalties:
             criminal: "Fine, accrued leave payment"
           criticality: high
+          application_to_dd: "Calculate accrued annual leave liability for transferring employees"
         - section: "Section 35"
           description: "Notice of termination"
           penalties:
             civil: "Payment in lieu required"
           criticality: high
+          application_to_dd: "Calculate notice pay obligations for affected employees"
         - section: "Section 37"
           description: "Payments on termination"
           penalties:
             civil: "Immediate payment required"
           criticality: high
+          application_to_dd: "Verify all termination payments comply with statutory requirements"
         - section: "Section 41"
           description: "Severance pay for operational requirement dismissals"
           penalties:
             civil: "Minimum 1 week per completed year of service"
           criticality: critical
+          application_to_dd: "Calculate statutory severance pay at minimum one week per year of service"
 
     - act: "Employment Equity Act 55 of 1998"
       acronym: "EEA"
@@ -574,26 +1323,31 @@ statutory_framework:
           penalties:
             civil: "Compensation, compliance order"
           criticality: critical
+          application_to_dd: "Assess risk of unfair discrimination claims from workforce changes"
         - section: "Section 13"
           description: "Duties of designated employers"
           penalties:
             administrative: "Fine up to R1.5 million or 2% of turnover"
           criticality: high
+          application_to_dd: "Verify designated employer compliance with affirmative action duties"
         - section: "Section 15"
           description: "Affirmative action measures"
           penalties:
             administrative: "Compliance order, fine"
           criticality: high
+          application_to_dd: "Assess impact of transaction on affirmative action measures"
         - section: "Section 20"
           description: "Employment equity plan"
           penalties:
             administrative: "Fine for non-compliance"
           criticality: high
+          application_to_dd: "Verify current EE plan is in place and targets being met"
         - section: "Section 21"
           description: "Employment equity report"
           penalties:
             administrative: "Fine for failure to report"
           criticality: high
+          application_to_dd: "Verify annual EE reports have been submitted"
 
     - act: "Skills Development Act 97 of 1998"
       acronym: "SDA"
@@ -604,11 +1358,13 @@ statutory_framework:
           penalties:
             administrative: "Interest and penalties on late payment"
           criticality: high
+          application_to_dd: "Verify skills development levy payments are current"
         - section: "Section 10"
           description: "Sectoral education and training requirements"
           penalties:
             administrative: "Loss of levy rebates"
           criticality: medium
+          application_to_dd: "Verify WSP and ATR submissions to applicable SETA"
 
     - act: "Occupational Health and Safety Act 85 of 1993"
       acronym: "OHSA"
@@ -619,16 +1375,19 @@ statutory_framework:
           penalties:
             criminal: "Fine or imprisonment up to 2 years"
           criticality: critical
+          application_to_dd: "Assess employer OHS compliance and any outstanding incidents"
         - section: "Section 14"
           description: "General duties of employees"
           penalties:
             criminal: "Fine"
           criticality: high
+          application_to_dd: "Verify employee OHS duties are communicated and enforced"
         - section: "Section 24"
           description: "Reporting of incidents"
           penalties:
             criminal: "Fine for failure to report"
           criticality: high
+          application_to_dd: "Check incident reporting compliance and any outstanding reports"
 
     - act: "Compensation for Occupational Injuries and Diseases Act 130 of 1993"
       acronym: "COIDA"
@@ -639,11 +1398,13 @@ statutory_framework:
           penalties:
             criminal: "Fine, personal liability for compensation"
           criticality: critical
+          application_to_dd: "Verify COIDA registration is current and assessment letter obtained"
         - section: "Section 82"
           description: "Assessment payment"
           penalties:
             administrative: "Interest, penalties, increased assessment"
           criticality: high
+          application_to_dd: "Verify assessment payments are current with no arrears"
 
     - act: "Pension Funds Act 24 of 1956"
       acronym: "PFA"
@@ -655,11 +1416,13 @@ statutory_framework:
             criminal: "Fine or imprisonment"
             civil: "Directors personally liable"
           criticality: critical
+          application_to_dd: "Verify pension fund contributions are current (criminal offence if not)"
         - section: "Section 37A"
           description: "Protection of pension benefits"
           penalties:
             civil: "Benefits cannot be reduced, attached, or ceded"
           criticality: high
+          application_to_dd: "Assess restrictions on dealing with pension benefits on transfer"
 
     - act: "Unemployment Insurance Act 63 of 2001"
       acronym: "UIA"
@@ -670,11 +1433,13 @@ statutory_framework:
           penalties:
             criminal: "Fine or imprisonment"
           criticality: high
+          application_to_dd: "Verify UIF registration and monthly contribution compliance"
         - section: "Section 56"
           description: "Offences"
           penalties:
             criminal: "Fine up to R10,000 or imprisonment"
           criticality: high
+          application_to_dd: "Assess risk of offence prosecution for non-compliance"
 
   sector_specific:
     sectoral_determinations:
@@ -721,3 +1486,80 @@ statutory_framework:
         trigger: "Change of control provisions in executive contracts"
         consequence: "Acceleration, enhanced severance may apply"
         timeline: "As per contract terms"
+  secondary_legislation:
+    - name: "BCEA Regulations and Sectoral Determinations"
+      parent_act: "BCEA"
+      relevance: "Minimum wages by sector, working conditions, and employment standards"
+    - name: "Employment Equity Regulations"
+      parent_act: "EEA"
+      relevance: "EE plan requirements, reporting formats, and fine schedules"
+    - name: "Skills Development Levy Act"
+      parent_act: "SDA"
+      relevance: "SDL rate (1% of payroll), payment procedures, and levy rebates"
+    - name: "National Minimum Wage Act 9 of 2018"
+      parent_act: "BCEA"
+      relevance: "National minimum wage rate and annual adjustments"
+    - name: "Bargaining Council Agreements"
+      parent_act: "LRA"
+      relevance: "Industry-specific binding terms and conditions"
+    - name: "OHS Regulations"
+      parent_act: "OHSA"
+      relevance: "Workplace health and safety standards and reporting requirements"
+  regulatory_bodies:
+    - name: "Department of Employment and Labour"
+      jurisdiction: "Employment regulation"
+      key_function: "Labour inspection, EE compliance, OHS enforcement"
+    - name: "CCMA"
+      jurisdiction: "Dispute resolution"
+      key_function: "Conciliation, mediation, and arbitration of labour disputes"
+    - name: "Labour Court"
+      jurisdiction: "Labour law adjudication"
+      key_function: "Review of CCMA awards, unfair dismissal, discrimination claims"
+    - name: "Compensation Fund"
+      jurisdiction: "Occupational injuries"
+      key_function: "COIDA registrations, assessments, and compensation claims"
+    - name: "SETAs"
+      jurisdiction: "Skills development"
+      key_function: "Skills development planning, levy administration, training quality"
+    - name: "Pension Funds Adjudicator"
+      jurisdiction: "Pension disputes"
+      key_function: "Resolution of pension fund complaints and disputes"
+output_templates:
+  executive_summary:
+    sections:
+      - "Transaction Overview"
+      - "Deal Blockers"
+      - "Critical Findings"
+      - "Financial Exposure Summary"
+      - "Conditions Precedent"
+      - "Recommendations"
+    required_elements:
+      - "Section 197 applicability and transfer scope"
+      - "Retrenchment exposure and consultation status"
+      - "Union relations and industrial action risk"
+      - "Executive CoC payment exposure"
+      - "Pension and benefit liabilities"
+      - "Employment Equity compliance status"
+      - "Total employment-related financial exposure"
+  full_report:
+    sections:
+      - "Transaction Context"
+      - "Workforce Composition"
+      - "Section 197 Transfer Analysis"
+      - "Union Relations & Collective Agreements"
+      - "Employment Contracts"
+      - "Restructuring & Retrenchments"
+      - "Employee Benefits"
+      - "Statutory Compliance"
+      - "BEE Analysis"
+      - "Warranties & Indemnities"
+  finding_format:
+    required_fields:
+      - "finding_reference"
+      - "category"
+      - "risk_level"
+      - "description"
+      - "statutory_reference"
+      - "financial_impact"
+      - "recommendation"
+      - "warranty_indemnity_reference"

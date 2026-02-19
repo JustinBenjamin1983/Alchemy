@@ -6,120 +6,430 @@ description: 'Due diligence blueprint for B-BBEE transactions including ownershi
 
   '
 jurisdiction: South Africa
+transaction_context:
+  deal_structures:
+    - type: bee_ownership_transaction
+      description: Sale or issuance of equity to BEE partners
+      key_considerations:
+        - BEE partner selection and independence
+        - Vendor financing and net value calculation
+        - Lock-in periods and exit mechanisms
+        - Fronting risk assessment
+    - type: share_sale_bee_impact
+      description: Share sale transaction affecting existing BEE shareholding
+      key_considerations:
+        - Impact on verified BEE ownership percentage
+        - Once Empowered Always Empowered qualification
+        - BEE partner consent and tag-along rights
+        - Post-transaction BEE compliance
+    - type: mining_charter_transaction
+      description: Transaction requiring Mining Charter III compliance
+      key_considerations:
+        - 30% HDSA ownership requirement
+        - Meaningful economic participation
+        - SLP compliance and community obligations
+        - DMRE consent for ownership changes
+    - type: bee_restructuring
+      description: Restructuring of existing BEE ownership structures
+      key_considerations:
+        - Impact on verified ownership percentage
+        - Flow-through benefit recalculation
+        - Trust or SPV restructuring implications
+        - B-BBEE Commission notification
+  typical_parties:
+    - role: seller
+      description: Existing shareholder disposing of equity to BEE partner
+    - role: bee_partner
+      description: Black person, entity, or broad-based trust acquiring equity
+    - role: target
+      description: Company in which BEE equity is being acquired
+    - role: community_trust
+      description: Community or broad-based ownership vehicle
+    - role: esop_trust
+      description: Employee share ownership plan trust
+    - role: verification_agency
+      description: SANAS-accredited B-BBEE verification agency
+    - role: bee_commission
+      description: B-BBEE Commission (regulatory oversight)
 primary_legislation:
 - Broad-Based Black Economic Empowerment Act 53 of 2003
-- B-BBEE Codes of Good Practice
-- Sector Codes (Mining Charter, FSC, Property Sector Code, etc.)
+- B-BBEE Codes of Good Practice (Generic Codes)
+- Companies Act 71 of 2008
+- Preferential Procurement Policy Framework Act 5 of 2000
+- Public Finance Management Act 1 of 1999
+reference_documents:
+  always_include:
+    - pattern: "B-BBEE certificate|BEE certificate|verification"
+      document_type: "B-BBEE Verification Certificate"
+    - pattern: "scorecard|BEE scorecard|verification workings"
+      document_type: "B-BBEE Scorecard"
+    - pattern: "shareholder agreement|BEE SHA|subscription"
+      document_type: "BEE Shareholder Agreement"
+    - pattern: "vendor loan|BEE financing|notional vendor"
+      document_type: "BEE Funding Agreement"
+    - pattern: "trust deed|community trust|ESOP"
+      document_type: "BEE Trust Deed"
+    - pattern: "ownership structure|flow-through|organogram"
+      document_type: "BEE Ownership Structure Diagram"
+    - pattern: "employment equity|EE Plan|EE Report"
+      document_type: "Employment Equity Plan"
+folder_structure:
+  01_Corporate_Governance:
+    relevance: critical
+    subcategories:
+    - Constitutional
+    - Governance
+    - Share Register
+    expected_documents:
+    - MOI
+    - Board Resolution
+    - Share Register
+    - Shareholders Agreement
+    document_expectations:
+      - document: "MOI"
+        expected_content: "Memorandum of Incorporation with BEE-related provisions"
+        key_fields: ["BEE shareholder rights", "reserved matters", "board appointment rights", "anti-dilution"]
+        cross_reference: ["Shareholders Agreement", "Share Register"]
+      - document: "Share Register"
+        expected_content: "Current share register showing all shareholders and percentages"
+        key_fields: ["shareholder names", "number of shares", "class of shares", "percentage holding"]
+        cross_reference: ["MOI", "B-BBEE Certificate"]
+  02_Commercial:
+    relevance: critical
+    subcategories:
+    - BEE Agreements
+    - Vendor Financing
+    - ED/SD Agreements
+    expected_documents:
+    - BEE Shareholder Agreement
+    - Subscription Agreement
+    - Vendor Loan Agreement
+    - ED Agreement
+    - SD Agreement
+    document_expectations:
+      - document: "BEE Shareholder Agreement"
+        expected_content: "Agreement governing BEE partner rights, obligations, and exit"
+        key_fields: ["ownership percentage", "lock-in period", "exit mechanisms", "governance rights", "anti-dilution"]
+        cross_reference: ["MOI", "B-BBEE Certificate"]
+      - document: "Vendor Loan Agreement"
+        expected_content: "Financing arrangement for BEE equity acquisition"
+        key_fields: ["loan amount", "interest rate", "repayment terms", "security", "dividend sweep"]
+        cross_reference: ["B-BBEE Scorecard", "Financial Statements"]
+  03_Financial:
+    relevance: high
+    subcategories:
+    - Financial Statements
+    - BEE Valuations
+    - Loan Records
+    expected_documents:
+    - Financial Statements
+    - BEE Valuation Report
+    - Vendor Loan Statement
+    - Dividend Records
+    document_expectations:
+      - document: "BEE Valuation Report"
+        expected_content: "Valuation of BEE equity for net value calculation"
+        key_fields: ["equity value", "methodology", "net value calculation", "vendor loan deduction"]
+        cross_reference: ["Vendor Loan Agreement", "B-BBEE Scorecard"]
+      - document: "Dividend Records"
+        expected_content: "Records of dividends paid to BEE shareholders"
+        key_fields: ["dividend dates", "amounts", "recipients", "debt service offset"]
+        cross_reference: ["Vendor Loan Agreement", "Financial Statements"]
+  04_Regulatory:
+    relevance: critical
+    subcategories:
+    - BEE Certificates
+    - Verification
+    - Commission Matters
+    expected_documents:
+    - B-BBEE Certificate
+    - Verification Workings
+    - B-BBEE Commission Correspondence
+    - EE Plan
+    document_expectations:
+      - document: "B-BBEE Certificate"
+        expected_content: "SANAS-accredited verification certificate"
+        key_fields: ["BEE level", "expiry date", "verification agency", "SANAS accreditation"]
+        cross_reference: ["Verification Workings", "Share Register"]
+      - document: "Verification Workings"
+        expected_content: "Detailed workings supporting BEE scorecard"
+        key_fields: ["ownership calculation", "flow-through", "net value", "management control scores"]
+        cross_reference: ["B-BBEE Certificate", "Financial Statements"]
+  05_Employment:
+    relevance: high
+    subcategories:
+    - Management Demographics
+    - EE Reports
+    - Skills Development
+    expected_documents:
+    - Employment Equity Report
+    - Skills Development Report
+    - Management Demographics Schedule
+    document_expectations:
+      - document: "Employment Equity Report"
+        expected_content: "EE report filed with Department of Employment and Labour"
+        key_fields: ["designated employer status", "EE targets", "actual demographics", "compliance status"]
+        cross_reference: ["B-BBEE Scorecard"]
+      - document: "Management Demographics Schedule"
+        expected_content: "Breakdown of management by race and gender"
+        key_fields: ["board composition", "executive management", "senior management", "middle management"]
+        cross_reference: ["Employment Equity Report", "B-BBEE Scorecard"]
+  06_Property:
+    relevance: low
+    subcategories:
+    - BEE Property Holdings
+    expected_documents:
+    - Title Deed
+    document_expectations:
+      - document: "Title Deed"
+        expected_content: "Title deed for properties held in BEE structures"
+        key_fields: ["registered owner", "property description"]
+        cross_reference: ["BEE Ownership Structure Diagram"]
+  07_Insurance:
+    relevance: low
+    subcategories:
+    - W&I Insurance
+    expected_documents:
+    - W&I Insurance Policy
+    document_expectations:
+      - document: "W&I Insurance Policy"
+        expected_content: "Warranty and indemnity insurance covering BEE representations"
+        key_fields: ["insurer", "coverage", "BEE-specific exclusions", "premium"]
+        cross_reference: ["BEE Shareholder Agreement"]
+  08_Litigation:
+    relevance: high
+    subcategories:
+    - B-BBEE Commission
+    - Partner Disputes
+    - Verification Challenges
+    expected_documents:
+    - B-BBEE Commission Correspondence
+    - Summons
+    - Settlement Agreement
+    document_expectations:
+      - document: "B-BBEE Commission Correspondence"
+        expected_content: "Correspondence with B-BBEE Commission regarding investigations or complaints"
+        key_fields: ["complaint nature", "investigation status", "findings", "remedial action"]
+        cross_reference: ["B-BBEE Certificate", "BEE Shareholder Agreement"]
+  09_Tax:
+    relevance: medium
+    subcategories:
+    - BEE Tax Treatment
+    - ED Deductions
+    expected_documents:
+    - Tax Return
+    - ED Spend Records
+    document_expectations:
+      - document: "Tax Return"
+        expected_content: "Income tax returns showing BEE-related tax treatment"
+        key_fields: ["ED deductions claimed", "trust taxation", "CGT on BEE share disposals"]
+        cross_reference: ["Financial Statements", "ED Spend Records"]
+  10_Mining:
+    relevance: critical
+    applies_to:
+    - mining_resources
+    subcategories:
+    - Mining Charter
+    - SLP
+    - DMRE
+    expected_documents:
+    - Mining Charter Scorecard
+    - Social and Labour Plan
+    - DMRE Correspondence
+    document_expectations:
+      - document: "Mining Charter Scorecard"
+        expected_content: "Mining Charter III compliance scorecard"
+        key_fields: ["HDSA ownership %", "meaningful economic participation", "procurement", "HR elements"]
+        cross_reference: ["B-BBEE Certificate", "Share Register"]
+      - document: "Social and Labour Plan"
+        expected_content: "SLP approved by DMRE for mining operations"
+        key_fields: ["HRD commitments", "mine community development", "BEE procurement targets"]
+        cross_reference: ["Mining Charter Scorecard"]
+  11_BEE:
+    relevance: critical
+    subcategories:
+    - Ownership Structure
+    - Flow-Through
+    - Verification
+    expected_documents:
+    - BEE Ownership Structure Diagram
+    - Flow-Through Calculation
+    - Net Value Calculation
+    - Fronting Assessment
+    document_expectations:
+      - document: "BEE Ownership Structure Diagram"
+        expected_content: "Diagram showing full BEE ownership chain and flow-through"
+        key_fields: ["ownership percentages", "entity types", "beneficial owners", "flow-through paths"]
+        cross_reference: ["Share Register", "Verification Workings"]
+      - document: "Flow-Through Calculation"
+        expected_content: "Detailed flow-through calculation per Codes methodology"
+        key_fields: ["direct ownership", "indirect ownership", "modified flow-through", "exclusion principle"]
+        cross_reference: ["BEE Ownership Structure Diagram", "B-BBEE Scorecard"]
+      - document: "Net Value Calculation"
+        expected_content: "Calculation of net value for ownership scoring"
+        key_fields: ["gross equity value", "less vendor financing", "less preference shares", "net value"]
+        cross_reference: ["Vendor Loan Agreement", "BEE Valuation Report"]
+  99_Needs_Review:
+    relevance: n/a
+    subcategories:
+    - Unclassified
+    - Low Confidence
+    expected_documents: []
 risk_categories:
 - name: BEE Ownership Structure
   weight: critical
   standard_questions:
-  - question: What is the current verified B-BBEE ownership percentage?
+  - id: BEE-OWN-001
+    question: What is the current verified B-BBEE ownership percentage?
     priority: critical
-  - question: Is ownership direct or through structures?
+  - id: BEE-OWN-002
+    question: Is ownership direct or through structures?
     priority: critical
-  - question: What flow-through benefits reach black participants?
+  - id: BEE-OWN-003
+    question: What flow-through benefits reach black participants?
     priority: critical
-  - question: Is there economic interest as well as voting rights?
+  - id: BEE-OWN-004
+    question: Is there economic interest as well as voting rights?
     priority: critical
-  - question: Are there any vendor financing arrangements?
+  - id: BEE-OWN-005
+    question: Are there any vendor financing arrangements?
     priority: high
-  - question: What are the terms of any notional vendor loans?
+  - id: BEE-OWN-006
+    question: What are the terms of any notional vendor loans?
     priority: high
-  - question: Is ownership compliant with applicable sector codes?
+  - id: BEE-OWN-007
+    question: Is ownership compliant with applicable sector codes?
     priority: critical
-  - question: What is the 'Once Empowered Always Empowered' position?
+  - id: BEE-OWN-008
+    question: What is the 'Once Empowered Always Empowered' position?
     priority: high
-  - question: Are BEE participants genuine and independent?
+  - id: BEE-OWN-009
+    question: Are BEE participants genuine and independent?
     priority: critical
-  - question: Is there any fronting risk?
+  - id: BEE-OWN-010
+    question: Is there any fronting risk?
     priority: critical
 - name: BEE Verification
   weight: critical
   standard_questions:
-  - question: Is there a valid B-BBEE certificate from SANAS accredited agency?
+  - id: BEE-VER-001
+    question: Is there a valid B-BBEE certificate from SANAS accredited agency?
     priority: critical
-  - question: When does the current certificate expire?
+  - id: BEE-VER-002
+    question: When does the current certificate expire?
     priority: high
-  - question: What is the current B-BBEE level?
+  - id: BEE-VER-003
+    question: What is the current B-BBEE level?
     priority: critical
-  - question: What is the scorecard breakdown by element?
+  - id: BEE-VER-004
+    question: What is the scorecard breakdown by element?
     priority: high
-  - question: Are there any elements at risk of non-compliance?
+  - id: BEE-VER-005
+    question: Are there any elements at risk of non-compliance?
     priority: high
-  - question: What is the impact of the transaction on the BEE rating?
+  - id: BEE-VER-006
+    question: What is the impact of the transaction on the BEE rating?
     priority: critical
-  - question: Will the transaction trigger re-verification?
+  - id: BEE-VER-007
+    question: Will the transaction trigger re-verification?
     priority: high
-  - question: Are there any amended codes that affect scoring?
+  - id: BEE-VER-008
+    question: Are there any amended codes that affect scoring?
     priority: medium
 - name: Ownership Transaction Structure
   weight: critical
   standard_questions:
-  - question: What ownership percentage will BEE partners hold post-transaction?
+  - id: BEE-OTS-001
+    question: What ownership percentage will BEE partners hold post-transaction?
     priority: critical
-  - question: How is the BEE transaction being funded?
+  - id: BEE-OTS-002
+    question: How is the BEE transaction being funded?
     priority: critical
-  - question: What are the terms of any preference shares?
+  - id: BEE-OTS-003
+    question: What are the terms of any preference shares?
     priority: high
-  - question: What lock-in periods apply to BEE shareholders?
+  - id: BEE-OTS-004
+    question: What lock-in periods apply to BEE shareholders?
     priority: high
-  - question: What exit mechanisms exist for BEE partners?
+  - id: BEE-OTS-005
+    question: What exit mechanisms exist for BEE partners?
     priority: high
-  - question: Are there any tag-along or drag-along rights?
+  - id: BEE-OTS-006
+    question: Are there any tag-along or drag-along rights?
     priority: high
-  - question: What anti-dilution protections exist?
+  - id: BEE-OTS-007
+    question: What anti-dilution protections exist?
     priority: high
-  - question: What governance rights do BEE partners have?
+  - id: BEE-OTS-008
+    question: What governance rights do BEE partners have?
     priority: high
-  - question: Are there any clawback or anti-embarrassment provisions?
+  - id: BEE-OTS-009
+    question: Are there any clawback or anti-embarrassment provisions?
     priority: medium
 - name: Mining Charter Compliance
   weight: critical
   applies_to:
   - mining_resources
   standard_questions:
-  - question: Is the target compliant with Mining Charter III ownership requirements?
+  - id: BEE-MIN-001
+    question: Is the target compliant with Mining Charter III ownership requirements?
     priority: critical
-  - question: What is the HDSA ownership percentage as per the Charter?
+  - id: BEE-MIN-002
+    question: What is the HDSA ownership percentage as per the Charter?
     priority: critical
-  - question: Is there 'meaningful economic participation'?
+  - id: BEE-MIN-003
+    question: Is there 'meaningful economic participation'?
     priority: critical
-  - question: Are procurement and HR elements compliant?
+  - id: BEE-MIN-004
+    question: Are procurement and HR elements compliant?
     priority: high
-  - question: What is the SLP compliance status?
+  - id: BEE-MIN-005
+    question: What is the SLP compliance status?
     priority: high
-  - question: How will the transaction affect Mining Charter compliance?
+  - id: BEE-MIN-006
+    question: How will the transaction affect Mining Charter compliance?
     priority: critical
-  - question: Will DMRE consent address BEE requirements?
+  - id: BEE-MIN-007
+    question: Will DMRE consent address BEE requirements?
     priority: high
 - name: Management Control & Employment Equity
   weight: high
   standard_questions:
-  - question: What is the black representation at board level?
+  - id: BEE-MCE-001
+    question: What is the black representation at board level?
     priority: high
-  - question: What is black representation in executive management?
+  - id: BEE-MCE-002
+    question: What is black representation in executive management?
     priority: high
-  - question: What is black representation in senior management?
+  - id: BEE-MCE-003
+    question: What is black representation in senior management?
     priority: high
-  - question: What is the gender breakdown of black representation?
+  - id: BEE-MCE-004
+    question: What is the gender breakdown of black representation?
     priority: medium
-  - question: Is the company Employment Equity compliant?
+  - id: BEE-MCE-005
+    question: Is the company Employment Equity compliant?
     priority: high
-  - question: Has the EE Plan been submitted and approved?
+  - id: BEE-MCE-006
+    question: Has the EE Plan been submitted and approved?
     priority: medium
 - name: Enterprise & Supplier Development
   weight: medium
   standard_questions:
-  - question: What enterprise development spend has been incurred?
+  - id: BEE-ESD-001
+    question: What enterprise development spend has been incurred?
     priority: medium
-  - question: What supplier development programs exist?
+  - id: BEE-ESD-002
+    question: What supplier development programs exist?
     priority: medium
-  - question: What is the percentage of procurement from BEE suppliers?
+  - id: BEE-ESD-003
+    question: What is the percentage of procurement from BEE suppliers?
     priority: high
-  - question: Are there any ED/SD commitments in the SLP?
+  - id: BEE-ESD-004
+    question: Are there any ED/SD commitments in the SLP?
     priority: high
-  - question: What is the localisation strategy?
+  - id: BEE-ESD-005
+    question: What is the localisation strategy?
     priority: medium
 deal_blockers:
 - description: Fronting investigation by B-BBEE Commission
@@ -130,6 +440,256 @@ deal_blockers:
   severity: conditional
 - description: Mining Charter non-compliance affecting DMRE consent
   severity: conditional
+entity_relationship_patterns:
+  typical_structures:
+    - name: Direct BEE Shareholding
+      description: Black individuals or entities holding shares directly
+      key_relationships: [BEE Shareholder, Company, Other Shareholders]
+      dd_focus: Genuineness, independence, economic interest, voting rights
+    - name: BEE Trust / SPV Structure
+      description: Ownership through trust or special purpose vehicle
+      key_relationships: [Trust/SPV, Beneficiaries, Company, Trustees, Vendor Financier]
+      dd_focus: Flow-through calculation, trust deed, beneficiary identification, fronting risk
+    - name: Community Trust
+      description: Broad-based community ownership vehicle
+      key_relationships: [Community Trust, Community Members, Trustees, Company, DMRE]
+      dd_focus: Trust governance, benefit distribution, community identification, independence
+    - name: ESOP Trust
+      description: Employee share ownership plan for broad-based ownership
+      key_relationships: [ESOP Trust, Employees, Company, Trustees]
+      dd_focus: Employee eligibility, vesting, forfeiture, benefit distribution
+    - name: Vendor-Financed Structure
+      description: BEE acquisition funded by vendor loan or preference shares
+      key_relationships: [BEE Partner, Vendor, Company, Lender]
+      dd_focus: Net value calculation, dividend flow, loan terms, economic substance
+  entity_roles:
+    - role: BEE Shareholder
+      description: Black person or entity holding equity
+    - role: Broad-Based Trust
+      description: Trust with >100 black beneficiaries
+    - role: Vendor Financier
+      description: Seller providing financing for BEE acquisition
+    - role: Verification Agency
+      description: SANAS-accredited B-BBEE verification agency
+    - role: B-BBEE Commission
+      description: Regulatory body overseeing BEE compliance and fronting
+    - role: Trustee
+      description: Trustee of BEE trust or community trust
+  common_related_parties:
+    - type: Seller as Vendor Financier
+      risk: Net value erosion, circular funding, fronting indicators
+    - type: Director as BEE Trustee
+      risk: Conflict of interest, governance concerns, fronting risk
+    - type: Company Nominee as Trust Beneficiary
+      risk: Fronting indicator, not genuine broad-based
+    - type: Advisor as BEE Introducer
+      risk: Fee arrangements, ongoing economic benefit, independence
+materiality_thresholds:
+  default_when_value_unknown: "R1,000,000"
+  when_value_known:
+    - threshold: "1% of BEE equity value"
+      applies_to: "Individual BEE transaction issue"
+    - threshold: "Any amount affecting BEE level"
+      applies_to: "Scorecard element at risk of threshold breach"
+    - threshold: "Any fronting indicator"
+      applies_to: "B-BBEE Commission investigation risk"
+  qualitative_overrides:
+    always_material:
+      - "Fronting investigation or indicators present"
+      - "BEE ownership below sector code minimum"
+      - "Net value calculation resulting in zero or negative ownership credit"
+      - "BEE partner not genuine or independent"
+      - "Flow-through benefits not reaching black participants"
+      - "B-BBEE certificate expired or invalid"
+      - "Mining Charter non-compliance affecting mining rights"
+      - "OEAE qualification disputed"
+      - "BEE partner exit without replacement"
+    never_immaterial:
+      - "BEE Ownership Structure"
+      - "BEE Verification"
+      - "Fronting Risk"
+      - "Mining Charter Compliance"
+      - "Net Value Calculation"
+cross_reference_expectations:
+  primary_documents:
+    - document: "B-BBEE Certificate"
+      must_cross_reference:
+        - target: "Share Register"
+          fields: ["ownership percentage", "black ownership"]
+          validation: "Verified ownership must match current share register"
+        - target: "Verification Workings"
+          fields: ["scorecard breakdown", "element scores"]
+          validation: "Certificate level must match detailed workings"
+    - document: "BEE Shareholder Agreement"
+      must_cross_reference:
+        - target: "MOI"
+          fields: ["shareholder rights", "reserved matters", "board appointments"]
+          validation: "SHA governance rights must be reflected in MOI"
+        - target: "Vendor Loan Agreement"
+          fields: ["funding amount", "repayment terms"]
+          validation: "SHA references to vendor financing must match loan terms"
+        - target: "Share Register"
+          fields: ["ownership percentages", "share classes"]
+          validation: "SHA percentage must match actual shareholding"
+    - document: "Verification Workings"
+      must_cross_reference:
+        - target: "Financial Statements"
+          fields: ["equity value", "NPAT", "ED/SD spend"]
+          validation: "Financial data in workings must match audited statements"
+        - target: "BEE Ownership Structure Diagram"
+          fields: ["ownership chain", "flow-through paths"]
+          validation: "Structure must match verification flow-through calculation"
+    - document: "Vendor Loan Agreement"
+      must_cross_reference:
+        - target: "Net Value Calculation"
+          fields: ["outstanding balance", "interest accrued"]
+          validation: "Loan balance must match net value deduction"
+        - target: "Dividend Records"
+          fields: ["dividend payments", "debt service offset"]
+          validation: "Dividend flow must match loan repayment schedule"
+    - document: "Mining Charter Scorecard"
+      must_cross_reference:
+        - target: "B-BBEE Certificate"
+          fields: ["ownership percentage"]
+          validation: "Charter HDSA % must be consistent with B-BBEE ownership"
+        - target: "Social and Labour Plan"
+          fields: ["commitments", "compliance status"]
+          validation: "SLP BEE elements must support Charter compliance"
+red_flag_patterns:
+  categories:
+    - category: fronting
+      patterns:
+        - id: BEE-RF-FRO-001
+          pattern: "fronting|front|nominee|conduit"
+          severity: critical
+          description: "Indicators of fronting under B-BBEE Act"
+          action: "Apply B-BBEE Act Section 10 fronting tests and assess independence"
+        - id: BEE-RF-FRO-002
+          pattern: "no economic benefit|no dividend|no participation"
+          severity: critical
+          description: "BEE partner receives no genuine economic benefit"
+          action: "Assess economic substance and flow-through of benefits"
+        - id: BEE-RF-FRO-003
+          pattern: "not independent|related to seller|controlled by"
+          severity: critical
+          description: "BEE partner lacks independence from seller"
+          action: "Assess BEE partner independence per Codes"
+        - id: BEE-RF-FRO-004
+          pattern: "window dress|cosmetic|sham"
+          severity: critical
+          description: "BEE structure appears to lack genuine substance"
+          action: "Full fronting assessment against B-BBEE Act indicators"
+    - category: ownership
+      patterns:
+        - id: BEE-RF-OWN-001
+          pattern: "below threshold|below minimum|non-compliant ownership"
+          severity: critical
+          description: "BEE ownership below applicable sector code minimum"
+          action: "Quantify shortfall and assess remediation options"
+        - id: BEE-RF-OWN-002
+          pattern: "net value zero|net value negative|no equity"
+          severity: critical
+          description: "Net value calculation eliminates ownership credit"
+          action: "Review vendor financing terms and dividend flow"
+        - id: BEE-RF-OWN-003
+          pattern: "dilution|diluted|anti-dilution breach"
+          severity: high
+          description: "BEE ownership diluted below committed levels"
+          action: "Assess anti-dilution protections and remediation"
+    - category: verification
+      patterns:
+        - id: BEE-RF-VER-001
+          pattern: "certificate expired|no certificate|unverified"
+          severity: critical
+          description: "B-BBEE certificate expired or missing"
+          action: "Arrange re-verification before transaction"
+        - id: BEE-RF-VER-002
+          pattern: "SANAS not accredited|agency suspended"
+          severity: critical
+          description: "Verification agency accreditation issue"
+          action: "Verify SANAS accreditation status of verification agency"
+        - id: BEE-RF-VER-003
+          pattern: "misrepresent|false certificate|incorrect level"
+          severity: critical
+          description: "Potential misrepresentation of B-BBEE status"
+          action: "Criminal offence under s13G - investigate immediately"
+    - category: mining_charter
+      patterns:
+        - id: BEE-RF-MIN-001
+          pattern: "HDSA below 30|Charter non-compliant|mining right at risk"
+          severity: critical
+          description: "Mining Charter III ownership non-compliance"
+          action: "Assess impact on mining rights and DMRE consent"
+        - id: BEE-RF-MIN-002
+          pattern: "SLP non-compliance|community development|HRD shortfall"
+          severity: high
+          description: "SLP BEE element non-compliance"
+          action: "Quantify SLP obligations and remediation plan"
+    - category: structure
+      patterns:
+        - id: BEE-RF-STR-001
+          pattern: "put option|exit|buyback|unwind"
+          severity: high
+          description: "BEE exit mechanism could reduce ownership below threshold"
+          action: "Model post-exit BEE position and replacement requirements"
+        - id: BEE-RF-STR-002
+          pattern: "vendor loan|high interest|onerous terms"
+          severity: high
+          description: "Vendor financing terms undermine BEE economic benefit"
+          action: "Assess impact on net value and genuine economic participation"
+        - id: BEE-RF-STR-003
+          pattern: "lock-in expired|restriction lapsed|free to sell"
+          severity: high
+          description: "Lock-in period expired allowing BEE partner exit"
+          action: "Assess exit risk and impact on continued BEE compliance"
+calculation_formulas:
+  categories:
+    - name: ownership
+      formulas:
+        - formula: "Verified BEE Ownership = Flow-Through % × Economic Interest %"
+          variables: ["flow_through_percentage", "economic_interest_percentage"]
+          description: "Verified black ownership percentage"
+        - formula: "Flow-Through = Σ(Ownership at each level in chain)"
+          variables: ["ownership_chain_percentages"]
+          description: "Modified flow-through principle calculation"
+        - formula: "Net Value = (Equity Value × BEE %) - Outstanding Vendor Loans - Preference Shares"
+          variables: ["equity_value", "bee_percentage", "vendor_loans", "preference_shares"]
+          description: "Net value calculation for ownership scoring"
+    - name: scorecard
+      formulas:
+        - formula: "Total BEE Score = Ownership + Mgmt Control + Skills Dev + ESD + SED"
+          variables: ["ownership_score", "management_control", "skills_development", "esd", "sed"]
+          description: "Generic Codes total scorecard calculation"
+        - formula: "BEE Level = Score-to-Level mapping (100+ = Level 1, 95-99 = Level 2, etc.)"
+          variables: ["total_score"]
+          description: "Scorecard score to BEE contributor level"
+    - name: ed_sd
+      formulas:
+        - formula: "ED Spend % = Annual ED Expenditure / NPAT × 100"
+          variables: ["annual_ed_spend", "npat"]
+          description: "Enterprise development spend as percentage of NPAT"
+        - formula: "SD Spend % = Annual SD Expenditure / NPAT × 100"
+          variables: ["annual_sd_spend", "npat"]
+          description: "Supplier development spend as percentage of NPAT"
+        - formula: "Preferential Procurement % = BEE Procurement / Total Procurement × 100"
+          variables: ["bee_procurement", "total_procurement"]
+          description: "Preferential procurement percentage"
+    - name: mining_charter
+      formulas:
+        - formula: "HDSA Ownership = HDP Shareholding / Total Shares × 100"
+          variables: ["hdp_shares", "total_shares"]
+          description: "Mining Charter HDSA ownership calculation"
+        - formula: "Meaningful Economic Participation = Dividends to HDP / Total Dividends"
+          variables: ["hdp_dividends", "total_dividends"]
+          description: "Mining Charter economic participation test"
+    - name: transaction_impact
+      formulas:
+        - formula: "Post-Transaction BEE % = BEE Shares Post / Total Shares Post × 100"
+          variables: ["bee_shares_post", "total_shares_post"]
+          description: "BEE ownership after transaction completion"
+        - formula: "Dilution Impact = Pre-Transaction BEE % - Post-Transaction BEE %"
+          variables: ["pre_bee_percentage", "post_bee_percentage"]
+          description: "BEE dilution from transaction"
 conditions_precedent_patterns:
 - pattern: BEE partner|HDSA|empowerment
   cp_type: BEE Partner Consent
@@ -142,19 +702,23 @@ folder_questions:
     display_name: Corporate & Governance
     relevance: critical
     questions:
-    - question: What is the current BEE/HDSA shareholding structure in the MOI?
+    - id: BEE-F01-001
+      question: What is the current BEE/HDSA shareholding structure in the MOI?
       priority: critical
       detail: Black ownership percentage, voting rights, economic interest
       cot_hint: Extract shareholding → calculate HDSA % → assess economic interest
-    - question: Are there any special BEE shareholder rights in the MOI?
+    - id: BEE-F01-002
+      question: Are there any special BEE shareholder rights in the MOI?
       priority: high
       detail: Veto rights, reserved matters, board appointments
       cot_hint: Review MOI → identify BEE provisions → assess governance rights
-    - question: What board and executive representation do BEE partners have?
+    - id: BEE-F01-003
+      question: What board and executive representation do BEE partners have?
       priority: high
       detail: Board seats, executive positions, committee membership
       cot_hint: Review board composition → calculate black representation
-    - question: Are there any BEE lock-in or restriction provisions?
+    - id: BEE-F01-004
+      question: Are there any BEE lock-in or restriction provisions?
       priority: high
       detail: Transfer restrictions, lock-in periods, tag-along/drag-along
       cot_hint: Find lock-in provisions → assess duration → check impact on transaction
@@ -167,27 +731,33 @@ folder_questions:
     display_name: Commercial Contracts
     relevance: critical
     questions:
-    - question: What BEE shareholder agreements or subscription agreements exist?
+    - id: BEE-F02-001
+      question: What BEE shareholder agreements or subscription agreements exist?
       priority: critical
       detail: BEE SHA, subscription terms, put/call options
       cot_hint: Find BEE agreements → extract key terms → identify rights
-    - question: What vendor/loan financing arrangements fund the BEE transaction?
+    - id: BEE-F02-002
+      question: What vendor/loan financing arrangements fund the BEE transaction?
       priority: critical
       detail: Notional vendor financing, loans, preference shares
       cot_hint: Identify funding structure → calculate net value → assess flow-through
-    - question: Are there any enterprise or supplier development agreements?
+    - id: BEE-F02-003
+      question: Are there any enterprise or supplier development agreements?
       priority: high
       detail: ED/SD agreements, loan agreements, grant agreements
       cot_hint: List ED/SD agreements → assess compliance → check spend
-    - question: What exit or liquidity mechanisms exist for BEE partners?
+    - id: BEE-F02-004
+      question: What exit or liquidity mechanisms exist for BEE partners?
       priority: high
       detail: Put options, buyback arrangements, listing undertakings
       cot_hint: Find exit provisions → assess trigger events → evaluate terms
-    - question: Are there any anti-dilution or pre-emptive right provisions?
+    - id: BEE-F02-005
+      question: Are there any anti-dilution or pre-emptive right provisions?
       priority: high
       detail: Protection against dilution, subscription rights
       cot_hint: Check anti-dilution → assess trigger → evaluate protection
-    - question: What preferential procurement commitments exist?
+    - id: BEE-F02-006
+      question: What preferential procurement commitments exist?
       priority: medium
       detail: Procurement agreements with BEE suppliers
       cot_hint: List procurement commitments → calculate spend → assess compliance
@@ -204,23 +774,28 @@ folder_questions:
     display_name: Financial & Banking
     relevance: high
     questions:
-    - question: What is the net value calculation for BEE ownership?
+    - id: BEE-F03-001
+      question: What is the net value calculation for BEE ownership?
       priority: critical
       detail: Equity value less outstanding BEE debt/preference shares
       cot_hint: Calculate gross value → subtract debt → derive net value
-    - question: What dividends or distributions have been paid to BEE shareholders?
+    - id: BEE-F03-002
+      question: What dividends or distributions have been paid to BEE shareholders?
       priority: high
       detail: Dividend history, distribution policy
       cot_hint: Extract dividend history → compare to debt service → assess flow-through
-    - question: What is the outstanding balance on BEE vendor loans?
+    - id: BEE-F03-003
+      question: What is the outstanding balance on BEE vendor loans?
       priority: critical
       detail: Loan balances, payment history, maturity dates
       cot_hint: Extract loan balance → check payment history → assess net value impact
-    - question: What is the enterprise and supplier development spend?
+    - id: BEE-F03-004
+      question: What is the enterprise and supplier development spend?
       priority: high
       detail: ED/SD expenditure for scorecard purposes
       cot_hint: Calculate ED/SD spend → compare to target → assess shortfall
-    - question: What is the preferential procurement spend?
+    - id: BEE-F03-005
+      question: What is the preferential procurement spend?
       priority: high
       detail: Procurement from QSE/EME/black-owned suppliers
       cot_hint: Extract procurement data → segment by BEE level → calculate %
@@ -233,27 +808,33 @@ folder_questions:
     display_name: Regulatory & Compliance
     relevance: critical
     questions:
-    - question: Is there a valid B-BBEE certificate from SANAS-accredited agency?
+    - id: BEE-F04-001
+      question: Is there a valid B-BBEE certificate from SANAS-accredited agency?
       priority: critical
       detail: Certificate validity, accreditation status, expiry date
       cot_hint: Check certificate → verify SANAS → note expiry
-    - question: What is the current verified B-BBEE level and scorecard?
+    - id: BEE-F04-002
+      question: What is the current verified B-BBEE level and scorecard?
       priority: critical
       detail: Level achieved, score breakdown by element
       cot_hint: Extract level → analyze scorecard → identify weak elements
-    - question: Which sector code applies - generic or sector-specific?
+    - id: BEE-F04-003
+      question: Which sector code applies - generic or sector-specific?
       priority: critical
       detail: Generic Codes, Mining Charter, FSC, Property Code, etc.
       cot_hint: Identify sector → determine applicable code → check thresholds
-    - question: Are there any B-BBEE Commission investigations or complaints?
+    - id: BEE-F04-004
+      question: Are there any B-BBEE Commission investigations or complaints?
       priority: critical
       detail: Fronting investigations, complaints, B-BBEE Commission matters
       cot_hint: Check for investigations → assess exposure → evaluate risk
-    - question: Is the company at risk of fronting allegations?
+    - id: BEE-F04-005
+      question: Is the company at risk of fronting allegations?
       priority: critical
       detail: Indicators of fronting under the B-BBEE Act
       cot_hint: Apply fronting indicators → assess genuine participation → evaluate risk
-    - question: What is the 'Once Empowered Always Empowered' position?
+    - id: BEE-F04-006
+      question: What is the 'Once Empowered Always Empowered' position?
       priority: high
       detail: OEAE qualification, percentage retained, sale of shares
       cot_hint: Check OEAE criteria → calculate retained ownership → apply rules
@@ -266,23 +847,28 @@ folder_questions:
     display_name: Employment & Labour
     relevance: high
     questions:
-    - question: What is the black representation at board level?
+    - id: BEE-F05-001
+      question: What is the black representation at board level?
       priority: high
       detail: Black directors, female black directors
       cot_hint: Count black directors → calculate % → assess compliance
-    - question: What is black representation in executive management?
+    - id: BEE-F05-002
+      question: What is black representation in executive management?
       priority: high
       detail: Black executives, ExCo members
       cot_hint: Count black executives → calculate % → assess compliance
-    - question: What is black representation in senior and middle management?
+    - id: BEE-F05-003
+      question: What is black representation in senior and middle management?
       priority: high
       detail: Management control element compliance
       cot_hint: Extract demographics → calculate by level → score management control
-    - question: Is the company Employment Equity compliant?
+    - id: BEE-F05-004
+      question: Is the company Employment Equity compliant?
       priority: high
       detail: EE Plan submission, EE targets, compliance status
       cot_hint: Check EE Plan → verify submission → assess compliance
-    - question: What skills development spend has been incurred?
+    - id: BEE-F05-005
+      question: What skills development spend has been incurred?
       priority: medium
       detail: Training spend, learnerships, bursaries
       cot_hint: Calculate skills spend → segment by beneficiary → assess scorecard
@@ -295,7 +881,8 @@ folder_questions:
     display_name: Property & Assets
     relevance: low
     questions:
-    - question: Are any properties held in BEE structures?
+    - id: BEE-F06-001
+      question: Are any properties held in BEE structures?
       priority: low
       detail: Property ownership in BEE vehicles
       cot_hint: Check property title → identify BEE ownership
@@ -304,7 +891,8 @@ folder_questions:
     display_name: Insurance
     relevance: low
     questions:
-    - question: Is there any insurance covering BEE transaction risks?
+    - id: BEE-F07-001
+      question: Is there any insurance covering BEE transaction risks?
       priority: low
       detail: Warranty and indemnity insurance, BEE representations
       cot_hint: Check W&I policy → identify BEE coverage
@@ -313,15 +901,18 @@ folder_questions:
     display_name: Litigation & Disputes
     relevance: high
     questions:
-    - question: Are there any B-BBEE Commission matters or investigations?
+    - id: BEE-F08-001
+      question: Are there any B-BBEE Commission matters or investigations?
       priority: critical
       detail: Fronting complaints, investigations, enforcement action
       cot_hint: Check for matters → assess status → evaluate exposure
-    - question: Are there any disputes with current BEE partners?
+    - id: BEE-F08-002
+      question: Are there any disputes with current BEE partners?
       priority: high
       detail: Shareholder disputes, exit disputes, payment disputes
       cot_hint: Identify disputes → assess claims → evaluate resolution
-    - question: Have there been any challenges to BEE verification?
+    - id: BEE-F08-003
+      question: Have there been any challenges to BEE verification?
       priority: high
       detail: Verification challenges, scorecard disputes
       cot_hint: Check for challenges → review outcome → assess risk
@@ -334,11 +925,13 @@ folder_questions:
     display_name: Tax
     relevance: medium
     questions:
-    - question: Are there any tax implications of BEE structure unwinding?
+    - id: BEE-F09-001
+      question: Are there any tax implications of BEE structure unwinding?
       priority: medium
       detail: CGT on share sales, STC on dividends, trust taxation
       cot_hint: Analyze structure → identify tax triggers → assess exposure
-    - question: Has enterprise development spend been correctly treated for tax?
+    - id: BEE-F09-002
+      question: Has enterprise development spend been correctly treated for tax?
       priority: medium
       detail: Section 12I, Section 18A deductions
       cot_hint: Review ED spend → check tax treatment → verify deductions
@@ -354,23 +947,28 @@ folder_questions:
     - mining_resources
     - mining_acquisition
     questions:
-    - question: Is the target compliant with Mining Charter III ownership requirements?
+    - id: BEE-F10-001
+      question: Is the target compliant with Mining Charter III ownership requirements?
       priority: critical
       detail: 30% HDP ownership, meaningful economic participation
       cot_hint: Calculate HDP ownership → check threshold → assess compliance
-    - question: What is the HDSA ownership percentage under the Mining Charter?
+    - id: BEE-F10-002
+      question: What is the HDSA ownership percentage under the Mining Charter?
       priority: critical
       detail: HDP calculation per Mining Charter methodology
       cot_hint: Apply Charter formula → calculate HDP % → verify compliance
-    - question: Is there 'meaningful economic participation' by HDSA?
+    - id: BEE-F10-003
+      question: Is there 'meaningful economic participation' by HDSA?
       priority: critical
       detail: Dividend flow, governance participation, economic benefit
       cot_hint: Check economic flow → assess governance → evaluate meaningfulness
-    - question: What Mining Charter elements are at risk?
+    - id: BEE-F10-004
+      question: What Mining Charter elements are at risk?
       priority: high
       detail: Ownership, procurement, HR elements, housing, community
       cot_hint: Review Charter scorecard → identify gaps → assess risk
-    - question: What is the SLP compliance status for BEE elements?
+    - id: BEE-F10-005
+      question: What is the SLP compliance status for BEE elements?
       priority: high
       detail: SLP commitments, HRD, mine community development
       cot_hint: Review SLP → check BEE commitments → assess compliance
@@ -383,35 +981,43 @@ folder_questions:
     display_name: B-BBEE & Transformation
     relevance: critical
     questions:
-    - question: What is the verified black ownership percentage?
+    - id: BEE-F11-001
+      question: What is the verified black ownership percentage?
       priority: critical
       detail: Direct and indirect ownership, flow-through calculation
       cot_hint: Extract ownership → apply flow-through → calculate verified %
-    - question: Is ownership held directly or through structures?
+    - id: BEE-F11-002
+      question: Is ownership held directly or through structures?
       priority: critical
       detail: Trusts, SPVs, holding companies, ownership structures
       cot_hint: Map structures → trace ownership → apply flow-through
-    - question: What flow-through benefits reach black participants?
+    - id: BEE-F11-003
+      question: What flow-through benefits reach black participants?
       priority: critical
       detail: Economic participation, dividends, governance rights
       cot_hint: Calculate economic flow → assess governance → determine net benefit
-    - question: Are BEE participants genuine and independent?
+    - id: BEE-F11-004
+      question: Are BEE participants genuine and independent?
       priority: critical
       detail: Fronting indicators, genuine participation assessment
       cot_hint: Apply fronting tests → assess independence → evaluate risk
-    - question: What is the scorecard breakdown by element?
+    - id: BEE-F11-005
+      question: What is the scorecard breakdown by element?
       priority: high
       detail: Ownership, management control, skills, ED, SD, SED
       cot_hint: Extract scores → identify weak elements → prioritize risk
-    - question: How will the transaction affect the BEE rating?
+    - id: BEE-F11-006
+      question: How will the transaction affect the BEE rating?
       priority: critical
       detail: Impact on ownership, level change, threshold risk
       cot_hint: Model post-transaction → compare levels → assess impact
-    - question: What are the terms of any preference share or loan structures?
+    - id: BEE-F11-007
+      question: What are the terms of any preference share or loan structures?
       priority: high
       detail: Preference dividends, loan terms, repayment schedules
       cot_hint: Extract terms → assess impact on net value → evaluate structure
-    - question: What lock-in periods apply to BEE shareholders?
+    - id: BEE-F11-008
+      question: What lock-in periods apply to BEE shareholders?
       priority: high
       detail: Minimum holding periods, transfer restrictions
       cot_hint: Identify lock-ins → check remaining period → assess flexibility
@@ -428,7 +1034,8 @@ folder_questions:
     display_name: Needs Review
     relevance: low
     questions:
-    - question: What BEE or transformation issues does this document raise?
+    - id: BEE-F99-001
+      question: What BEE or transformation issues does this document raise?
       priority: medium
       detail: Documents requiring manual classification review
       cot_hint: Identify BEE content → flag for review
@@ -545,6 +1152,177 @@ cot_questions:
   - What preferential procurement requirements apply?
   - What socio-economic development commitments exist?
 
+warranty_categories:
+  - category: BEE Ownership
+    warranties:
+      - "Verified B-BBEE ownership percentage is as represented"
+      - "BEE shareholders are genuine and independent"
+      - "No fronting indicators exist"
+      - "Flow-through benefits reach black participants"
+      - "Net value calculation is accurate"
+      - "No B-BBEE Commission investigations pending"
+  - category: BEE Verification
+    warranties:
+      - "B-BBEE certificate is valid and from SANAS-accredited agency"
+      - "Scorecard accurately reflects current position"
+      - "No challenges to verification pending"
+      - "All verification data provided was accurate"
+  - category: Ownership Structure
+    warranties:
+      - "BEE structure is genuine and commercially substantive"
+      - "Lock-in periods and restrictions are as disclosed"
+      - "Vendor financing terms are as represented"
+      - "All exit mechanisms have been disclosed"
+      - "Anti-dilution protections are in place"
+  - category: Management Control
+    warranties:
+      - "Board and executive demographics are as represented"
+      - "Employment Equity Plan is current and compliant"
+      - "Management control element accurately scored"
+  - category: Enterprise & Supplier Development
+    warranties:
+      - "ED and SD spend is as reported"
+      - "Preferential procurement figures are accurate"
+      - "All ED/SD agreements have been disclosed"
+      - "SED commitments are being met"
+  - category: Mining Charter
+    warranties:
+      - "Mining Charter III compliance status is as represented"
+      - "HDSA ownership meets 30% threshold"
+      - "SLP commitments are being fulfilled"
+      - "Meaningful economic participation exists"
+      - "No DMRE compliance notices outstanding"
+  - category: Regulatory
+    warranties:
+      - "No B-BBEE Commission investigations or complaints pending"
+      - "No fronting complaints lodged or threatened"
+      - "No government contract at risk due to BEE status"
+      - "OEAE qualification is valid if claimed"
+
+indemnity_categories:
+  - category: Fronting
+    typical_indemnities:
+      - "Indemnity for losses arising from fronting investigation"
+      - "Indemnity for penalties and fines for fronting"
+      - "Indemnity for contract cancellation due to fronting finding"
+  - category: BEE Level Change
+    typical_indemnities:
+      - "Indemnity for loss of government contracts due to BEE level change"
+      - "Indemnity for tender disqualification from BEE non-compliance"
+      - "Indemnity for costs of re-establishing BEE compliance"
+  - category: Verification
+    typical_indemnities:
+      - "Indemnity for losses from invalid or incorrect verification"
+      - "Indemnity for costs of re-verification"
+  - category: Mining Charter
+    typical_indemnities:
+      - "Indemnity for mining right non-renewal due to Charter non-compliance"
+      - "Indemnity for DMRE penalties"
+      - "Indemnity for SLP non-compliance costs"
+  - category: Vendor Financing
+    typical_indemnities:
+      - "Indemnity for net value recalculation reducing BEE credit"
+      - "Indemnity for vendor loan disputes"
+  - category: Tax
+    typical_indemnities:
+      - "Indemnity for tax liabilities arising from BEE structure"
+      - "Indemnity for disallowed ED deductions"
+
+warranty_indemnity_patterns:
+  warranty_patterns:
+    - pattern: "warrant|represent|confirm"
+      context: "BEE ownership|black ownership|HDSA|empowerment"
+      maps_to: "BEE Ownership"
+    - pattern: "warrant|represent|confirm"
+      context: "B-BBEE certificate|verification|scorecard|BEE level"
+      maps_to: "BEE Verification"
+    - pattern: "warrant|represent|confirm"
+      context: "BEE structure|vendor loan|lock-in|exit|anti-dilution"
+      maps_to: "Ownership Structure"
+    - pattern: "warrant|represent|confirm"
+      context: "management control|board|executive|employment equity"
+      maps_to: "Management Control"
+    - pattern: "warrant|represent|confirm"
+      context: "enterprise development|supplier development|procurement|SED"
+      maps_to: "Enterprise & Supplier Development"
+    - pattern: "warrant|represent|confirm"
+      context: "Mining Charter|HDSA|SLP|DMRE|mining right"
+      maps_to: "Mining Charter"
+    - pattern: "warrant|represent|confirm"
+      context: "B-BBEE Commission|fronting|investigation|OEAE"
+      maps_to: "Regulatory"
+  indemnity_patterns:
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "fronting|B-BBEE Commission|investigation"
+      maps_to: "Fronting"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "BEE level|government contract|tender|procurement"
+      maps_to: "BEE Level Change"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "verification|certificate|scorecard"
+      maps_to: "Verification"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "Mining Charter|mining right|SLP|DMRE"
+      maps_to: "Mining Charter"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "vendor loan|net value|financing"
+      maps_to: "Vendor Financing"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "tax|deduction|ED spend"
+      maps_to: "Tax"
+
+cot_questions_warranty_indemnity:
+  bee_ownership:
+    - "Is the BEE ownership percentage warranted as verified?"
+    - "Is there a warranty that BEE partners are genuine and independent?"
+    - "Is fronting risk adequately covered by warranty?"
+    - "Is there an indemnity for losses from fronting investigation?"
+  bee_structure:
+    - "Are vendor financing terms warranted as disclosed?"
+    - "Is net value calculation warranted as accurate?"
+    - "Is there an indemnity for net value recalculation?"
+    - "Are lock-in and exit provisions warranted?"
+  verification:
+    - "Is the B-BBEE certificate warranted as valid?"
+    - "Is the scorecard warranted as accurate?"
+    - "Is there an indemnity for incorrect verification?"
+  mining_charter:
+    - "Is Mining Charter compliance warranted?"
+    - "Is HDSA ownership at 30% warranted?"
+    - "Is there an indemnity for mining right non-renewal?"
+  management_ed:
+    - "Are management demographics warranted as reported?"
+    - "Is ED/SD spend warranted as accurate?"
+    - "Is there an indemnity for BEE level change affecting contracts?"
+
+output_requirements:
+  warranties_register:
+    required_columns:
+      - "warranty_reference"
+      - "category"
+      - "warranty_text"
+      - "warrantor"
+      - "beneficiary"
+      - "limitation_period"
+      - "cap_amount"
+      - "dd_finding_reference"
+      - "risk_assessment"
+    grouping: "by_category"
+    sort_order: "by_risk_level"
+  indemnities_register:
+    required_columns:
+      - "indemnity_reference"
+      - "category"
+      - "indemnity_text"
+      - "indemnifier"
+      - "beneficiary"
+      - "trigger_event"
+      - "cap_amount"
+      - "time_limitation"
+      - "dd_finding_reference"
+    grouping: "by_category"
+    sort_order: "by_exposure_value"
+
 # ============================================================================
 # STATUTORY FRAMEWORK
 # Detailed statutory citation framework for B-BBEE regulatory findings
@@ -560,33 +1338,39 @@ statutory_framework:
           penalties:
             administrative: "Non-compliance affects scorecard rating"
           criticality: high
+          application_to_dd: "Assess which Codes of Good Practice or sector codes apply to the target"
         - section: "Section 10"
           description: "Fronting practices prohibition"
           penalties:
             criminal: "Fine up to 10% of annual turnover or imprisonment up to 10 years"
             administrative: "Cancellation of contracts, debarment"
           criticality: critical
+          application_to_dd: "Apply fronting indicators to BEE ownership structure and assess risk"
         - section: "Section 13A"
           description: "B-BBEE Commission establishment and powers"
           penalties:
             administrative: "Investigation powers, referral to NPA"
           criticality: high
+          application_to_dd: "Assess whether B-BBEE Commission has investigated or is likely to investigate"
         - section: "Section 13G"
           description: "Misrepresentation of B-BBEE status"
           penalties:
             criminal: "Fine up to 10% of turnover, imprisonment up to 10 years"
             administrative: "Debarment from government contracts for 10 years"
           criticality: critical
+          application_to_dd: "Verify accuracy of B-BBEE status representations and certificates"
         - section: "Section 13J"
           description: "Register of tender defaulters"
           penalties:
             administrative: "Listing on register, contract cancellation"
           criticality: high
+          application_to_dd: "Check register of tender defaulters for any listing"
         - section: "Section 13O"
           description: "Offences and penalties"
           penalties:
             criminal: "Fine or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Assess criminal liability exposure for BEE-related offences"
 
     - act: "Codes of Good Practice (Generic Codes)"
       acronym: "Generic Codes"
@@ -597,26 +1381,31 @@ statutory_framework:
           penalties:
             administrative: "Reduced scorecard points"
           criticality: critical
+          application_to_dd: "Calculate ownership element score including flow-through and net value"
         - section: "Statement 200"
           description: "Management control element"
           penalties:
             administrative: "Reduced scorecard points"
           criticality: high
+          application_to_dd: "Score management control element based on board and executive demographics"
         - section: "Statement 300"
           description: "Skills development element"
           penalties:
             administrative: "Reduced scorecard points"
           criticality: high
+          application_to_dd: "Calculate skills development spend and score element"
         - section: "Statement 400"
           description: "Enterprise and supplier development"
           penalties:
             administrative: "Reduced scorecard points, priority element"
           criticality: critical
+          application_to_dd: "Calculate ED/SD spend and preferential procurement for scoring"
         - section: "Statement 500"
           description: "Socio-economic development"
           penalties:
             administrative: "Reduced scorecard points"
           criticality: high
+          application_to_dd: "Assess SED contributions and score element"
 
     - act: "Companies Act 71 of 2008"
       acronym: "Companies Act"
@@ -627,16 +1416,19 @@ statutory_framework:
           penalties:
             civil: "Issue may be invalid"
           criticality: high
+          application_to_dd: "Verify share issuance to BEE partners complies with Companies Act"
         - section: "Section 41"
           description: "Share subscription requirements"
           penalties:
             civil: "Subscription may be voidable"
           criticality: high
+          application_to_dd: "Confirm BEE subscription agreement meets statutory requirements"
         - section: "Section 48"
           description: "Company acquisition of own shares"
           penalties:
             civil: "Solvency and liquidity requirements"
           criticality: high
+          application_to_dd: "Assess buyback provisions for BEE shares against solvency requirements"
 
     - act: "Preferential Procurement Policy Framework Act 5 of 2000"
       acronym: "PPPFA"
@@ -647,11 +1439,13 @@ statutory_framework:
           penalties:
             administrative: "Disqualification from tender"
           criticality: high
+          application_to_dd: "Assess impact of BEE status change on government procurement eligibility"
         - section: "Section 5"
           description: "Preference point system"
           penalties:
             administrative: "Tender disqualification"
           criticality: high
+          application_to_dd: "Calculate preference point impact of BEE level change"
 
     - act: "Public Finance Management Act 1 of 1999"
       acronym: "PFMA"
@@ -662,11 +1456,13 @@ statutory_framework:
           penalties:
             criminal: "Personal liability, fine or imprisonment"
           criticality: critical
+          application_to_dd: "Assess compliance with accounting officer BEE procurement obligations"
         - section: "Section 51"
           description: "General responsibilities of accounting authorities (public entities)"
           penalties:
             criminal: "Personal liability"
           criticality: critical
+          application_to_dd: "Assess public entity BEE reporting and compliance obligations"
 
   sector_specific:
     mining_charter:
@@ -722,3 +1518,81 @@ statutory_framework:
         trigger: "Tender for government work"
         consequence: "B-BBEE status verification required"
         processing_time: "At tender submission"
+  secondary_legislation:
+    - name: "B-BBEE Regulations"
+      parent_act: "B-BBEE Act"
+      relevance: "Detail fronting indicators, verification requirements, and compliance procedures"
+    - name: "Amended Codes of Good Practice (2019)"
+      parent_act: "B-BBEE Act"
+      relevance: "Updated scorecard weightings and measurement criteria"
+    - name: "Preferential Procurement Regulations"
+      parent_act: "PPPFA"
+      relevance: "Detail preference point calculations and BEE requirements for tenders"
+    - name: "Mining Charter III (2018)"
+      parent_act: "MPRDA"
+      relevance: "Sector-specific BEE ownership and transformation requirements for mining"
+    - name: "Financial Sector Code"
+      parent_act: "B-BBEE Act"
+      relevance: "Sector-specific BEE requirements for financial services"
+    - name: "ICT Sector Code"
+      parent_act: "B-BBEE Act"
+      relevance: "Sector-specific BEE requirements for ICT sector"
+  regulatory_bodies:
+    - name: "B-BBEE Commission"
+      jurisdiction: "BEE compliance and fronting"
+      key_function: "Investigate fronting complaints, monitor compliance, refer to NPA"
+    - name: "DTIC"
+      jurisdiction: "Trade and industry policy"
+      key_function: "Issue Codes of Good Practice, BEE policy development"
+    - name: "SANAS"
+      jurisdiction: "Accreditation"
+      key_function: "Accredit B-BBEE verification agencies"
+    - name: "DMRE"
+      jurisdiction: "Mining regulation"
+      key_function: "Mining Charter compliance, mining right conditions"
+    - name: "CIPC"
+      jurisdiction: "Company registration"
+      key_function: "Company registration, share register, annual returns"
+    - name: "National Treasury"
+      jurisdiction: "Public procurement"
+      key_function: "Preferential procurement framework and regulations"
+output_templates:
+  executive_summary:
+    sections:
+      - "Transaction Overview"
+      - "Deal Blockers"
+      - "Critical Findings"
+      - "BEE Impact Summary"
+      - "Conditions Precedent"
+      - "Recommendations"
+    required_elements:
+      - "Current verified BEE ownership percentage"
+      - "Post-transaction BEE ownership projection"
+      - "Fronting risk assessment"
+      - "Net value calculation"
+      - "Scorecard impact analysis"
+      - "Mining Charter compliance (if applicable)"
+      - "B-BBEE Commission risk assessment"
+  full_report:
+    sections:
+      - "Transaction Context"
+      - "BEE Ownership Structure"
+      - "BEE Verification & Scorecard"
+      - "Ownership Transaction Structure"
+      - "Mining Charter Compliance"
+      - "Management Control & Employment Equity"
+      - "Enterprise & Supplier Development"
+      - "Fronting Risk Assessment"
+      - "Net Value Analysis"
+      - "Transaction Impact"
+      - "Warranties & Indemnities"
+  finding_format:
+    required_fields:
+      - "finding_reference"
+      - "category"
+      - "risk_level"
+      - "description"
+      - "statutory_reference"
+      - "financial_impact"
+      - "recommendation"
+      - "warranty_indemnity_reference"

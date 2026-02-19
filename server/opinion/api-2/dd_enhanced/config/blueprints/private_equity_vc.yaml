@@ -7,6 +7,320 @@ description: 'Due diligence blueprint for private equity and venture capital tra
   investments. Covers investment structures, management incentives, and exit planning.
 
   '
+jurisdiction: South Africa
+
+# ============================================================================
+# TRANSACTION CONTEXT
+# ============================================================================
+transaction_context:
+  deal_structures:
+    - id: buyout
+      description: "Leveraged or management buyout of established business"
+      typical_considerations:
+        - "Acquisition debt structure and serviceability"
+        - "Management participation and incentive alignment"
+        - "Section 44 financial assistance for acquisition"
+        - "Competition Commission notification if thresholds met"
+    - id: growth_equity
+      description: "Minority or significant minority growth capital investment"
+      typical_considerations:
+        - "Minority protection provisions and governance rights"
+        - "Anti-dilution and pre-emption rights"
+        - "Board representation and reserved matters"
+        - "Exit timeline and mechanism"
+    - id: venture_investment
+      description: "Early-stage venture capital investment"
+      typical_considerations:
+        - "IP ownership and founder assignment verification"
+        - "Liquidation preference and participation rights"
+        - "Vesting schedules for founder shares"
+        - "Convertible instrument mechanics"
+    - id: secondary_transaction
+      description: "Purchase of existing PE/VC stake from another investor"
+      typical_considerations:
+        - "Transfer restrictions and consent requirements"
+        - "Tag-along and drag-along mechanics"
+        - "Information rights and governance transfer"
+        - "Existing investor relationship dynamics"
+  typical_parties:
+    - role: investor
+      description: "PE/VC fund making the investment — subject to fund mandate and LP obligations"
+    - role: target
+      description: "Company receiving investment or being acquired"
+    - role: founders
+      description: "Original founders — key to value creation, retention critical"
+    - role: management
+      description: "Management team — alignment through MIP/share scheme essential"
+    - role: existing_shareholders
+      description: "Current shareholders — consent, pre-emption, and tag-along rights"
+    - role: co_investors
+      description: "Co-investment partners or syndicate members"
+    - role: lenders
+      description: "Acquisition debt providers (in buyout transactions)"
+
+primary_legislation:
+- Companies Act 71 of 2008
+- Competition Act 89 of 1998
+- Income Tax Act 58 of 1962
+- Exchange Control Regulations
+- Financial Intelligence Centre Act 38 of 2001
+- Protection of Personal Information Act 4 of 2013
+- Securities Transfer Tax Act 25 of 2007
+- Broad-Based Black Economic Empowerment Act 53 of 2003
+
+reference_documents:
+  always_include:
+  - pattern: Term Sheet|Investment Agreement|Subscription Agreement
+    reason: Core deal documentation
+  - pattern: Shareholders Agreement|SHA|Shareholder Agreement
+    reason: Governance and exit mechanics
+  - pattern: Cap Table|Share Register|Capitalisation Table
+    reason: Ownership verification
+  - pattern: Financial Model|Projections|Business Plan
+    reason: Investment thesis and return analysis
+  - pattern: Management Incentive|MIP|Share Scheme|Option Scheme
+    reason: Management alignment and retention
+  - pattern: Due Diligence Report|QofE|Quality of Earnings
+    reason: Financial due diligence findings
+  - pattern: Valuation Report|Comparable Analysis
+    reason: Valuation methodology support
+
+# ============================================================================
+# FOLDER STRUCTURE
+# ============================================================================
+folder_structure:
+  01_Corporate_Governance:
+    relevance: critical
+    subcategories:
+    - Constitutional Documents
+    - Cap Table & Share Register
+    - Shareholder Agreements
+    - Board Resolutions
+    expected_documents:
+    - MOI
+    - Shareholders Agreement
+    - Share Register
+    - Cap Table
+    - Board Resolutions
+    - Share Certificates
+    - CIPC Records
+    - Side Letters
+    document_expectations:
+      MOI:
+        importance: critical
+        review_focus: "Share classes, transfer restrictions, pre-emption rights, reserved matters, financial assistance provisions"
+        red_flags: ["Non-standard share classes not reflected in cap table", "Restrictive transfer provisions blocking exit"]
+      Shareholders_Agreement:
+        importance: critical
+        review_focus: "Governance rights, exit mechanics, drag/tag, anti-dilution, reserved matters, deadlock resolution"
+        red_flags: ["Undisclosed side agreements", "Conflicting provisions with MOI", "Blocking rights preventing investment"]
+      Cap_Table:
+        importance: critical
+        review_focus: "Fully diluted ownership, option pool, convertible instruments, ESOP allocation, BEE ownership"
+        red_flags: ["Cap table not reconciled to share register", "Undisclosed options or convertibles", "Missing founder vesting"]
+
+  02_Commercial:
+    relevance: high
+    subcategories:
+    - Customer Contracts
+    - Supplier Agreements
+    - Partnership Arrangements
+    - Revenue Analysis
+    expected_documents:
+    - Customer Agreements
+    - Supplier Contracts
+    - Revenue Breakdown
+    - Pipeline Analysis
+    - Partnership Agreements
+    document_expectations:
+      Customer_Agreements:
+        importance: critical
+        review_focus: "Revenue concentration, contract terms, renewal rates, change of control provisions"
+        red_flags: ["Top 3 customers >50% revenue", "Short-term contracts with key customers", "CoC termination rights"]
+
+  03_Financial:
+    relevance: critical
+    subcategories:
+    - Audited Financials
+    - Management Accounts
+    - Financial Model
+    - Working Capital
+    expected_documents:
+    - Audited Financial Statements
+    - Management Accounts
+    - Financial Model
+    - Quality of Earnings Report
+    - Working Capital Analysis
+    - Debt Schedule
+    - Tax Returns
+    document_expectations:
+      Financial_Model:
+        importance: critical
+        review_focus: "Key assumptions, revenue growth rates, margin progression, cash conversion, return analysis"
+        red_flags: ["Aggressive growth assumptions disconnected from track record", "Hockey-stick projections without evidence"]
+      Quality_of_Earnings:
+        importance: critical
+        review_focus: "Normalisation adjustments, recurring vs non-recurring items, owner perquisites, related party adjustments"
+        red_flags: ["Material normalisation adjustments", "Declining underlying earnings trend"]
+
+  04_Regulatory:
+    relevance: medium
+    subcategories:
+    - Competition
+    - Exchange Control
+    - Sector Licences
+    expected_documents:
+    - Competition Analysis
+    - Exchange Control Assessment
+    - Regulatory Licences
+    - SARB Correspondence
+    document_expectations:
+      Competition_Analysis:
+        importance: critical
+        review_focus: "Merger notification thresholds, market definition, public interest considerations"
+        red_flags: ["Thresholds clearly exceeded without filing timeline", "Potential prohibition risk"]
+
+  05_Employment:
+    relevance: critical
+    subcategories:
+    - Management Team
+    - Employment Contracts
+    - Incentive Schemes
+    - Organisational Structure
+    expected_documents:
+    - Management CVs
+    - Employment Contracts
+    - Share Option Scheme
+    - Restraint of Trade Agreements
+    - IP Assignment Agreements
+    - Organisational Chart
+    document_expectations:
+      Employment_Contracts:
+        importance: critical
+        review_focus: "Notice periods, restraint of trade provisions, IP assignment clauses, change of control provisions"
+        red_flags: ["Key persons without restraints", "Missing IP assignment from founders/developers"]
+      Share_Option_Scheme:
+        importance: critical
+        review_focus: "Pool size, vesting schedule, exercise mechanics, leaver provisions, Section 8C tax implications"
+        red_flags: ["No vesting on founder shares", "Option pool exhausted", "Unclear leaver provisions"]
+
+  06_Property:
+    relevance: low
+    subcategories:
+    - Leases
+    - Assets
+    expected_documents:
+    - Lease Agreements
+    - Asset Register
+    document_expectations:
+      Lease_Agreements:
+        importance: medium
+        review_focus: "Lease terms, renewal options, escalation rates, CoC provisions"
+        red_flags: ["Short lease on critical premises", "Above-market escalation rates"]
+
+  07_Insurance:
+    relevance: medium
+    subcategories:
+    - D&O Insurance
+    - Key-Man Insurance
+    - General Insurance
+    expected_documents:
+    - D&O Insurance Policy
+    - Key-Man Insurance
+    - Insurance Schedule
+    document_expectations:
+      DO_Insurance:
+        importance: high
+        review_focus: "Coverage limits, exclusions, run-off provisions, director indemnification"
+        red_flags: ["No D&O coverage", "Inadequate limits for transaction size"]
+
+  08_Litigation:
+    relevance: high
+    subcategories:
+    - Active Litigation
+    - Threatened Claims
+    - Regulatory Matters
+    expected_documents:
+    - Litigation Schedule
+    - Legal Opinions
+    - Regulatory Correspondence
+    - Insurance Claims
+    document_expectations:
+      Litigation_Schedule:
+        importance: critical
+        review_focus: "Pending claims, quantum exposure, insurance coverage, material contingencies"
+        red_flags: ["Undisclosed litigation", "Founder/shareholder disputes", "Regulatory investigation"]
+
+  09_Tax:
+    relevance: high
+    subcategories:
+    - Tax Returns
+    - Tax Opinions
+    - Structure Tax Analysis
+    expected_documents:
+    - Tax Returns
+    - Tax Compliance Certificates
+    - Tax Opinions
+    - Transfer Pricing Documentation
+    - Structure Tax Analysis
+    document_expectations:
+      Structure_Tax_Analysis:
+        importance: critical
+        review_focus: "Investment structure tax efficiency, Section 8C implications, CGT, STT, withholding tax, exit tax planning"
+        red_flags: ["Tax-inefficient structure", "Section 8C exposure not quantified", "Missing tax opinions"]
+
+  10_IP:
+    relevance: critical
+    subcategories:
+    - IP Register
+    - IP Assignments
+    - Licence Agreements
+    - Open Source
+    expected_documents:
+    - IP Register
+    - IP Assignment Agreements
+    - Patent Certificates
+    - Trademark Registrations
+    - Licence Agreements
+    - Open Source Audit
+    document_expectations:
+      IP_Register:
+        importance: critical
+        review_focus: "Complete chain of title, registration status, expiry dates, geographic coverage"
+        red_flags: ["IP held by founder personally not company", "Missing assignments from developers/contractors"]
+      IP_Assignments:
+        importance: critical
+        review_focus: "Assignment completeness from all creators, consideration, effective date, scope"
+        red_flags: ["Incomplete chain of title", "Missing contractor assignments", "Pre-incorporation IP not assigned"]
+
+  11_Technology:
+    relevance: high
+    subcategories:
+    - Technology Stack
+    - Cybersecurity
+    - Data Protection
+    expected_documents:
+    - Technology Architecture
+    - Cybersecurity Assessment
+    - POPIA Assessment
+    - Source Code Audit
+    - Technical Debt Analysis
+    document_expectations:
+      Technology_Architecture:
+        importance: high
+        review_focus: "Scalability, technical debt, technology stack currency, cloud infrastructure, dependencies"
+        red_flags: ["Significant technical debt", "Single point of failure", "Outdated technology stack"]
+
+  99_Needs_Review:
+    relevance: low
+    subcategories:
+    - Uncategorised
+    expected_documents:
+    - Uncategorised Documents
+
+# ============================================================================
+# RISK CATEGORIES
+# ============================================================================
 risk_categories:
 - name: Investment Structure & Terms
   description: Deal structure, investment instruments, and key commercial terms
@@ -706,20 +1020,336 @@ deal_blockers:
   condition: Unresolvable IP ownership issues
   severity: high
   mitigation: Secure assignments, indemnities, carve-out affected IP, reduce valuation
+
+# ============================================================================
+# ENTITY RELATIONSHIP PATTERNS
+# ============================================================================
+entity_relationship_patterns:
+  typical_structures:
+    - name: "Founder-Led Growth Company"
+      description: "Founder(s) hold majority, seeking growth capital"
+      entities: ["Founder(s)", "Company", "Option holders", "Angel investors"]
+      typical_issues: ["Founder IP not assigned", "Informal arrangements", "Cap table errors"]
+    - name: "PE Buyout Target"
+      description: "Established business being acquired via leveraged buyout"
+      entities: ["Seller", "Target", "OpCo", "AcquiCo", "FundCo", "Lenders"]
+      typical_issues: ["Multi-layer structure complexity", "Financial assistance (s44)", "Debt push-down"]
+    - name: "Venture-Backed Startup"
+      description: "Multi-round funded startup with multiple investor classes"
+      entities: ["Founders", "Company", "Seed investors", "Series A/B investors", "ESOP trust"]
+      typical_issues: ["Complex liquidation preferences", "Anti-dilution ratchets", "Option pool sizing"]
+    - name: "Management Buyout"
+      description: "Management team acquiring business from parent or PE seller"
+      entities: ["Management team", "Target", "MBO vehicle", "PE sponsor", "Vendor", "Lenders"]
+      typical_issues: ["Conflicts of interest", "Financial assistance compliance", "Sweet equity terms"]
+    - name: "Co-Investment Structure"
+      description: "Fund investment alongside co-investors and management"
+      entities: ["Lead fund", "Co-investors", "Management co-invest", "Target", "HoldCo"]
+      typical_issues: ["Alignment of interests", "Information asymmetry", "Fee allocation"]
+  entity_roles:
+    - "Investor (PE/VC Fund)"
+    - "Target Company"
+    - "Founder / Entrepreneur"
+    - "Management Team"
+    - "Existing Shareholder"
+    - "Co-Investor"
+    - "Lender / Debt Provider"
+    - "ESOP Trust / Option Holders"
+  common_related_parties:
+    - type: "Fund Manager / GP"
+      risk: "Conflicts between fund and portfolio company interests"
+    - type: "Founder Family Members"
+      risk: "Undisclosed related party transactions, informal employment"
+    - type: "Prior Investor"
+      risk: "Side letters, preferential terms, blocking rights"
+    - type: "Portfolio Company"
+      risk: "Cross-portfolio conflicts, shared services"
+
+# ============================================================================
+# MATERIALITY THRESHOLDS
+# ============================================================================
+materiality_thresholds:
+  default_when_value_unknown: "R1,000,000"
+  when_value_known:
+    percentage_tiers:
+      - threshold: "5%"
+        applies_to: "Deal value up to R50 million"
+      - threshold: "2%"
+        applies_to: "Deal value R50 million to R500 million"
+      - threshold: "1%"
+        applies_to: "Deal value above R500 million"
+  qualitative_overrides:
+    always_material:
+      - "Founder or key person departure without restraint"
+      - "Cap table error or undisclosed equity interest"
+      - "IP not assigned to company"
+      - "Undisclosed litigation or regulatory matter"
+      - "Material contract with change of control termination"
+      - "Competition Commission filing requirement missed"
+      - "Financial assistance non-compliance (Section 44)"
+      - "BEE dilution below applicable threshold"
+      - "Fraud or misrepresentation in DD process"
+    never_immaterial:
+      - "Cap Table Accuracy"
+      - "Founder IP Assignment"
+      - "Key Person Retention"
+      - "Exit Mechanics"
+      - "Financial Assistance Compliance"
+
+# ============================================================================
+# CROSS-REFERENCE EXPECTATIONS
+# ============================================================================
+cross_reference_expectations:
+  primary_documents:
+    - document: "Cap Table / Capitalisation Table"
+      must_cross_reference:
+        - "Share Register"
+        - "CIPC Records"
+        - "MOI (authorised shares)"
+        - "Option Scheme documents"
+        - "Convertible instrument terms"
+      validation: "Fully diluted cap table must reconcile to share register and CIPC"
+    - document: "Shareholders Agreement"
+      must_cross_reference:
+        - "MOI"
+        - "Investment Agreement"
+        - "Side Letters"
+        - "Board Resolutions"
+      validation: "SHA provisions must be consistent with MOI and not create conflicts"
+    - document: "Financial Model / Projections"
+      must_cross_reference:
+        - "Audited Financial Statements"
+        - "Management Accounts"
+        - "Quality of Earnings Report"
+        - "Customer Contracts"
+      validation: "Model assumptions must be supported by historical performance and contracts"
+    - document: "Investment Agreement"
+      must_cross_reference:
+        - "Term Sheet"
+        - "Shareholders Agreement"
+        - "MOI"
+        - "Cap Table"
+        - "Competition Act analysis"
+      validation: "Investment terms must match term sheet and be consistent with SHA and MOI"
+    - document: "Employment Contracts"
+      must_cross_reference:
+        - "IP Assignment Agreements"
+        - "Restraint of Trade"
+        - "Share Option Scheme"
+        - "Organisational Chart"
+      validation: "All key persons must have employment contracts with IP assignment and restraint"
+    - document: "IP Register"
+      must_cross_reference:
+        - "IP Assignment Agreements"
+        - "Employment Contracts"
+        - "Contractor Agreements"
+        - "Open Source Audit"
+      validation: "Complete chain of title from all creators to company"
+    - document: "Tax Structure Analysis"
+      must_cross_reference:
+        - "Investment Agreement"
+        - "Financial Model"
+        - "Section 8C analysis"
+        - "Exchange Control assessment"
+      validation: "Tax treatment of investment, exit, and management incentives must be confirmed"
+    - document: "Competition Act Analysis"
+      must_cross_reference:
+        - "Financial Statements (turnover)"
+        - "Market analysis"
+        - "Investment Agreement"
+      validation: "Merger thresholds must be accurately calculated from audited financials"
+
+# ============================================================================
+# RED FLAG PATTERNS
+# ============================================================================
+red_flag_patterns:
+  corporate_structure:
+    - id: PE-RF-CORP-001
+      pattern: "Cap table does not reconcile to share register or CIPC records"
+      severity: critical
+      action_category: terminal
+      typical_response: "Full cap table reconciliation required before investment. Identify and resolve all discrepancies."
+    - id: PE-RF-CORP-002
+      pattern: "Undisclosed shareholders, options, convertibles, or equity interests"
+      severity: critical
+      action_category: terminal
+      typical_response: "Complete disclosure required. Consider walking away if deliberate concealment."
+    - id: PE-RF-CORP-003
+      pattern: "Existing shareholder blocking rights preventing investment"
+      severity: high
+      action_category: condition_precedent
+      typical_response: "Negotiate consent or restructure to avoid blocking rights. Obtain waiver as CP."
+    - id: PE-RF-CORP-004
+      pattern: "Section 44 financial assistance not properly authorised"
+      severity: critical
+      action_category: condition_precedent
+      typical_response: "Obtain board resolution, solvency and liquidity test, shareholder approval if required."
+
+  founder_management:
+    - id: PE-RF-MGMT-001
+      pattern: "Founder/key person refuses to sign restraint of trade or IP assignment"
+      severity: critical
+      action_category: terminal
+      typical_response: "Restraint and IP assignment are non-negotiable. Adjust valuation or walk away."
+    - id: PE-RF-MGMT-002
+      pattern: "Key person departure risk without succession plan"
+      severity: high
+      action_category: warranty_required
+      typical_response: "Key-man insurance, retention arrangements, accelerated succession planning."
+    - id: PE-RF-MGMT-003
+      pattern: "Management incentive misalignment or inadequate vesting"
+      severity: high
+      action_category: price_adjustment
+      typical_response: "Restructure incentive scheme, implement proper vesting, align with investment thesis."
+
+  ip_technology:
+    - id: PE-RF-IP-001
+      pattern: "IP held by founder personally, not assigned to company"
+      severity: critical
+      action_category: condition_precedent
+      typical_response: "IP assignment to company as CP before investment. Full chain of title required."
+    - id: PE-RF-IP-002
+      pattern: "Open source copyleft contamination of core product"
+      severity: critical
+      action_category: terminal
+      typical_response: "Technical assessment of contamination scope. May require code rewrite or deal termination."
+    - id: PE-RF-IP-003
+      pattern: "Missing IP assignments from contractors or former employees"
+      severity: high
+      action_category: condition_precedent
+      typical_response: "Obtain assignments or confirmations. Indemnity from founders for any gaps."
+
+  financial:
+    - id: PE-RF-FIN-001
+      pattern: "Material quality of earnings adjustments reducing normalised EBITDA"
+      severity: high
+      action_category: price_adjustment
+      typical_response: "Adjust valuation for normalised earnings. Renegotiate price or structure."
+    - id: PE-RF-FIN-002
+      pattern: "Cash burn rate inconsistent with funding runway"
+      severity: critical
+      action_category: terminal
+      typical_response: "Assess bridge funding needs. Adjust investment timeline or amount."
+    - id: PE-RF-FIN-003
+      pattern: "Related party transactions at non-arm's length terms"
+      severity: high
+      action_category: price_adjustment
+      typical_response: "Normalise for arm's length terms. Require cessation or formalisation post-investment."
+
+  exit_liquidity:
+    - id: PE-RF-EXIT-001
+      pattern: "No realistic exit route identified within fund life"
+      severity: critical
+      action_category: terminal
+      typical_response: "Reassess investment thesis. Consider whether exit is achievable within fund constraints."
+    - id: PE-RF-EXIT-002
+      pattern: "Drag-along provisions inadequate for clean exit"
+      severity: high
+      action_category: condition_precedent
+      typical_response: "Negotiate appropriate drag-along provisions in SHA before investment."
+
+  regulatory:
+    - id: PE-RF-REG-001
+      pattern: "Competition Commission filing required with prohibition risk"
+      severity: critical
+      action_category: condition_precedent
+      typical_response: "Early engagement with Commission. Competition condition precedent in investment agreement."
+    - id: PE-RF-REG-002
+      pattern: "Loop structure requiring SARB approval with uncertainty"
+      severity: high
+      action_category: condition_precedent
+      typical_response: "SARB pre-approval or restructure to avoid loop. Exchange control CP in agreement."
+
+# ============================================================================
+# CALCULATION FORMULAS
+# ============================================================================
+calculation_formulas:
+  valuation:
+    - name: "Post-Money Valuation"
+      formula: "Investment Amount / Equity Percentage Acquired"
+      required_inputs: ["Investment amount", "Equity percentage"]
+    - name: "Pre-Money Valuation"
+      formula: "Post-Money Valuation - Investment Amount"
+      required_inputs: ["Post-money valuation", "Investment amount"]
+    - name: "Implied EV/EBITDA Multiple"
+      formula: "Enterprise Value / Normalised EBITDA"
+      required_inputs: ["Enterprise value", "Normalised EBITDA"]
+  return_analysis:
+    - name: "Target IRR"
+      formula: "IRR(Investment, Exit Proceeds, Hold Period)"
+      required_inputs: ["Investment amount", "Expected exit value", "Hold period years"]
+    - name: "Money Multiple (MOIC)"
+      formula: "Total Distributions / Total Invested Capital"
+      required_inputs: ["Expected distributions", "Total invested"]
+  dilution:
+    - name: "Fully Diluted Ownership"
+      formula: "Investor Shares / (Total Shares + All Options + All Convertibles)"
+      required_inputs: ["Investor shares", "Total outstanding", "Option pool", "Convertible shares"]
+    - name: "Anti-Dilution Adjustment"
+      formula: "Adjusted Price = Weighted Average Price considering down-round"
+      required_inputs: ["Original price", "New round price", "Shares outstanding"]
+  bee:
+    - name: "Post-Investment BEE Dilution"
+      formula: "Post-Investment BEE % = (BEE Shares) / (Pre-Investment Total + New Investor Shares)"
+      required_inputs: ["Current BEE shares", "Pre-investment total shares", "New shares issued"]
+  tax:
+    - name: "Section 8C Exposure"
+      formula: "(Market Value at Vesting - Amount Paid) x Marginal Tax Rate"
+      required_inputs: ["Market value", "Amount paid by employee", "Tax rate"]
+    - name: "STT on Transfer"
+      formula: "Taxable Amount x 0.25%"
+      required_inputs: ["Transfer consideration"]
+
+# ============================================================================
+# CONDITIONS PRECEDENT PATTERNS
+# ============================================================================
+conditions_precedent_patterns:
+  - pattern: "Competition Commission approval|merger notification|competition filing"
+    cp_type: regulatory
+    typical_timeline: "20-120 business days depending on merger size"
+    blocker_if_not_met: true
+  - pattern: "SARB approval|exchange control|loop structure"
+    cp_type: regulatory
+    typical_timeline: "4-8 weeks"
+    blocker_if_not_met: true
+  - pattern: "Section 44|financial assistance|board resolution|solvency test"
+    cp_type: corporate
+    typical_timeline: "Board meeting + 10 business days for shareholder notice if required"
+    blocker_if_not_met: true
+  - pattern: "IP assignment|founder assignment|contractor assignment"
+    cp_type: legal
+    typical_timeline: "5-10 business days"
+    blocker_if_not_met: true
+  - pattern: "management service agreement|restraint of trade|employment contract"
+    cp_type: employment
+    typical_timeline: "Negotiation 2-4 weeks"
+    blocker_if_not_met: true
+  - pattern: "shareholder consent|pre-emption waiver|tag-along waiver"
+    cp_type: corporate
+    typical_timeline: "10-20 business days"
+    blocker_if_not_met: true
+  - pattern: "option scheme|MIP|management incentive plan"
+    cp_type: corporate
+    typical_timeline: "Drafting and approval 2-4 weeks"
+    blocker_if_not_met: false
+
 folder_questions:
   01_Corporate_Governance:
     display_name: Corporate & Governance
     relevance: critical
     questions:
-    - question: Is the corporate structure clean and cap table accurate?
+    - id: PE-F01-001
+      question: Is the corporate structure clean and cap table accurate?
       priority: critical
       detail: Share register, option pool, convertibles, cap table reconciliation
       cot_hint: Review cap table → verify share register → reconcile differences
-    - question: Are all existing shareholder arrangements documented?
+    - id: PE-F01-002
+      question: Are all existing shareholder arrangements documented?
       priority: critical
       detail: Existing SHA, side letters, oral agreements
       cot_hint: List SHA provisions → identify blocking rights → assess impact
-    - question: Are all shares validly issued with proper resolutions?
+    - id: PE-F01-003
+      question: Are all shares validly issued with proper resolutions?
       priority: critical
       detail: Share issue resolutions, allotment letters, certificates
       cot_hint: Trace share issuances → verify resolutions → confirm validity
@@ -731,15 +1361,18 @@ folder_questions:
     display_name: Commercial Contracts
     relevance: high
     questions:
-    - question: What are the key customer contracts and is there concentration risk?
+    - id: PE-F02-001
+      question: What are the key customer contracts and is there concentration risk?
       priority: critical
       detail: Customer agreements, revenue concentration, contract terms
       cot_hint: List top customers → calculate concentration → assess risk
-    - question: Are there any exclusivity or non-compete arrangements?
+    - id: PE-F02-002
+      question: Are there any exclusivity or non-compete arrangements?
       priority: high
       detail: Exclusive agreements, territory restrictions
       cot_hint: Identify exclusives → assess scope → evaluate impact
-    - question: What supplier dependencies exist?
+    - id: PE-F02-003
+      question: What supplier dependencies exist?
       priority: high
       detail: Key supplier contracts, single-source arrangements
       cot_hint: List critical suppliers → check alternatives → assess risk
@@ -752,19 +1385,23 @@ folder_questions:
     display_name: Financial & Banking
     relevance: critical
     questions:
-    - question: What is the quality of earnings and are there normalisation adjustments?
+    - id: PE-F03-001
+      question: What is the quality of earnings and are there normalisation adjustments?
       priority: critical
       detail: QofE analysis, one-off items, owner adjustments
       cot_hint: Review earnings → identify adjustments → calculate normalized EBITDA
-    - question: What is the cash burn rate and runway?
+    - id: PE-F03-002
+      question: What is the cash burn rate and runway?
       priority: critical
       detail: Monthly burn, cash balance, funding requirements
       cot_hint: Calculate burn → assess runway → identify funding needs
-    - question: Are financial projections achievable and assumptions reasonable?
+    - id: PE-F03-003
+      question: Are financial projections achievable and assumptions reasonable?
       priority: critical
       detail: Management model, key assumptions, sensitivity analysis
       cot_hint: Review projections → test assumptions → assess achievability
-    - question: Are there any debt-like items or off-balance sheet arrangements?
+    - id: PE-F03-004
+      question: Are there any debt-like items or off-balance sheet arrangements?
       priority: high
       detail: Leases, deferred consideration, earnouts
       cot_hint: Identify debt-like items → quantify → adjust for valuation
@@ -776,15 +1413,18 @@ folder_questions:
     display_name: Regulatory & Compliance
     relevance: medium
     questions:
-    - question: Is Competition Commission approval required?
+    - id: PE-F04-001
+      question: Is Competition Commission approval required?
       priority: critical
       detail: Merger thresholds, market definition, timeline
       cot_hint: Check thresholds → assess market → determine filing requirement
-    - question: Are there any exchange control or SARB considerations?
+    - id: PE-F04-002
+      question: Are there any exchange control or SARB considerations?
       priority: high
       detail: Loop structures, cross-border flows, SARB approval
       cot_hint: Analyze structure → check loop → assess SARB requirement
-    - question: Are there any sector-specific regulatory approvals required?
+    - id: PE-F04-003
+      question: Are there any sector-specific regulatory approvals required?
       priority: high
       detail: Sector licences, regulatory change of control
       cot_hint: Identify sector → check regulatory requirements → assess approvals
@@ -793,19 +1433,23 @@ folder_questions:
     display_name: Employment & Labour
     relevance: critical
     questions:
-    - question: What is the quality and track record of founding team and key management?
+    - id: PE-F05-001
+      question: What is the quality and track record of founding team and key management?
       priority: critical
       detail: Management CVs, reference checks, track record
       cot_hint: Review backgrounds → check references → assess quality
-    - question: Are management incentive arrangements appropriately aligned?
+    - id: PE-F05-002
+      question: Are management incentive arrangements appropriately aligned?
       priority: critical
       detail: Share options, vesting, performance conditions
       cot_hint: Review scheme → check alignment → assess retention
-    - question: Are service agreements and restraints in place?
+    - id: PE-F05-003
+      question: Are service agreements and restraints in place?
       priority: high
       detail: Employment contracts, restraint provisions, IP assignments
       cot_hint: Check contracts → verify restraints → confirm IP
-    - question: What key person dependencies and succession arrangements exist?
+    - id: PE-F05-004
+      question: What key person dependencies and succession arrangements exist?
       priority: high
       detail: Key persons, succession plans, team depth
       cot_hint: Identify key persons → assess depth → check succession
@@ -818,7 +1462,8 @@ folder_questions:
     display_name: Property & Assets
     relevance: low
     questions:
-    - question: Are leases in place for key premises?
+    - id: PE-F06-001
+      question: Are leases in place for key premises?
       priority: medium
       detail: Office leases, warehouse agreements
       cot_hint: Check leases → verify terms → assess adequacy
@@ -827,7 +1472,8 @@ folder_questions:
     display_name: Insurance
     relevance: medium
     questions:
-    - question: Is there adequate D&O and key-man insurance?
+    - id: PE-F07-001
+      question: Is there adequate D&O and key-man insurance?
       priority: high
       detail: D&O coverage, key-man insurance
       cot_hint: Review policies → check coverage → assess adequacy
@@ -836,11 +1482,13 @@ folder_questions:
     display_name: Litigation & Disputes
     relevance: high
     questions:
-    - question: Are there any pending or threatened litigation matters?
+    - id: PE-F08-001
+      question: Are there any pending or threatened litigation matters?
       priority: critical
       detail: Active claims, threatened litigation, regulatory matters
       cot_hint: List matters → assess exposure → check insurance
-    - question: Are there any founder or shareholder disputes?
+    - id: PE-F08-002
+      question: Are there any founder or shareholder disputes?
       priority: high
       detail: Shareholder litigation, founder conflicts
       cot_hint: Identify disputes → assess status → evaluate risk
@@ -853,15 +1501,18 @@ folder_questions:
     display_name: Tax
     relevance: high
     questions:
-    - question: Is the investment structure tax efficient?
+    - id: PE-F09-001
+      question: Is the investment structure tax efficient?
       priority: critical
       detail: Entry structure, withholding, repatriation
       cot_hint: Review structure → assess tax efficiency → identify issues
-    - question: Are management incentives structured tax efficiently?
+    - id: PE-F09-002
+      question: Are management incentives structured tax efficiently?
       priority: high
       detail: Section 8C, share scheme taxation
       cot_hint: Check incentive taxation → identify exposure → optimize
-    - question: Are there any historical tax issues or disputes?
+    - id: PE-F09-003
+      question: Are there any historical tax issues or disputes?
       priority: high
       detail: SARS compliance, disputes, assessments
       cot_hint: Check tax history → identify issues → assess exposure
@@ -870,15 +1521,18 @@ folder_questions:
     display_name: Intellectual Property
     relevance: critical
     questions:
-    - question: Is IP properly owned by the company with complete chain of title?
+    - id: PE-F10-001
+      question: Is IP properly owned by the company with complete chain of title?
       priority: critical
       detail: IP ownership, assignments from founders/contractors
       cot_hint: Trace IP ownership → verify assignments → identify gaps
-    - question: Are there any open-source or third-party IP dependencies?
+    - id: PE-F10-002
+      question: Are there any open-source or third-party IP dependencies?
       priority: critical
       detail: Open-source licenses, third-party IP, copyleft obligations
       cot_hint: List dependencies → check licenses → assess risk
-    - question: Is IP properly registered and protected?
+    - id: PE-F10-003
+      question: Is IP properly registered and protected?
       priority: high
       detail: Registrations, trade secrets, protection measures
       cot_hint: Check registrations → assess protection → identify gaps
@@ -891,11 +1545,13 @@ folder_questions:
     display_name: Technology & Systems
     relevance: high
     questions:
-    - question: What is the technology stack and are there scalability concerns?
+    - id: PE-F11-001
+      question: What is the technology stack and are there scalability concerns?
       priority: high
       detail: Tech stack, architecture, scalability assessment
       cot_hint: Review tech stack → assess scalability → identify technical debt
-    - question: Is there adequate cybersecurity and data protection?
+    - id: PE-F11-002
+      question: Is there adequate cybersecurity and data protection?
       priority: high
       detail: Security measures, POPIA compliance, data protection
       cot_hint: Review security → check compliance → assess adequacy
@@ -904,7 +1560,8 @@ folder_questions:
     display_name: Needs Review
     relevance: low
     questions:
-    - question: What investment-related issues does this document raise?
+    - id: PE-F99-001
+      question: What investment-related issues does this document raise?
       priority: medium
       detail: Documents requiring manual classification review
       cot_hint: Identify relevant content → flag for review
@@ -1025,6 +1682,477 @@ cot_questions:
   - Are there any B-BBEE considerations affecting the investment?
 
 # ============================================================================
+# WARRANTY CATEGORIES
+# PE/VC-specific warranty categories for investment protection
+# ============================================================================
+
+warranty_categories:
+  # ---------------------------------------------------------------------------
+  # TITLE & CAPACITY WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Title & Capacity"
+    description: "Warranties relating to share ownership, corporate capacity, and authority"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-TC-001"
+        description: "Seller/founder has full legal and beneficial ownership of shares being sold"
+        detailed_wording: "The Seller is the sole legal and beneficial owner of the Sale Shares, free from any encumbrances, liens, charges, pledges, or third-party rights whatsoever"
+        typical_cap: "Purchase price"
+        survival_period: "3 years from Closing Date"
+        priority: critical
+        dd_triggers:
+          - "Share register verification"
+          - "CIPC records check"
+          - "Cap table reconciliation"
+      - id: "W-TC-002"
+        description: "Shares are fully paid up and validly issued"
+        detailed_wording: "All issued shares have been validly issued in compliance with the Companies Act and the MOI, are fully paid up, and no further amounts are payable"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-TC-003"
+        description: "Cap table is accurate and complete on fully diluted basis"
+        detailed_wording: "The capitalisation table attached as Schedule [X] is accurate and complete, reflecting all issued shares, options, warrants, convertible instruments, and any other rights to acquire equity on a fully diluted basis"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Cap table vs share register reconciliation"
+          - "Option scheme review"
+          - "Convertible instrument terms"
+      - id: "W-TC-004"
+        description: "No undisclosed equity interests, options, or rights"
+        detailed_wording: "There are no outstanding options, warrants, convertible securities, pre-emptive rights, or other rights to acquire equity in the Company other than as disclosed in the Disclosure Schedule"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-TC-005"
+        description: "Seller has authority to enter into and perform the transaction"
+        detailed_wording: "The Seller has full power and authority to enter into this Agreement, all necessary approvals have been obtained, and the transaction does not conflict with any agreement or obligation"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # INTELLECTUAL PROPERTY WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Intellectual Property"
+    description: "Warranties specific to IP ownership, assignments, and protection"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    pe_vc_specific: true
+    standard_warranties:
+      - id: "W-IP-001"
+        description: "Company owns all IP used in the business"
+        detailed_wording: "The Company is the sole legal and beneficial owner of all intellectual property used in or necessary for its business, and all IP created by founders, employees, and contractors has been validly assigned to the Company"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "IP register review"
+          - "Assignment agreements"
+          - "Employment contracts"
+      - id: "W-IP-002"
+        description: "No IP infringement claims pending or threatened"
+        detailed_wording: "The Company is not infringing any third-party IP rights, and no claims of infringement have been made or threatened against the Company"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-IP-003"
+        description: "Open source compliance and no copyleft contamination"
+        detailed_wording: "The Company has complied with all open source licence obligations, and no proprietary code has been combined with copyleft-licensed code in a manner that would require disclosure of proprietary source code"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Open source audit"
+          - "SBOM review"
+          - "Licence compliance check"
+      - id: "W-IP-004"
+        description: "All founder and contractor IP assignments are complete"
+        detailed_wording: "All persons who have contributed to the creation of Company IP (including founders, employees, and independent contractors) have executed valid and enforceable IP assignment agreements in favour of the Company"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # BUSINESS & COMMERCIAL WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Business & Commercial"
+    description: "Warranties relating to business operations, contracts, and commercial matters"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-BUS-001"
+        description: "All material contracts have been disclosed"
+        detailed_wording: "Complete and accurate copies of all Material Contracts have been disclosed, and the Disclosure Schedule sets out all contracts with annual value exceeding R[X] or strategic importance"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Contract schedule review"
+          - "Revenue analysis"
+      - id: "W-BUS-002"
+        description: "No material contract at risk of termination"
+        detailed_wording: "No notice of termination, breach, or dispute has been given or received under any Material Contract, and no change of control provision is triggered by this transaction"
+        typical_cap: "Contract value at risk"
+        survival_period: "3 years"
+        priority: high
+      - id: "W-BUS-003"
+        description: "Business information provided during DD is accurate"
+        detailed_wording: "All information provided to the Investor during the due diligence process is true, accurate, and complete in all material respects and is not misleading"
+        typical_cap: "Purchase price (for fraud, unlimited)"
+        survival_period: "3 years"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # FINANCIAL WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Financial"
+    description: "Warranties relating to financial statements, debt, and financial position"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-FIN-001"
+        description: "Financial statements fairly present the financial position"
+        detailed_wording: "The financial statements for the financial year ended [date] have been prepared in accordance with IFRS/IFRS for SMEs and fairly present the financial position, results, and cash flows of the Company"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-FIN-002"
+        description: "No undisclosed liabilities"
+        detailed_wording: "The Company has no liabilities other than those reflected in the Accounts, incurred in the ordinary course since the Accounts Date, or disclosed in the Disclosure Schedule"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-FIN-003"
+        description: "Cash burn rate and financial projections are achievable"
+        detailed_wording: "The financial projections provided to the Investor have been prepared in good faith on reasonable assumptions, and the current cash burn rate is materially consistent with the projections"
+        typical_cap: "25% of purchase price"
+        survival_period: "2 years"
+        priority: high
+        pe_vc_specific: true
+
+  # ---------------------------------------------------------------------------
+  # EMPLOYMENT WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Employment"
+    description: "Warranties relating to employees, key persons, and incentive arrangements"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-EMP-001"
+        description: "Complete employee information disclosed"
+        detailed_wording: "Complete and accurate details of all employees and independent contractors have been disclosed including remuneration, benefits, notice periods, and restraints"
+        typical_cap: "12 months total remuneration"
+        survival_period: "2 years"
+        priority: high
+      - id: "W-EMP-002"
+        description: "Key person retention arrangements in place"
+        detailed_wording: "All key persons identified in Schedule [X] have binding service agreements, restraint of trade provisions, and are not in breach of any obligations to any third party"
+        typical_cap: "Replacement cost"
+        survival_period: "2 years"
+        priority: critical
+        pe_vc_specific: true
+      - id: "W-EMP-003"
+        description: "Share option scheme accurately described and compliant"
+        detailed_wording: "The share option scheme has been validly established in compliance with the Companies Act, all grants have been properly authorised, and the option pool allocation is as described"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # TAX WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Tax"
+    description: "Warranties relating to tax compliance and structuring"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-TAX-001"
+        description: "All tax returns filed and taxes paid"
+        detailed_wording: "All tax returns required to be filed have been filed on time, all taxes due have been paid, and adequate provision has been made for taxes not yet due"
+        typical_cap: "Underpaid amount + penalties"
+        survival_period: "5 years"
+        priority: critical
+      - id: "W-TAX-002"
+        description: "No tax disputes or audits outstanding"
+        detailed_wording: "There are no pending or threatened tax audits, disputes, or assessments from SARS"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "5 years"
+        priority: critical
+      - id: "W-TAX-003"
+        description: "Section 8C implications accurately disclosed"
+        detailed_wording: "All equity instruments subject to Section 8C have been identified, the tax implications have been accurately disclosed, and the Company has complied with PAYE withholding obligations"
+        typical_cap: "Tax exposure amount"
+        survival_period: "5 years"
+        priority: high
+        pe_vc_specific: true
+
+  # ---------------------------------------------------------------------------
+  # LITIGATION WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Litigation"
+    description: "Warranties relating to disputes, claims, and legal proceedings"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-LIT-001"
+        description: "No material litigation pending or threatened"
+        detailed_wording: "There is no litigation, arbitration, or administrative proceeding pending or threatened against the Company with a value exceeding R[X], other than as disclosed"
+        typical_cap: "Claim value"
+        survival_period: "3 years"
+        priority: high
+      - id: "W-LIT-002"
+        description: "No founder or shareholder disputes"
+        detailed_wording: "There are no disputes between shareholders, or between any shareholder and the Company, and no circumstances exist that could give rise to such disputes"
+        typical_cap: "As negotiated"
+        survival_period: "3 years"
+        priority: high
+        pe_vc_specific: true
+
+# ============================================================================
+# INDEMNITY CATEGORIES
+# PE/VC-specific indemnity categories for investor protection
+# ============================================================================
+
+indemnity_categories:
+  # ---------------------------------------------------------------------------
+  # IP OWNERSHIP INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "IP Ownership Defects"
+    description: "Indemnities for IP not properly owned by or assigned to the company"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    pe_vc_specific: true
+    triggers:
+      - "IP held by founder not company"
+      - "Missing contractor assignments"
+      - "Incomplete chain of title"
+    standard_indemnities:
+      - id: "I-IP-001"
+        description: "IP ownership defect indemnity"
+        detailed_wording: "The Founders shall indemnify the Investor against all Losses arising from any defect in the Company's ownership of intellectual property, including costs of obtaining assignments, defending ownership claims, and any diminution in value"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+      - id: "I-IP-002"
+        description: "Open source contamination indemnity"
+        detailed_wording: "The Founders shall indemnify the Investor against all Losses arising from any copyleft contamination of proprietary code that requires disclosure or remediation"
+        typical_cap: "Remediation cost + value impact"
+        survival_period: "3 years"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # FOUNDER/MANAGEMENT INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Founder & Management"
+    description: "Indemnities for founder-related risks and management matters"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    pe_vc_specific: true
+    triggers:
+      - "Founder competing post-investment"
+      - "Key person departure"
+      - "Undisclosed founder liabilities"
+    standard_indemnities:
+      - id: "I-MGT-001"
+        description: "Founder breach of restraint indemnity"
+        detailed_wording: "The Founders shall indemnify the Investor against all Losses arising from any breach of restraint of trade or non-compete obligations by any Founder"
+        typical_cap: "Investment amount"
+        survival_period: "Duration of restraint + 1 year"
+        priority: high
+      - id: "I-MGT-002"
+        description: "Pre-investment conduct indemnity"
+        detailed_wording: "The Founders shall indemnify the Investor against all Losses arising from any act, omission, or liability of the Company occurring prior to Closing that was not disclosed during due diligence"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # TAX INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Tax"
+    description: "Indemnities for tax liabilities arising from pre-investment periods"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Tax audit findings"
+      - "Section 8C non-compliance"
+      - "Historical tax positions"
+    standard_indemnities:
+      - id: "I-TAX-001"
+        description: "Pre-investment tax liabilities"
+        detailed_wording: "The Founders/Sellers shall indemnify the Investor against any tax liability of the Company relating to any period ending on or before the Closing Date, to the extent not provided for in the Accounts"
+        typical_cap: "Unlimited for tax"
+        survival_period: "5 years"
+        priority: critical
+      - id: "I-TAX-002"
+        description: "Section 8C non-compliance"
+        detailed_wording: "The Company shall indemnify the Investor against any penalties arising from non-compliance with Section 8C PAYE obligations in respect of equity instruments issued prior to Closing"
+        typical_cap: "Tax exposure + penalties"
+        survival_period: "5 years"
+        priority: high
+        pe_vc_specific: true
+
+  # ---------------------------------------------------------------------------
+  # THIRD PARTY CLAIMS INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Third Party Claims"
+    description: "Indemnities for claims by third parties arising from pre-investment matters"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Undisclosed litigation"
+      - "Customer claims"
+      - "Regulatory matters"
+    standard_indemnities:
+      - id: "I-3P-001"
+        description: "Undisclosed claims indemnity"
+        detailed_wording: "The Founders/Sellers shall indemnify the Investor against all Losses arising from any claim, litigation, or dispute that was pending or threatened as at Closing but not disclosed"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "3 years"
+        priority: critical
+
+# ============================================================================
+# WARRANTY & INDEMNITY DETECTION PATTERNS
+# ============================================================================
+
+warranty_indemnity_patterns:
+  warranty_patterns:
+    - pattern: "represents and warrants|seller warrants|founder warrants"
+      type: warranty
+      category: General
+    - pattern: "title to|ownership of|free from encumbrance|unencumbered"
+      type: warranty
+      category: "Title & Capacity"
+    - pattern: "cap table.*accurate|capitalisation.*complete|fully diluted"
+      type: warranty
+      category: "Title & Capacity"
+    - pattern: "intellectual property.*own|IP.*assign|chain of title"
+      type: warranty
+      category: "Intellectual Property"
+    - pattern: "open source.*compli|copyleft|SBOM"
+      type: warranty
+      category: "Intellectual Property"
+    - pattern: "financial statements.*fair|prepared in accordance"
+      type: warranty
+      category: Financial
+    - pattern: "no.*undisclosed.*liabilit"
+      type: warranty
+      category: Financial
+    - pattern: "key person|restraint of trade|service agreement"
+      type: warranty
+      category: Employment
+    - pattern: "tax.*return.*filed|taxes.*paid|Section 8C"
+      type: warranty
+      category: Tax
+    - pattern: "no.*litigation|no.*claims.*pending|no.*disputes"
+      type: warranty
+      category: Litigation
+    - pattern: "material contract.*disclosed|no.*breach.*contract"
+      type: warranty
+      category: "Business & Commercial"
+
+  indemnity_patterns:
+    - pattern: "indemnify|hold harmless|indemnification"
+      type: indemnity
+      category: General
+    - pattern: "IP.*indemnity|intellectual property.*indemnity"
+      type: indemnity
+      category: "IP Ownership Defects"
+    - pattern: "founder.*indemnity|restraint.*indemnity"
+      type: indemnity
+      category: "Founder & Management"
+    - pattern: "tax.*indemnity|pre-closing.*tax|Section 8C.*indemnity"
+      type: indemnity
+      category: Tax
+    - pattern: "open source.*indemnity|copyleft.*indemnity"
+      type: indemnity
+      category: "IP Ownership Defects"
+
+# ============================================================================
+# COT QUESTIONS - WARRANTY & INDEMNITY ANALYSIS
+# ============================================================================
+
+cot_questions_warranty_indemnity:
+  warranties_analysis:
+    - What title and capacity risks exist (share ownership, cap table accuracy, undisclosed equity interests)?
+    - What IP ownership risks require warranty protection (chain of title, founder assignments, open source)?
+    - What business and commercial risks need warranty coverage (material contracts, CoC provisions, DD accuracy)?
+    - What financial risks require warranty protection (AFS accuracy, undisclosed liabilities, projections)?
+    - What employment risks need warranty coverage (key persons, restraints, option scheme)?
+    - What tax risks require warranty protection (returns, Section 8C, disputes)?
+    - What litigation risks need warranty coverage (pending claims, shareholder disputes)?
+    - For each warranty, what is the appropriate cap and survival period?
+    - Which warranties should be fundamental (title, cap table, IP, fraud)?
+
+  indemnities_analysis:
+    - What IP ownership gaps require indemnity protection beyond warranties?
+    - Is there open source contamination risk requiring a specific indemnity?
+    - What founder-related risks warrant specific indemnities (restraint breach, pre-investment conduct)?
+    - What pre-investment tax liabilities require indemnity coverage?
+    - Are there undisclosed matters that warrant unlimited indemnity protection?
+    - For each indemnity, what cap, survival period, and basket apply?
+    - Should escrow be recommended for critical indemnities?
+
+  warranty_indemnity_structuring:
+    - What aggregate warranty cap is appropriate (typically 20-50% of investment amount)?
+    - What mini-basket and basket thresholds apply (typically 0.1% and 1%)?
+    - Which warranties should be carved out from limitations (title, cap table, IP, tax, fraud)?
+    - Should W&I insurance be recommended for this transaction?
+    - How do warranties interact with the investment agreement's representations?
+    - What is appropriate survival (general 18-24 months, fundamental 3-5 years, tax 5 years)?
+
+# ============================================================================
+# OUTPUT REQUIREMENTS
+# ============================================================================
+
+output_requirements:
+  must_include:
+    - Deal blocker identification with full reasoning
+    - Financial exposure quantification with calculations shown
+    - Conditions precedent register
+    - Key risk summary with investment thesis impact
+    - Exit risk assessment
+    - Recommendations
+    - CoT reasoning audit trail for critical findings
+    - Warranties register (recommended warranties for investor protection)
+    - Indemnities register (recommended indemnities based on DD findings)
+    - W&I structuring recommendations (caps, baskets, survival periods)
+  format:
+    - Executive summary (1-2 pages)
+    - Detailed findings by category with reasoning
+    - Financial exposure schedule
+    - CP checklist
+    - Warranties schedule by category with detailed wording suggestions
+    - Indemnities schedule with triggers, caps, and survival periods
+    - Investment risk matrix (critical vs manageable items)
+
+# ============================================================================
 # STATUTORY FRAMEWORK
 # Detailed statutory citation framework for private equity and VC findings
 # ============================================================================
@@ -1039,26 +2167,31 @@ statutory_framework:
           penalties:
             civil: "Transaction voidable, director liability"
           criticality: high
+          application_to_dd: "Review any share buyback arrangements. Assess compliance with solvency requirements."
         - section: "Section 44"
           description: "Financial assistance for acquisition of shares"
           penalties:
             civil: "Transaction voidable"
           criticality: critical
+          application_to_dd: "Critical for buyouts — verify financial assistance compliance including board resolution, solvency test, and shareholder approval."
         - section: "Section 112-115"
           description: "Fundamental transactions (mergers, schemes)"
           penalties:
             administrative: "Transaction invalid without compliance"
           criticality: critical
+          application_to_dd: "Assess whether transaction structure triggers fundamental transaction requirements."
         - section: "Section 122"
           description: "Rights of securities holders"
           penalties:
             civil: "Appraisal rights"
           criticality: high
+          application_to_dd: "Evaluate appraisal rights exposure for dissenting minority shareholders."
         - section: "Section 158"
           description: "Business rescue provisions"
           penalties:
             administrative: "BRP powers, moratorium"
           criticality: high
+          application_to_dd: "Check for any business rescue history or current distress indicators."
 
     - act: "Competition Act 89 of 1998"
       acronym: "Competition Act"
@@ -1069,21 +2202,25 @@ statutory_framework:
           penalties:
             administrative: "Fine up to 10% of turnover"
           criticality: critical
+          application_to_dd: "Calculate merger notification thresholds using audited turnover and asset values."
         - section: "Section 12A"
           description: "Merger evaluation criteria"
           penalties:
             administrative: "Conditions, prohibition"
           criticality: critical
+          application_to_dd: "Assess competition impact — market definition, market shares, potential concerns."
         - section: "Section 13A"
           description: "Small merger notification"
           penalties:
             administrative: "Fine for non-notification"
           criticality: high
+          application_to_dd: "Determine whether small merger exemption applies or voluntary notification advisable."
         - section: "Section 16"
           description: "Competition Tribunal merger adjudication"
           penalties:
             administrative: "Approval, conditions, or prohibition"
           criticality: critical
+          application_to_dd: "Assess probability of approval, conditions, or prohibition. Plan for Tribunal timeline."
 
     - act: "Exchange Control Regulations"
       acronym: "Exchange Control"
@@ -1094,16 +2231,19 @@ statutory_framework:
           penalties:
             administrative: "SARB approval required, potential unwinding"
           criticality: critical
+          application_to_dd: "Critical for cross-border PE structures. Assess whether investment creates prohibited loop structure."
         - section: "Regulation 10"
           description: "Acquisition of foreign assets"
           penalties:
             administrative: "SARB approval required"
           criticality: high
+          application_to_dd: "Evaluate foreign acquisition elements. Determine SARB approval requirements for offshore components."
         - section: "Regulation 14"
           description: "Dividends and profit remittances"
           penalties:
             administrative: "Verification requirements"
           criticality: high
+          application_to_dd: "Assess dividend and profit repatriation mechanics. Plan for withholding and verification requirements."
 
     - act: "Income Tax Act 58 of 1962"
       acronym: "Income Tax Act"
@@ -1114,26 +2254,31 @@ statutory_framework:
           penalties:
             administrative: "PAYE liability, penalties"
           criticality: critical
+          application_to_dd: "Critical for PE/VC — assess Section 8C implications for all management equity instruments and vesting triggers."
         - section: "Section 22"
           description: "Trading stock and share dealer provisions"
           penalties:
             administrative: "Income vs capital characterization"
           criticality: high
+          application_to_dd: "Determine whether investor is share dealer vs capital investor. Affects exit tax treatment."
         - section: "Section 24B"
           description: "Anti-avoidance - disposal at undervalue"
           penalties:
             administrative: "Deemed consideration adjustments"
           criticality: high
+          application_to_dd: "Review any shares issued below market value. Assess deemed consideration implications."
         - section: "Eighth Schedule"
           description: "Capital gains tax"
           penalties:
             administrative: "CGT liability"
           criticality: high
+          application_to_dd: "Model CGT on exit scenarios. Consider effective rate, inclusion rate, and small business exclusion."
         - section: "Section 23M"
           description: "Interest limitation rules"
           penalties:
             administrative: "Disallowed interest deductions"
           criticality: high
+          application_to_dd: "Assess interest limitation on acquisition debt. Critical for leveraged buyout structures."
 
     - act: "Securities Transfer Tax Act 25 of 2007"
       acronym: "STT Act"
@@ -1144,11 +2289,13 @@ statutory_framework:
           penalties:
             administrative: "0.25% STT liability"
           criticality: medium
+          application_to_dd: "Calculate STT liability on share transfers. Factor into transaction costs."
         - section: "Section 8"
           description: "Exemptions from STT"
           penalties:
             administrative: "Incorrect exemption claims"
           criticality: medium
+          application_to_dd: "Assess whether any exemptions apply (e.g., listed securities, intra-group)."
 
     - act: "Financial Intelligence Centre Act 38 of 2001"
       acronym: "FICA"
@@ -1160,11 +2307,13 @@ statutory_framework:
             administrative: "Fine up to R50 million"
             criminal: "Imprisonment up to 15 years"
           criticality: critical
+          application_to_dd: "Verify CDD compliance for all transaction counterparties."
         - section: "Section 29"
           description: "Suspicious transaction reporting"
           penalties:
             criminal: "Fine up to R100 million or imprisonment"
           criticality: critical
+          application_to_dd: "Assess suspicious transaction reporting compliance and history."
 
     - act: "Protection of Personal Information Act 4 of 2013"
       acronym: "POPIA"
@@ -1176,11 +2325,13 @@ statutory_framework:
             administrative: "Fine up to R10 million"
             criminal: "Imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Assess target's POPIA compliance. Review data processing practices and consent mechanisms."
         - section: "Section 72"
           description: "Trans-border information flows"
           penalties:
             administrative: "Enforcement notice"
           criticality: high
+          application_to_dd: "Evaluate cross-border data flow implications, especially for SaaS/tech targets with international users."
 
   sector_specific:
     venture_capital:
@@ -1225,3 +2376,118 @@ statutory_framework:
         trigger: "Target providing financial assistance for own acquisition"
         consequence: "Board approval, solvency test, shareholder approval if MOI requires"
         timeline: "Board resolution required before financial close"
+
+  secondary_legislation:
+    - name: "Companies Act Regulations"
+      issuing_body: "DTI / CIPC"
+      relevance: "Company registration, annual returns, shareholder meetings requirements"
+    - name: "Competition Commission Rules"
+      issuing_body: "Competition Commission"
+      relevance: "Merger notification forms, thresholds, filing requirements and timelines"
+    - name: "Exchange Control Manual"
+      issuing_body: "SARB / Authorised Dealers"
+      relevance: "Detailed exchange control procedures for cross-border investment structures"
+    - name: "SARS Interpretation Notes"
+      issuing_body: "SARS"
+      relevance: "Tax interpretation guidance including Section 8C, CGT, and transfer pricing"
+      key_notes:
+        - "IN 50 — Section 8C equity instruments"
+        - "IN 43 — Section 24B deemed consideration"
+        - "IN 7 — Restraint of trade payments"
+    - name: "B-BBEE Codes of Good Practice"
+      issuing_body: "DTI"
+      relevance: "Generic codes and sector codes applicable to target company"
+    - name: "King IV Report on Corporate Governance"
+      issuing_body: "IoDSA"
+      relevance: "Corporate governance standards — increasingly required for investee companies"
+
+  regulatory_bodies:
+    - name: "Competition Commission"
+      parent: "Independent statutory body"
+      jurisdiction: "Merger control and competition enforcement"
+      key_powers:
+        - "Merger approval, conditions, or prohibition"
+        - "Interim relief during investigation"
+        - "Administrative penalties up to 10% of turnover"
+      relevance_to_dd: "Merger filing assessment — determine thresholds and timeline for approval"
+    - name: "Companies and Intellectual Property Commission (CIPC)"
+      parent: "DTI"
+      jurisdiction: "Company registration, compliance, and intellectual property"
+      key_powers:
+        - "Company registration and deregistration"
+        - "Annual return enforcement"
+        - "IP registration (trademarks, patents, designs)"
+      relevance_to_dd: "Company records verification, IP registration status, corporate compliance"
+    - name: "South African Reserve Bank (SARB)"
+      parent: "Constitutional institution"
+      jurisdiction: "Exchange control and financial stability"
+      key_powers:
+        - "Exchange control approvals"
+        - "Loop structure assessment"
+        - "Cross-border transaction monitoring"
+      relevance_to_dd: "Exchange control compliance for cross-border PE structures and repatriation"
+    - name: "South African Revenue Service (SARS)"
+      parent: "National Treasury"
+      jurisdiction: "Tax administration and enforcement"
+      key_powers:
+        - "Tax assessments and audits"
+        - "Transfer pricing adjustments"
+        - "Section 8C PAYE enforcement"
+      relevance_to_dd: "Tax compliance verification, structure tax efficiency assessment, Section 8C review"
+    - name: "Information Regulator"
+      parent: "Independent statutory body"
+      jurisdiction: "Data protection under POPIA"
+      key_powers:
+        - "Enforcement notices"
+        - "Administrative fines up to R10 million"
+        - "Assessment and compliance monitoring"
+      relevance_to_dd: "Data protection compliance for tech/SaaS targets with significant personal data"
+
+# ============================================================================
+# OUTPUT TEMPLATES
+# ============================================================================
+
+output_templates:
+  executive_summary:
+    max_items: 15
+    sections:
+      - "Transaction Overview"
+      - "Deal Blockers"
+      - "Critical Findings"
+      - "Financial Exposure Summary"
+      - "Conditions Precedent"
+      - "Key Recommendations"
+    required_elements:
+      - "Total quantified exposure amount"
+      - "Number of deal blockers identified"
+      - "Number of conditions precedent"
+      - "BEE compliance status (compliant / non-compliant / at risk)"
+      - "Competition Commission filing requirement and timeline"
+      - "IP ownership status"
+      - "Key person retention status"
+      - "Exit route viability assessment"
+  full_report:
+    sections:
+      - "Transaction Context & Investment Thesis"
+      - "Investment Structure & Terms"
+      - "Founder & Management Assessment"
+      - "Business & Commercial DD"
+      - "Financial DD & Quality of Earnings"
+      - "Legal & Corporate Structure"
+      - "IP & Technology"
+      - "Exit & Liquidity"
+      - "Tax Structuring"
+      - "Regulatory & Compliance"
+      - "BEE & Transformation"
+      - "Warranties & Indemnities"
+  finding_format:
+    required_fields:
+      - finding_id
+      - category
+      - severity
+      - description
+      - financial_exposure
+      - recommendation
+      - warranty_implication
+      - indemnity_implication
+      - investment_thesis_impact

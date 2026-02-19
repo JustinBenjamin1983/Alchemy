@@ -6,114 +6,414 @@ description: 'Due diligence blueprint for infrastructure projects and public-pri
 
   '
 jurisdiction: South Africa
+transaction_context:
+  deal_structures:
+    - type: concession_acquisition
+      description: Acquisition of shares in PPP concessionaire SPV
+      key_considerations:
+        - Treasury consent for change of control
+        - Authority consent under concession agreement
+        - Senior lender consent for project finance
+        - BEE compliance maintenance
+    - type: secondary_sale
+      description: Secondary market sale of infrastructure investment
+      key_considerations:
+        - Multiple consent requirements (Treasury, authority, lenders)
+        - Remaining concession term and revenue profile
+        - Handback condition obligations
+        - Infrastructure fund structuring
+    - type: refinancing
+      description: Refinancing of existing PPP project finance
+      key_considerations:
+        - Treasury consent for material financial changes
+        - Lender consent and security release
+        - Impact on equity returns and distribution
+        - BEE ownership implications
+    - type: concession_extension
+      description: Extension or variation of existing concession
+      key_considerations:
+        - Treasury Approval III for amendments
+        - Value-for-money assessment
+        - Additional capital expenditure requirements
+        - Revised handback obligations
+  typical_parties:
+    - role: concessionaire
+      description: SPV holding the concession (project company)
+    - role: contracting_authority
+      description: Government entity granting the concession
+    - role: national_treasury
+      description: National Treasury PPP Unit providing approvals
+    - role: senior_lender
+      description: Project finance debt provider
+    - role: equity_investor
+      description: Shareholder in the concessionaire SPV
+    - role: o_and_m_contractor
+      description: Operations and maintenance contractor
+    - role: epc_contractor
+      description: Engineering, procurement and construction contractor
 primary_legislation:
 - Public Finance Management Act 1 of 1999
 - Municipal Finance Management Act 56 of 2003
-- National Treasury PPP Regulations
 - Infrastructure Development Act 23 of 2014
 - Preferential Procurement Policy Framework Act 5 of 2000
+- National Environmental Management Act 107 of 1998
+- National Water Act 36 of 1998
+- Construction Industry Development Board Act 38 of 2000
+- Promotion of Administrative Justice Act 3 of 2000
+reference_documents:
+  always_include:
+    - pattern: "concession agreement|PPP agreement"
+      document_type: "Concession Agreement"
+    - pattern: "Treasury approval|Treasury consent"
+      document_type: "Treasury Approval"
+    - pattern: "unitary payment|availability payment|tariff"
+      document_type: "Revenue/Payment Schedule"
+    - pattern: "facility agreement|project finance"
+      document_type: "Project Finance Agreement"
+    - pattern: "handback|asset condition"
+      document_type: "Handback Requirements"
+    - pattern: "performance|KPI|service level"
+      document_type: "Performance Standards"
+    - pattern: "lifecycle|maintenance plan"
+      document_type: "Lifecycle Replacement Plan"
+folder_structure:
+  01_Corporate_Governance:
+    relevance: high
+    subcategories:
+    - Constitutional
+    - Governance
+    - SPV Structure
+    expected_documents:
+    - MOI
+    - Board Resolution
+    - Shareholders Agreement
+    document_expectations:
+      - document: "MOI"
+        expected_content: "SPV Memorandum of Incorporation with concession-required provisions"
+        key_fields: ["objects clause", "governance provisions", "concession compliance", "BEE provisions"]
+        cross_reference: ["Shareholders Agreement", "Concession Agreement"]
+      - document: "Shareholders Agreement"
+        expected_content: "SHA governing concessionaire SPV ownership and governance"
+        key_fields: ["ownership percentages", "BEE lock-in", "CoC provisions", "reserved matters"]
+        cross_reference: ["MOI", "Concession Agreement"]
+  02_Commercial:
+    relevance: critical
+    subcategories:
+    - Concession
+    - O&M
+    - Subcontracts
+    expected_documents:
+    - Concession Agreement
+    - O&M Agreement
+    - Implementation Agreement
+    - Direct Agreement
+    document_expectations:
+      - document: "Concession Agreement"
+        expected_content: "PPP concession agreement with contracting authority"
+        key_fields: ["term", "services", "performance standards", "CoC provisions", "step-in rights", "termination", "handback"]
+        cross_reference: ["Treasury Approval", "Project Finance Agreement"]
+      - document: "O&M Agreement"
+        expected_content: "Operations and maintenance contract"
+        key_fields: ["operator", "term", "KPIs", "penalties", "fee structure"]
+        cross_reference: ["Concession Agreement"]
+      - document: "Direct Agreement"
+        expected_content: "Direct agreement between authority and lenders"
+        key_fields: ["step-in rights", "cure periods", "lender protections"]
+        cross_reference: ["Concession Agreement", "Project Finance Agreement"]
+  03_Financial:
+    relevance: critical
+    subcategories:
+    - Project Finance
+    - Security
+    - Financial Model
+    expected_documents:
+    - Facility Agreement
+    - Security Agreement
+    - Financial Model
+    - Financial Statements
+    document_expectations:
+      - document: "Facility Agreement"
+        expected_content: "Senior project finance facility agreement"
+        key_fields: ["facility amount", "tenor", "DSCR covenants", "CoC provisions", "distribution tests"]
+        cross_reference: ["Financial Model", "Concession Agreement"]
+      - document: "Financial Model"
+        expected_content: "Detailed project financial model"
+        key_fields: ["revenue assumptions", "opex", "capex", "debt service", "DSCR", "equity IRR"]
+        cross_reference: ["Concession Agreement", "Facility Agreement"]
+  04_Regulatory:
+    relevance: critical
+    subcategories:
+    - Treasury Approvals
+    - PFMA/MFMA
+    - Environmental
+    expected_documents:
+    - Treasury Approval Letter
+    - PFMA Compliance Report
+    - Environmental Authorization
+    document_expectations:
+      - document: "Treasury Approval Letter"
+        expected_content: "National/Provincial Treasury PPP approval"
+        key_fields: ["approval stage", "conditions", "validity", "CoC consent requirements"]
+        cross_reference: ["Concession Agreement"]
+      - document: "Environmental Authorization"
+        expected_content: "NEMA environmental authorization for infrastructure"
+        key_fields: ["authorization number", "listed activities", "conditions", "EMPr"]
+        cross_reference: ["Concession Agreement"]
+  05_Employment:
+    relevance: medium
+    subcategories:
+    - O&M Staff
+    - Local Employment
+    expected_documents:
+    - Employment Contract
+    - Local Content Report
+    document_expectations:
+      - document: "Local Content Report"
+        expected_content: "Report on local employment and skills transfer compliance"
+        key_fields: ["local jobs created", "skills transfer metrics", "local content percentage"]
+        cross_reference: ["Concession Agreement"]
+  06_Property:
+    relevance: high
+    subcategories:
+    - Land Rights
+    - Servitudes
+    - Infrastructure
+    expected_documents:
+    - Land Lease Agreement
+    - Servitude Agreement
+    - Title Deed
+    document_expectations:
+      - document: "Land Lease Agreement"
+        expected_content: "Land rights for infrastructure project site"
+        key_fields: ["lessor", "term", "rental", "renewal", "restoration obligations"]
+        cross_reference: ["Concession Agreement", "Title Deed"]
+  07_Insurance:
+    relevance: high
+    subcategories:
+    - Construction
+    - Operations
+    - BI
+    - Political Risk
+    expected_documents:
+    - Insurance Programme
+    - Political Risk Insurance
+    document_expectations:
+      - document: "Insurance Programme"
+        expected_content: "Full insurance programme as required by concession"
+        key_fields: ["CAR", "OAR", "BI", "public liability", "professional indemnity"]
+        cross_reference: ["Concession Agreement", "Facility Agreement"]
+  08_Litigation:
+    relevance: high
+    subcategories:
+    - Authority Disputes
+    - Construction Claims
+    - Regulatory
+    expected_documents:
+    - Summons
+    - Arbitration Notice
+    - Settlement Agreement
+    document_expectations:
+      - document: "Arbitration Notice"
+        expected_content: "Notice of arbitration under concession dispute resolution"
+        key_fields: ["claimant", "respondent", "dispute", "relief sought", "arbitrator"]
+        cross_reference: ["Concession Agreement"]
+  09_Tax:
+    relevance: medium
+    subcategories:
+    - PPP Tax Structure
+    - VAT
+    expected_documents:
+    - Tax Return
+    - VAT Ruling
+    document_expectations:
+      - document: "Tax Return"
+        expected_content: "Income tax returns for concessionaire SPV"
+        key_fields: ["taxable income", "capital allowances", "assessed losses"]
+        cross_reference: ["Financial Statements"]
+  10_Technical:
+    relevance: critical
+    subcategories:
+    - Asset Condition
+    - Lifecycle
+    - Construction
+    expected_documents:
+    - Asset Condition Report
+    - Lifecycle Replacement Plan
+    - Construction Completion Certificate
+    document_expectations:
+      - document: "Asset Condition Report"
+        expected_content: "Independent assessment of infrastructure asset condition"
+        key_fields: ["asset description", "condition rating", "remaining useful life", "capex needs"]
+        cross_reference: ["Lifecycle Replacement Plan", "Concession Agreement"]
+      - document: "Lifecycle Replacement Plan"
+        expected_content: "Plan for lifecycle replacement of infrastructure components"
+        key_fields: ["component", "replacement cycle", "estimated cost", "funding source"]
+        cross_reference: ["Financial Model", "Asset Condition Report"]
+  11_BEE:
+    relevance: critical
+    subcategories:
+    - BEE Compliance
+    - Procurement
+    - Local Content
+    expected_documents:
+    - B-BBEE Certificate
+    - Procurement Report
+    - Local Content Report
+    document_expectations:
+      - document: "B-BBEE Certificate"
+        expected_content: "B-BBEE verification certificate for concessionaire"
+        key_fields: ["BEE level", "ownership percentage", "expiry date"]
+        cross_reference: ["Shareholders Agreement", "Concession Agreement"]
+  99_Needs_Review:
+    relevance: n/a
+    subcategories:
+    - Unclassified
+    - Low Confidence
+    expected_documents: []
 risk_categories:
 - name: Concession Agreement
   weight: critical
   standard_questions:
-  - question: What is the concession term and remaining duration?
+  - id: PPP-CON-001
+    question: What is the concession term and remaining duration?
     priority: critical
-  - question: What assets are covered by the concession?
+  - id: PPP-CON-002
+    question: What assets are covered by the concession?
     priority: critical
-  - question: What services must be provided under the concession?
+  - id: PPP-CON-003
+    question: What services must be provided under the concession?
     priority: critical
-  - question: What performance standards apply?
+  - id: PPP-CON-004
+    question: What performance standards apply?
     priority: critical
-  - question: Does the concession contain change of control provisions?
+  - id: PPP-CON-005
+    question: Does the concession contain change of control provisions?
     priority: critical
-  - question: What step-in rights does the authority have?
+  - id: PPP-CON-006
+    question: What step-in rights does the authority have?
     priority: high
-  - question: What termination rights exist and what are compensation provisions?
+  - id: PPP-CON-007
+    question: What termination rights exist and what are compensation provisions?
     priority: critical
-  - question: Are there any rebalancing or renegotiation provisions?
+  - id: PPP-CON-008
+    question: Are there any rebalancing or renegotiation provisions?
     priority: high
-  - question: What benchmarking or market testing applies?
+  - id: PPP-CON-009
+    question: What benchmarking or market testing applies?
     priority: medium
-  - question: What extension or renewal options exist?
+  - id: PPP-CON-010
+    question: What extension or renewal options exist?
     priority: high
 - name: Revenue & Tariffs
   weight: critical
   standard_questions:
-  - question: What is the revenue model (availability, usage, combination)?
+  - id: PPP-REV-001
+    question: What is the revenue model (availability, usage, combination)?
     priority: critical
-  - question: What tariff or unitary payment structure applies?
+  - id: PPP-REV-002
+    question: What tariff or unitary payment structure applies?
     priority: critical
-  - question: What indexation or escalation mechanisms exist?
+  - id: PPP-REV-003
+    question: What indexation or escalation mechanisms exist?
     priority: critical
-  - question: What demand/volume risk exists?
+  - id: PPP-REV-004
+    question: What demand/volume risk exists?
     priority: critical
-  - question: Are there any minimum revenue guarantees?
+  - id: PPP-REV-005
+    question: Are there any minimum revenue guarantees?
     priority: high
-  - question: What penalty or deduction regime applies?
+  - id: PPP-REV-006
+    question: What penalty or deduction regime applies?
     priority: high
-  - question: What is the payment track record of the authority?
+  - id: PPP-REV-007
+    question: What is the payment track record of the authority?
     priority: critical
-  - question: Are there any tariff disputes or regulatory reviews pending?
+  - id: PPP-REV-008
+    question: Are there any tariff disputes or regulatory reviews pending?
     priority: high
 - name: Treasury Approvals
   weight: critical
   standard_questions:
-  - question: Have all required Treasury approvals been obtained?
+  - id: PPP-TRA-001
+    question: Have all required Treasury approvals been obtained?
     priority: critical
-  - question: What conditions were attached to Treasury approval?
+  - id: PPP-TRA-002
+    question: What conditions were attached to Treasury approval?
     priority: high
-  - question: Is there any contingent liability recorded by government?
+  - id: PPP-TRA-003
+    question: Is there any contingent liability recorded by government?
     priority: high
-  - question: Does the change of control require Treasury consent?
+  - id: PPP-TRA-004
+    question: Does the change of control require Treasury consent?
     priority: critical
-  - question: Are there any PFMA/MFMA compliance issues?
+  - id: PPP-TRA-005
+    question: Are there any PFMA/MFMA compliance issues?
     priority: critical
-  - question: What reporting obligations to Treasury exist?
+  - id: PPP-TRA-006
+    question: What reporting obligations to Treasury exist?
     priority: medium
 - name: Construction & Asset Condition
   weight: high
   standard_questions:
-  - question: What is the construction status of the project?
+  - id: PPP-CAC-001
+    question: What is the construction status of the project?
     priority: critical
-  - question: Are there any outstanding construction claims?
+  - id: PPP-CAC-002
+    question: Are there any outstanding construction claims?
     priority: high
-  - question: What warranties remain in force?
+  - id: PPP-CAC-003
+    question: What warranties remain in force?
     priority: high
-  - question: What is the condition of the infrastructure assets?
+  - id: PPP-CAC-004
+    question: What is the condition of the infrastructure assets?
     priority: critical
-  - question: What lifecycle replacement obligations exist?
+  - id: PPP-CAC-005
+    question: What lifecycle replacement obligations exist?
     priority: high
-  - question: What is the maintenance record and current condition?
+  - id: PPP-CAC-006
+    question: What is the maintenance record and current condition?
     priority: high
-  - question: Are there any handback condition requirements?
+  - id: PPP-CAC-007
+    question: Are there any handback condition requirements?
     priority: high
 - name: BEE & Transformation
   weight: high
   standard_questions:
-  - question: What BEE ownership requirements apply to the concession?
+  - id: PPP-BET-001
+    question: What BEE ownership requirements apply to the concession?
     priority: critical
-  - question: Is the concessionaire compliant with BEE requirements?
+  - id: PPP-BET-002
+    question: Is the concessionaire compliant with BEE requirements?
     priority: critical
-  - question: What happens to BEE compliance on change of control?
+  - id: PPP-BET-003
+    question: What happens to BEE compliance on change of control?
     priority: critical
-  - question: What local content and procurement obligations apply?
+  - id: PPP-BET-004
+    question: What local content and procurement obligations apply?
     priority: high
-  - question: What skills transfer obligations exist?
+  - id: PPP-BET-005
+    question: What skills transfer obligations exist?
     priority: medium
 - name: Insurance & Risk Allocation
   weight: high
   standard_questions:
-  - question: What insurance coverage is required under the concession?
+  - id: PPP-INR-001
+    question: What insurance coverage is required under the concession?
     priority: high
-  - question: Is all required insurance in place?
+  - id: PPP-INR-002
+    question: Is all required insurance in place?
     priority: high
-  - question: What is the risk allocation between authority and concessionaire?
+  - id: PPP-INR-003
+    question: What is the risk allocation between authority and concessionaire?
     priority: high
-  - question: What force majeure provisions apply?
+  - id: PPP-INR-004
+    question: What force majeure provisions apply?
     priority: high
-  - question: What change in law protections exist?
+  - id: PPP-INR-005
+    question: What change in law protections exist?
     priority: high
-  - question: Are there any political risk protections?
+  - id: PPP-INR-006
+    question: Are there any political risk protections?
     priority: medium
 deal_blockers:
 - description: Treasury or authority consent cannot be obtained
@@ -126,6 +426,250 @@ deal_blockers:
   severity: conditional
 - description: Significant infrastructure asset impairment
   severity: conditional
+entity_relationship_patterns:
+  typical_structures:
+    - name: PPP Concession SPV
+      description: Ringfenced SPV holding concession agreement and project assets
+      key_relationships: [Contracting Authority, Sponsors, Lenders, O&M Contractor, EPC Contractor]
+      dd_focus: Concession compliance, Treasury consent, project finance, BEE ownership
+    - name: Toll Road Concessionaire
+      description: Toll road concession with traffic revenue model
+      key_relationships: [SANRAL/Authority, Sponsors, Lenders, Toll Operator, Road Users]
+      dd_focus: Traffic volume risk, tariff regulation, concession duration, handback
+    - name: Social Infrastructure PPP
+      description: PPP for hospitals, schools, prisons, or government buildings
+      key_relationships: [Government Department, SPV, FM Contractor, Lenders]
+      dd_focus: Availability payments, performance standards, penalty regime
+    - name: Water/Utilities Concession
+      description: Water treatment, distribution, or utilities concession
+      key_relationships: [Municipality, SPV, O&M Contractor, Regulator, Community]
+      dd_focus: Tariff regulation, service levels, regulatory compliance, community engagement
+    - name: Infrastructure Fund Investment
+      description: Infrastructure fund holding portfolio of PPP investments
+      key_relationships: [Fund Manager, Fund Investors, Portfolio SPVs, Lenders]
+      dd_focus: Portfolio analysis, cross-default, management agreements, fund terms
+  entity_roles:
+    - role: Concessionaire
+      description: SPV holding the concession agreement
+    - role: Contracting Authority
+      description: Government entity granting the concession
+    - role: National Treasury
+      description: PPP approval and oversight body
+    - role: Senior Lender
+      description: Project finance debt provider
+    - role: O&M Contractor
+      description: Operations and maintenance service provider
+    - role: Independent Engineer
+      description: Technical monitor appointed under concession
+  common_related_parties:
+    - type: Sponsor as O&M Contractor
+      risk: Related party contract, non-arms-length pricing, conflict of interest
+    - type: Government Official as Director
+      risk: PFMA conflict, governance concerns
+    - type: Fund Manager Affiliate
+      risk: Fee arrangements, conflicts between funds
+    - type: BEE Partner as Subcontractor
+      risk: Fronting risk, non-genuine participation
+materiality_thresholds:
+  default_when_value_unknown: "R5,000,000"
+  when_value_known:
+    - threshold: "5% of equity value"
+      applies_to: "Individual contract exposure, single asset condition issue"
+    - threshold: "2% of equity value"
+      applies_to: "Aggregate compliance costs, lifecycle shortfall"
+    - threshold: "1% of annual revenue"
+      applies_to: "Performance deductions, tariff disputes"
+  qualitative_overrides:
+    always_material:
+      - "Treasury consent not obtainable"
+      - "Concession termination or termination risk"
+      - "Authority step-in rights triggered"
+      - "Material breach of concession agreement"
+      - "Project finance covenant breach or event of default"
+      - "BEE non-compliance affecting concession"
+      - "Handback condition failure risk"
+      - "Environmental authorization breach"
+      - "PFMA/MFMA non-compliance"
+    never_immaterial:
+      - "Concession Agreement"
+      - "Treasury Approvals"
+      - "Revenue & Tariffs"
+      - "Project Finance Covenants"
+      - "Handback Obligations"
+cross_reference_expectations:
+  primary_documents:
+    - document: "Concession Agreement"
+      must_cross_reference:
+        - target: "Treasury Approval Letter"
+          fields: ["approval conditions", "consent requirements"]
+          validation: "Concession must reflect Treasury conditions"
+        - target: "Financial Model"
+          fields: ["revenue assumptions", "tariff", "concession term"]
+          validation: "Model must match concession commercial terms"
+        - target: "Performance Standards"
+          fields: ["KPIs", "penalty regime"]
+          validation: "Performance schedule must match concession"
+    - document: "Financial Model"
+      must_cross_reference:
+        - target: "Facility Agreement"
+          fields: ["debt amount", "interest rate", "repayment"]
+          validation: "Debt assumptions must match facility terms"
+        - target: "Concession Agreement"
+          fields: ["revenue", "tariff", "escalation", "term"]
+          validation: "Revenue assumptions must match concession terms"
+        - target: "Lifecycle Replacement Plan"
+          fields: ["capex schedule", "lifecycle costs"]
+          validation: "Lifecycle provisions must match plan"
+    - document: "Treasury Approval Letter"
+      must_cross_reference:
+        - target: "Concession Agreement"
+          fields: ["approval conditions"]
+          validation: "Concession must comply with Treasury conditions"
+        - target: "Shareholders Agreement"
+          fields: ["ownership", "BEE requirements"]
+          validation: "Ownership must meet Treasury BEE conditions"
+    - document: "Asset Condition Report"
+      must_cross_reference:
+        - target: "Lifecycle Replacement Plan"
+          fields: ["condition ratings", "replacement needs"]
+          validation: "Lifecycle plan must address condition findings"
+        - target: "Handback Requirements"
+          fields: ["handback standards", "remaining life"]
+          validation: "Condition must be on track for handback compliance"
+red_flag_patterns:
+  categories:
+    - category: concession
+      patterns:
+        - id: PPP-RF-CON-001
+          pattern: "concession termination|termination notice|material breach"
+          severity: critical
+          description: "Concession at risk of termination"
+          action: "Assess termination grounds, cure period, and compensation"
+        - id: PPP-RF-CON-002
+          pattern: "step-in|authority intervention|cure period"
+          severity: critical
+          description: "Authority step-in rights may be triggered"
+          action: "Assess step-in triggers and contractor cure rights"
+        - id: PPP-RF-CON-003
+          pattern: "performance failure|KPI breach|penalty deduction"
+          severity: high
+          description: "Performance standards not being met"
+          action: "Quantify deductions and assess remediation plan"
+        - id: PPP-RF-CON-004
+          pattern: "handback|end of concession|asset condition"
+          severity: high
+          description: "Handback condition requirements at risk"
+          action: "Commission independent condition assessment vs handback requirements"
+    - category: treasury
+      patterns:
+        - id: PPP-RF-TRE-001
+          pattern: "Treasury consent|Treasury approval|PFMA"
+          severity: critical
+          description: "Treasury consent required but uncertain"
+          action: "Assess Treasury consent requirements and likelihood"
+        - id: PPP-RF-TRE-002
+          pattern: "irregular expenditure|unauthorized|PFMA breach"
+          severity: critical
+          description: "PFMA/MFMA compliance issue"
+          action: "Assess irregularity and potential consequences"
+    - category: revenue
+      patterns:
+        - id: PPP-RF-REV-001
+          pattern: "tariff dispute|payment default|authority arrears"
+          severity: critical
+          description: "Revenue at risk from authority payment issues"
+          action: "Assess payment history and government creditworthiness"
+        - id: PPP-RF-REV-002
+          pattern: "demand risk|traffic below|volume shortfall"
+          severity: high
+          description: "Demand/volume below forecast"
+          action: "Assess revenue impact and minimum guarantee provisions"
+        - id: PPP-RF-REV-003
+          pattern: "tariff review|regulatory review|price cap"
+          severity: high
+          description: "Tariff under regulatory review"
+          action: "Assess regulatory review process and potential impact"
+    - category: project_finance
+      patterns:
+        - id: PPP-RF-FIN-001
+          pattern: "DSCR breach|covenant breach|event of default"
+          severity: critical
+          description: "Project finance covenant breach"
+          action: "Assess breach severity, cure rights, and lender remedies"
+        - id: PPP-RF-FIN-002
+          pattern: "distribution lock-up|cash sweep"
+          severity: high
+          description: "Equity distributions restricted"
+          action: "Assess DSCR headroom and distribution forecast"
+    - category: asset_condition
+      patterns:
+        - id: PPP-RF-AST-001
+          pattern: "asset deterioration|deferred maintenance|lifecycle gap"
+          severity: high
+          description: "Infrastructure asset condition deteriorating"
+          action: "Commission condition assessment and lifecycle gap analysis"
+        - id: PPP-RF-AST-002
+          pattern: "construction defect|latent defect|structural"
+          severity: critical
+          description: "Construction or structural defect in infrastructure"
+          action: "Assess defect severity and warranty/insurance coverage"
+    - category: bee_compliance
+      patterns:
+        - id: PPP-RF-BEE-001
+          pattern: "BEE non-compliant|ownership below|concession breach"
+          severity: critical
+          description: "BEE non-compliance under concession"
+          action: "Assess impact on concession and Treasury consent"
+        - id: PPP-RF-BEE-002
+          pattern: "PPPFA|procurement non-compliant|local content"
+          severity: high
+          description: "Preferential procurement non-compliance"
+          action: "Assess PPPFA compliance and remediation"
+calculation_formulas:
+  categories:
+    - name: project_valuation
+      formulas:
+        - formula: "Equity IRR = IRR of equity cash flows over remaining concession term"
+          variables: ["equity_investment", "distributions", "terminal_value"]
+          description: "Equity internal rate of return"
+        - formula: "DCF Value = Σ(Free Cash Flow / (1 + WACC)^t)"
+          variables: ["free_cash_flows", "wacc", "remaining_term"]
+          description: "Discounted cash flow valuation"
+        - formula: "EV/EBITDA = Enterprise Value / Annual EBITDA"
+          variables: ["enterprise_value", "ebitda"]
+          description: "Enterprise value multiple"
+    - name: project_finance
+      formulas:
+        - formula: "DSCR = Cash Available for Debt Service / Debt Service"
+          variables: ["revenue", "opex", "capex_reserve", "debt_service"]
+          description: "Debt service coverage ratio"
+        - formula: "LLCR = NPV(CFADS over loan life) / Outstanding Debt"
+          variables: ["cfads", "discount_rate", "outstanding_debt"]
+          description: "Loan life coverage ratio"
+    - name: revenue
+      formulas:
+        - formula: "Annual Revenue = Unitary Payment × 12 (or Traffic × Tariff)"
+          variables: ["unitary_payment", "traffic_volume", "tariff"]
+          description: "Annual revenue calculation (availability or usage based)"
+        - formula: "Real Revenue Growth = Nominal Growth - Inflation"
+          variables: ["nominal_growth", "inflation_rate"]
+          description: "Real growth in revenue after inflation"
+    - name: lifecycle
+      formulas:
+        - formula: "Lifecycle Gap = Required Lifecycle Spend - Funded Lifecycle Reserve"
+          variables: ["required_spend", "funded_reserve"]
+          description: "Unfunded lifecycle replacement requirement"
+        - formula: "Handback Reserve = Σ(Component Replacement Cost × (1 - Remaining Life / Total Life))"
+          variables: ["component_costs", "remaining_life", "total_life"]
+          description: "Estimated cost to meet handback condition"
+    - name: bee
+      formulas:
+        - formula: "Post-Transaction BEE % = BEE Shares / Total Shares × 100"
+          variables: ["bee_shares", "total_shares"]
+          description: "BEE ownership post-transaction"
+        - formula: "Concession BEE Compliance = Actual BEE % >= Concession Required %"
+          variables: ["actual_bee_pct", "concession_required_pct"]
+          description: "BEE compliance against concession requirement"
 conditions_precedent_patterns:
 - pattern: Treasury|National Treasury|Provincial Treasury
   cp_type: Treasury Approval
@@ -140,11 +684,13 @@ folder_questions:
     display_name: Corporate & Governance
     relevance: high
     questions:
-    - question: Is the SPV/concessionaire properly constituted for the project?
+    - id: PPP-F01-001
+      question: Is the SPV/concessionaire properly constituted for the project?
       priority: critical
       detail: Special purpose vehicle, ring-fencing, project-specific governance
       cot_hint: Review SPV structure → check ring-fencing → verify compliance
-    - question: Does the MOI comply with concession requirements?
+    - id: PPP-F01-002
+      question: Does the MOI comply with concession requirements?
       priority: high
       detail: Concession-required governance provisions
       cot_hint: Compare MOI → concession requirements → identify gaps
@@ -157,27 +703,33 @@ folder_questions:
     display_name: Commercial Contracts
     relevance: critical
     questions:
-    - question: What is the concession term and remaining duration?
+    - id: PPP-F02-001
+      question: What is the concession term and remaining duration?
       priority: critical
       detail: Concession period, extension rights, handback
       cot_hint: Extract term → calculate remaining → assess extension
-    - question: Does the concession contain change of control provisions?
+    - id: PPP-F02-002
+      question: Does the concession contain change of control provisions?
       priority: critical
       detail: CoC triggers, authority consent, termination rights
       cot_hint: Find CoC clause → identify triggers → assess impact
-    - question: What step-in rights does the contracting authority have?
+    - id: PPP-F02-003
+      question: What step-in rights does the contracting authority have?
       priority: critical
       detail: Authority step-in, cure periods, contractor rights
       cot_hint: Review step-in provisions → check triggers → assess risk
-    - question: What termination rights exist and compensation provisions?
+    - id: PPP-F02-004
+      question: What termination rights exist and compensation provisions?
       priority: critical
       detail: Termination events, compensation formula, handback
       cot_hint: List termination rights → check compensation → calculate exposure
-    - question: What is the revenue model and tariff structure?
+    - id: PPP-F02-005
+      question: What is the revenue model and tariff structure?
       priority: critical
       detail: Availability payments, usage fees, unitary charge
       cot_hint: Identify revenue model → check indexation → assess risk
-    - question: What performance standards and penalty regime applies?
+    - id: PPP-F02-006
+      question: What performance standards and penalty regime applies?
       priority: high
       detail: KPIs, deductions, performance bonds
       cot_hint: Review KPIs → check deductions → assess performance risk
@@ -190,23 +742,28 @@ folder_questions:
     display_name: Financial & Banking
     relevance: critical
     questions:
-    - question: What project finance facilities are in place?
+    - id: PPP-F03-001
+      question: What project finance facilities are in place?
       priority: critical
       detail: Senior debt, mezzanine, shareholder loans, DFI funding
       cot_hint: List facilities → check terms → calculate debt service
-    - question: Is lender consent required for the transaction?
+    - id: PPP-F03-002
+      question: Is lender consent required for the transaction?
       priority: critical
       detail: Lender consent, inter-creditor provisions
       cot_hint: Review finance documents → find CoC → assess consent
-    - question: What are the debt service coverage requirements?
+    - id: PPP-F03-003
+      question: What are the debt service coverage requirements?
       priority: critical
       detail: DSCR, LLCR, cash sweep, distribution tests
       cot_hint: Extract covenant ratios → check compliance → assess headroom
-    - question: What security package is in place?
+    - id: PPP-F03-004
+      question: What security package is in place?
       priority: high
       detail: Share pledge, account security, assignment of concession rights
       cot_hint: List security → verify perfection → assess release requirements
-    - question: What reserves and accounts are required to be maintained?
+    - id: PPP-F03-005
+      question: What reserves and accounts are required to be maintained?
       priority: high
       detail: DSRA, maintenance reserve, project accounts
       cot_hint: Check reserve requirements → verify funding → assess adequacy
@@ -219,19 +776,23 @@ folder_questions:
     display_name: Regulatory & Compliance
     relevance: critical
     questions:
-    - question: Have all required Treasury approvals been obtained?
+    - id: PPP-F04-001
+      question: Have all required Treasury approvals been obtained?
       priority: critical
       detail: National/Provincial Treasury, PFMA/MFMA compliance
       cot_hint: Check Treasury approvals → verify conditions → assess compliance
-    - question: Does the transaction require Treasury consent?
+    - id: PPP-F04-002
+      question: Does the transaction require Treasury consent?
       priority: critical
       detail: Treasury Regulation 16 consent, PFMA Section 38
       cot_hint: Review regulations → check CoC requirement → plan consent
-    - question: Are there any PFMA/MFMA compliance issues?
+    - id: PPP-F04-003
+      question: Are there any PFMA/MFMA compliance issues?
       priority: critical
       detail: Unauthorised expenditure, irregular expenditure
       cot_hint: Review compliance → identify issues → assess risk
-    - question: What conditions were attached to Treasury approval?
+    - id: PPP-F04-004
+      question: What conditions were attached to Treasury approval?
       priority: high
       detail: Treasury conditions, ongoing obligations
       cot_hint: List conditions → check compliance → identify breaches
@@ -244,11 +805,13 @@ folder_questions:
     display_name: Employment & Labour
     relevance: medium
     questions:
-    - question: What O&M contractor arrangements are in place?
+    - id: PPP-F05-001
+      question: What O&M contractor arrangements are in place?
       priority: high
       detail: O&M contract, contractor employees, Section 197
       cot_hint: Review O&M → check employment → assess transfer
-    - question: What skills transfer and local employment obligations apply?
+    - id: PPP-F05-002
+      question: What skills transfer and local employment obligations apply?
       priority: medium
       detail: Local content, skills development, SLP-type obligations
       cot_hint: Check local content → verify compliance → assess obligations
@@ -257,11 +820,13 @@ folder_questions:
     display_name: Property & Assets
     relevance: high
     questions:
-    - question: What is the status of land rights and servitudes?
+    - id: PPP-F06-001
+      question: What is the status of land rights and servitudes?
       priority: critical
       detail: Land leases, servitudes, rights of way
       cot_hint: Review land rights → check term → verify coverage
-    - question: What handback condition requirements apply?
+    - id: PPP-F06-002
+      question: What handback condition requirements apply?
       priority: high
       detail: Handback specifications, asset condition, lifecycle
       cot_hint: Check handback requirements → assess condition → calculate liability
@@ -274,11 +839,13 @@ folder_questions:
     display_name: Insurance
     relevance: high
     questions:
-    - question: Is the required insurance programme in place?
+    - id: PPP-F07-001
+      question: Is the required insurance programme in place?
       priority: critical
       detail: Construction all-risks, operational coverage, BI
       cot_hint: Check required cover → verify policies → assess gaps
-    - question: What force majeure and political risk protections exist?
+    - id: PPP-F07-002
+      question: What force majeure and political risk protections exist?
       priority: high
       detail: Force majeure, political risk insurance, termination compensation
       cot_hint: Review FM provisions → check PRI → assess protection
@@ -291,11 +858,13 @@ folder_questions:
     display_name: Litigation & Disputes
     relevance: high
     questions:
-    - question: Are there any disputes with the contracting authority?
+    - id: PPP-F08-001
+      question: Are there any disputes with the contracting authority?
       priority: critical
       detail: Concession disputes, claims, arbitrations
       cot_hint: List disputes → assess status → evaluate exposure
-    - question: Are there any construction claims outstanding?
+    - id: PPP-F08-002
+      question: Are there any construction claims outstanding?
       priority: high
       detail: Contractor claims, delay claims, variations
       cot_hint: Identify claims → assess quantum → check resolution
@@ -304,7 +873,8 @@ folder_questions:
     display_name: Tax
     relevance: medium
     questions:
-    - question: Are there any tax implications of the PPP structure?
+    - id: PPP-F09-001
+      question: Are there any tax implications of the PPP structure?
       priority: medium
       detail: VAT on unitary payments, withholding on cross-border
       cot_hint: Review structure → check VAT → assess efficiency
@@ -313,15 +883,18 @@ folder_questions:
     display_name: Technical & Assets
     relevance: critical
     questions:
-    - question: What is the condition of infrastructure assets?
+    - id: PPP-F10-001
+      question: What is the condition of infrastructure assets?
       priority: critical
       detail: Asset condition assessment, maintenance records, lifecycle
       cot_hint: Review condition → check maintenance → assess capex needs
-    - question: What lifecycle replacement obligations exist?
+    - id: PPP-F10-002
+      question: What lifecycle replacement obligations exist?
       priority: high
       detail: Lifecycle model, replacement schedule, funding
       cot_hint: Review lifecycle → check funding → assess gap
-    - question: Is the construction complete or are there outstanding works?
+    - id: PPP-F10-003
+      question: Is the construction complete or are there outstanding works?
       priority: high
       detail: Practical completion, defects, retention
       cot_hint: Check completion status → identify defects → assess risk
@@ -334,15 +907,18 @@ folder_questions:
     display_name: B-BBEE & Transformation
     relevance: critical
     questions:
-    - question: What BEE ownership requirements apply to the concession?
+    - id: PPP-F11-001
+      question: What BEE ownership requirements apply to the concession?
       priority: critical
       detail: Concession BEE requirements, sector codes
       cot_hint: Check BEE requirements → verify compliance → assess impact
-    - question: What happens to BEE compliance on change of control?
+    - id: PPP-F11-002
+      question: What happens to BEE compliance on change of control?
       priority: critical
       detail: BEE lock-in, change of control consent
       cot_hint: Review BEE provisions → check CoC → assess continuity
-    - question: What local content and procurement obligations apply?
+    - id: PPP-F11-003
+      question: What local content and procurement obligations apply?
       priority: high
       detail: Local procurement, PPPFA, designated sectors
       cot_hint: Check local content → verify compliance → assess obligations
@@ -355,7 +931,8 @@ folder_questions:
     display_name: Needs Review
     relevance: low
     questions:
-    - question: What infrastructure or PPP issues does this document raise?
+    - id: PPP-F99-001
+      question: What infrastructure or PPP issues does this document raise?
       priority: medium
       detail: Documents requiring manual classification review
       cot_hint: Identify PPP content → flag for review
@@ -470,6 +1047,172 @@ cot_questions:
   - What are the debt service coverage requirements?
   - Are there any covenant breaches or waivers?
 
+warranty_categories:
+  - category: Concession Agreement
+    warranties:
+      - "Concession agreement is valid and in full force"
+      - "No termination notice or material breach exists"
+      - "All performance standards are being met"
+      - "No step-in rights have been triggered"
+      - "Handback condition is on track"
+  - category: Treasury & Regulatory
+    warranties:
+      - "All required Treasury approvals have been obtained"
+      - "No PFMA/MFMA compliance issues exist"
+      - "Treasury conditions are being complied with"
+      - "No irregular or unauthorized expenditure"
+  - category: Revenue & Tariffs
+    warranties:
+      - "Revenue and tariff structure is as represented"
+      - "Payment track record of authority is as disclosed"
+      - "No tariff disputes or regulatory reviews pending"
+      - "Demand/volume forecasts are reasonable"
+  - category: Project Finance
+    warranties:
+      - "No event of default under facility agreement"
+      - "All DSCR covenants complied with"
+      - "Security package properly perfected"
+      - "No distribution lock-up in effect"
+  - category: Construction & Assets
+    warranties:
+      - "Construction is complete with no outstanding claims"
+      - "Asset condition is as represented"
+      - "Lifecycle replacement obligations are funded"
+      - "All warranties from contractors remain in force"
+  - category: Environmental & Land
+    warranties:
+      - "Valid Environmental Authorization in place"
+      - "Land rights sufficient for concession term"
+      - "No environmental contamination or remediation required"
+  - category: BEE & Transformation
+    warranties:
+      - "BEE compliance meets concession requirements"
+      - "PPPFA procurement obligations are met"
+      - "Local content commitments are being fulfilled"
+      - "No BEE-related concession breach exists"
+
+indemnity_categories:
+  - category: Concession
+    typical_indemnities:
+      - "Indemnity for concession termination or partial termination"
+      - "Indemnity for performance deductions arising pre-acquisition"
+      - "Indemnity for handback condition shortfall costs"
+  - category: Treasury & Regulatory
+    typical_indemnities:
+      - "Indemnity for PFMA/MFMA non-compliance consequences"
+      - "Indemnity for irregular expenditure findings"
+  - category: Revenue
+    typical_indemnities:
+      - "Indemnity for revenue shortfall from pre-existing issues"
+      - "Indemnity for tariff disputes arising pre-acquisition"
+  - category: Project Finance
+    typical_indemnities:
+      - "Indemnity for lender claims arising pre-acquisition"
+      - "Indemnity for covenant breaches prior to closing"
+  - category: Construction & Assets
+    typical_indemnities:
+      - "Indemnity for construction defects discovered post-acquisition"
+      - "Indemnity for lifecycle underfunding"
+      - "Indemnity for asset condition not meeting handback standards"
+  - category: Tax
+    typical_indemnities:
+      - "Indemnity for VAT treatment of unitary payments"
+      - "Indemnity for tax structuring issues"
+
+warranty_indemnity_patterns:
+  warranty_patterns:
+    - pattern: "warrant|represent|confirm"
+      context: "concession|PPP|step-in|handback|performance"
+      maps_to: "Concession Agreement"
+    - pattern: "warrant|represent|confirm"
+      context: "Treasury|PFMA|MFMA|approval|consent"
+      maps_to: "Treasury & Regulatory"
+    - pattern: "warrant|represent|confirm"
+      context: "revenue|tariff|unitary|payment|demand"
+      maps_to: "Revenue & Tariffs"
+    - pattern: "warrant|represent|confirm"
+      context: "facility|lender|DSCR|security|covenant"
+      maps_to: "Project Finance"
+    - pattern: "warrant|represent|confirm"
+      context: "construction|asset|condition|lifecycle|handback"
+      maps_to: "Construction & Assets"
+    - pattern: "warrant|represent|confirm"
+      context: "environment|land|servitude|water"
+      maps_to: "Environmental & Land"
+    - pattern: "warrant|represent|confirm"
+      context: "BEE|PPPFA|procurement|local content"
+      maps_to: "BEE & Transformation"
+  indemnity_patterns:
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "concession|termination|step-in|handback"
+      maps_to: "Concession"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "Treasury|PFMA|irregular|unauthorized"
+      maps_to: "Treasury & Regulatory"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "revenue|tariff|payment|shortfall"
+      maps_to: "Revenue"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "lender|facility|covenant"
+      maps_to: "Project Finance"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "construction|asset|lifecycle|defect"
+      maps_to: "Construction & Assets"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "tax|VAT|withholding"
+      maps_to: "Tax"
+
+cot_questions_warranty_indemnity:
+  concession:
+    - "Is the concession warranted as valid and not in breach?"
+    - "Are performance standards warranted as being met?"
+    - "Is there an indemnity for pre-acquisition performance deductions?"
+    - "Is handback condition adequately warranted?"
+  treasury_regulatory:
+    - "Are Treasury approvals warranted as obtained?"
+    - "Is PFMA/MFMA compliance warranted?"
+    - "Is there an indemnity for irregular expenditure?"
+  revenue:
+    - "Is the revenue structure warranted as represented?"
+    - "Is authority payment history warranted?"
+    - "Is there an indemnity for pre-existing tariff disputes?"
+  project_finance:
+    - "Is covenant compliance warranted?"
+    - "Is security perfection warranted?"
+    - "Is there an indemnity for lender claims?"
+  assets:
+    - "Is asset condition warranted?"
+    - "Is lifecycle funding warranted as adequate?"
+    - "Is there an indemnity for construction defects?"
+
+output_requirements:
+  warranties_register:
+    required_columns:
+      - "warranty_reference"
+      - "category"
+      - "warranty_text"
+      - "warrantor"
+      - "beneficiary"
+      - "limitation_period"
+      - "cap_amount"
+      - "dd_finding_reference"
+      - "risk_assessment"
+    grouping: "by_category"
+    sort_order: "by_risk_level"
+  indemnities_register:
+    required_columns:
+      - "indemnity_reference"
+      - "category"
+      - "indemnity_text"
+      - "indemnifier"
+      - "beneficiary"
+      - "trigger_event"
+      - "cap_amount"
+      - "time_limitation"
+      - "dd_finding_reference"
+    grouping: "by_category"
+    sort_order: "by_exposure_value"
+
 # ============================================================================
 # STATUTORY FRAMEWORK
 # Detailed statutory citation framework for infrastructure and PPP findings
@@ -485,21 +1228,25 @@ statutory_framework:
           penalties:
             criminal: "Fine or imprisonment up to 5 years"
           criticality: critical
+          application_to_dd: "Verify accounting officer has properly managed PPP financial obligations and Treasury reporting"
         - section: "Section 51(1)(g)"
           description: "Public entities - proper financial management"
           penalties:
             criminal: "Fine or imprisonment"
           criticality: critical
+          application_to_dd: "Confirm public entity financial management duties discharged for PPP"
         - section: "Section 66"
           description: "Restrictions on borrowing, guarantees, and PPPs"
           penalties:
             administrative: "Invalid transactions"
           criticality: critical
+          application_to_dd: "Verify PPP was properly authorised under borrowing and guarantee restrictions"
         - section: "Treasury Regulation 16"
           description: "PPP regulations - approval and implementation"
           penalties:
             administrative: "Transaction voidable"
           criticality: critical
+          application_to_dd: "Confirm all Treasury Approval stages (I, IIA, IIB, III) obtained and conditions met"
 
     - act: "Municipal Finance Management Act 56 of 2003"
       acronym: "MFMA"
@@ -510,21 +1257,25 @@ statutory_framework:
           penalties:
             administrative: "Contract may be void"
           criticality: critical
+          application_to_dd: "Verify municipal PPP contract has proper budgetary authority and Council approval"
         - section: "Section 78"
           description: "Tariff policy"
           penalties:
             administrative: "Compliance orders"
           criticality: high
+          application_to_dd: "Confirm tariff policy compliance for municipal infrastructure services"
         - section: "Section 120"
           description: "Municipal PPP requirements"
           penalties:
             administrative: "Transaction invalid without Treasury approval"
           criticality: critical
+          application_to_dd: "Verify all municipal PPP requirements and Treasury approvals obtained"
         - section: "MFMA Circular 62"
           description: "Municipal PPP guidelines"
           penalties:
             administrative: "Non-compliance findings"
           criticality: high
+          application_to_dd: "Check compliance with municipal PPP guidelines and reporting requirements"
 
     - act: "Infrastructure Development Act 23 of 2014"
       acronym: "IDA"
@@ -535,11 +1286,13 @@ statutory_framework:
           penalties:
             administrative: "Project de-designation"
           criticality: high
+          application_to_dd: "Assess whether project is designated as SIP and implications for approvals"
         - section: "Section 8"
           description: "Fast-tracking and approval processes"
           penalties:
             administrative: "Loss of expedited processes"
           criticality: medium
+          application_to_dd: "Verify any fast-tracking approvals obtained under IDA and their conditions"
 
     - act: "Preferential Procurement Policy Framework Act 5 of 2000"
       acronym: "PPPFA"
@@ -550,16 +1303,19 @@ statutory_framework:
           penalties:
             administrative: "Procurement set aside"
           criticality: high
+          application_to_dd: "Verify preferential procurement framework applied to all PPP procurement"
         - section: "Section 5"
           description: "Goals for procurement"
           penalties:
             administrative: "Non-compliance findings"
           criticality: high
+          application_to_dd: "Confirm procurement goals including BEE targets met in infrastructure contracts"
         - section: "PPPFA Regulations 2017"
           description: "80/20 and 90/10 preference point systems"
           penalties:
             administrative: "Procurement invalid"
           criticality: critical
+          application_to_dd: "Verify correct preference point system (80/20 or 90/10) applied to procurement"
 
     - act: "National Environmental Management Act 107 of 1998"
       acronym: "NEMA"
@@ -570,11 +1326,13 @@ statutory_framework:
           penalties:
             criminal: "Fine up to R10 million or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Verify environmental authorization obtained for all listed activities in infrastructure project"
         - section: "Section 28"
           description: "Duty of care and remediation"
           penalties:
             civil: "Unlimited remediation liability"
           criticality: critical
+          application_to_dd: "Assess duty of care obligations and any environmental remediation liabilities"
 
     - act: "National Water Act 36 of 1998"
       acronym: "NWA"
@@ -585,11 +1343,13 @@ statutory_framework:
           penalties:
             criminal: "Fine or imprisonment up to 5 years"
           criticality: critical
+          application_to_dd: "Verify water use license obtained for all water uses associated with infrastructure"
         - section: "Section 40"
           description: "General authorization for water use"
           penalties:
             administrative: "Limited water use without license"
           criticality: high
+          application_to_dd: "Confirm any general authorization water uses are properly registered"
 
     - act: "Construction Industry Development Board Act 38 of 2000"
       acronym: "CIDB Act"
@@ -600,11 +1360,13 @@ statutory_framework:
           penalties:
             administrative: "Prohibition from public contracts"
           criticality: high
+          application_to_dd: "Verify all contractors on PPP project are properly registered with CIDB"
         - section: "CIDB Regulations"
           description: "Contractor grading and categories"
           penalties:
             administrative: "Contract limitations"
           criticality: high
+          application_to_dd: "Confirm contractor grading appropriate for contract value and complexity"
 
     - act: "Promotion of Administrative Justice Act 3 of 2000"
       acronym: "PAJA"
@@ -615,11 +1377,13 @@ statutory_framework:
           penalties:
             civil: "Judicial review, setting aside decisions"
           criticality: high
+          application_to_dd: "Assess whether PPP award process met procedural fairness requirements"
         - section: "Section 6"
           description: "Grounds for judicial review"
           penalties:
             civil: "Administrative action set aside"
           criticality: high
+          application_to_dd: "Identify any grounds for judicial review of PPP-related administrative decisions"
 
   sector_specific:
     treasury_ppp_regulations:
@@ -670,3 +1434,82 @@ statutory_framework:
         trigger: "Change of control, material amendments"
         consequence: "Lender consent required"
         timeline: "60-90 days process"
+  secondary_legislation:
+    - name: "Treasury Regulation 16"
+      parent_act: "PFMA"
+      relevance: "Core PPP regulatory framework - all approval stages"
+    - name: "MFMA PPP Regulations"
+      parent_act: "MFMA"
+      relevance: "Municipal PPP process requirements"
+    - name: "PPPFA Regulations 2017"
+      parent_act: "PPPFA"
+      relevance: "Preference point system for procurement"
+    - name: "NEMA EIA Regulations 2014"
+      parent_act: "NEMA"
+      relevance: "Environmental impact assessment requirements"
+    - name: "National Water Act Regulations"
+      parent_act: "NWA"
+      relevance: "Water use licensing requirements"
+    - name: "CIDB Standard for Uniformity"
+      parent_act: "CIDB Act"
+      relevance: "Contractor registration and grading standards"
+  regulatory_bodies:
+    - name: "National Treasury PPP Unit"
+      jurisdiction: "PPP approvals and oversight"
+      key_functions: ["Treasury Approval stages", "PPP monitoring", "Value-for-money assessment"]
+    - name: "Provincial Treasury"
+      jurisdiction: "Provincial PPP oversight"
+      key_functions: ["Provincial PPP approval", "PFMA compliance monitoring"]
+    - name: "Auditor-General"
+      jurisdiction: "Public audit and accountability"
+      key_functions: ["PPP audit", "Irregular expenditure findings", "Performance audit"]
+    - name: "Construction Industry Development Board"
+      jurisdiction: "Construction industry regulation"
+      key_functions: ["Contractor registration", "Construction standards", "Development support"]
+    - name: "Department of Forestry, Fisheries and Environment"
+      jurisdiction: "Environmental regulation"
+      key_functions: ["Environmental authorization", "EIA oversight", "Compliance enforcement"]
+    - name: "Department of Water and Sanitation"
+      jurisdiction: "Water resource regulation"
+      key_functions: ["Water use licensing", "Water quality monitoring"]
+    - name: "SARS"
+      jurisdiction: "Tax administration"
+      key_functions: ["Tax compliance", "VAT on PPP payments", "Capital allowances"]
+output_templates:
+  executive_summary:
+    sections:
+      - "Transaction Overview"
+      - "Deal Blockers"
+      - "Critical Findings"
+      - "Financial Exposure Summary"
+      - "Conditions Precedent"
+      - "Key Recommendations"
+    required_elements:
+      - "Concession status and remaining term"
+      - "Treasury consent requirements and status"
+      - "Revenue model and payment track record"
+      - "Project finance covenant compliance"
+      - "Asset condition and handback readiness"
+      - "BEE compliance status"
+  full_report:
+    sections:
+      - "Transaction Context & Deal Structure"
+      - "Concession Agreement Analysis"
+      - "Revenue & Tariff Review"
+      - "Treasury & Regulatory Compliance"
+      - "Project Finance & Security"
+      - "Construction & Asset Condition"
+      - "Environmental & Land Rights"
+      - "Insurance & Risk Allocation"
+      - "BEE & Transformation"
+      - "Warranty & Indemnity Analysis"
+  finding_format:
+    required_fields:
+      - "finding_id"
+      - "category"
+      - "severity"
+      - "description"
+      - "statutory_reference"
+      - "financial_impact"
+      - "recommendation"
+      - "warranty_indemnity_implication"

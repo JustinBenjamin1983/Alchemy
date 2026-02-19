@@ -20,6 +20,19 @@ folder_structure:
     - Shareholders Agreement
     - Company Registration
     - BEE Certificate
+    document_expectations:
+      - document: "MOI"
+        expected_content: "Memorandum of Incorporation showing power generation objects and borrowing powers"
+        key_fields: ["main business objects", "borrowing powers", "asset disposal thresholds"]
+        cross_reference: ["Board Resolution", "Shareholders Agreement"]
+      - document: "Shareholders Agreement"
+        expected_content: "SHA governing SPV ownership, governance, and exit provisions"
+        key_fields: ["ownership percentages", "BEE ownership", "CoC provisions", "exit mechanisms", "reserved matters"]
+        cross_reference: ["MOI", "REIPPPP Award Letter"]
+      - document: "BEE Certificate"
+        expected_content: "B-BBEE verification certificate for project company"
+        key_fields: ["BEE level", "ownership percentage", "verification date", "validity"]
+        cross_reference: ["Shareholders Agreement", "REIPPPP Award Letter"]
   02_Commercial:
     relevance: critical
     subcategories:
@@ -35,6 +48,23 @@ folder_structure:
     - O&M Agreement
     - Equipment Supply Agreement
     - Grid Connection Agreement
+    document_expectations:
+      - document: "Power Purchase Agreement"
+        expected_content: "Long-term PPA with Eskom or private offtaker"
+        key_fields: ["term", "tariff", "escalation", "CoC provisions", "termination rights", "curtailment", "deemed energy"]
+        cross_reference: ["Financial Model", "Generation License", "Grid Connection Agreement"]
+      - document: "EPC Contract"
+        expected_content: "Engineering, procurement and construction contract"
+        key_fields: ["contractor", "contract price", "completion date", "warranties", "LDs", "defects liability"]
+        cross_reference: ["O&M Agreement", "Equipment Supply Agreement"]
+      - document: "O&M Agreement"
+        expected_content: "Operations and maintenance services agreement"
+        key_fields: ["operator", "term", "performance guarantees", "availability", "fee structure"]
+        cross_reference: ["PPA", "EPC Contract"]
+      - document: "Grid Connection Agreement"
+        expected_content: "Agreement with Eskom for grid connection"
+        key_fields: ["contracted capacity", "connection point", "charges", "connection works responsibility"]
+        cross_reference: ["PPA", "Generation License"]
   03_Financial:
     relevance: critical
     subcategories:
@@ -49,6 +79,19 @@ folder_structure:
     - Sponsor Support Agreement
     - Bank Guarantee
     - Financial Statements
+    document_expectations:
+      - document: "Facility Agreement"
+        expected_content: "Senior project finance facility agreement"
+        key_fields: ["lender", "facility amount", "tenor", "DSCR covenants", "CoC provisions", "security package"]
+        cross_reference: ["Financial Model", "Security Agreement"]
+      - document: "Financial Model"
+        expected_content: "Detailed project financial model"
+        key_fields: ["tariff assumptions", "generation forecast", "debt schedule", "DSCR projections", "IRR"]
+        cross_reference: ["PPA", "Facility Agreement"]
+      - document: "Security Agreement"
+        expected_content: "Comprehensive security package over project assets"
+        key_fields: ["share pledge", "asset cession", "account pledge", "contract cession"]
+        cross_reference: ["Facility Agreement"]
   04_Regulatory:
     relevance: critical
     subcategories:
@@ -62,6 +105,19 @@ folder_structure:
     - Water Use License
     - REIPPPP Award Letter
     - Grid Code Compliance Certificate
+    document_expectations:
+      - document: "Generation License"
+        expected_content: "NERSA generation license for the project"
+        key_fields: ["licensee", "licensed capacity", "technology", "conditions", "expiry date"]
+        cross_reference: ["PPA", "Grid Connection Agreement"]
+      - document: "Environmental Authorization"
+        expected_content: "NEMA environmental authorization for listed activities"
+        key_fields: ["authorization number", "listed activities", "conditions", "EMPr requirements"]
+        cross_reference: ["Water Use License"]
+      - document: "REIPPPP Award Letter"
+        expected_content: "DMRE/DOE award of preferred bidder status"
+        key_fields: ["bid window", "allocated capacity", "tariff", "ED commitments", "COD deadline"]
+        cross_reference: ["PPA", "Shareholders Agreement"]
   05_Employment:
     relevance: medium
     subcategories:
@@ -70,6 +126,15 @@ folder_structure:
     expected_documents:
     - Employment Contract
     - Local Content Report
+    document_expectations:
+      - document: "Employment Contract"
+        expected_content: "Contracts for project operations staff"
+        key_fields: ["employee name", "position", "remuneration", "local content classification"]
+        cross_reference: ["Local Content Report"]
+      - document: "Local Content Report"
+        expected_content: "REIPPPP local content and job creation compliance report"
+        key_fields: ["local jobs created", "local content percentage", "skills development spend"]
+        cross_reference: ["REIPPPP Award Letter"]
   06_Property:
     relevance: high
     subcategories:
@@ -81,6 +146,19 @@ folder_structure:
     - Title Deed
     - Servitude Agreement
     - Community Agreement
+    document_expectations:
+      - document: "Land Lease Agreement"
+        expected_content: "Long-term land lease for project site"
+        key_fields: ["lessor", "term", "rental", "escalation", "renewal options", "restoration obligations"]
+        cross_reference: ["Title Deed", "PPA"]
+      - document: "Servitude Agreement"
+        expected_content: "Servitude for power lines, access roads, or infrastructure"
+        key_fields: ["servitude type", "extent", "beneficiary", "compensation"]
+        cross_reference: ["Title Deed", "Grid Connection Agreement"]
+      - document: "Community Agreement"
+        expected_content: "Agreement with local community for project development"
+        key_fields: ["community", "benefits", "obligations", "dispute resolution"]
+        cross_reference: ["REIPPPP Award Letter"]
   07_Insurance:
     relevance: high
     subcategories:
@@ -91,6 +169,19 @@ folder_structure:
     - Construction All Risk Policy
     - Operational All Risk Policy
     - Business Interruption Policy
+    document_expectations:
+      - document: "Construction All Risk Policy"
+        expected_content: "CAR insurance for project construction phase"
+        key_fields: ["insurer", "sum insured", "period", "exclusions", "deductibles"]
+        cross_reference: ["EPC Contract", "Facility Agreement"]
+      - document: "Operational All Risk Policy"
+        expected_content: "OAR insurance for operational phase"
+        key_fields: ["insurer", "sum insured", "period", "exclusions", "machinery breakdown"]
+        cross_reference: ["O&M Agreement", "Facility Agreement"]
+      - document: "Business Interruption Policy"
+        expected_content: "BI insurance for revenue loss during outages"
+        key_fields: ["insurer", "indemnity period", "sum insured", "waiting period"]
+        cross_reference: ["PPA", "Facility Agreement"]
   08_Litigation:
     relevance: medium
     subcategories:
@@ -100,6 +191,15 @@ folder_structure:
     expected_documents:
     - Summons
     - Settlement Agreement
+    document_expectations:
+      - document: "Summons"
+        expected_content: "Court summons relating to project disputes"
+        key_fields: ["plaintiff", "defendant", "cause of action", "relief sought"]
+        cross_reference: ["Settlement Agreement", "EPC Contract"]
+      - document: "Settlement Agreement"
+        expected_content: "Settlement of contractor, community, or regulatory disputes"
+        key_fields: ["parties", "dispute", "settlement terms", "payment obligations"]
+        cross_reference: ["Summons"]
   09_Tax:
     relevance: medium
     subcategories:
@@ -109,147 +209,286 @@ folder_structure:
     - Tax Return
     - 12B Certificate
     - Carbon Tax Return
+    document_expectations:
+      - document: "Tax Return"
+        expected_content: "Income tax returns for project company"
+        key_fields: ["taxable income", "12B allowance claimed", "assessed losses"]
+        cross_reference: ["Financial Statements"]
+      - document: "12B Certificate"
+        expected_content: "Section 12B renewable energy allowance certificate"
+        key_fields: ["qualifying assets", "allowance percentage", "remaining allowance"]
+        cross_reference: ["Financial Model", "Tax Return"]
+      - document: "Carbon Tax Return"
+        expected_content: "Carbon tax return for GHG emissions"
+        key_fields: ["emissions", "tax liability", "allowances applied", "offsets"]
+        cross_reference: ["Environmental Authorization"]
   99_Needs_Review:
     relevance: n/a
     subcategories:
     - Unclassified
     - Low Confidence
     expected_documents: []
+transaction_context:
+  deal_structures:
+    - type: ipp_acquisition
+      description: Acquisition of shares in independent power producer SPV
+      key_considerations:
+        - PPA change of control consent from Eskom
+        - NERSA license transfer or approval
+        - DMRE/IPP Office consent for REIPPPP projects
+        - Senior lender consent for project finance
+    - type: asset_sale
+      description: Sale of power generation assets
+      key_considerations:
+        - License transfer to new operator
+        - PPA assignment or novation
+        - Environmental authorization transfer
+        - Grid connection agreement assignment
+    - type: project_development
+      description: Greenfield or brownfield energy project development
+      key_considerations:
+        - REIPPPP bid window allocation
+        - Generation license application
+        - Environmental Impact Assessment
+        - Grid connection application
+    - type: refinancing
+      description: Refinancing of existing project finance facilities
+      key_considerations:
+        - Lender consent and security release
+        - PPA consent for refinancing
+        - BEE ownership implications of equity changes
+        - REIPPPP ED compliance maintenance
+    - type: portfolio_sale
+      description: Sale of portfolio of IPP projects
+      key_considerations:
+        - Multiple PPA consents
+        - Multiple license transfers
+        - Portfolio-level BEE compliance
+        - Cross-default provisions
+  typical_parties:
+    - role: seller
+      description: Current shareholder in IPP project company
+    - role: buyer
+      description: Acquiring party (often infrastructure fund or utility)
+    - role: target
+      description: IPP project company (ringfenced SPV)
+    - role: offtaker
+      description: Eskom or private offtaker under PPA
+    - role: senior_lender
+      description: Project finance lender with security over assets
+    - role: epc_contractor
+      description: Engineering, procurement and construction contractor
+    - role: om_contractor
+      description: Operations and maintenance service provider
+    - role: community_trust
+      description: Local community ownership entity (REIPPPP)
 primary_legislation:
 - Electricity Regulation Act 4 of 2006
 - National Energy Act 34 of 2008
 - National Environmental Management Act 107 of 1998
+- National Water Act 36 of 1998
 - Infrastructure Development Act 23 of 2014
 - Carbon Tax Act 15 of 2019
+- Gas Act 48 of 2001
+- National Nuclear Regulator Act 47 of 1999
+reference_documents:
+  always_include:
+    - pattern: "power purchase agreement|PPA"
+      document_type: "Power Purchase Agreement"
+    - pattern: "generation license|NERSA license"
+      document_type: "Generation License"
+    - pattern: "environmental authorization|EA|EIA"
+      document_type: "Environmental Authorization"
+    - pattern: "grid connection|connection agreement"
+      document_type: "Grid Connection Agreement"
+    - pattern: "EPC contract|construction contract"
+      document_type: "EPC Contract"
+    - pattern: "financial model|project model"
+      document_type: "Financial Model"
+    - pattern: "REIPPPP|bid submission|award letter"
+      document_type: "REIPPPP Award Documentation"
 risk_categories:
 - name: Generation License & Regulatory
   weight: critical
   standard_questions:
-  - question: Is there a valid generation license from NERSA?
+  - id: EP-GLR-001
+    question: Is there a valid generation license from NERSA?
     priority: critical
-  - question: What are the conditions attached to the license?
+  - id: EP-GLR-002
+    question: What are the conditions attached to the license?
     priority: critical
-  - question: What is the licensed capacity?
+  - id: EP-GLR-003
+    question: What is the licensed capacity?
     priority: critical
-  - question: When does the license expire and what is renewal process?
+  - id: EP-GLR-004
+    question: When does the license expire and what is renewal process?
     priority: high
-  - question: Are there any pending license amendments?
+  - id: EP-GLR-005
+    question: Are there any pending license amendments?
     priority: high
-  - question: Is registration as a schedule 2 generator required?
+  - id: EP-GLR-006
+    question: Is registration as a schedule 2 generator required?
     priority: high
-  - question: Are there any NERSA investigations or disputes?
+  - id: EP-GLR-007
+    question: Are there any NERSA investigations or disputes?
     priority: high
-  - question: What grid code compliance requirements apply?
+  - id: EP-GLR-008
+    question: What grid code compliance requirements apply?
     priority: high
-  - question: Is IRP (Integrated Resource Plan) allocation secured?
+  - id: EP-GLR-009
+    question: Is IRP (Integrated Resource Plan) allocation secured?
     priority: critical
 - name: Power Purchase Agreement
   weight: critical
   standard_questions:
-  - question: Is there a PPA with Eskom or other offtaker?
+  - id: EP-PPA-001
+    question: Is there a PPA with Eskom or other offtaker?
     priority: critical
-  - question: What is the PPA term and when does it expire?
+  - id: EP-PPA-002
+    question: What is the PPA term and when does it expire?
     priority: critical
-  - question: What is the tariff structure and escalation mechanism?
+  - id: EP-PPA-003
+    question: What is the tariff structure and escalation mechanism?
     priority: critical
-  - question: Are there any minimum generation obligations?
+  - id: EP-PPA-004
+    question: Are there any minimum generation obligations?
     priority: high
-  - question: What are the curtailment provisions and compensation?
+  - id: EP-PPA-005
+    question: What are the curtailment provisions and compensation?
     priority: high
-  - question: Does the PPA contain change of control provisions?
+  - id: EP-PPA-006
+    question: Does the PPA contain change of control provisions?
     priority: critical
-  - question: What termination rights exist and what are the consequences?
+  - id: EP-PPA-007
+    question: What termination rights exist and what are the consequences?
     priority: critical
-  - question: Is the PPA bankable?
+  - id: EP-PPA-008
+    question: Is the PPA bankable?
     priority: high
-  - question: What are the deemed energy / availability requirements?
+  - id: EP-PPA-009
+    question: What are the deemed energy / availability requirements?
     priority: high
-  - question: Are there any construction or COD milestones outstanding?
+  - id: EP-PPA-010
+    question: Are there any construction or COD milestones outstanding?
     priority: critical
 - name: REIPPPP Compliance
   weight: critical
   applies_to:
   - renewable
   standard_questions:
-  - question: Under which REIPPPP bid window was the project awarded?
+  - id: EP-REI-001
+    question: Under which REIPPPP bid window was the project awarded?
     priority: critical
-  - question: What economic development obligations apply?
+  - id: EP-REI-002
+    question: What economic development obligations apply?
     priority: critical
-  - question: Is the project compliant with ED commitments?
+  - id: EP-REI-003
+    question: Is the project compliant with ED commitments?
     priority: critical
-  - question: What local content requirements apply?
+  - id: EP-REI-004
+    question: What local content requirements apply?
     priority: high
-  - question: What community ownership requirements exist?
+  - id: EP-REI-005
+    question: What community ownership requirements exist?
     priority: high
-  - question: Are there any penalties for ED non-compliance?
+  - id: EP-REI-006
+    question: Are there any penalties for ED non-compliance?
     priority: high
-  - question: What reporting obligations apply to DMRE/DOE?
+  - id: EP-REI-007
+    question: What reporting obligations apply to DMRE/DOE?
     priority: medium
 - name: Project Contracts
   weight: critical
   standard_questions:
-  - question: Is there an EPC contract in place and what is its status?
+  - id: EP-PCO-001
+    question: Is there an EPC contract in place and what is its status?
     priority: critical
-  - question: What warranties apply and are they still in force?
+  - id: EP-PCO-002
+    question: What warranties apply and are they still in force?
     priority: high
-  - question: Is there an O&M agreement and what are its terms?
+  - id: EP-PCO-003
+    question: Is there an O&M agreement and what are its terms?
     priority: critical
-  - question: What performance guarantees exist?
+  - id: EP-PCO-004
+    question: What performance guarantees exist?
     priority: high
-  - question: What equipment supply and warranty agreements exist?
+  - id: EP-PCO-005
+    question: What equipment supply and warranty agreements exist?
     priority: high
-  - question: Are there any disputes with contractors or suppliers?
+  - id: EP-PCO-006
+    question: Are there any disputes with contractors or suppliers?
     priority: high
-  - question: What is the status of punch list / defects liability?
+  - id: EP-PCO-007
+    question: What is the status of punch list / defects liability?
     priority: medium
-  - question: Are there any liquidated damages outstanding?
+  - id: EP-PCO-008
+    question: Are there any liquidated damages outstanding?
     priority: high
 - name: Grid Connection
   weight: critical
   standard_questions:
-  - question: Is there a grid connection agreement?
+  - id: EP-GRC-001
+    question: Is there a grid connection agreement?
     priority: critical
-  - question: What is the contracted capacity?
+  - id: EP-GRC-002
+    question: What is the contracted capacity?
     priority: critical
-  - question: What grid charges and use-of-system fees apply?
+  - id: EP-GRC-003
+    question: What grid charges and use-of-system fees apply?
     priority: high
-  - question: What are the connection works and who is responsible?
+  - id: EP-GRC-004
+    question: What are the connection works and who is responsible?
     priority: high
-  - question: Are there any grid constraints or curtailment risks?
+  - id: EP-GRC-005
+    question: Are there any grid constraints or curtailment risks?
     priority: critical
-  - question: What reactive power requirements apply?
+  - id: EP-GRC-006
+    question: What reactive power requirements apply?
     priority: medium
-  - question: Is there wheeling for private offtake?
+  - id: EP-GRC-007
+    question: Is there wheeling for private offtake?
     priority: high
 - name: Land & Surface Rights
   weight: high
   standard_questions:
-  - question: Is the land owned or leased?
+  - id: EP-LSR-001
+    question: Is the land owned or leased?
     priority: critical
-  - question: Do lease terms align with PPA term?
+  - id: EP-LSR-002
+    question: Do lease terms align with PPA term?
     priority: critical
-  - question: What rental/royalty arrangements apply?
+  - id: EP-LSR-003
+    question: What rental/royalty arrangements apply?
     priority: high
-  - question: Are there any competing land uses?
+  - id: EP-LSR-004
+    question: Are there any competing land uses?
     priority: medium
-  - question: What land rehabilitation obligations exist?
+  - id: EP-LSR-005
+    question: What land rehabilitation obligations exist?
     priority: high
-  - question: Are there any community land claims?
+  - id: EP-LSR-006
+    question: Are there any community land claims?
     priority: high
 - name: Environmental & Permitting
   weight: high
   standard_questions:
-  - question: Is there a valid Environmental Authorization?
+  - id: EP-ENV-001
+    question: Is there a valid Environmental Authorization?
     priority: critical
-  - question: What conditions attach to the EA?
+  - id: EP-ENV-002
+    question: What conditions attach to the EA?
     priority: high
-  - question: Are all water use authorizations in place?
+  - id: EP-ENV-003
+    question: Are all water use authorizations in place?
     priority: high
-  - question: What bird/bat monitoring is required (for wind/solar)?
+  - id: EP-ENV-004
+    question: What bird/bat monitoring is required (for wind/solar)?
     priority: medium
-  - question: Are there any heritage or biodiversity issues?
+  - id: EP-ENV-005
+    question: Are there any heritage or biodiversity issues?
     priority: medium
-  - question: What decommissioning obligations exist?
+  - id: EP-ENV-006
+    question: What decommissioning obligations exist?
     priority: high
 deal_blockers:
 - description: PPA terminated or termination notice received
@@ -262,6 +501,286 @@ deal_blockers:
   severity: conditional
 - description: Project has not reached COD and is at risk of termination
   severity: conditional
+entity_relationship_patterns:
+  typical_structures:
+    - name: REIPPPP Project SPV
+      description: Ringfenced SPV holding PPA, license, and project assets
+      key_relationships: [Sponsors, Community Trust, Lenders, Eskom, EPC Contractor, O&M Provider]
+      dd_focus: SPV isolation, shareholder agreement, BEE ownership, project contracts
+    - name: IPP Portfolio Holding
+      description: Holding company owning multiple IPP project SPVs
+      key_relationships: [HoldCo, Project SPVs, Portfolio Lenders, Fund Investors]
+      dd_focus: Cross-default provisions, portfolio-level BEE, management agreements
+    - name: Private Offtake / Wheeling
+      description: IPP selling power to private offtaker via wheeling
+      key_relationships: [Generator, Offtaker, Wheeling Provider, Municipality, Eskom]
+      dd_focus: Wheeling agreement, offtaker creditworthiness, grid charges
+    - name: Gas-to-Power Project
+      description: Gas-fired power generation with fuel supply chain
+      key_relationships: [IPP, Gas Supplier, Pipeline Operator, Eskom, NERSA]
+      dd_focus: Gas supply agreement, pipeline access, generation license
+    - name: Development JV
+      description: Joint venture for greenfield project development
+      key_relationships: [Developer, Equity Partner, EPC Contractor, Landowner, Community]
+      dd_focus: JV agreement, development rights, REIPPPP bid commitments
+  entity_roles:
+    - role: Project SPV
+      description: Ringfenced special purpose vehicle holding project assets
+    - role: Sponsor
+      description: Equity investor in project company
+    - role: Senior Lender
+      description: Project finance debt provider with security over assets
+    - role: Offtaker
+      description: Purchaser of electricity under PPA (Eskom or private)
+    - role: EPC Contractor
+      description: Engineering, procurement, and construction contractor
+    - role: O&M Provider
+      description: Operations and maintenance service provider
+    - role: Community Trust
+      description: Local community ownership vehicle for REIPPPP compliance
+  common_related_parties:
+    - type: Sponsor Affiliate
+      risk: Related party EPC or O&M contracts, non-arms-length pricing
+    - type: Community Trust Trustee
+      risk: Governance of community benefit, conflict of interest
+    - type: Developer
+      risk: Development fee arrangements, IP licensing
+    - type: Fund Manager
+      risk: Management fees, carried interest, conflicts between funds
+materiality_thresholds:
+  default_when_value_unknown: "R5,000,000"
+  when_value_known:
+    - threshold: "5% of project value"
+      applies_to: "Individual contract exposure, single equipment warranty"
+    - threshold: "2% of project value"
+      applies_to: "Aggregate compliance costs, O&M underperformance"
+    - threshold: "1% of annual revenue"
+      applies_to: "Curtailment losses, grid charges variance"
+  qualitative_overrides:
+    always_material:
+      - "PPA termination or termination risk"
+      - "Generation license suspension or revocation"
+      - "Grid connection agreement default"
+      - "REIPPPP ED non-compliance triggering penalties"
+      - "Environmental authorization breach"
+      - "Senior lender event of default"
+      - "COD failure or delay"
+      - "Community ownership non-compliance"
+      - "Change of control consent not obtainable"
+    never_immaterial:
+      - "Generation License & Regulatory"
+      - "Power Purchase Agreement"
+      - "REIPPPP Compliance"
+      - "Grid Connection"
+      - "Project Finance Covenants"
+cross_reference_expectations:
+  primary_documents:
+    - document: "Power Purchase Agreement"
+      must_cross_reference:
+        - target: "Financial Model"
+          fields: ["tariff", "escalation", "term", "deemed energy"]
+          validation: "Model tariff assumptions must match PPA contracted terms"
+        - target: "Generation License"
+          fields: ["licensed capacity", "technology"]
+          validation: "PPA capacity must not exceed licensed capacity"
+        - target: "Grid Connection Agreement"
+          fields: ["contracted capacity", "connection point"]
+          validation: "Grid capacity must support PPA generation obligations"
+    - document: "Generation License"
+      must_cross_reference:
+        - target: "PPA"
+          fields: ["capacity", "technology type"]
+          validation: "Licensed capacity must cover PPA obligations"
+        - target: "Environmental Authorization"
+          fields: ["authorized activities", "capacity"]
+          validation: "EA must cover licensed generation activities"
+    - document: "Financial Model"
+      must_cross_reference:
+        - target: "PPA"
+          fields: ["tariff", "escalation", "term"]
+          validation: "Revenue assumptions must match PPA terms"
+        - target: "Facility Agreement"
+          fields: ["debt amount", "interest rate", "repayment profile"]
+          validation: "Debt assumptions must match facility terms"
+        - target: "O&M Agreement"
+          fields: ["fees", "escalation"]
+          validation: "O&M cost assumptions must match contracted terms"
+    - document: "REIPPPP Award Letter"
+      must_cross_reference:
+        - target: "Shareholders Agreement"
+          fields: ["BEE ownership", "community ownership"]
+          validation: "Current ownership must meet bid commitments"
+        - target: "PPA"
+          fields: ["tariff", "capacity"]
+          validation: "PPA terms must match bid award"
+    - document: "Facility Agreement"
+      must_cross_reference:
+        - target: "Security Agreement"
+          fields: ["security package", "perfection status"]
+          validation: "All required security must be in place and perfected"
+        - target: "Insurance Policies"
+          fields: ["coverage", "insured value", "BI indemnity period"]
+          validation: "Insurance must meet lender requirements"
+red_flag_patterns:
+  categories:
+    - category: ppa_revenue
+      patterns:
+        - id: EP-RF-PPA-001
+          pattern: "PPA termination|termination notice|default notice"
+          severity: critical
+          description: "PPA at risk of termination"
+          action: "Assess termination grounds, cure period, and consequences"
+        - id: EP-RF-PPA-002
+          pattern: "curtailment|constrained|grid limitation"
+          severity: high
+          description: "Generation curtailed due to grid constraints"
+          action: "Quantify revenue impact and assess compensation mechanism"
+        - id: EP-RF-PPA-003
+          pattern: "tariff dispute|Eskom non-payment|offtaker default"
+          severity: critical
+          description: "Offtaker payment default or tariff dispute"
+          action: "Assess Eskom creditworthiness and government guarantee"
+        - id: EP-RF-PPA-004
+          pattern: "COD delay|commissioning delay|not operational"
+          severity: critical
+          description: "Project has not achieved commercial operation date"
+          action: "Assess COD timeline, penalties, and termination risk"
+    - category: regulatory
+      patterns:
+        - id: EP-RF-REG-001
+          pattern: "license suspended|license revoked|NERSA investigation"
+          severity: critical
+          description: "Generation license at risk"
+          action: "Assess NERSA investigation status and license conditions"
+        - id: EP-RF-REG-002
+          pattern: "EA breach|environmental non-compliance|stop order"
+          severity: critical
+          description: "Environmental authorization breach"
+          action: "Assess breach severity and remediation requirements"
+        - id: EP-RF-REG-003
+          pattern: "water use|WUL expired|water license"
+          severity: high
+          description: "Water use license issue"
+          action: "Verify WUL validity and renewal status"
+    - category: reipppp
+      patterns:
+        - id: EP-RF-REI-001
+          pattern: "ED non-compliance|economic development penalty|scorecard"
+          severity: critical
+          description: "REIPPPP economic development non-compliance"
+          action: "Quantify ED penalties and assess remediation plan"
+        - id: EP-RF-REI-002
+          pattern: "community ownership|local ownership below"
+          severity: critical
+          description: "Community ownership below REIPPPP commitment"
+          action: "Assess community trust structure and compliance"
+        - id: EP-RF-REI-003
+          pattern: "local content|below threshold|non-compliant"
+          severity: high
+          description: "Local content below committed levels"
+          action: "Quantify shortfall and penalty exposure"
+    - category: project_finance
+      patterns:
+        - id: EP-RF-FIN-001
+          pattern: "DSCR breach|covenant breach|event of default"
+          severity: critical
+          description: "Project finance covenant breach"
+          action: "Assess breach severity, cure rights, and lender remedies"
+        - id: EP-RF-FIN-002
+          pattern: "distribution lock-up|cash sweep|restricted payment"
+          severity: high
+          description: "Distributions restricted by lender covenants"
+          action: "Assess DSCR headroom and distribution forecast"
+        - id: EP-RF-FIN-003
+          pattern: "security imperfect|security not registered|lien"
+          severity: high
+          description: "Project finance security not properly perfected"
+          action: "Verify security registration and perfection status"
+    - category: technical
+      patterns:
+        - id: EP-RF-TEC-001
+          pattern: "underperformance|below forecast|capacity factor low"
+          severity: high
+          description: "Project generating below forecast"
+          action: "Assess technical cause and impact on revenue and DSCR"
+        - id: EP-RF-TEC-002
+          pattern: "equipment defect|warranty claim|manufacturer"
+          severity: high
+          description: "Equipment defect or warranty issue"
+          action: "Assess warranty coverage and remediation plan"
+        - id: EP-RF-TEC-003
+          pattern: "grid connection|transmission constraint|load shedding"
+          severity: high
+          description: "Grid connection or transmission issues"
+          action: "Assess impact on generation and revenue"
+    - category: bee_ed
+      patterns:
+        - id: EP-RF-BEE-001
+          pattern: "BEE ownership below|ownership non-compliant"
+          severity: critical
+          description: "BEE ownership below REIPPPP commitment"
+          action: "Model post-transaction BEE position and ED impact"
+        - id: EP-RF-BEE-002
+          pattern: "community benefit|trust dispute|benefit distribution"
+          severity: high
+          description: "Community trust governance or benefit distribution issues"
+          action: "Assess trust structure and community satisfaction"
+calculation_formulas:
+  categories:
+    - name: project_valuation
+      formulas:
+        - formula: "Project IRR = IRR of equity cash flows over remaining PPA term"
+          variables: ["equity_investment", "distributions", "terminal_value"]
+          description: "Equity internal rate of return"
+        - formula: "DCF Value = Σ(Free Cash Flow / (1 + WACC)^t)"
+          variables: ["free_cash_flows", "wacc", "terminal_value"]
+          description: "Discounted cash flow valuation"
+        - formula: "EV/MW = Enterprise Value / Installed Capacity (MW)"
+          variables: ["enterprise_value", "installed_capacity_mw"]
+          description: "Per-MW valuation metric"
+    - name: project_finance
+      formulas:
+        - formula: "DSCR = Cash Available for Debt Service / Debt Service"
+          variables: ["revenue", "opex", "capex_reserve", "debt_service"]
+          description: "Debt service coverage ratio"
+        - formula: "LLCR = NPV(CFADS over loan life) / Outstanding Debt"
+          variables: ["cfads", "discount_rate", "outstanding_debt"]
+          description: "Loan life coverage ratio"
+    - name: generation
+      formulas:
+        - formula: "Capacity Factor = Actual Generation (MWh) / (Capacity MW × 8,760 hours)"
+          variables: ["actual_generation_mwh", "capacity_mw"]
+          description: "Actual vs theoretical maximum generation"
+        - formula: "Availability = Available Hours / Total Hours × 100"
+          variables: ["available_hours", "total_hours"]
+          description: "Plant availability for generation"
+        - formula: "Curtailment Loss = Curtailed MWh × Tariff"
+          variables: ["curtailed_mwh", "tariff"]
+          description: "Revenue lost to grid curtailment"
+    - name: ed_compliance
+      formulas:
+        - formula: "ED Score = Weighted sum of ownership + jobs + local content + ED spend"
+          variables: ["ownership_score", "job_creation_score", "local_content_score", "ed_spend_score"]
+          description: "REIPPPP economic development scorecard"
+        - formula: "ED Penalty = Tariff × Penalty % × Generation"
+          variables: ["tariff", "penalty_percentage", "generation_mwh"]
+          description: "Economic development penalty deduction"
+    - name: bee
+      formulas:
+        - formula: "Post-Transaction BEE % = BEE Shares / Total Shares × 100"
+          variables: ["bee_shares", "total_shares"]
+          description: "BEE ownership post-transaction"
+        - formula: "Community Ownership = Community Trust Shares / Total × 100"
+          variables: ["community_shares", "total_shares"]
+          description: "REIPPPP community ownership percentage"
+    - name: tax
+      formulas:
+        - formula: "12B Allowance = Cost of Plant × Allowance % (50%/30%/20% or 100%)"
+          variables: ["plant_cost", "allowance_percentage"]
+          description: "Section 12B accelerated depreciation for renewable energy"
+        - formula: "Carbon Tax = GHG Emissions × Tax Rate × (1 - Allowances)"
+          variables: ["ghg_emissions", "tax_rate", "allowance_percentage"]
+          description: "Carbon tax liability calculation"
 conditions_precedent_patterns:
 - pattern: NERSA|generation license
   cp_type: Regulatory Approval
@@ -276,15 +795,18 @@ folder_questions:
     display_name: Corporate & Governance
     relevance: high
     questions:
-    - question: Is the SPV structure appropriate for the project and transaction?
+    - id: EP-F01-001
+      question: Is the SPV structure appropriate for the project and transaction?
       priority: critical
       detail: Project finance typically requires ringfenced SPV structure
       cot_hint: Check SPV isolation → bankruptcy remoteness → lender requirements
-    - question: Does the MOI authorize the project activities and borrowing?
+    - id: EP-F01-002
+      question: Does the MOI authorize the project activities and borrowing?
       priority: critical
       detail: Objects clause must cover power generation and related activities
       cot_hint: Review objects → check borrowing powers → confirm capacity
-    - question: Is the project BEE compliant for REIPPPP purposes?
+    - id: EP-F01-003
+      question: Is the project BEE compliant for REIPPPP purposes?
       priority: critical
       detail: Ownership and ED requirements are critical for REIPPPP projects
       cot_hint: Check ownership % → ED commitments → compliance status
@@ -297,19 +819,23 @@ folder_questions:
     display_name: Commercial Contracts
     relevance: critical
     questions:
-    - question: Does the PPA contain change of control provisions and what consent is required?
+    - id: EP-F02-001
+      question: Does the PPA contain change of control provisions and what consent is required?
       priority: critical
       detail: Eskom and DOE consent typically required for ownership changes
       cot_hint: CoC definition → consent parties → approval process
-    - question: What is the remaining PPA term and tariff escalation mechanism?
+    - id: EP-F02-002
+      question: What is the remaining PPA term and tariff escalation mechanism?
       priority: critical
       detail: Revenue projections depend on remaining term and escalation
       cot_hint: PPA term → COD date → remaining years → escalation formula
-    - question: What are the curtailment provisions and compensation arrangements?
+    - id: EP-F02-003
+      question: What are the curtailment provisions and compensation arrangements?
       priority: critical
       detail: Grid constraints may result in curtailment - check compensation
       cot_hint: Curtailment definition → compensation mechanism → caps
-    - question: What O&M performance guarantees are in place?
+    - id: EP-F02-004
+      question: What O&M performance guarantees are in place?
       priority: high
       detail: Availability and performance guarantees affect revenue
       cot_hint: Guaranteed availability → penalty mechanism → cure rights
@@ -322,15 +848,18 @@ folder_questions:
     display_name: Project Finance
     relevance: critical
     questions:
-    - question: Do project finance facilities contain change of control triggers?
+    - id: EP-F03-001
+      question: Do project finance facilities contain change of control triggers?
       priority: critical
       detail: Senior lender consent typically required for ownership changes
       cot_hint: CoC provisions → prepayment triggers → consent requirements
-    - question: What is the current debt outstanding and debt service coverage?
+    - id: EP-F03-002
+      question: What is the current debt outstanding and debt service coverage?
       priority: critical
       detail: DSCR compliance affects distribution and refinancing
       cot_hint: Debt balance → DSCR calculation → covenant headroom
-    - question: What security package is in place over project assets?
+    - id: EP-F03-003
+      question: What security package is in place over project assets?
       priority: critical
       detail: Comprehensive security over SPV shares, assets, contracts
       cot_hint: Security list → perfection status → release conditions
@@ -342,15 +871,18 @@ folder_questions:
     display_name: Regulatory & Environmental
     relevance: critical
     questions:
-    - question: Is the generation license valid and are all conditions being met?
+    - id: EP-F04-001
+      question: Is the generation license valid and are all conditions being met?
       priority: critical
       detail: NERSA license is fundamental authorization for operations
       cot_hint: License validity → conditions → compliance status
-    - question: Is the project compliant with REIPPPP economic development requirements?
+    - id: EP-F04-002
+      question: Is the project compliant with REIPPPP economic development requirements?
       priority: critical
       detail: ED non-compliance can result in PPA penalties
       cot_hint: ED commitments → actual performance → gap analysis
-    - question: Is the Environmental Authorization current with all conditions complied?
+    - id: EP-F04-003
+      question: Is the Environmental Authorization current with all conditions complied?
       priority: critical
       detail: EA conditions must be met for lawful operation
       cot_hint: EA validity → conditions → compliance
@@ -362,7 +894,8 @@ folder_questions:
     display_name: Employment & Local Content
     relevance: medium
     questions:
-    - question: Are local employment requirements being met?
+    - id: EP-F05-001
+      question: Are local employment requirements being met?
       priority: high
       detail: REIPPPP projects have local employment commitments
       cot_hint: Job creation targets → actual employment → local %
@@ -371,11 +904,13 @@ folder_questions:
     display_name: Land & Surface Rights
     relevance: high
     questions:
-    - question: Does the land lease term align with the PPA term?
+    - id: EP-F06-001
+      question: Does the land lease term align with the PPA term?
       priority: critical
       detail: Land rights must extend beyond PPA to avoid stranded assets
       cot_hint: Lease term → PPA expiry → buffer period
-    - question: What decommissioning and site restoration obligations exist?
+    - id: EP-F06-002
+      question: What decommissioning and site restoration obligations exist?
       priority: high
       detail: End of life obligations must be provisioned
       cot_hint: Restoration requirements → provision amounts → timing
@@ -384,7 +919,8 @@ folder_questions:
     display_name: Insurance
     relevance: high
     questions:
-    - question: Is there adequate operational all-risk and BI coverage?
+    - id: EP-F07-001
+      question: Is there adequate operational all-risk and BI coverage?
       priority: critical
       detail: Lender required insurance for project finance
       cot_hint: Coverage limits → BI indemnity period → exclusions
@@ -397,7 +933,8 @@ folder_questions:
     display_name: Litigation
     relevance: medium
     questions:
-    - question: Are there any disputes with EPC contractor or equipment suppliers?
+    - id: EP-F08-001
+      question: Are there any disputes with EPC contractor or equipment suppliers?
       priority: high
       detail: Construction and warranty disputes affect project value
       cot_hint: Identify disputes → quantify exposure
@@ -406,7 +943,8 @@ folder_questions:
     display_name: Tax
     relevance: medium
     questions:
-    - question: Has the project claimed Section 12B renewable energy allowance?
+    - id: EP-F09-001
+      question: Has the project claimed Section 12B renewable energy allowance?
       priority: high
       detail: Accelerated depreciation benefit for renewable projects
       cot_hint: 12B election → allowance calculation → remaining benefit
@@ -527,6 +1065,195 @@ cot_questions:
   - What conditions attach and is compliance on track?
   - What decommissioning obligations and financial provision exist?
 
+warranty_categories:
+  - category: Generation License & Regulatory
+    warranties:
+      - "Valid NERSA generation license in full force and effect"
+      - "All license conditions complied with"
+      - "No NERSA investigations or proceedings pending"
+      - "IRP allocation secured and valid"
+      - "Grid code compliance achieved"
+  - category: Power Purchase Agreement
+    warranties:
+      - "PPA is valid, binding, and in full force"
+      - "No default or termination notice under PPA"
+      - "COD has been achieved and all milestones met"
+      - "Tariff and escalation as represented"
+      - "No material curtailment disputes pending"
+  - category: REIPPPP Compliance
+    warranties:
+      - "Project is compliant with all ED commitments"
+      - "Community ownership requirements are met"
+      - "Local content obligations are satisfied"
+      - "No ED penalties currently being applied"
+      - "All DMRE/DOE reporting obligations current"
+  - category: Project Contracts
+    warranties:
+      - "EPC contract completed and all warranties in force"
+      - "O&M agreement in place with performance guarantees"
+      - "No material disputes with contractors or suppliers"
+      - "All equipment warranties are valid"
+      - "Defects liability period status as represented"
+  - category: Project Finance
+    warranties:
+      - "No event of default under facility agreement"
+      - "All DSCR covenants complied with"
+      - "Security package properly perfected"
+      - "No distribution lock-up in effect"
+      - "Insurance requirements met per lender terms"
+  - category: Environmental & Land
+    warranties:
+      - "Valid Environmental Authorization in place"
+      - "All EA conditions complied with"
+      - "Water use licenses current and valid"
+      - "Land lease in full force for PPA term"
+      - "No environmental contamination or remediation required"
+      - "Decommissioning provision adequate"
+  - category: Technical Performance
+    warranties:
+      - "Project generating at or above forecast levels"
+      - "No material equipment defects known"
+      - "All grid connection requirements met"
+      - "Plant availability at warranted levels"
+  - category: Tax
+    warranties:
+      - "Section 12B allowances correctly claimed"
+      - "Carbon tax obligations current"
+      - "No tax disputes pending"
+      - "Transfer pricing compliant for related party contracts"
+
+indemnity_categories:
+  - category: PPA & Revenue
+    typical_indemnities:
+      - "Indemnity for PPA termination or partial termination"
+      - "Indemnity for tariff reduction due to ED penalties"
+      - "Indemnity for curtailment losses not compensated under PPA"
+  - category: Regulatory
+    typical_indemnities:
+      - "Indemnity for loss of generation license"
+      - "Indemnity for environmental fines and remediation costs"
+      - "Indemnity for REIPPPP non-compliance penalties"
+  - category: Project Contracts
+    typical_indemnities:
+      - "Indemnity for EPC warranty claims not recoverable"
+      - "Indemnity for O&M underperformance losses"
+      - "Indemnity for equipment defects post-warranty"
+  - category: Project Finance
+    typical_indemnities:
+      - "Indemnity for lender claims arising from pre-acquisition events"
+      - "Indemnity for covenant breaches prior to closing"
+  - category: Environmental & Land
+    typical_indemnities:
+      - "Indemnity for environmental remediation costs"
+      - "Indemnity for land lease disputes or termination"
+      - "Indemnity for decommissioning cost overruns"
+  - category: Tax
+    typical_indemnities:
+      - "Indemnity for disallowed Section 12B deductions"
+      - "Indemnity for carbon tax underpayment"
+      - "Indemnity for transfer pricing adjustments"
+
+warranty_indemnity_patterns:
+  warranty_patterns:
+    - pattern: "warrant|represent|confirm"
+      context: "NERSA|generation license|regulatory"
+      maps_to: "Generation License & Regulatory"
+    - pattern: "warrant|represent|confirm"
+      context: "PPA|power purchase|offtake|Eskom"
+      maps_to: "Power Purchase Agreement"
+    - pattern: "warrant|represent|confirm"
+      context: "REIPPPP|economic development|local content|community"
+      maps_to: "REIPPPP Compliance"
+    - pattern: "warrant|represent|confirm"
+      context: "EPC|O&M|contractor|equipment|warranty"
+      maps_to: "Project Contracts"
+    - pattern: "warrant|represent|confirm"
+      context: "facility|lender|DSCR|security|covenant"
+      maps_to: "Project Finance"
+    - pattern: "warrant|represent|confirm"
+      context: "environment|EA|water|land|decommission"
+      maps_to: "Environmental & Land"
+    - pattern: "warrant|represent|confirm"
+      context: "generation|capacity|availability|performance"
+      maps_to: "Technical Performance"
+    - pattern: "warrant|represent|confirm"
+      context: "tax|12B|carbon|transfer pricing"
+      maps_to: "Tax"
+  indemnity_patterns:
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "PPA|termination|tariff|curtailment"
+      maps_to: "PPA & Revenue"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "license|NERSA|REIPPPP|environment"
+      maps_to: "Regulatory"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "EPC|O&M|contractor|equipment"
+      maps_to: "Project Contracts"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "lender|facility|covenant|security"
+      maps_to: "Project Finance"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "environment|land|decommission|remediation"
+      maps_to: "Environmental & Land"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "tax|12B|carbon|SARS"
+      maps_to: "Tax"
+
+cot_questions_warranty_indemnity:
+  generation_license:
+    - "Is the NERSA license warranted as valid and in force?"
+    - "Are all license conditions warranted as complied with?"
+    - "Is there an indemnity for license suspension or revocation?"
+  ppa_revenue:
+    - "Is the PPA warranted as valid and not in default?"
+    - "Is COD achievement warranted?"
+    - "Is there an indemnity for PPA termination events?"
+    - "Are curtailment provisions adequately warranted?"
+  reipppp:
+    - "Are ED commitments warranted as complied with?"
+    - "Is community ownership warranted at committed levels?"
+    - "Is there an indemnity for ED penalty deductions?"
+  project_contracts:
+    - "Are EPC warranties warranted as still in force?"
+    - "Is O&M performance warranted at guaranteed levels?"
+    - "Is there an indemnity for contractor claims?"
+  project_finance:
+    - "Is covenant compliance warranted?"
+    - "Is security perfection warranted?"
+    - "Is there an indemnity for lender claims?"
+  environmental_land:
+    - "Is EA compliance warranted?"
+    - "Is land lease tenure warranted for PPA term?"
+    - "Is there an indemnity for environmental remediation?"
+
+output_requirements:
+  warranties_register:
+    required_columns:
+      - "warranty_reference"
+      - "category"
+      - "warranty_text"
+      - "warrantor"
+      - "beneficiary"
+      - "limitation_period"
+      - "cap_amount"
+      - "dd_finding_reference"
+      - "risk_assessment"
+    grouping: "by_category"
+    sort_order: "by_risk_level"
+  indemnities_register:
+    required_columns:
+      - "indemnity_reference"
+      - "category"
+      - "indemnity_text"
+      - "indemnifier"
+      - "beneficiary"
+      - "trigger_event"
+      - "cap_amount"
+      - "time_limitation"
+      - "dd_finding_reference"
+    grouping: "by_category"
+    sort_order: "by_exposure_value"
+
 # ============================================================================
 # STATUTORY FRAMEWORK
 # Detailed statutory citation framework for energy and power regulatory findings
@@ -542,26 +1269,31 @@ statutory_framework:
           penalties:
             criminal: "Fine up to R5 million or imprisonment up to 5 years"
           criticality: critical
+          application_to_dd: "Verify valid generation license exists and covers project capacity and technology"
         - section: "Section 7"
           description: "License conditions"
           penalties:
             administrative: "License amendment, suspension, revocation"
           criticality: critical
+          application_to_dd: "Assess compliance with all license conditions including reporting and operational requirements"
         - section: "Section 10"
           description: "License transfer and amendment"
           penalties:
             administrative: "NERSA approval required for transfer"
           criticality: critical
+          application_to_dd: "Confirm NERSA approval obtained or obtainable for license transfer on change of control"
         - section: "Section 14"
           description: "Tariff approval requirements"
           penalties:
             administrative: "Tariffs must be NERSA-approved"
           criticality: high
+          application_to_dd: "Verify tariffs comply with NERSA-approved rates or PPA terms"
         - section: "Section 15"
           description: "Dispute resolution"
           penalties:
             administrative: "NERSA binding decisions"
           criticality: high
+          application_to_dd: "Assess any pending NERSA disputes or complaints"
 
     - act: "National Energy Act 34 of 2008"
       acronym: "NEA"
@@ -572,11 +1304,13 @@ statutory_framework:
           penalties:
             administrative: "Policy compliance requirements"
           criticality: high
+          application_to_dd: "Assess project alignment with Integrated Resource Plan and energy planning"
         - section: "Section 19"
           description: "Energy data and information"
           penalties:
             criminal: "Fine for failure to provide data"
           criticality: medium
+          application_to_dd: "Verify compliance with energy data reporting obligations"
 
     - act: "National Environmental Management Act 107 of 1998"
       acronym: "NEMA"
@@ -587,16 +1321,19 @@ statutory_framework:
           penalties:
             criminal: "Fine up to R10 million or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Verify Environmental Authorization covers all listed activities for the project"
         - section: "Section 24G"
           description: "Rectification of unlawful commencement"
           penalties:
             administrative: "Fine up to R5 million plus rectification"
           criticality: high
+          application_to_dd: "Assess whether any unlawful commencement has occurred requiring rectification"
         - section: "Section 28"
           description: "Duty of care and remediation"
           penalties:
             civil: "Unlimited remediation liability"
           criticality: critical
+          application_to_dd: "Assess environmental duty of care obligations and any remediation liability"
 
     - act: "National Water Act 36 of 1998"
       acronym: "NWA"
@@ -607,16 +1344,19 @@ statutory_framework:
           penalties:
             criminal: "Fine or imprisonment up to 5 years"
           criticality: critical
+          application_to_dd: "Verify water use license covers all project water uses"
         - section: "Section 40"
           description: "General authorization for water use"
           penalties:
             administrative: "Limited water use without license"
           criticality: high
+          application_to_dd: "Assess whether general authorization applies or full license required"
         - section: "Section 151"
           description: "Pollution offences"
           penalties:
             criminal: "Fine up to R10 million or imprisonment"
           criticality: critical
+          application_to_dd: "Assess risk of water pollution offences from project operations"
 
     - act: "Gas Act 48 of 2001"
       acronym: "Gas Act"
@@ -627,11 +1367,13 @@ statutory_framework:
           penalties:
             criminal: "Fine or imprisonment"
           criticality: critical
+          application_to_dd: "Verify gas-related licenses for gas-to-power projects"
         - section: "Section 9"
           description: "License requirements"
           penalties:
             administrative: "License suspension or revocation"
           criticality: critical
+          application_to_dd: "Assess compliance with gas license conditions"
 
     - act: "Petroleum Pipelines Act 60 of 2003"
       acronym: "PPA"
@@ -642,11 +1384,13 @@ statutory_framework:
           penalties:
             criminal: "Fine or imprisonment"
           criticality: critical
+          application_to_dd: "Verify pipeline activity licenses for fuel supply infrastructure"
         - section: "Section 19"
           description: "Third party access to pipelines"
           penalties:
             administrative: "Mandatory access requirements"
           criticality: high
+          application_to_dd: "Assess third-party access requirements for pipeline infrastructure"
 
     - act: "National Nuclear Regulator Act 47 of 1999"
       acronym: "NNR Act"
@@ -657,11 +1401,13 @@ statutory_framework:
           penalties:
             criminal: "Fine up to R10 million or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Verify nuclear authorization for nuclear generation projects"
         - section: "Section 45"
           description: "Nuclear damage liability"
           penalties:
             civil: "Unlimited operator liability"
           criticality: critical
+          application_to_dd: "Assess nuclear damage liability and insurance requirements"
 
     - act: "Carbon Tax Act 15 of 2019"
       acronym: "Carbon Tax Act"
@@ -672,11 +1418,13 @@ statutory_framework:
           penalties:
             administrative: "Tax penalties and interest"
           criticality: high
+          application_to_dd: "Calculate carbon tax liability for fossil fuel generation"
         - section: "Section 6"
           description: "Emissions allowances and offsets"
           penalties:
             administrative: "Reduced tax liability for compliance"
           criticality: high
+          application_to_dd: "Assess eligibility for emissions allowances and carbon offsets"
 
   sector_specific:
     reipppp:
@@ -743,3 +1491,84 @@ statutory_framework:
         trigger: "Water use for power generation"
         consequence: "Water use license required"
         processing_time: "300 days statutory timeline"
+  secondary_legislation:
+    - name: "Electricity Regulation Act Regulations"
+      parent_act: "ERA"
+      relevance: "Detail license application, amendment, and transfer procedures"
+    - name: "REIPPPP Bid Documents and Implementation Agreement"
+      parent_act: "ERA / DMRE"
+      relevance: "Binding ED commitments, tariff structure, and project milestones"
+    - name: "Grid Code (Network, Metering, System Operation)"
+      parent_act: "ERA"
+      relevance: "Technical requirements for grid connection and operation"
+    - name: "Environmental Impact Assessment Regulations"
+      parent_act: "NEMA"
+      relevance: "Listed activities requiring environmental authorization for energy projects"
+    - name: "National Water Act Regulations"
+      parent_act: "NWA"
+      relevance: "Water use license procedures and general authorizations"
+    - name: "Carbon Tax Regulations"
+      parent_act: "Carbon Tax Act"
+      relevance: "Emissions reporting, allowances, and offset procedures"
+  regulatory_bodies:
+    - name: "NERSA"
+      jurisdiction: "Energy regulation"
+      key_function: "Generation licensing, tariff approval, grid code enforcement"
+    - name: "DMRE"
+      jurisdiction: "Energy policy"
+      key_function: "REIPPPP procurement, IRP implementation, energy planning"
+    - name: "IPP Office"
+      jurisdiction: "IPP procurement"
+      key_function: "REIPPPP bid evaluation, ED monitoring, consent processes"
+    - name: "Eskom"
+      jurisdiction: "Power utility"
+      key_function: "PPA counterparty, grid connection, system operation"
+    - name: "DFFE"
+      jurisdiction: "Environmental affairs"
+      key_function: "Environmental authorizations, compliance monitoring"
+    - name: "DWS"
+      jurisdiction: "Water affairs"
+      key_function: "Water use licenses, pollution control"
+    - name: "SARS"
+      jurisdiction: "Tax administration"
+      key_function: "Carbon tax, 12B allowances, income tax"
+output_templates:
+  executive_summary:
+    sections:
+      - "Transaction Overview"
+      - "Deal Blockers"
+      - "Critical Findings"
+      - "Financial Exposure Summary"
+      - "Conditions Precedent"
+      - "Recommendations"
+    required_elements:
+      - "PPA status and revenue security"
+      - "Generation license status"
+      - "REIPPPP ED compliance status"
+      - "Grid connection status"
+      - "Project finance covenant compliance"
+      - "Environmental authorization status"
+      - "Total financial exposure estimate"
+  full_report:
+    sections:
+      - "Transaction Context"
+      - "Generation License & Regulatory"
+      - "Power Purchase Agreement"
+      - "REIPPPP Compliance"
+      - "Project Contracts"
+      - "Grid Connection"
+      - "Project Finance"
+      - "Land & Surface Rights"
+      - "Environmental & Permitting"
+      - "BEE Analysis"
+      - "Warranties & Indemnities"
+  finding_format:
+    required_fields:
+      - "finding_reference"
+      - "category"
+      - "risk_level"
+      - "description"
+      - "statutory_reference"
+      - "financial_impact"
+      - "recommendation"
+      - "warranty_indemnity_reference"

@@ -18,6 +18,23 @@ folder_structure:
     - Board Resolution
     - Company Registration
     - Power of Attorney
+    document_expectations:
+      - document: "MOI"
+        expected_content: "Memorandum of Incorporation showing disposal powers and authority"
+        key_fields: ["main business", "special resolutions", "asset disposal thresholds"]
+        cross_reference: ["Board Resolution", "Title Deed"]
+      - document: "Board Resolution"
+        expected_content: "Resolution authorizing the specific property transaction"
+        key_fields: ["property description", "transaction value", "authorized signatories"]
+        cross_reference: ["MOI", "Sale Agreement"]
+      - document: "Company Registration"
+        expected_content: "CIPC registration documents confirming entity details"
+        key_fields: ["registration number", "directors", "registered address"]
+        cross_reference: ["MOI", "Title Deed"]
+      - document: "Power of Attorney"
+        expected_content: "Authority to act on behalf of seller or buyer"
+        key_fields: ["grantor", "attorney", "scope of authority", "property description"]
+        cross_reference: ["MOI", "Board Resolution"]
   02_Commercial:
     relevance: critical
     subcategories:
@@ -31,6 +48,27 @@ folder_structure:
     - Tenant Deposit Schedule
     - Property Management Agreement
     - Service Level Agreement
+    document_expectations:
+      - document: "Lease Agreement"
+        expected_content: "Commercial or residential lease with all material terms"
+        key_fields: ["parties", "premises", "rental", "escalation", "term", "renewal options", "CoC clause"]
+        cross_reference: ["Rental Statement", "Title Deed"]
+      - document: "Rental Statement"
+        expected_content: "Current rental roll showing all tenants and payments"
+        key_fields: ["tenant name", "unit", "monthly rental", "arrears", "deposit held"]
+        cross_reference: ["Lease Agreement", "Financial Statements"]
+      - document: "Tenant Deposit Schedule"
+        expected_content: "Schedule of all tenant deposits held"
+        key_fields: ["tenant", "deposit amount", "interest earned", "investment account"]
+        cross_reference: ["Lease Agreement"]
+      - document: "Property Management Agreement"
+        expected_content: "Management agreement with property manager"
+        key_fields: ["manager", "fee structure", "term", "termination provisions", "CoC clause"]
+        cross_reference: ["Service Level Agreement"]
+      - document: "Service Level Agreement"
+        expected_content: "Service contracts for property maintenance and operations"
+        key_fields: ["service provider", "scope", "fees", "term", "termination"]
+        cross_reference: ["Property Management Agreement"]
   03_Financial:
     relevance: high
     subcategories:
@@ -42,6 +80,23 @@ folder_structure:
     - Property Valuation
     - Financial Statements
     - Rates Clearance Certificate
+    document_expectations:
+      - document: "Mortgage Bond"
+        expected_content: "Registered mortgage bond over the property"
+        key_fields: ["bondholder", "capital amount", "interest rate", "special conditions"]
+        cross_reference: ["Title Deed", "Financial Statements"]
+      - document: "Property Valuation"
+        expected_content: "Independent valuation report by registered valuer"
+        key_fields: ["valuation amount", "methodology", "comparable sales", "date of valuation", "valuer qualifications"]
+        cross_reference: ["Title Deed", "Rental Statement", "Financial Statements"]
+      - document: "Financial Statements"
+        expected_content: "Audited or reviewed financial statements of property-owning entity"
+        key_fields: ["property carrying value", "rental income", "operating expenses", "NOI"]
+        cross_reference: ["Rental Statement", "Rates Clearance Certificate"]
+      - document: "Rates Clearance Certificate"
+        expected_content: "Municipal rates clearance for transfer"
+        key_fields: ["property description", "clearance date", "amounts paid", "validity period"]
+        cross_reference: ["Title Deed", "Municipal Rates Account"]
   04_Regulatory:
     relevance: critical
     subcategories:
@@ -55,6 +110,27 @@ folder_structure:
     - Occupation Certificate
     - Heritage Consent
     - Environmental Authorization
+    document_expectations:
+      - document: "Zoning Certificate"
+        expected_content: "Municipal confirmation of current property zoning"
+        key_fields: ["zoning category", "permitted uses", "bulk and coverage", "height restrictions", "parking requirements"]
+        cross_reference: ["Title Deed", "Approved Building Plans"]
+      - document: "Approved Building Plans"
+        expected_content: "Municipality-approved building plans for all structures"
+        key_fields: ["plan number", "approval date", "building area", "use classification"]
+        cross_reference: ["Occupation Certificate", "Zoning Certificate"]
+      - document: "Occupation Certificate"
+        expected_content: "Certificate of occupancy issued by municipality"
+        key_fields: ["certificate number", "date issued", "building description", "approved use"]
+        cross_reference: ["Approved Building Plans"]
+      - document: "Heritage Consent"
+        expected_content: "SAHRA or provincial heritage authority consent for buildings >60 years"
+        key_fields: ["heritage grading", "restrictions", "permitted alterations"]
+        cross_reference: ["Title Deed"]
+      - document: "Environmental Authorization"
+        expected_content: "NEMA environmental authorization for listed activities"
+        key_fields: ["authorization number", "listed activities", "conditions", "EMPr requirements"]
+        cross_reference: ["Title Deed", "Zoning Certificate"]
   05_Employment:
     relevance: low
     subcategories:
@@ -63,6 +139,11 @@ folder_structure:
     - Maintenance
     expected_documents:
     - Employment Contract
+    document_expectations:
+      - document: "Employment Contract"
+        expected_content: "Contracts for on-site staff transferring with property under s197 LRA"
+        key_fields: ["employee name", "position", "remuneration", "notice period", "benefits"]
+        cross_reference: ["Property Management Agreement"]
   06_Property:
     relevance: critical
     subcategories:
@@ -76,6 +157,27 @@ folder_structure:
     - Servitude Agreement
     - Notarial Lease
     - Deeds Search
+    document_expectations:
+      - document: "Title Deed"
+        expected_content: "Registered deed of transfer showing ownership and conditions"
+        key_fields: ["registered owner", "property description", "extent", "conditions", "servitudes noted"]
+        cross_reference: ["Survey Diagram", "Deeds Search", "MOI"]
+      - document: "Survey Diagram"
+        expected_content: "Surveyor General approved diagram showing property boundaries"
+        key_fields: ["diagram number", "extent", "boundary descriptions", "beacon positions"]
+        cross_reference: ["Title Deed"]
+      - document: "Servitude Agreement"
+        expected_content: "Registered servitude agreement burdening or benefiting property"
+        key_fields: ["servitude type", "dominant/servient tenement", "extent", "conditions"]
+        cross_reference: ["Title Deed", "Deeds Search"]
+      - document: "Notarial Lease"
+        expected_content: "Long-term lease registered against title (>10 years)"
+        key_fields: ["lessee", "term", "rental", "renewal options", "registration details"]
+        cross_reference: ["Title Deed", "Lease Agreement"]
+      - document: "Deeds Search"
+        expected_content: "Current deeds office search showing all registered interests"
+        key_fields: ["registered owner", "bonds", "servitudes", "caveats", "endorsements"]
+        cross_reference: ["Title Deed", "Mortgage Bond"]
   07_Insurance:
     relevance: high
     subcategories:
@@ -86,6 +188,19 @@ folder_structure:
     - Insurance Policy
     - Certificate of Insurance
     - Claims Record
+    document_expectations:
+      - document: "Insurance Policy"
+        expected_content: "Building and property insurance policy"
+        key_fields: ["insurer", "insured value", "replacement value", "excess", "exclusions", "expiry date"]
+        cross_reference: ["Property Valuation", "Title Deed"]
+      - document: "Certificate of Insurance"
+        expected_content: "Certificate confirming current insurance coverage"
+        key_fields: ["insurer", "policy number", "cover amount", "period of insurance"]
+        cross_reference: ["Insurance Policy"]
+      - document: "Claims Record"
+        expected_content: "History of insurance claims on the property"
+        key_fields: ["claim date", "nature of claim", "amount claimed", "settlement status"]
+        cross_reference: ["Insurance Policy"]
   08_Litigation:
     relevance: medium
     subcategories:
@@ -96,6 +211,19 @@ folder_structure:
     - Summons
     - Settlement Agreement
     - Legal Opinion
+    document_expectations:
+      - document: "Summons"
+        expected_content: "Court summons relating to property disputes"
+        key_fields: ["plaintiff", "defendant", "cause of action", "relief sought", "case number"]
+        cross_reference: ["Legal Opinion", "Settlement Agreement"]
+      - document: "Settlement Agreement"
+        expected_content: "Settlement of property-related disputes"
+        key_fields: ["parties", "dispute description", "settlement terms", "payment obligations"]
+        cross_reference: ["Summons"]
+      - document: "Legal Opinion"
+        expected_content: "Legal opinion on property-related matters"
+        key_fields: ["issue", "opinion", "risk assessment", "recommendations"]
+        cross_reference: ["Title Deed", "Summons"]
   09_Tax:
     relevance: high
     subcategories:
@@ -107,138 +235,276 @@ folder_structure:
     - Tax Clearance Certificate
     - Municipal Rates Account
     - Body Corporate Levy Statement
+    document_expectations:
+      - document: "Tax Clearance Certificate"
+        expected_content: "SARS tax clearance for property-owning entity"
+        key_fields: ["taxpayer", "tax reference number", "clearance status", "validity period"]
+        cross_reference: ["Financial Statements"]
+      - document: "Municipal Rates Account"
+        expected_content: "Current municipal rates account showing payment status"
+        key_fields: ["property description", "account number", "current balance", "arrears"]
+        cross_reference: ["Rates Clearance Certificate", "Title Deed"]
+      - document: "Body Corporate Levy Statement"
+        expected_content: "Levy statement from body corporate for sectional title units"
+        key_fields: ["unit number", "monthly levy", "special levies", "arrears", "reserve fund"]
+        cross_reference: ["Title Deed"]
   99_Needs_Review:
     relevance: n/a
     subcategories:
     - Unclassified
     - Low Confidence
     expected_documents: []
+transaction_context:
+  deal_structures:
+    - type: direct_acquisition
+      description: Direct purchase of immovable property
+      key_considerations:
+        - Title deed transfer via Deeds Registry
+        - Transfer duty or VAT implications
+        - Rates clearance and compliance certificates
+        - Existing lease and tenant transfer
+    - type: share_sale
+      description: Acquisition of shares in property-owning company or trust
+      key_considerations:
+        - No transfer duty on share sale (securities transfer tax instead)
+        - Property remains in entity - no conveyancing
+        - All liabilities and obligations transfer with entity
+        - BEE ownership implications
+    - type: property_development
+      description: Development or redevelopment of property
+      key_considerations:
+        - Zoning and land use approvals under SPLUMA
+        - Building plan approvals under NBR Act
+        - Environmental authorizations under NEMA
+        - Heritage consents under NHRA if applicable
+    - type: sectional_title
+      description: Acquisition of sectional title unit
+      key_considerations:
+        - Body corporate levy clearance required
+        - Management and conduct rules apply
+        - Exclusive use areas and common property
+        - CSOS dispute resolution
+    - type: portfolio_acquisition
+      description: Acquisition of property portfolio or REIT
+      key_considerations:
+        - Multiple title deeds and registrations
+        - Bulk transfer logistics
+        - Tenant notification requirements
+        - JSE requirements if listed REIT
+  typical_parties:
+    - role: seller
+      description: Registered owner or entity holding the property
+    - role: buyer
+      description: Acquiring party
+    - role: target
+      description: Property-owning entity (in share sale transactions)
+    - role: conveyancer
+      description: Appointed attorney handling transfer registration
+    - role: bondholder
+      description: Mortgagee with registered bond over property
+    - role: tenant
+      description: Existing lessee or occupant
+    - role: body_corporate
+      description: Sectional title scheme management body
 primary_legislation:
 - Deeds Registries Act 47 of 1937
 - Alienation of Land Act 68 of 1981
 - Sectional Titles Act 95 of 1986
+- Sectional Titles Schemes Management Act 8 of 2011
 - Property Practitioners Act 22 of 2019
 - Spatial Planning and Land Use Management Act 16 of 2013 (SPLUMA)
+- National Building Regulations and Building Standards Act 103 of 1977
+- Transfer Duty Act 40 of 1949
+- Value-Added Tax Act 89 of 1991
+- National Environmental Management Act 107 of 1998
+- National Heritage Resources Act 25 of 1999
+reference_documents:
+  always_include:
+    - pattern: "title deed|deed of transfer"
+      document_type: "Title Deed"
+    - pattern: "survey diagram|general plan"
+      document_type: "Survey Diagram"
+    - pattern: "zoning certificate|land use"
+      document_type: "Zoning Certificate"
+    - pattern: "occupation certificate|completion certificate"
+      document_type: "Occupation Certificate"
+    - pattern: "rates clearance|municipal clearance"
+      document_type: "Rates Clearance Certificate"
+    - pattern: "valuation report|property valuation"
+      document_type: "Property Valuation Report"
+    - pattern: "lease agreement|rental agreement"
+      document_type: "Lease Agreement"
 risk_categories:
 - name: Title & Ownership
   weight: critical
   standard_questions:
-  - question: Is the seller the registered owner of the property?
+  - id: RE-TOW-001
+    question: Is the seller the registered owner of the property?
     priority: critical
-  - question: What is the extent and description of the property?
+  - id: RE-TOW-002
+    question: What is the extent and description of the property?
     priority: critical
-  - question: Are there any title deed conditions or restrictions?
+  - id: RE-TOW-003
+    question: Are there any title deed conditions or restrictions?
     priority: critical
-  - question: Are there any servitudes registered against the property?
+  - id: RE-TOW-004
+    question: Are there any servitudes registered against the property?
     priority: critical
-  - question: Are there any mortgage bonds registered?
+  - id: RE-TOW-005
+    question: Are there any mortgage bonds registered?
     priority: critical
-  - question: Are there any caveats or interdict noted on the title?
+  - id: RE-TOW-006
+    question: Are there any caveats or interdict noted on the title?
     priority: critical
-  - question: Is the property subject to any expropriation notice?
+  - id: RE-TOW-007
+    question: Is the property subject to any expropriation notice?
     priority: critical
-  - question: Are there any boundary disputes?
+  - id: RE-TOW-008
+    question: Are there any boundary disputes?
     priority: high
-  - question: What mineral rights apply to the property?
+  - id: RE-TOW-009
+    question: What mineral rights apply to the property?
     priority: high
-  - question: Is there a valid survey diagram?
+  - id: RE-TOW-010
+    question: Is there a valid survey diagram?
     priority: medium
 - name: Zoning & Land Use
   weight: critical
   standard_questions:
-  - question: What is the current zoning of the property?
+  - id: RE-ZLU-001
+    question: What is the current zoning of the property?
     priority: critical
-  - question: Is the current use compliant with zoning?
+  - id: RE-ZLU-002
+    question: Is the current use compliant with zoning?
     priority: critical
-  - question: Are there any pending rezoning applications?
+  - id: RE-ZLU-003
+    question: Are there any pending rezoning applications?
     priority: high
-  - question: What building plan approvals have been obtained?
+  - id: RE-ZLU-004
+    question: What building plan approvals have been obtained?
     priority: critical
-  - question: Is there an occupation certificate for all buildings?
+  - id: RE-ZLU-005
+    question: Is there an occupation certificate for all buildings?
     priority: critical
-  - question: Are there any building contraventions?
+  - id: RE-ZLU-006
+    question: Are there any building contraventions?
     priority: high
-  - question: What development rights attach to the property?
+  - id: RE-ZLU-007
+    question: What development rights attach to the property?
     priority: high
-  - question: Are there any heritage or environmental restrictions?
+  - id: RE-ZLU-008
+    question: Are there any heritage or environmental restrictions?
     priority: high
-  - question: What bulk and coverage allowances apply?
+  - id: RE-ZLU-009
+    question: What bulk and coverage allowances apply?
     priority: medium
-  - question: Are there any spatial development framework implications?
+  - id: RE-ZLU-010
+    question: Are there any spatial development framework implications?
     priority: medium
 - name: Rates, Taxes & Levies
   weight: high
   standard_questions:
-  - question: Are all municipal rates and taxes paid up to date?
+  - id: RE-RTL-001
+    question: Are all municipal rates and taxes paid up to date?
     priority: critical
-  - question: What is the current municipal valuation?
+  - id: RE-RTL-002
+    question: What is the current municipal valuation?
     priority: high
-  - question: Are there any objections to municipal valuation pending?
+  - id: RE-RTL-003
+    question: Are there any objections to municipal valuation pending?
     priority: medium
-  - question: Is the property located in a special rating area?
+  - id: RE-RTL-004
+    question: Is the property located in a special rating area?
     priority: medium
-  - question: What body corporate or homeowners levies apply?
+  - id: RE-RTL-005
+    question: What body corporate or homeowners levies apply?
     priority: high
-  - question: Are all levies paid up to date?
+  - id: RE-RTL-006
+    question: Are all levies paid up to date?
     priority: high
-  - question: Are there any special levies pending?
+  - id: RE-RTL-007
+    question: Are there any special levies pending?
     priority: medium
 - name: Leases & Tenancies
   weight: high
   standard_questions:
-  - question: What leases are in place and to whom?
+  - id: RE-LET-001
+    question: What leases are in place and to whom?
     priority: critical
-  - question: What is the total monthly rental and escalation terms?
+  - id: RE-LET-002
+    question: What is the total monthly rental and escalation terms?
     priority: high
-  - question: What is the lease expiry profile?
+  - id: RE-LET-003
+    question: What is the lease expiry profile?
     priority: high
-  - question: Are there any tenant disputes or arrears?
+  - id: RE-LET-004
+    question: Are there any tenant disputes or arrears?
     priority: high
-  - question: Do leases contain change of control or assignment provisions?
+  - id: RE-LET-005
+    question: Do leases contain change of control or assignment provisions?
     priority: critical
-  - question: What tenant deposits are held?
+  - id: RE-LET-006
+    question: What tenant deposits are held?
     priority: medium
-  - question: Are there any unusual lease provisions?
+  - id: RE-LET-007
+    question: Are there any unusual lease provisions?
     priority: medium
-  - question: What are the vacancy rates and marketing status?
+  - id: RE-LET-008
+    question: What are the vacancy rates and marketing status?
     priority: high
-  - question: Are there any options to renew or purchase?
+  - id: RE-LET-009
+    question: Are there any options to renew or purchase?
     priority: high
-  - question: What tenant improvements have been made?
+  - id: RE-LET-010
+    question: What tenant improvements have been made?
     priority: low
 - name: Physical Condition
   weight: medium
   standard_questions:
-  - question: What is the age and condition of buildings?
+  - id: RE-PHY-001
+    question: What is the age and condition of buildings?
     priority: high
-  - question: Are there any latent or patent defects?
+  - id: RE-PHY-002
+    question: Are there any latent or patent defects?
     priority: high
-  - question: What capital expenditure is required?
+  - id: RE-PHY-003
+    question: What capital expenditure is required?
     priority: high
-  - question: Are all services (water, electricity, sewer) connected and compliant?
+  - id: RE-PHY-004
+    question: Are all services (water, electricity, sewer) connected and compliant?
     priority: high
-  - question: Are there any asbestos or hazardous materials present?
+  - id: RE-PHY-005
+    question: Are there any asbestos or hazardous materials present?
     priority: high
-  - question: What is the status of fire and safety compliance?
+  - id: RE-PHY-006
+    question: What is the status of fire and safety compliance?
     priority: high
-  - question: Are lifts and escalators certified?
+  - id: RE-PHY-007
+    question: Are lifts and escalators certified?
     priority: medium
-  - question: What is the energy efficiency rating?
+  - id: RE-PHY-008
+    question: What is the energy efficiency rating?
     priority: low
 - name: Environmental
   weight: high
   standard_questions:
-  - question: Has environmental due diligence been conducted?
+  - id: RE-ENV-001
+    question: Has environmental due diligence been conducted?
     priority: high
-  - question: Is there any soil or groundwater contamination?
+  - id: RE-ENV-002
+    question: Is there any soil or groundwater contamination?
     priority: critical
-  - question: Are there any environmental authorizations required?
+  - id: RE-ENV-003
+    question: Are there any environmental authorizations required?
     priority: high
-  - question: What is the flood risk for the property?
+  - id: RE-ENV-004
+    question: What is the flood risk for the property?
     priority: medium
-  - question: Are there any protected species or ecosystems?
+  - id: RE-ENV-005
+    question: Are there any protected species or ecosystems?
     priority: medium
-  - question: What waste management systems are in place?
+  - id: RE-ENV-006
+    question: What waste management systems are in place?
     priority: medium
 deal_blockers:
 - description: Defect in title that cannot be cured
@@ -251,6 +517,330 @@ deal_blockers:
   severity: conditional
 - description: Failure to obtain rates clearance
   severity: absolute
+entity_relationship_patterns:
+  typical_structures:
+    - name: Direct Property Ownership
+      description: Individual or entity directly owns immovable property
+      key_relationships: [Registered Owner, Bondholder, Municipality, Tenants]
+      dd_focus: Title verification, rates clearance, lease analysis
+    - name: Property Holding Company
+      description: SPV or company holding property as its primary asset
+      key_relationships: [Shareholders, SPV, Property, Tenants, Body Corporate]
+      dd_focus: Corporate authority, shareholders agreement, intercompany arrangements
+    - name: Sectional Title Scheme
+      description: Property divided into sections with body corporate
+      key_relationships: [Unit Owner, Body Corporate, Trustees, Managing Agent, CSOS]
+      dd_focus: Body corporate rules, levy clearance, exclusive use areas
+    - name: Property Fund / REIT
+      description: Listed or unlisted property fund holding portfolio
+      key_relationships: [Unitholders, Asset Manager, Property Manager, Tenants, JSE]
+      dd_focus: Portfolio analysis, management agreements, JSE compliance
+    - name: Development Joint Venture
+      description: JV for property development or redevelopment
+      key_relationships: [JV Partners, Developer, Landowner, Municipality, Contractor]
+      dd_focus: JV agreement, development rights, zoning approvals
+  entity_roles:
+    - role: Registered Owner
+      description: Entity reflected as owner in Deeds Registry
+    - role: Bondholder
+      description: Financial institution holding mortgage bond
+    - role: Conveyancer
+      description: Attorney handling transfer registration
+    - role: Body Corporate
+      description: Sectional title management entity
+    - role: Managing Agent
+      description: Property management company
+    - role: Tenant
+      description: Lessee or occupier of the property
+  common_related_parties:
+    - type: Director / Shareholder
+      risk: Self-dealing, related party transactions
+    - type: Property Manager
+      risk: Conflict of interest, fee structures
+    - type: Development Partner
+      risk: JV terms, profit sharing, cost overruns
+    - type: Linked Tenant
+      risk: Non-arms-length lease terms, below-market rental
+materiality_thresholds:
+  default_when_value_unknown: "R1,000,000"
+  when_value_known:
+    - threshold: "5% of purchase price"
+      applies_to: "Individual defect, single lease exposure"
+    - threshold: "2% of purchase price"
+      applies_to: "Aggregate compliance costs, maintenance backlog"
+    - threshold: "1% of purchase price"
+      applies_to: "Transfer costs, municipal charges discrepancy"
+  qualitative_overrides:
+    always_material:
+      - "Title defect that cannot be cured"
+      - "Unregistered servitude affecting core use"
+      - "Absence of occupation certificate for main building"
+      - "Zoning non-compliance for current use"
+      - "Environmental contamination requiring remediation"
+      - "Rates in arrears preventing clearance"
+      - "Undisclosed tenant dispute or eviction proceedings"
+      - "Expropriation notice or threat"
+      - "Heritage restriction on building >60 years"
+    never_immaterial:
+      - "Title & Ownership"
+      - "Zoning & Land Use"
+      - "Rates Clearance"
+      - "Environmental Compliance"
+      - "Building Plan Approval"
+cross_reference_expectations:
+  primary_documents:
+    - document: "Title Deed"
+      must_cross_reference:
+        - target: "Sale Agreement"
+          fields: ["property description", "extent", "conditions"]
+          validation: "Property description in agreement must match title deed exactly"
+        - target: "Survey Diagram"
+          fields: ["extent", "diagram number", "boundaries"]
+          validation: "Diagram number on title must match current SG diagram"
+        - target: "Deeds Search"
+          fields: ["registered owner", "bonds", "servitudes"]
+          validation: "Deeds search must confirm current registered position"
+        - target: "Insurance Policy"
+          fields: ["property description", "insured value"]
+          validation: "Insured property must match title description"
+    - document: "Zoning Certificate"
+      must_cross_reference:
+        - target: "Title Deed"
+          fields: ["property description", "erf number"]
+          validation: "Zoning must relate to correct property"
+        - target: "Approved Building Plans"
+          fields: ["use classification", "bulk and coverage"]
+          validation: "Building plans must comply with zoning permissions"
+    - document: "Lease Agreement"
+      must_cross_reference:
+        - target: "Rental Statement"
+          fields: ["tenant name", "rental amount", "escalation"]
+          validation: "Rental roll must match lease terms"
+        - target: "Title Deed"
+          fields: ["property description"]
+          validation: "Leased premises must fall within titled property"
+        - target: "Zoning Certificate"
+          fields: ["permitted use"]
+          validation: "Tenant use must be permitted under zoning"
+    - document: "Property Valuation"
+      must_cross_reference:
+        - target: "Title Deed"
+          fields: ["property description", "extent"]
+          validation: "Valuation must cover the correct property"
+        - target: "Rental Statement"
+          fields: ["rental income", "vacancy"]
+          validation: "Income assumptions must match actual rental roll"
+        - target: "Financial Statements"
+          fields: ["property income", "operating expenses"]
+          validation: "Financial performance must support valuation"
+    - document: "Rates Clearance Certificate"
+      must_cross_reference:
+        - target: "Title Deed"
+          fields: ["property description"]
+          validation: "Clearance must relate to correct property"
+        - target: "Municipal Rates Account"
+          fields: ["outstanding amounts"]
+          validation: "Account must be current for clearance to be valid"
+    - document: "Occupation Certificate"
+      must_cross_reference:
+        - target: "Approved Building Plans"
+          fields: ["plan number", "building description"]
+          validation: "OC must relate to approved plans"
+red_flag_patterns:
+  categories:
+    - category: title_ownership
+      patterns:
+        - id: RE-RF-TIT-001
+          pattern: "title defect|ownership dispute|competing claim"
+          severity: critical
+          description: "Defect in title that may prevent transfer"
+          action: "Obtain legal opinion on curability of defect"
+        - id: RE-RF-TIT-002
+          pattern: "expropriation|notice to expropriate"
+          severity: critical
+          description: "Property subject to expropriation proceedings"
+          action: "Assess status and likelihood of expropriation"
+        - id: RE-RF-TIT-003
+          pattern: "unregistered servitude|informal right of way"
+          severity: high
+          description: "Unregistered burden on the property"
+          action: "Assess practical impact and regularization options"
+        - id: RE-RF-TIT-004
+          pattern: "caveat|interdict|court order"
+          severity: critical
+          description: "Legal restraint preventing transfer"
+          action: "Assess basis for restraint and removal options"
+        - id: RE-RF-TIT-005
+          pattern: "boundary dispute|encroachment"
+          severity: high
+          description: "Dispute over property boundaries"
+          action: "Obtain surveyor report and assess resolution"
+    - category: zoning_compliance
+      patterns:
+        - id: RE-RF-ZON-001
+          pattern: "non-compliant use|zoning contravention"
+          severity: critical
+          description: "Current use not permitted under zoning"
+          action: "Assess regularization options and municipal enforcement risk"
+        - id: RE-RF-ZON-002
+          pattern: "no building plan|unapproved structure|illegal building"
+          severity: critical
+          description: "Structure without approved building plans"
+          action: "Assess demolition risk and as-built plan approval process"
+        - id: RE-RF-ZON-003
+          pattern: "no occupation certificate|OC missing"
+          severity: critical
+          description: "Building occupied without occupation certificate"
+          action: "Apply for OC - may require building compliance inspection"
+        - id: RE-RF-ZON-004
+          pattern: "heritage|older than 60|NHRA"
+          severity: high
+          description: "Heritage restrictions limiting development or alteration"
+          action: "Obtain heritage assessment and identify restrictions"
+    - category: financial
+      patterns:
+        - id: RE-RF-FIN-001
+          pattern: "rates arrears|municipal debt|clearance refused"
+          severity: critical
+          description: "Municipal rates in arrears preventing clearance"
+          action: "Quantify arrears and negotiate payment plan for clearance"
+        - id: RE-RF-FIN-002
+          pattern: "overvalued|valuation gap|purchase price exceeds"
+          severity: high
+          description: "Purchase price significantly above market value"
+          action: "Obtain independent second valuation"
+        - id: RE-RF-FIN-003
+          pattern: "underinsured|replacement value gap"
+          severity: high
+          description: "Property insured below replacement value"
+          action: "Quantify underinsurance gap and adjust cover"
+    - category: tenant_lease
+      patterns:
+        - id: RE-RF-TEN-001
+          pattern: "tenant arrears|rental default|eviction"
+          severity: high
+          description: "Tenant in arrears or subject to eviction proceedings"
+          action: "Quantify arrears exposure and assess collectability"
+        - id: RE-RF-TEN-002
+          pattern: "change of control|assignment consent|landlord change"
+          severity: critical
+          description: "Lease terminable on change of ownership"
+          action: "Identify affected leases and obtain tenant consents"
+        - id: RE-RF-TEN-003
+          pattern: "below market rental|related party lease"
+          severity: high
+          description: "Lease at below market rental, possibly related party"
+          action: "Assess rental vs market and identify relationship"
+        - id: RE-RF-TEN-004
+          pattern: "anchor tenant|single tenant|concentration"
+          severity: high
+          description: "Excessive reliance on single tenant for rental income"
+          action: "Assess tenant creditworthiness and lease security"
+    - category: environmental
+      patterns:
+        - id: RE-RF-ENV-001
+          pattern: "contamination|pollution|hazardous"
+          severity: critical
+          description: "Environmental contamination of soil or groundwater"
+          action: "Commission Phase 2 environmental assessment"
+        - id: RE-RF-ENV-002
+          pattern: "asbestos|ACM|hazardous material"
+          severity: high
+          description: "Asbestos or hazardous materials present in buildings"
+          action: "Commission asbestos survey and removal estimate"
+        - id: RE-RF-ENV-003
+          pattern: "flood risk|stormwater|flood plain"
+          severity: high
+          description: "Property in flood risk area"
+          action: "Assess flood history and insurance implications"
+    - category: physical_condition
+      patterns:
+        - id: RE-RF-PHY-001
+          pattern: "structural defect|foundation|subsidence"
+          severity: critical
+          description: "Structural defect affecting building integrity"
+          action: "Commission structural engineer assessment"
+        - id: RE-RF-PHY-002
+          pattern: "deferred maintenance|capex backlog"
+          severity: high
+          description: "Significant deferred maintenance requiring capital expenditure"
+          action: "Quantify capex requirements and adjust pricing"
+        - id: RE-RF-PHY-003
+          pattern: "fire safety|fire compliance|no CoC"
+          severity: high
+          description: "Fire safety non-compliance"
+          action: "Obtain fire compliance certificate or remediation plan"
+    - category: bee_compliance
+      patterns:
+        - id: RE-RF-BEE-001
+          pattern: "government tenant|SOE lease|BEE requirement"
+          severity: high
+          description: "Government tenant requiring landlord BEE compliance"
+          action: "Assess BEE status impact on government lease retention"
+        - id: RE-RF-BEE-002
+          pattern: "property sector code|BEE scorecard|ownership element"
+          severity: medium
+          description: "Property Sector Code compliance risk post-transaction"
+          action: "Model post-transaction BEE scorecard impact"
+calculation_formulas:
+  categories:
+    - name: valuation
+      formulas:
+        - formula: "Capitalisation Value = NOI / Cap Rate"
+          variables: ["net_operating_income", "capitalisation_rate"]
+          description: "Income capitalisation method for property valuation"
+        - formula: "NOI = Gross Rental - Operating Expenses - Vacancy Allowance"
+          variables: ["gross_rental", "operating_expenses", "vacancy_rate"]
+          description: "Net operating income calculation"
+        - formula: "WALT = Σ(Remaining Lease Term × Annual Rental) / Total Annual Rental"
+          variables: ["lease_terms", "annual_rentals"]
+          description: "Weighted average lease term"
+    - name: transfer_costs
+      formulas:
+        - formula: "Transfer Duty = Sliding scale per value bracket (0% to 13%)"
+          variables: ["purchase_price", "entity_type"]
+          description: "Transfer duty calculation per Transfer Duty Act rates"
+        - formula: "Total Transfer Costs = Transfer Duty + Conveyancing Fees + Deeds Office + VAT on Fees"
+          variables: ["transfer_duty", "conveyancing_fees", "deeds_office_fees"]
+          description: "All-in transfer cost estimate"
+    - name: rental_analysis
+      formulas:
+        - formula: "Vacancy Rate = Vacant GLA / Total GLA × 100"
+          variables: ["vacant_gla", "total_gla"]
+          description: "Physical vacancy rate"
+        - formula: "Rental Reversion = Market Rental / Passing Rental - 1"
+          variables: ["market_rental", "passing_rental"]
+          description: "Upside or downside to market on lease renewals"
+        - formula: "Cost to Income Ratio = Operating Expenses / Gross Income × 100"
+          variables: ["operating_expenses", "gross_income"]
+          description: "Operating efficiency metric"
+    - name: exposure
+      formulas:
+        - formula: "Tenant Concentration = Largest Tenant Rental / Total Rental × 100"
+          variables: ["largest_tenant_rental", "total_rental"]
+          description: "Single tenant income concentration risk"
+        - formula: "Arrears Exposure = Total Arrears + Legal Costs + Lost Rental during Eviction"
+          variables: ["total_arrears", "legal_costs", "eviction_period_rental"]
+          description: "Total exposure from tenant arrears"
+        - formula: "Capex Requirement = Deferred Maintenance + Life Cycle Replacement + Compliance Costs"
+          variables: ["deferred_maintenance", "lifecycle_replacement", "compliance_costs"]
+          description: "Total capital expenditure requirements"
+    - name: bee
+      formulas:
+        - formula: "Post-Transaction BEE % = BEE Shares / Total Shares × 100"
+          variables: ["bee_shares", "total_shares"]
+          description: "BEE ownership post-transaction"
+        - formula: "Government Tenant Risk = Government Rental / Total Rental × 100"
+          variables: ["government_rental", "total_rental"]
+          description: "Revenue at risk from BEE non-compliance"
+    - name: tax
+      formulas:
+        - formula: "CGT = (Proceeds - Base Cost - Selling Expenses) × Inclusion Rate × Tax Rate"
+          variables: ["proceeds", "base_cost", "selling_expenses", "inclusion_rate", "tax_rate"]
+          description: "Capital gains tax on property disposal"
+        - formula: "VAT Exposure = Purchase Price × 15% (if incorrectly zero-rated)"
+          variables: ["purchase_price", "vat_rate"]
+          description: "VAT exposure if s11(1)(e) zero-rating incorrectly applied"
 conditions_precedent_patterns:
 - pattern: rates clearance|municipal clearance
   cp_type: Rates Clearance
@@ -267,15 +857,18 @@ folder_questions:
     display_name: Corporate & Authority
     relevance: high
     questions:
-    - question: Is the seller the registered owner and authorized to sell the property?
+    - id: RE-F01-001
+      question: Is the seller the registered owner and authorized to sell the property?
       priority: critical
       detail: Verify registered ownership matches seller, check MOI for disposal powers
       cot_hint: Title deed owner → seller identity → MOI disposal powers
-    - question: Has the board properly authorized the sale or purchase?
+    - id: RE-F01-002
+      question: Has the board properly authorized the sale or purchase?
       priority: critical
       detail: Check resolution covers the specific property and transaction terms
       cot_hint: Resolution property description → transaction authorization
-    - question: Are there any shareholder approvals required for the transaction?
+    - id: RE-F01-003
+      question: Are there any shareholder approvals required for the transaction?
       priority: high
       detail: Check MOI for asset disposal thresholds and approval requirements
       cot_hint: Identify materiality thresholds → check approval mechanism
@@ -288,27 +881,33 @@ folder_questions:
     display_name: Leases & Commercial
     relevance: critical
     questions:
-    - question: What is the total monthly rental income and vacancy rate?
+    - id: RE-F02-001
+      question: What is the total monthly rental income and vacancy rate?
       priority: critical
       detail: Calculate gross rental, vacancies, and net effective rent
       cot_hint: Sum contracted rents → deduct vacancies → net effective
-    - question: What is the lease expiry profile and weighted average lease term?
+    - id: RE-F02-002
+      question: What is the lease expiry profile and weighted average lease term?
       priority: critical
       detail: WALT affects property value and income security
       cot_hint: Plot expiries → calculate WALT → identify concentration risk
-    - question: Do leases contain change of control or assignment provisions?
+    - id: RE-F02-003
+      question: Do leases contain change of control or assignment provisions?
       priority: critical
       detail: Tenant consent may be required for change of landlord
       cot_hint: Check assignment clauses → identify consent requirements
-    - question: What tenant deposits are held and how are they treated on transfer?
+    - id: RE-F02-004
+      question: What tenant deposits are held and how are they treated on transfer?
       priority: high
       detail: Deposits transfer with property - verify amounts and interest
       cot_hint: Sum deposits → verify interest calculations → transfer mechanism
-    - question: Are there any tenant arrears or disputes?
+    - id: RE-F02-005
+      question: Are there any tenant arrears or disputes?
       priority: high
       detail: Current arrears and disputes affect property value
       cot_hint: Extract arrears → assess collectability → quantify disputes
-    - question: What escalation mechanisms apply to rentals?
+    - id: RE-F02-006
+      question: What escalation mechanisms apply to rentals?
       priority: medium
       detail: Fixed vs CPI-linked escalations affect income growth
       cot_hint: Identify escalation types → project income growth
@@ -321,19 +920,23 @@ folder_questions:
     display_name: Financial & Valuation
     relevance: high
     questions:
-    - question: What mortgage bonds are registered over the property?
+    - id: RE-F03-001
+      question: What mortgage bonds are registered over the property?
       priority: critical
       detail: Bonds must be cancelled before transfer or assumed by buyer
       cot_hint: Check title deed for bond endorsements → amounts → holders
-    - question: Is the purchase price supported by the property valuation?
+    - id: RE-F03-002
+      question: Is the purchase price supported by the property valuation?
       priority: critical
       detail: Compare purchase price to market valuation and methodology
       cot_hint: Valuation amount → methodology → purchase price comparison
-    - question: What is the net operating income and capitalization rate?
+    - id: RE-F03-003
+      question: What is the net operating income and capitalization rate?
       priority: high
       detail: NOI and cap rate determine investment value
       cot_hint: Income - opex = NOI → NOI / purchase price = cap rate
-    - question: Are rates and levies paid up to date?
+    - id: RE-F03-004
+      question: Are rates and levies paid up to date?
       priority: critical
       detail: Clearance certificates required for transfer
       cot_hint: Check rates account → outstanding amounts → clearance status
@@ -346,23 +949,28 @@ folder_questions:
     display_name: Zoning & Compliance
     relevance: critical
     questions:
-    - question: Is the current use of the property compliant with zoning?
+    - id: RE-F04-001
+      question: Is the current use of the property compliant with zoning?
       priority: critical
       detail: Non-compliant use creates enforcement risk
       cot_hint: Zoning permission → actual use → compliance assessment
-    - question: Are all buildings covered by approved building plans?
+    - id: RE-F04-002
+      question: Are all buildings covered by approved building plans?
       priority: critical
       detail: Unapproved structures may need to be demolished or regularized
       cot_hint: Compare actual buildings to approved plans
-    - question: Is there a valid occupation certificate for all buildings?
+    - id: RE-F04-003
+      question: Is there a valid occupation certificate for all buildings?
       priority: critical
       detail: Required for lawful occupation - affects insurance and liability
       cot_hint: OC for each building → check dates → verify completeness
-    - question: Are there any heritage or conservation restrictions?
+    - id: RE-F04-004
+      question: Are there any heritage or conservation restrictions?
       priority: high
       detail: Heritage buildings have restrictions on alterations
       cot_hint: Check heritage register → identify restrictions
-    - question: What development potential exists on the property?
+    - id: RE-F04-005
+      question: What development potential exists on the property?
       priority: medium
       detail: Bulk and coverage allowances for future development
       cot_hint: Zoning bulk → existing bulk used → remaining development potential
@@ -374,7 +982,8 @@ folder_questions:
     display_name: Employment
     relevance: low
     questions:
-    - question: Are there any on-site staff that will transfer with the property?
+    - id: RE-F05-001
+      question: Are there any on-site staff that will transfer with the property?
       priority: medium
       detail: Section 197 may apply to building staff
       cot_hint: Identify on-site employees → check transfer implications
@@ -383,23 +992,28 @@ folder_questions:
     display_name: Title & Ownership
     relevance: critical
     questions:
-    - question: Is the title deed free of restrictive conditions affecting use?
+    - id: RE-F06-001
+      question: Is the title deed free of restrictive conditions affecting use?
       priority: critical
       detail: Title conditions may restrict development or use
       cot_hint: Read title conditions → identify restrictions → assess impact
-    - question: Are there any servitudes that affect the property?
+    - id: RE-F06-002
+      question: Are there any servitudes that affect the property?
       priority: critical
       detail: Servitudes burden property with third party rights
       cot_hint: Identify registered servitudes → assess practical impact
-    - question: Are there any caveats, interdicts, or disputed ownership claims?
+    - id: RE-F06-003
+      question: Are there any caveats, interdicts, or disputed ownership claims?
       priority: critical
       detail: These prevent or delay transfer registration
       cot_hint: Check deeds search for endorsements → identify blockers
-    - question: Is there a valid survey diagram consistent with the title?
+    - id: RE-F06-004
+      question: Is there a valid survey diagram consistent with the title?
       priority: high
       detail: Diagram defines exact property boundaries
       cot_hint: Compare diagram to title deed → verify consistency
-    - question: What mineral rights apply and are they severed?
+    - id: RE-F06-005
+      question: What mineral rights apply and are they severed?
       priority: medium
       detail: Mineral rights may be held separately under MPRDA
       cot_hint: Check if mineral rights severed → who holds them
@@ -411,15 +1025,18 @@ folder_questions:
     display_name: Insurance
     relevance: high
     questions:
-    - question: Is the property adequately insured for replacement value?
+    - id: RE-F07-001
+      question: Is the property adequately insured for replacement value?
       priority: high
       detail: Underinsurance creates gap risk
       cot_hint: Compare insured value to replacement cost estimate
-    - question: Is there public liability insurance in place?
+    - id: RE-F07-002
+      question: Is there public liability insurance in place?
       priority: high
       detail: Required for tenant and visitor injuries
       cot_hint: Check liability limit → assess adequacy
-    - question: Are there any pending insurance claims?
+    - id: RE-F07-003
+      question: Are there any pending insurance claims?
       priority: medium
       detail: Outstanding claims may indicate property issues
       cot_hint: Review claims history → pending matters
@@ -432,15 +1049,18 @@ folder_questions:
     display_name: Litigation
     relevance: medium
     questions:
-    - question: Are there any pending disputes with tenants?
+    - id: RE-F08-001
+      question: Are there any pending disputes with tenants?
       priority: high
       detail: Tenant disputes affect occupancy and income
       cot_hint: Identify tenant disputes → quantify exposure
-    - question: Are there any boundary or servitude disputes?
+    - id: RE-F08-002
+      question: Are there any boundary or servitude disputes?
       priority: high
       detail: Could delay or prevent transfer
       cot_hint: Check for correspondence → assess resolution status
-    - question: Are there any building defect claims pending?
+    - id: RE-F08-003
+      question: Are there any building defect claims pending?
       priority: medium
       detail: Construction defects create liability
       cot_hint: Identify claims → assess warranty status
@@ -449,19 +1069,23 @@ folder_questions:
     display_name: Tax & Duties
     relevance: high
     questions:
-    - question: What is the transfer duty payable on the transaction?
+    - id: RE-F09-001
+      question: What is the transfer duty payable on the transaction?
       priority: critical
       detail: Transfer duty rates depend on value and entity type
       cot_hint: Calculate duty at applicable rate → exemptions
-    - question: Is the property a VAT transaction or exempt?
+    - id: RE-F09-002
+      question: Is the property a VAT transaction or exempt?
       priority: critical
       detail: VAT treatment affects pricing and cash flow
       cot_hint: Check if seller is VAT vendor → election for zero-rating
-    - question: Are municipal rates and levies current?
+    - id: RE-F09-003
+      question: Are municipal rates and levies current?
       priority: critical
       detail: Rates clearance required for transfer
       cot_hint: Verify accounts paid → clearance obtainable
-    - question: What is the seller's CGT position on the sale?
+    - id: RE-F09-004
+      question: What is the seller's CGT position on the sale?
       priority: medium
       detail: CGT affects seller's net proceeds
       cot_hint: Base cost → proceeds → taxable gain
@@ -581,6 +1205,197 @@ cot_questions:
   - What is the flood risk and stormwater management?
   - Are there any protected species or ecosystems?
 
+warranty_categories:
+  - category: Title & Ownership
+    warranties:
+      - "Seller is the sole registered owner of the property"
+      - "Property is free from encumbrances not disclosed"
+      - "No expropriation notice has been received"
+      - "All servitudes have been disclosed"
+      - "No boundary disputes exist"
+      - "Mineral rights status as warranted"
+  - category: Zoning & Land Use
+    warranties:
+      - "Current use is compliant with zoning"
+      - "All buildings have approved building plans"
+      - "Valid occupation certificates exist for all buildings"
+      - "No building contraventions or notices received"
+      - "No heritage restrictions unless disclosed"
+  - category: Rates & Taxes
+    warranties:
+      - "All municipal rates and taxes are paid to date"
+      - "No special levies are pending unless disclosed"
+      - "Body corporate levies are current (sectional title)"
+      - "Municipal valuation is not subject to objection"
+  - category: Leases & Tenancies
+    warranties:
+      - "Complete rental roll has been provided"
+      - "All leases have been disclosed"
+      - "No tenant arrears exceed one month"
+      - "No tenant disputes or eviction proceedings pending"
+      - "Lease terms are as represented"
+      - "Tenant deposits held in compliance with lease terms"
+  - category: Physical Condition
+    warranties:
+      - "No latent defects known to seller"
+      - "All services are connected and functional"
+      - "No asbestos or hazardous materials present"
+      - "Fire safety compliance certificates are current"
+      - "No structural defects exist"
+  - category: Environmental
+    warranties:
+      - "No environmental contamination exists"
+      - "All environmental authorizations are in place"
+      - "No environmental rehabilitation obligations exist"
+      - "No protected species or ecosystems affected"
+  - category: Insurance
+    warranties:
+      - "Property is insured for full replacement value"
+      - "No material insurance claims are pending"
+      - "Insurance history has been fully disclosed"
+  - category: Tax & Duties
+    warranties:
+      - "Transfer duty status is as represented"
+      - "VAT treatment is correct"
+      - "No tax liabilities attach to property"
+      - "CGT position has been accurately represented"
+
+indemnity_categories:
+  - category: Title Defects
+    typical_indemnities:
+      - "Indemnity against loss from undisclosed title defects"
+      - "Indemnity for costs of curing title conditions"
+      - "Indemnity for unregistered servitude claims"
+  - category: Rates & Clearance
+    typical_indemnities:
+      - "Indemnity for rates and levies not paid by seller"
+      - "Indemnity for special levies imposed but not disclosed"
+      - "Indemnity for municipal charges arising pre-transfer"
+  - category: Environmental
+    typical_indemnities:
+      - "Indemnity for environmental remediation costs"
+      - "Indemnity for contamination existing pre-sale"
+      - "Indemnity for environmental fines and penalties"
+  - category: Tenant & Lease
+    typical_indemnities:
+      - "Indemnity for tenant deposits not properly held"
+      - "Indemnity for undisclosed lease obligations"
+      - "Indemnity for tenant claims arising pre-transfer"
+  - category: Building Compliance
+    typical_indemnities:
+      - "Indemnity for unapproved building work"
+      - "Indemnity for costs of obtaining occupation certificates"
+      - "Indemnity for building defects arising pre-sale"
+  - category: Tax
+    typical_indemnities:
+      - "Indemnity for transfer duty underpayment"
+      - "Indemnity for incorrect VAT treatment"
+      - "Indemnity for CGT miscalculation"
+
+warranty_indemnity_patterns:
+  warranty_patterns:
+    - pattern: "warrant|represent|confirm|declare"
+      context: "title|ownership|registered owner"
+      maps_to: "Title & Ownership"
+    - pattern: "warrant|represent|confirm"
+      context: "zoning|land use|building plan|occupation certificate"
+      maps_to: "Zoning & Land Use"
+    - pattern: "warrant|represent|confirm"
+      context: "rates|taxes|levies|municipal|clearance"
+      maps_to: "Rates & Taxes"
+    - pattern: "warrant|represent|confirm"
+      context: "lease|tenant|rental|vacancy"
+      maps_to: "Leases & Tenancies"
+    - pattern: "warrant|represent|confirm"
+      context: "condition|defect|services|asbestos|fire"
+      maps_to: "Physical Condition"
+    - pattern: "warrant|represent|confirm"
+      context: "environment|contamination|pollution|NEMA"
+      maps_to: "Environmental"
+    - pattern: "warrant|represent|confirm"
+      context: "insurance|insured|claims"
+      maps_to: "Insurance"
+    - pattern: "warrant|represent|confirm"
+      context: "transfer duty|VAT|CGT|tax"
+      maps_to: "Tax & Duties"
+  indemnity_patterns:
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "title|ownership|servitude|encumbrance"
+      maps_to: "Title Defects"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "rates|levies|municipal|clearance"
+      maps_to: "Rates & Clearance"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "environment|contamination|remediation"
+      maps_to: "Environmental"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "tenant|lease|deposit|rental"
+      maps_to: "Tenant & Lease"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "building|plans|occupation|defect"
+      maps_to: "Building Compliance"
+    - pattern: "indemnif|hold harmless|compensate"
+      context: "transfer duty|VAT|tax|CGT"
+      maps_to: "Tax"
+
+cot_questions_warranty_indemnity:
+  title_ownership:
+    - "Does the seller warrant that it is the sole registered owner?"
+    - "Are all encumbrances and servitudes warranted as disclosed?"
+    - "Is there an indemnity for undisclosed title defects?"
+    - "Are mineral rights warranties adequate?"
+  zoning_compliance:
+    - "Does the seller warrant zoning compliance for current use?"
+    - "Are building plan approvals warranted for all structures?"
+    - "Is there a warranty on occupation certificate validity?"
+    - "Is there an indemnity for costs of regularizing non-compliance?"
+  rates_taxes:
+    - "Does the seller warrant all rates and taxes are current?"
+    - "Is there an indemnity for pre-transfer municipal charges?"
+    - "Are body corporate levy warranties adequate (sectional title)?"
+  leases_tenancies:
+    - "Does the seller warrant completeness of the rental roll?"
+    - "Are lease terms accurately warranted?"
+    - "Is there an indemnity for tenant deposits not properly held?"
+    - "Are CoC provisions in leases adequately warranted?"
+  physical_environmental:
+    - "Does the seller warrant no latent defects?"
+    - "Is there a warranty on environmental condition?"
+    - "Is there an indemnity for contamination remediation costs?"
+    - "Are fire and safety compliance warranties adequate?"
+  tax_duties:
+    - "Is the transfer duty or VAT treatment warranted?"
+    - "Is there an indemnity for incorrect tax treatment?"
+    - "Are CGT warranties adequate for share sale transactions?"
+
+output_requirements:
+  warranties_register:
+    required_columns:
+      - "warranty_reference"
+      - "category"
+      - "warranty_text"
+      - "warrantor"
+      - "beneficiary"
+      - "limitation_period"
+      - "cap_amount"
+      - "dd_finding_reference"
+      - "risk_assessment"
+    grouping: "by_category"
+    sort_order: "by_risk_level"
+  indemnities_register:
+    required_columns:
+      - "indemnity_reference"
+      - "category"
+      - "indemnity_text"
+      - "indemnifier"
+      - "beneficiary"
+      - "trigger_event"
+      - "cap_amount"
+      - "time_limitation"
+      - "dd_finding_reference"
+    grouping: "by_category"
+    sort_order: "by_exposure_value"
+
 # ============================================================================
 # STATUTORY FRAMEWORK
 # Detailed statutory citation framework for real estate findings
@@ -596,21 +1411,25 @@ statutory_framework:
           penalties:
             administrative: "Registration refusal"
           criticality: critical
+          application_to_dd: "Verify registrar requirements for the specific transfer are met"
         - section: "Section 16"
           description: "Form of deeds"
           penalties:
             administrative: "Deed not registrable"
           criticality: high
+          application_to_dd: "Confirm deed format complies with registrar requirements"
         - section: "Section 63"
           description: "Transfer duties"
           penalties:
             administrative: "Transfer refused without duty payment"
           criticality: critical
+          application_to_dd: "Verify transfer duty paid or exemption certificate obtained before lodgement"
         - section: "Section 102"
           description: "Rectification of registry"
           penalties:
             civil: "Court order required for rectification"
           criticality: high
+          application_to_dd: "Assess whether any registry rectification is needed for title irregularities"
 
     - act: "Alienation of Land Act 68 of 1981"
       acronym: "ALA"
@@ -621,12 +1440,14 @@ statutory_framework:
           penalties:
             civil: "Contract unenforceable if oral"
           criticality: critical
+          application_to_dd: "Verify sale agreement is in writing and signed by both parties"
         - section: "Section 28"
           description: "Prohibition on receipt of consideration before registration"
           penalties:
             criminal: "Fine or imprisonment"
             civil: "Must be held in trust"
           criticality: critical
+          application_to_dd: "Confirm purchase price deposits held in trust by conveyancer or estate agent"
 
     - act: "Sectional Titles Act 95 of 1986"
       acronym: "STA"
@@ -637,16 +1458,19 @@ statutory_framework:
           penalties:
             administrative: "Scheme rules apply"
           criticality: high
+          application_to_dd: "Verify sectional plan registered and sections properly divided"
         - section: "Section 15B"
           description: "Duty of owners to bodies corporate"
           penalties:
             civil: "Levy liability, interest"
           criticality: high
+          application_to_dd: "Confirm all body corporate levies paid and clearance obtainable"
         - section: "Section 35"
           description: "Transfer of units"
           penalties:
             administrative: "Clearance certificate required"
           criticality: critical
+          application_to_dd: "Verify body corporate clearance certificate for unit transfer"
 
     - act: "Sectional Titles Schemes Management Act 8 of 2011"
       acronym: "STSMA"
@@ -657,11 +1481,13 @@ statutory_framework:
           penalties:
             administrative: "Non-compliance orders"
           criticality: high
+          application_to_dd: "Confirm body corporate properly constituted and functioning"
         - section: "Section 13"
           description: "Trustees duties"
           penalties:
             administrative: "Removal, personal liability"
           criticality: high
+          application_to_dd: "Verify trustee compliance with duties and no personal liability exposure"
 
     - act: "Property Practitioners Act 22 of 2019"
       acronym: "PPA"
@@ -673,11 +1499,13 @@ statutory_framework:
             administrative: "Fine, suspension"
             criminal: "Imprisonment up to 10 years for fraud"
           criticality: critical
+          application_to_dd: "Verify property practitioner has made all mandatory disclosures"
         - section: "Section 54"
           description: "Trust account requirements"
           penalties:
             administrative: "Fidelity Fund claims"
           criticality: critical
+          application_to_dd: "Confirm trust account compliance for deposits held by practitioner"
 
     - act: "Spatial Planning and Land Use Management Act 16 of 2013"
       acronym: "SPLUMA"
@@ -688,17 +1516,20 @@ statutory_framework:
           penalties:
             administrative: "Development rights refused"
           criticality: critical
+          application_to_dd: "Assess municipal planning tribunal requirements for development applications"
         - section: "Section 52"
           description: "Use of land contrary to scheme"
           penalties:
             criminal: "Fine"
             administrative: "Demolition order"
           criticality: critical
+          application_to_dd: "Verify current property use is lawful under applicable zoning scheme"
         - section: "Section 67"
           description: "Offences"
           penalties:
             criminal: "Fine or imprisonment"
           criticality: high
+          application_to_dd: "Assess risk of prosecution for unlawful land use activities"
 
     - act: "National Building Regulations and Building Standards Act 103 of 1977"
       acronym: "NBR Act"
@@ -709,11 +1540,13 @@ statutory_framework:
           penalties:
             administrative: "Demolition order if unapproved"
           criticality: critical
+          application_to_dd: "Verify all structures have approved building plans from municipality"
         - section: "Section 14"
           description: "Occupation certificate"
           penalties:
             administrative: "Unlawful occupation"
           criticality: critical
+          application_to_dd: "Confirm valid occupation certificates exist for all occupied buildings"
 
     - act: "Transfer Duty Act 40 of 1949"
       acronym: "TDA"
@@ -724,11 +1557,13 @@ statutory_framework:
           penalties:
             administrative: "Interest and penalties on late payment"
           criticality: critical
+          application_to_dd: "Calculate transfer duty payable at applicable rates and verify payment"
         - section: "Section 9"
           description: "Exemptions from transfer duty"
           penalties:
             administrative: "Incorrect exemption = duty + penalties"
           criticality: high
+          application_to_dd: "Assess eligibility for transfer duty exemptions (e.g., VAT vendor, public benefit)"
 
     - act: "Value-Added Tax Act 89 of 1991"
       acronym: "VAT Act"
@@ -739,11 +1574,13 @@ statutory_framework:
           penalties:
             administrative: "VAT @ 15% if incorrectly zero-rated"
           criticality: critical
+          application_to_dd: "Verify conditions for zero-rating of fixed property supply are met"
         - section: "Section 18(1)"
           description: "Change in use adjustment"
           penalties:
             administrative: "Output VAT adjustment"
           criticality: high
+          application_to_dd: "Assess change-in-use VAT adjustment obligations on property"
 
     - act: "National Environmental Management Act 107 of 1998"
       acronym: "NEMA"
@@ -754,11 +1591,13 @@ statutory_framework:
           penalties:
             criminal: "Fine up to R10 million or imprisonment"
           criticality: critical
+          application_to_dd: "Verify all listed activities have required environmental authorizations"
         - section: "Section 28"
           description: "Duty of care"
           penalties:
             civil: "Remediation liability"
           criticality: critical
+          application_to_dd: "Assess duty of care obligations and any remediation liability on property"
 
     - act: "National Heritage Resources Act 25 of 1999"
       acronym: "NHRA"
@@ -769,11 +1608,13 @@ statutory_framework:
           penalties:
             criminal: "Fine or imprisonment"
           criticality: high
+          application_to_dd: "Verify heritage impact assessment completed for developments affecting heritage sites"
         - section: "Section 34"
           description: "Protection of heritage resources"
           penalties:
             criminal: "Fine, restoration order"
           criticality: high
+          application_to_dd: "Assess heritage restrictions on buildings older than 60 years"
 
   sector_specific:
     municipal_clearances:
@@ -818,3 +1659,84 @@ statutory_framework:
         trigger: "Alteration of building >60 years old"
         consequence: "Heritage permit required"
         timeline: "60-120 days"
+  secondary_legislation:
+    - name: "Deeds Registries Regulations"
+      parent_act: "Deeds Registries Act"
+      relevance: "Prescribe forms and procedures for deed registration and transfer"
+    - name: "SPLUMA Regulations"
+      parent_act: "SPLUMA"
+      relevance: "Detail land use management procedures and municipal planning requirements"
+    - name: "National Building Regulations (SANS 10400)"
+      parent_act: "NBR Act"
+      relevance: "Technical building standards for compliance assessment"
+    - name: "Environmental Impact Assessment Regulations"
+      parent_act: "NEMA"
+      relevance: "List activities requiring environmental authorization before development"
+    - name: "Property Practitioners Regulations"
+      parent_act: "Property Practitioners Act"
+      relevance: "Detail trust account requirements and disclosure obligations"
+    - name: "Transfer Duty Regulations"
+      parent_act: "Transfer Duty Act"
+      relevance: "Prescribe transfer duty rates and exemption procedures"
+  regulatory_bodies:
+    - name: "Deeds Registries Office"
+      jurisdiction: "Property registration and transfer"
+      key_function: "Registration of property transfers, bonds, and servitudes"
+    - name: "Municipality"
+      jurisdiction: "Local government"
+      key_function: "Zoning, building plans, rates, occupation certificates"
+    - name: "SARS"
+      jurisdiction: "Tax administration"
+      key_function: "Transfer duty, VAT, CGT on property transactions"
+    - name: "PPRA"
+      jurisdiction: "Property practitioners regulation"
+      key_function: "Licensing and regulation of property practitioners"
+    - name: "CSOS"
+      jurisdiction: "Community schemes"
+      key_function: "Dispute resolution for sectional title and community schemes"
+    - name: "DFFE"
+      jurisdiction: "Environmental affairs"
+      key_function: "Environmental authorizations and compliance"
+    - name: "SAHRA"
+      jurisdiction: "Heritage resources"
+      key_function: "Heritage impact assessments and protection orders"
+output_templates:
+  executive_summary:
+    sections:
+      - "Transaction Overview"
+      - "Deal Blockers"
+      - "Critical Findings"
+      - "Financial Exposure Summary"
+      - "Conditions Precedent"
+      - "Recommendations"
+    required_elements:
+      - "Title and ownership status"
+      - "Zoning and building compliance status"
+      - "Rates and taxes clearance status"
+      - "Lease and tenant risk summary"
+      - "Environmental condition"
+      - "Transfer duty / VAT treatment"
+      - "Total financial exposure estimate"
+  full_report:
+    sections:
+      - "Transaction Context"
+      - "Title & Ownership"
+      - "Zoning & Land Use"
+      - "Rates, Taxes & Levies"
+      - "Leases & Tenancies"
+      - "Physical Condition"
+      - "Environmental"
+      - "Insurance"
+      - "Tax & Transfer Duties"
+      - "BEE Analysis"
+      - "Warranties & Indemnities"
+  finding_format:
+    required_fields:
+      - "finding_reference"
+      - "category"
+      - "risk_level"
+      - "description"
+      - "statutory_reference"
+      - "financial_impact"
+      - "recommendation"
+      - "warranty_indemnity_reference"

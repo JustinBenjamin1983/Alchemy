@@ -7,6 +7,377 @@ description: 'Due diligence blueprint for financial services sector transactions
   FSCA licensing, Prudential Authority requirements, and sector-specific regulations.
 
   '
+jurisdiction: South Africa
+
+# ============================================================================
+# TRANSACTION CONTEXT
+# ============================================================================
+transaction_context:
+  deal_structures:
+    - id: share_acquisition
+      description: "Acquisition of shares in a licensed financial services provider"
+      typical_considerations:
+        - "PA significant owner approval required at >15%, >25%, >49% thresholds"
+        - "FSCA notification of change in control of FSP"
+        - "Fit and proper assessment of new significant shareholders"
+        - "Processing time 60-180 days depending on complexity"
+    - id: business_transfer
+      description: "Transfer of a financial services business or book of business"
+      typical_considerations:
+        - "New FSP license application typically required for transferee"
+        - "Policyholder/client notification and consent requirements"
+        - "Section 197 LRA automatic transfer of employees"
+        - "Portfolio transfer scheme approval for insurance books"
+    - id: merger_of_fsps
+      description: "Merger of two licensed financial services providers"
+      typical_considerations:
+        - "Both PA and FSCA approvals required"
+        - "Competition Commission notification if thresholds met"
+        - "Combined license conditions and regulatory capital assessment"
+        - "Client transition and communication planning"
+    - id: bancassurance_acquisition
+      description: "Acquisition of integrated banking and insurance group"
+      typical_considerations:
+        - "Multiple regulatory approvals — PA, FSCA, SARB, CompCom"
+        - "Financial conglomerate supervision implications"
+        - "Capital adequacy at solo and group level"
+        - "Complex BEE and public interest considerations"
+  typical_parties:
+    - role: seller
+      description: "Current owner of shares or business in the financial services entity"
+    - role: buyer
+      description: "Acquirer — must satisfy fit and proper requirements and obtain PA/FSCA approvals"
+    - role: target
+      description: "Licensed financial services entity being acquired"
+    - role: prudential_authority
+      description: "Prudential Authority — approves significant owner changes and monitors solvency"
+    - role: fsca
+      description: "Financial Sector Conduct Authority — licenses FSPs and supervises market conduct"
+    - role: sarb
+      description: "South African Reserve Bank — concurrence required for banking acquisitions"
+    - role: fic
+      description: "Financial Intelligence Centre — AML/CFT supervisory body"
+
+primary_legislation:
+- Financial Sector Regulation Act 9 of 2017
+- Financial Advisory and Intermediary Services Act 37 of 2002
+- Insurance Act 18 of 2017
+- Banks Act 94 of 1990
+- Financial Intelligence Centre Act 38 of 2001
+- Collective Investment Schemes Control Act 45 of 2002
+- Pension Funds Act 24 of 1956
+- National Credit Act 34 of 2005
+
+reference_documents:
+  always_include:
+  - pattern: FSP Licence|FSCA Licence|Financial Services Provider
+    reason: Core licensing document
+  - pattern: Capital Adequacy|CAR Return|Solvency Report
+    reason: Prudential compliance verification
+  - pattern: RMCP|Risk Management and Compliance Programme
+    reason: AML/CFT compliance
+  - pattern: Actuarial Valuation|Reserve Report
+    reason: Insurance reserve adequacy
+  - pattern: TCF|Treating Customers Fairly|Conduct Report
+    reason: Market conduct compliance
+  - pattern: Fit and Proper|Director Declaration
+    reason: Key individual qualification
+  - pattern: Financial Statements|Regulatory Returns
+    reason: Financial position and regulatory compliance
+
+# ============================================================================
+# FOLDER STRUCTURE
+# ============================================================================
+folder_structure:
+  01_Corporate_Governance:
+    relevance: critical
+    subcategories:
+    - Constitutional
+    - Governance
+    - Board Composition
+    - Fit and Proper
+    expected_documents:
+    - MOI
+    - Shareholders Agreement
+    - Board Resolution
+    - Share Certificate
+    - Company Registration
+    - Board Charter
+    - Fit and Proper Declarations
+    document_expectations:
+      - type: "MOI"
+        aliases: ["Memorandum of Incorporation", "Articles of Association", "Constitution"]
+        tier: critical
+        why_critical: "Defines governance structure, share transfer restrictions, and approval requirements"
+        red_flags_if_missing: "Cannot verify corporate authority for transaction"
+      - type: "Board Charter"
+        aliases: ["Board Terms of Reference", "Governance Framework"]
+        tier: critical
+        why_critical: "Must meet FSR Act and King IV requirements for financial institutions"
+        red_flags_if_missing: "Governance compliance status unknown"
+      - type: "Fit and Proper Declarations"
+        aliases: ["Director Declarations", "Key Individual Assessments", "F&P Forms"]
+        tier: critical
+        why_critical: "All key individuals must be fit and proper per FSRA Section 153"
+        red_flags_if_missing: "Cannot verify regulatory qualification of key individuals"
+  02_Commercial:
+    relevance: high
+    subcategories:
+    - Outsourcing Agreements
+    - Distribution Agreements
+    - Reinsurance Contracts
+    - Intermediary Mandates
+    expected_documents:
+    - Outsourcing Agreement
+    - Distribution Agreement
+    - Reinsurance Contract
+    - Intermediary Mandate
+    - Service Level Agreement
+    document_expectations:
+      - type: "Outsourcing Agreement"
+        aliases: ["Material Outsourcing", "Service Provider Agreement", "BPO Agreement"]
+        tier: critical
+        why_critical: "Material outsourcing requires regulatory notification and oversight framework"
+        red_flags_if_missing: "Outsourcing governance compliance unknown"
+      - type: "Reinsurance Contract"
+        aliases: ["Reinsurance Treaty", "Reinsurance Programme", "Retrocession Agreement"]
+        tier: critical
+        why_critical: "Reinsurance adequacy directly impacts solvency and risk transfer"
+        red_flags_if_missing: "Risk transfer adequacy cannot be assessed"
+      - type: "Distribution Agreement"
+        aliases: ["Intermediary Agreement", "Binder Agreement", "Agency Agreement"]
+        tier: important
+        why_critical: "FAIS compliance requirements for intermediary arrangements"
+  03_Financial:
+    relevance: critical
+    subcategories:
+    - Financial Statements
+    - Capital Adequacy
+    - Liquidity Reports
+    - Actuarial Valuations
+    expected_documents:
+    - Financial Statements
+    - Audit Report
+    - Capital Adequacy Return
+    - Liquidity Report
+    - Actuarial Valuation
+    - Stress Test Results
+    document_expectations:
+      - type: "Financial Statements"
+        aliases: ["AFS", "Annual Financial Statements", "Audited Accounts"]
+        tier: critical
+        why_critical: "Basis for capital adequacy, solvency, and financial assessment"
+        red_flags_if_missing: "Financial position cannot be verified"
+      - type: "Capital Adequacy Return"
+        aliases: ["CAR", "BA Returns", "QIS Returns", "Solvency Report"]
+        tier: critical
+        why_critical: "Demonstrates compliance with prudential capital requirements"
+        red_flags_if_missing: "Capital adequacy compliance unknown — potential deal blocker"
+      - type: "Actuarial Valuation"
+        aliases: ["SAM Report", "Statutory Actuary Report", "Reserve Valuation"]
+        tier: critical
+        why_critical: "Insurance reserve adequacy — shortfall is a deal blocker"
+        red_flags_if_missing: "Reserve adequacy cannot be assessed"
+  04_Regulatory:
+    relevance: critical
+    subcategories:
+    - Licenses
+    - Compliance Reports
+    - Regulatory Correspondence
+    - Enforcement History
+    expected_documents:
+    - FSP License
+    - License Conditions
+    - Compliance Report
+    - Regulatory Correspondence
+    - Inspection Report
+    - Enforcement Notice
+    document_expectations:
+      - type: "FSP License"
+        aliases: ["FSCA License", "Financial Services License", "Category License"]
+        tier: critical
+        why_critical: "Core authorization to conduct financial services business"
+        red_flags_if_missing: "Cannot verify target is authorized to conduct business"
+      - type: "License Conditions"
+        aliases: ["Condition Register", "License Schedule", "Authorization Conditions"]
+        tier: critical
+        why_critical: "Conditions define scope of authorized activities — breaches are deal-critical"
+        red_flags_if_missing: "License scope and restrictions unknown"
+      - type: "Compliance Report"
+        aliases: ["Compliance Monitoring Report", "Annual Compliance Report"]
+        tier: important
+        why_critical: "Evidence of ongoing compliance with license conditions and regulations"
+  05_Employment:
+    relevance: medium
+    subcategories:
+    - Employment Contracts
+    - Key Individual Approvals
+    - Representative Registrations
+    expected_documents:
+    - Employment Contract
+    - Key Individual Approval
+    - Representative Registration
+    - Remuneration Policy
+    document_expectations:
+      - type: "Key Individual Approval"
+        aliases: ["KI Approval", "FSCA Approval", "Fit and Proper Approval"]
+        tier: critical
+        why_critical: "Key individuals must be approved by FSCA — transaction may require new approvals"
+        red_flags_if_missing: "Cannot verify key individuals are approved"
+      - type: "Representative Registration"
+        aliases: ["FAIS Registration", "Representative List", "Product Training Records"]
+        tier: important
+        why_critical: "All representatives must be registered per FAIS Section 14"
+  06_Property:
+    relevance: low
+    subcategories:
+    - Premises
+    - Data Centers
+    expected_documents:
+    - Lease Agreement
+    - Data Center Agreement
+    document_expectations:
+      - type: "Data Center Agreement"
+        aliases: ["Hosting Agreement", "Colocation Agreement"]
+        tier: supporting
+        why_critical: "Infrastructure hosting for financial systems and data"
+  07_Insurance:
+    relevance: high
+    subcategories:
+    - Professional Indemnity
+    - D&O Insurance
+    - Fidelity Guarantee
+    - Cyber Insurance
+    expected_documents:
+    - Professional Indemnity Policy
+    - D&O Insurance Policy
+    - Fidelity Guarantee Policy
+    - Cyber Insurance Policy
+    document_expectations:
+      - type: "Professional Indemnity Policy"
+        aliases: ["PI Policy", "PI Insurance", "Professional Liability"]
+        tier: critical
+        why_critical: "Mandatory for FSPs — FAIS requires adequate PI coverage"
+        red_flags_if_missing: "Statutory PI requirement potentially not met"
+      - type: "Fidelity Guarantee Policy"
+        aliases: ["Fidelity Insurance", "Crime Insurance", "Employee Dishonesty"]
+        tier: important
+        why_critical: "Protection against employee fraud — critical for financial institutions"
+  08_Litigation:
+    relevance: critical
+    subcategories:
+    - Regulatory Proceedings
+    - Customer Complaints
+    - Ombud Determinations
+    - Class Actions
+    expected_documents:
+    - Regulatory Proceeding
+    - Ombud Determination
+    - Complaint Register
+    - Class Action Filing
+    - Enforcement Notice
+    document_expectations:
+      - type: "Complaint Register"
+        aliases: ["Customer Complaints", "Complaints Log", "TCF Complaints"]
+        tier: critical
+        why_critical: "Customer complaints pattern indicates conduct risk and TCF compliance"
+        red_flags_if_missing: "Conduct risk profile unknown"
+      - type: "Ombud Determination"
+        aliases: ["FAIS Ombud", "Pension Fund Adjudicator", "Long-term Insurance Ombud"]
+        tier: important
+        why_critical: "Adverse ombud findings indicate systemic conduct issues"
+      - type: "Enforcement Notice"
+        aliases: ["FSCA Enforcement", "PA Directive", "Regulatory Action"]
+        tier: critical
+        why_critical: "Active enforcement is potential deal blocker"
+        red_flags_if_missing: "Enforcement history unknown"
+  09_Tax:
+    relevance: medium
+    subcategories:
+    - Tax Compliance
+    - VAT Treatment
+    - Policyholder Tax
+    expected_documents:
+    - Tax Compliance Certificate
+    - VAT Analysis
+    - Policyholder Tax Computation
+    document_expectations:
+      - type: "Tax Compliance Certificate"
+        aliases: ["TCC", "SARS Tax Certificate", "Good Standing"]
+        tier: important
+        why_critical: "Confirms tax compliance status with SARS"
+      - type: "VAT Analysis"
+        aliases: ["VAT Treatment", "Financial Services VAT", "Exempt Supply Analysis"]
+        tier: important
+        why_critical: "FS-specific VAT exemptions require careful analysis"
+  10_AML:
+    relevance: critical
+    subcategories:
+    - RMCP
+    - KYC Procedures
+    - Transaction Monitoring
+    - Sanctions Screening
+    expected_documents:
+    - RMCP Document
+    - KYC Policy
+    - Transaction Monitoring Rules
+    - Sanctions Screening Policy
+    - STR Register
+    - FIC Inspection Report
+    document_expectations:
+      - type: "RMCP Document"
+        aliases: ["Risk Management and Compliance Programme", "AML Programme", "FIC Programme"]
+        tier: critical
+        why_critical: "Mandatory under FIC Act — inadequacy is a potential deal blocker"
+        red_flags_if_missing: "AML/CFT compliance framework missing — critical regulatory risk"
+      - type: "FIC Inspection Report"
+        aliases: ["FIC Audit", "AML Inspection", "Supervisory Visit Report"]
+        tier: critical
+        why_critical: "FIC findings indicate AML compliance gaps — remediation status critical"
+        red_flags_if_missing: "AML compliance history unknown"
+      - type: "STR Register"
+        aliases: ["Suspicious Transaction Reports", "STR Log", "SAR Register"]
+        tier: important
+        why_critical: "STR filing patterns indicate monitoring effectiveness"
+  11_Technology:
+    relevance: critical
+    subcategories:
+    - Core Systems
+    - Cybersecurity
+    - BCP/DR
+    - Outsourcing
+    expected_documents:
+    - Technology Assessment
+    - Penetration Test Report
+    - BCP/DR Documentation
+    - Outsourcing Register
+    - Security Certification
+    document_expectations:
+      - type: "Penetration Test Report"
+        aliases: ["Pen Test", "Security Assessment", "Vulnerability Assessment"]
+        tier: critical
+        why_critical: "Financial institutions are prime cyber targets — security posture critical"
+        red_flags_if_missing: "Cybersecurity posture unverified"
+      - type: "BCP/DR Documentation"
+        aliases: ["Business Continuity Plan", "Disaster Recovery Plan", "Operational Resilience"]
+        tier: important
+        why_critical: "Financial institutions must demonstrate operational resilience"
+      - type: "Outsourcing Register"
+        aliases: ["Material Outsourcing", "Third Party Register", "Vendor Register"]
+        tier: important
+        why_critical: "PA requires oversight of material outsourcing arrangements"
+  99_Needs_Review:
+    relevance: low
+    subcategories:
+    - Unclassified
+    expected_documents:
+    - Unclassified Document
+    document_expectations:
+      - type: "Unclassified Document"
+        aliases: ["Unknown", "Miscellaneous"]
+        tier: supporting
+        why_critical: "Documents requiring manual classification and review"
+
 risk_categories:
 - name: Regulatory Licensing & Authorisation
   description: Licences, authorisations, and regulatory status
@@ -698,20 +1069,472 @@ deal_blockers:
   condition: Critical cybersecurity vulnerability or recent material breach
   severity: high
   mitigation: Remediation programme, cyber insurance, price adjustment
+
+# ============================================================================
+# ENTITY RELATIONSHIP PATTERNS
+# ============================================================================
+entity_relationship_patterns:
+  typical_structures:
+    - name: "Banking Group"
+      description: "Bank holding company with banking, insurance, and asset management subsidiaries"
+      dd_implication: "Consolidated supervision by PA; each subsidiary separately licensed; group capital adequacy"
+    - name: "Insurance Group"
+      description: "Insurance holding company with long-term, short-term, and reinsurance subsidiaries"
+      dd_implication: "SAM/Solvency group capital requirements; intercompany reinsurance arrangements; actuarial interdependencies"
+    - name: "FSP with Multiple Categories"
+      description: "Single FSP holding multiple FAIS license categories (Cat I, II, IIA, III, IV)"
+      dd_implication: "Each category has distinct compliance requirements; license conditions may restrict activities"
+    - name: "Asset Manager with CIS"
+      description: "Asset management company that also manages collective investment schemes"
+      dd_implication: "Dual regulation — FAIS for discretionary mandates, CISCA for CIS; trustee/custodian oversight"
+    - name: "Fintech / Digital FSP"
+      description: "Technology-driven financial services provider, often with limited license"
+      dd_implication: "Regulatory sandbox status; technology dependency; outsourcing of regulated functions"
+  entity_roles:
+    - role: "Licensed Entity"
+      description: "Entity holding the FSP license, bank license, or insurer registration"
+    - role: "Controlling Company"
+      description: "Holding company controlling the licensed entity — PA significant owner approval required"
+    - role: "Appointed Actuary"
+      description: "Statutory actuary appointed for insurance entities — independence critical"
+    - role: "Compliance Officer"
+      description: "FAIS compliance officer responsible for regulatory compliance monitoring"
+    - role: "Key Individual"
+      description: "Person approved by FSCA to manage or oversee financial services activities"
+    - role: "External Auditor"
+      description: "Auditor approved by PA for financial institution — rotational requirements"
+  common_related_parties:
+    - type: "Group Company"
+      red_flags:
+        - "Intercompany transactions not at arm's length"
+        - "Capital support arrangements masking solo entity weakness"
+        - "Shared infrastructure without proper outsourcing agreements"
+    - type: "BEE Partner"
+      red_flags:
+        - "BEE shares pledged as security without PA notification"
+        - "Fronting risk — no genuine economic participation"
+        - "BEE partner not assessed for fit and proper"
+    - type: "Distribution Partner"
+      red_flags:
+        - "Intermediary not properly registered under FAIS"
+        - "Commission structures incentivising mis-selling"
+        - "Binder holder acting beyond mandate scope"
+    - type: "Outsource Provider"
+      red_flags:
+        - "Material outsourcing without PA notification"
+        - "Single provider dependency for critical function"
+        - "Offshore processing without data protection safeguards"
+
+# ============================================================================
+# MATERIALITY THRESHOLDS
+# ============================================================================
+materiality_thresholds:
+  default_when_value_unknown:
+    absolute_threshold: "R5,000,000"
+    description: "Applied when transaction value is not known or not disclosed"
+  when_value_known:
+    tiers:
+      - percentage: 5
+        applies_to: "General findings — contracts, liabilities, exposures"
+      - percentage: 2
+        applies_to: "Capital and solvency findings — any impact on regulatory ratios"
+      - percentage: 1
+        applies_to: "Reserve and provisioning findings — actuarial or credit impairment adjustments"
+  qualitative_overrides:
+    always_material_regardless_of_amount:
+      - "License condition breach or license at risk of suspension"
+      - "PA significant owner approval denied or materially delayed"
+      - "Capital adequacy ratio below minimum regulatory requirement"
+      - "Solvency capital requirement breach or near-breach"
+      - "Active FIC enforcement action or material AML findings"
+      - "Material data breach affecting client personal information"
+      - "Systemic TCF failure or conduct risk finding"
+      - "Key individual fit and proper failure"
+      - "Reserve deficiency identified by statutory actuary"
+    never_immaterial_categories:
+      - category: "Regulatory Licensing"
+        reason: "License is the foundation of all business activity — loss terminates operations"
+      - category: "Capital Adequacy"
+        reason: "Below-minimum capital triggers supervisory ladder intervention up to curatorship"
+      - category: "AML/CFT Compliance"
+        reason: "FIC fines up to R50 million; criminal liability up to 15 years imprisonment"
+      - category: "Market Conduct"
+        reason: "TCF failures can result in product intervention, license conditions, or revocation"
+      - category: "Reserve Adequacy"
+        reason: "Insurance reserve deficiency threatens policyholder obligations and solvency"
+
+# ============================================================================
+# CROSS-REFERENCE EXPECTATIONS
+# ============================================================================
+cross_reference_expectations:
+  - primary_document: "FSP License"
+    should_reference:
+      - "License categories and authorized products"
+      - "License conditions and restrictions"
+      - "Key individuals approved"
+    should_be_referenced_by:
+      - "Compliance Reports — compliance against conditions"
+      - "Product Register — products within license scope"
+      - "Regulatory Correspondence — license status"
+  - primary_document: "Capital Adequacy Return"
+    should_reference:
+      - "Risk-weighted assets and capital components"
+      - "Capital buffers and ratios"
+      - "Large exposure positions"
+    should_be_referenced_by:
+      - "Financial Statements — capital figures reconcile"
+      - "Stress Test Results — capital impact scenarios"
+      - "Board Risk Reports — capital monitoring"
+  - primary_document: "Actuarial Valuation"
+    should_reference:
+      - "Reserve methodology and assumptions"
+      - "Best estimate liabilities"
+      - "Risk margin calculation"
+    should_be_referenced_by:
+      - "Financial Statements — reserve figures match"
+      - "Solvency Report — technical provisions"
+      - "Board Report — actuary findings"
+  - primary_document: "RMCP"
+    should_reference:
+      - "Risk assessment methodology"
+      - "CDD procedures and thresholds"
+      - "Transaction monitoring rules"
+      - "STR filing procedures"
+    should_be_referenced_by:
+      - "KYC Procedures — CDD implementation"
+      - "Training Materials — RMCP content"
+      - "FIC Inspection Report — RMCP assessed"
+  - primary_document: "Compliance Report"
+    should_reference:
+      - "License conditions compliance status"
+      - "Regulatory breaches identified"
+      - "Remediation actions and deadlines"
+    should_be_referenced_by:
+      - "Board Minutes — compliance reports tabled"
+      - "Regulatory Filings — consistent status"
+      - "Audit Report — compliance findings cross-referenced"
+  - primary_document: "Financial Statements"
+    should_reference:
+      - "Capital position and adequacy"
+      - "Reserve and provisioning levels"
+      - "Intangible assets and goodwill"
+    should_be_referenced_by:
+      - "Capital Adequacy Return — figures reconcile"
+      - "Actuarial Valuation — reserves match"
+      - "Tax Computations — profit figures match"
+  - primary_document: "TCF Framework"
+    should_reference:
+      - "Customer outcome measurements"
+      - "Product suitability criteria"
+      - "Complaints handling procedures"
+    should_be_referenced_by:
+      - "Complaint Register — TCF categorisation"
+      - "Product Governance — design aligned to outcomes"
+      - "Remuneration Policy — conduct linkage"
+  - primary_document: "Reinsurance Programme"
+    should_reference:
+      - "Treaty and facultative arrangements"
+      - "Counterparty credit ratings"
+      - "Coverage limits and retentions"
+    should_be_referenced_by:
+      - "Actuarial Valuation — reinsurance recoveries"
+      - "Capital Adequacy — risk transfer credit"
+      - "Financial Statements — reinsurance assets"
+
+# ============================================================================
+# RED FLAG PATTERNS
+# ============================================================================
+red_flag_patterns:
+  regulatory:
+    - id: "FS-RF-REG-001"
+      pattern: "License condition breach or pending enforcement"
+      indicators:
+        - "Regulatory warning letter or compliance notice"
+        - "Condition breach reported in compliance monitoring"
+        - "FSCA or PA correspondence citing non-compliance"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "FSRA Section 108, FAIS Section 7"
+      typical_resolution: "Remediation plan to regulator; pre-closing compliance programme"
+    - id: "FS-RF-REG-002"
+      pattern: "PA significant owner approval risk"
+      indicators:
+        - "Buyer does not meet fit and proper requirements"
+        - "Complex ownership structure obscuring ultimate beneficial owner"
+        - "Previous PA application refused or withdrawn"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "FSRA Section 144"
+      typical_resolution: "Pre-application engagement with PA; restructure if needed"
+    - id: "FS-RF-REG-003"
+      pattern: "Key individual not approved or fit and proper concern"
+      indicators:
+        - "Key individual operating without FSCA approval"
+        - "Adverse findings in background checks"
+        - "Debarment or disqualification history"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "FSRA Section 153, FAIS Section 13"
+      typical_resolution: "Replacement of key individual; new approval application"
+    - id: "FS-RF-REG-004"
+      pattern: "Multiple regulatory investigations active"
+      indicators:
+        - "FSCA investigation in progress"
+        - "PA supervisory intervention"
+        - "FIC inspection findings unresolved"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "FSRA Section 135"
+      typical_resolution: "Quantify potential penalties; seller indemnity; price adjustment"
+  capital_solvency:
+    - id: "FS-RF-CAP-001"
+      pattern: "Capital adequacy below minimum regulatory requirement"
+      indicators:
+        - "CAR below regulatory minimum"
+        - "Solvency coverage ratio below 100%"
+        - "Capital buffer erosion trend"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "Insurance Act Section 39, Banks Act"
+      typical_resolution: "Capital injection as condition precedent; restructure transaction"
+    - id: "FS-RF-CAP-002"
+      pattern: "Reserve deficiency identified by actuary"
+      indicators:
+        - "Statutory actuary qualifies reserve adequacy"
+        - "Reserve strengthening required"
+        - "Methodology change resulting in material increase"
+      severity: critical
+      action_category: price_adjustment
+      statutory_reference: "Insurance Act Section 28"
+      typical_resolution: "Reserve top-up; price adjustment; seller indemnity"
+    - id: "FS-RF-CAP-003"
+      pattern: "Large exposure or concentration limit breach"
+      indicators:
+        - "Single counterparty exposure above regulatory limit"
+        - "Connected party lending concerns"
+        - "Sector concentration exceeding prudential limits"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "Banks Act Regulations"
+      typical_resolution: "Exposure reduction plan; regulatory notification; capital charge"
+  aml_cft:
+    - id: "FS-RF-AML-001"
+      pattern: "Material FIC inspection findings unresolved"
+      indicators:
+        - "FIC directive or remediation order outstanding"
+        - "RMCP deemed inadequate by FIC"
+        - "STR filing deficiencies identified"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "FICA Section 21A, Section 29"
+      typical_resolution: "Urgent RMCP remediation; FIC engagement; enhanced monitoring"
+    - id: "FS-RF-AML-002"
+      pattern: "KYC/CDD deficiencies across client base"
+      indicators:
+        - "Incomplete CDD records for material portion of clients"
+        - "No ongoing CDD review process"
+        - "Enhanced due diligence not applied where required"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "FICA Section 21"
+      typical_resolution: "CDD remediation programme; timeline and cost assessment"
+    - id: "FS-RF-AML-003"
+      pattern: "Sanctions screening failures"
+      indicators:
+        - "Clients not screened against sanctions lists"
+        - "False negative matches not investigated"
+        - "Outdated sanctions lists in use"
+      severity: critical
+      action_category: condition_precedent
+      statutory_reference: "FICA, UN Sanctions"
+      typical_resolution: "Screening system upgrade; full client base re-screening"
+  conduct:
+    - id: "FS-RF-CON-001"
+      pattern: "Systemic TCF failure or mis-selling identified"
+      indicators:
+        - "Pattern of customer complaints on same product"
+        - "Ombud findings of systemic unfairness"
+        - "FSCA product intervention notice"
+      severity: critical
+      action_category: price_adjustment
+      statutory_reference: "FAIS Section 16, TCF Framework"
+      typical_resolution: "Customer remediation programme; product redesign; provision for claims"
+    - id: "FS-RF-CON-002"
+      pattern: "Conflict of interest not disclosed or managed"
+      indicators:
+        - "Related party transactions not disclosed to clients"
+        - "Commission structures creating perverse incentives"
+        - "Proprietary product bias in advice"
+      severity: high
+      action_category: warranty_required
+      statutory_reference: "FAIS General Code of Conduct"
+      typical_resolution: "COI policy overhaul; disclosure remediation; conduct training"
+    - id: "FS-RF-CON-003"
+      pattern: "Product governance failures"
+      indicators:
+        - "Products sold outside target market"
+        - "No product review or value assessment conducted"
+        - "Distribution channels not aligned to product complexity"
+      severity: high
+      action_category: price_adjustment
+      statutory_reference: "Conduct of Financial Institutions Bill"
+      typical_resolution: "Product review; distribution realignment; customer remediation"
+  cybersecurity:
+    - id: "FS-RF-CYB-001"
+      pattern: "Material cybersecurity incident or data breach"
+      indicators:
+        - "Client data compromised"
+        - "System downtime affecting financial transactions"
+        - "Ransomware or advanced persistent threat"
+      severity: critical
+      action_category: terminal
+      statutory_reference: "POPIA Section 22, Cybercrimes Act"
+      typical_resolution: "Full incident assessment; remediation; enhanced indemnity; cyber insurance"
+    - id: "FS-RF-CYB-002"
+      pattern: "Inadequate operational resilience"
+      indicators:
+        - "BCP/DR plans untested or outdated"
+        - "Single points of failure in critical systems"
+        - "No cyber insurance coverage"
+      severity: high
+      action_category: condition_precedent
+      statutory_reference: "PA Prudential Standards"
+      typical_resolution: "BCP/DR remediation; testing programme; cyber insurance procurement"
+  financial:
+    - id: "FS-RF-FIN-001"
+      pattern: "Loan book quality deterioration (banking)"
+      indicators:
+        - "NPL ratio above peer benchmark"
+        - "IFRS 9 Stage 3 migration increasing"
+        - "Impairment coverage below industry norm"
+      severity: critical
+      action_category: price_adjustment
+      statutory_reference: "Banks Act, IFRS 9"
+      typical_resolution: "Enhanced credit review; provision top-up; price adjustment"
+    - id: "FS-RF-FIN-002"
+      pattern: "Reinsurance counterparty credit risk (insurance)"
+      indicators:
+        - "Reinsurer credit rating downgraded"
+        - "Concentration in single reinsurer"
+        - "Reinsurance recoverables disputed"
+      severity: high
+      action_category: warranty_required
+      statutory_reference: "Insurance Act, SAM Standards"
+      typical_resolution: "Reinsurance programme diversification; counterparty assessment"
+
+# ============================================================================
+# CALCULATION FORMULAS
+# ============================================================================
+calculation_formulas:
+  capital:
+    - id: "CALC-FS-CAP-001"
+      name: "Capital Adequacy Ratio (Banking)"
+      formula: "Total_qualifying_capital / Risk_weighted_assets x 100"
+      inputs:
+        - { name: "qualifying_capital", source: "capital_return", type: "currency_zar" }
+        - { name: "risk_weighted_assets", source: "capital_return", type: "currency_zar" }
+      output_type: percentage
+      typical_red_flag: "CAR below 10% (minimum) or below 11.5% (including buffers)"
+    - id: "CALC-FS-CAP-002"
+      name: "Solvency Capital Requirement Coverage (Insurance)"
+      formula: "Own_funds / Solvency_capital_requirement x 100"
+      inputs:
+        - { name: "own_funds", source: "solvency_return", type: "currency_zar" }
+        - { name: "scr", source: "solvency_return", type: "currency_zar" }
+      output_type: percentage
+      typical_red_flag: "SCR coverage below 100% — supervisory intervention triggered"
+  exposure:
+    - id: "CALC-FS-EXP-001"
+      name: "Total Regulatory Penalty Exposure"
+      formula: "SUM(fsca_penalties + pa_penalties + fic_penalties + ncr_penalties)"
+      inputs:
+        - { name: "fsca_penalties", source: "regulatory_assessment", type: "currency_zar" }
+        - { name: "pa_penalties", source: "regulatory_assessment", type: "currency_zar" }
+        - { name: "fic_penalties", source: "aml_assessment", type: "currency_zar" }
+        - { name: "ncr_penalties", source: "nca_assessment", type: "currency_zar" }
+      output_type: currency_zar
+      typical_red_flag: "Total regulatory exposure exceeds 10% of transaction value"
+    - id: "CALC-FS-EXP-002"
+      name: "Customer Remediation Exposure"
+      formula: "Affected_customers x Average_remediation_cost + Administration_cost"
+      inputs:
+        - { name: "affected_customers", source: "conduct_assessment", type: "number" }
+        - { name: "average_remediation", source: "conduct_assessment", type: "currency_zar" }
+        - { name: "admin_cost", source: "remediation_plan", type: "currency_zar" }
+      output_type: currency_zar
+      typical_red_flag: "Remediation cost exceeds 5% of transaction value"
+  bee:
+    - id: "CALC-FS-BEE-001"
+      name: "Post-Transaction FSC BEE Ownership"
+      formula: "(Current_BEE_shares - Exiting_BEE) / (Total_shares + New_shares) x 100"
+      inputs:
+        - { name: "current_bee_shares", source: "share_register", type: "number" }
+        - { name: "exiting_bee_shares", source: "transaction_structure", type: "number" }
+        - { name: "total_shares", source: "share_register", type: "number" }
+        - { name: "new_shares", source: "transaction_structure", type: "number" }
+      output_type: percentage
+      typical_red_flag: "Post-transaction BEE below 25% (FSC threshold)"
+  reserve:
+    - id: "CALC-FS-RES-001"
+      name: "Insurance Reserve Adequacy Gap"
+      formula: "Actuarial_best_estimate + Risk_margin - Reported_reserves"
+      inputs:
+        - { name: "best_estimate", source: "actuarial_valuation", type: "currency_zar" }
+        - { name: "risk_margin", source: "actuarial_valuation", type: "currency_zar" }
+        - { name: "reported_reserves", source: "financial_statements", type: "currency_zar" }
+      output_type: currency_zar
+      typical_red_flag: "Gap exceeds 5% of total reserves — material reserve deficiency"
+    - id: "CALC-FS-RES-002"
+      name: "Credit Impairment Coverage Ratio (Banking)"
+      formula: "Total_impairment_provisions / Total_NPL_balance x 100"
+      inputs:
+        - { name: "impairment_provisions", source: "credit_analysis", type: "currency_zar" }
+        - { name: "npl_balance", source: "credit_analysis", type: "currency_zar" }
+      output_type: percentage
+      typical_red_flag: "Coverage below 50% for unsecured NPLs"
+  penalties:
+    - id: "CALC-FS-PEN-001"
+      name: "Maximum FICA Penalty"
+      formula: "R50,000,000 per contravention (statutory maximum)"
+      inputs:
+        - { name: "contraventions_identified", source: "aml_assessment", type: "number" }
+      output_type: currency_zar
+      typical_red_flag: "Multiple FICA contraventions — aggregate exposure material"
+
+# ============================================================================
+# CONDITIONS PRECEDENT PATTERNS
+# ============================================================================
+conditions_precedent_patterns:
+- pattern: PA approval|Prudential Authority|significant owner
+  cp_type: PA Significant Owner Approval
+- pattern: FSCA|license transfer|FSP approval
+  cp_type: FSCA License Approval
+- pattern: SARB|Reserve Bank|banking approval
+  cp_type: SARB Concurrence
+- pattern: FIC|AML remediation|RMCP
+  cp_type: AML Compliance Remediation
+- pattern: capital injection|capital adequacy|solvency
+  cp_type: Capital Adequacy Satisfaction
+- pattern: fit and proper|key individual|director approval
+  cp_type: Fit and Proper Approval
+
 folder_questions:
   01_Corporate_Governance:
     display_name: Corporate & Governance
     relevance: critical
     questions:
-    - question: Does the board composition meet FSR Act and King IV requirements?
+    - id: FS-F01-001
+      question: Does the board composition meet FSR Act and King IV requirements?
       priority: critical
       detail: Independent directors, board committees, fit and proper
       cot_hint: Review board → check independence → assess compliance
-    - question: Are all key individuals approved by FSCA/PA?
+    - id: FS-F01-002
+      question: Are all key individuals approved by FSCA/PA?
       priority: critical
       detail: Key individual approvals, fit and proper declarations
       cot_hint: List key individuals → verify approvals → check currency
-    - question: Is the governance framework compliant with license conditions?
+    - id: FS-F01-003
+      question: Is the governance framework compliant with license conditions?
       priority: high
       detail: Board charter, committee terms, governance policies
       cot_hint: Review governance → check vs conditions → identify gaps
@@ -724,15 +1547,18 @@ folder_questions:
     display_name: Commercial Contracts
     relevance: high
     questions:
-    - question: What outsourcing arrangements are in place and are they properly governed?
+    - id: FS-F02-001
+      question: What outsourcing arrangements are in place and are they properly governed?
       priority: critical
       detail: Material outsourcing, oversight framework, SLAs
       cot_hint: List outsourcing → check governance → assess compliance
-    - question: Are distribution agreements and intermediary arrangements compliant?
+    - id: FS-F02-002
+      question: Are distribution agreements and intermediary arrangements compliant?
       priority: high
       detail: FAIS compliance, mandates, commission structures
       cot_hint: Review distribution → check FAIS → assess compliance
-    - question: What reinsurance arrangements are in place (if insurer)?
+    - id: FS-F02-003
+      question: What reinsurance arrangements are in place (if insurer)?
       priority: critical
       detail: Reinsurance contracts, counterparty exposure, coverage adequacy
       cot_hint: Review reinsurance → check counterparties → assess cover
@@ -745,19 +1571,23 @@ folder_questions:
     display_name: Financial & Banking
     relevance: critical
     questions:
-    - question: Does the target meet capital adequacy/solvency requirements?
+    - id: FS-F03-001
+      question: Does the target meet capital adequacy/solvency requirements?
       priority: critical
       detail: CAR, SCR/MCR, capital buffers
       cot_hint: Review capital returns → check ratios → assess headroom
-    - question: Are liquidity ratios compliant (LCR, NSFR if bank)?
+    - id: FS-F03-002
+      question: Are liquidity ratios compliant (LCR, NSFR if bank)?
       priority: critical
       detail: Liquidity coverage, net stable funding
       cot_hint: Review liquidity returns → check compliance → assess risk
-    - question: Are insurance reserves/technical provisions adequate (if insurer)?
+    - id: FS-F03-003
+      question: Are insurance reserves/technical provisions adequate (if insurer)?
       priority: critical
       detail: Actuarial valuation, reserving methodology
       cot_hint: Review actuarial report → check reserves → assess adequacy
-    - question: What is the loan book quality and impairment coverage (if bank)?
+    - id: FS-F03-004
+      question: What is the loan book quality and impairment coverage (if bank)?
       priority: critical
       detail: NPL ratio, impairment provisions, IFRS 9 staging
       cot_hint: Review credit book → check provisions → assess quality
@@ -769,23 +1599,28 @@ folder_questions:
     display_name: Regulatory & Compliance
     relevance: critical
     questions:
-    - question: What FSCA/PA licenses and authorizations are held?
+    - id: FS-F04-001
+      question: What FSCA/PA licenses and authorizations are held?
       priority: critical
       detail: FSP license, bank license, insurer registration
       cot_hint: List licenses → check conditions → verify standing
-    - question: Are license conditions being complied with?
+    - id: FS-F04-002
+      question: Are license conditions being complied with?
       priority: critical
       detail: Condition register, compliance reports, remediation
       cot_hint: Review conditions → check compliance → identify breaches
-    - question: What regulatory approvals are required for the transaction?
+    - id: FS-F04-003
+      question: What regulatory approvals are required for the transaction?
       priority: critical
       detail: Section 52/54 (FSR Act), PA approval, SARB concurrence
       cot_hint: Identify approvals → assess timeline → plan applications
-    - question: Are there any pending regulatory investigations or enforcement?
+    - id: FS-F04-004
+      question: Are there any pending regulatory investigations or enforcement?
       priority: critical
       detail: Investigations, enforcement notices, administrative actions
       cot_hint: Check for matters → assess exposure → evaluate risk
-    - question: Is the target compliant with Treating Customers Fairly outcomes?
+    - id: FS-F04-005
+      question: Is the target compliant with Treating Customers Fairly outcomes?
       priority: high
       detail: TCF framework, customer outcomes, complaints analysis
       cot_hint: Review TCF framework → check outcomes → identify issues
@@ -798,11 +1633,13 @@ folder_questions:
     display_name: Employment & Labour
     relevance: medium
     questions:
-    - question: Are key individuals properly licensed and approved?
+    - id: FS-F05-001
+      question: Are key individuals properly licensed and approved?
       priority: critical
       detail: Representative registrations, product training, CPD
       cot_hint: Check registrations → verify training → assess compliance
-    - question: Are remuneration structures compliant with conduct standards?
+    - id: FS-F05-002
+      question: Are remuneration structures compliant with conduct standards?
       priority: high
       detail: Commission structures, clawback provisions, conduct linkage
       cot_hint: Review remuneration → check compliance → identify issues
@@ -811,7 +1648,8 @@ folder_questions:
     display_name: Property & Assets
     relevance: low
     questions:
-    - question: Are data centers and IT infrastructure properly secured?
+    - id: FS-F06-001
+      question: Are data centers and IT infrastructure properly secured?
       priority: medium
       detail: Data center locations, physical security, access controls
       cot_hint: Check facilities → assess security → verify controls
@@ -820,11 +1658,13 @@ folder_questions:
     display_name: Insurance
     relevance: high
     questions:
-    - question: Is there adequate professional indemnity and D&O coverage?
+    - id: FS-F07-001
+      question: Is there adequate professional indemnity and D&O coverage?
       priority: high
       detail: PI limits, D&O coverage, cyber insurance
       cot_hint: Review policies → check limits → assess adequacy
-    - question: Is fidelity guarantee coverage adequate?
+    - id: FS-F07-002
+      question: Is fidelity guarantee coverage adequate?
       priority: high
       detail: Fidelity coverage, claims history
       cot_hint: Check coverage → review claims → assess adequacy
@@ -833,15 +1673,18 @@ folder_questions:
     display_name: Litigation & Disputes
     relevance: critical
     questions:
-    - question: Are there any pending or threatened regulatory proceedings?
+    - id: FS-F08-001
+      question: Are there any pending or threatened regulatory proceedings?
       priority: critical
       detail: FSCA/PA matters, Ombud complaints, tribunal proceedings
       cot_hint: List matters → assess exposure → check provisions
-    - question: What is the customer complaints profile and Ombud history?
+    - id: FS-F08-002
+      question: What is the customer complaints profile and Ombud history?
       priority: high
       detail: Complaint statistics, Ombud findings, systemic issues
       cot_hint: Review complaints → check patterns → identify issues
-    - question: Are there any class actions or representative actions?
+    - id: FS-F08-003
+      question: Are there any class actions or representative actions?
       priority: high
       detail: Class actions, product liability, mis-selling claims
       cot_hint: Identify claims → assess exposure → check insurance
@@ -854,7 +1697,8 @@ folder_questions:
     display_name: Tax
     relevance: medium
     questions:
-    - question: Are there any FS-specific tax considerations (VAT exemptions, policyholder tax)?
+    - id: FS-F09-001
+      question: Are there any FS-specific tax considerations (VAT exemptions, policyholder tax)?
       priority: high
       detail: VAT treatment, policyholder taxation, withholding
       cot_hint: Review tax treatment → check exemptions → identify issues
@@ -863,23 +1707,28 @@ folder_questions:
     display_name: AML/CFT Compliance
     relevance: critical
     questions:
-    - question: Is the RMCP adequate, current, and board-approved?
+    - id: FS-F10-001
+      question: Is the RMCP adequate, current, and board-approved?
       priority: critical
       detail: RMCP documentation, FIC registration, annual review
       cot_hint: Review RMCP → check approval → assess adequacy
-    - question: Are KYC/CDD processes compliant with FIC Act?
+    - id: FS-F10-002
+      question: Are KYC/CDD processes compliant with FIC Act?
       priority: critical
       detail: CDD procedures, EDD triggers, ongoing monitoring
       cot_hint: Review CDD → check procedures → identify gaps
-    - question: Is transaction monitoring adequate and are STRs being filed?
+    - id: FS-F10-003
+      question: Is transaction monitoring adequate and are STRs being filed?
       priority: critical
       detail: Monitoring systems, alert handling, STR filing rates
       cot_hint: Review monitoring → check STRs → assess effectiveness
-    - question: Are sanctions screening processes effective?
+    - id: FS-F10-004
+      question: Are sanctions screening processes effective?
       priority: high
       detail: Sanctions lists, screening frequency, match resolution
       cot_hint: Check screening → verify lists → assess process
-    - question: Have there been any FIC inspections or AML findings?
+    - id: FS-F10-005
+      question: Have there been any FIC inspections or AML findings?
       priority: high
       detail: FIC inspection reports, remediation status
       cot_hint: Review findings → check remediation → assess risk
@@ -891,15 +1740,18 @@ folder_questions:
     display_name: Technology & Cyber
     relevance: critical
     questions:
-    - question: What is the cybersecurity posture and have assessments been conducted?
+    - id: FS-F11-001
+      question: What is the cybersecurity posture and have assessments been conducted?
       priority: critical
       detail: Pen testing, vulnerability scans, security certifications
       cot_hint: Review assessments → check findings → assess remediation
-    - question: Have there been any material cybersecurity incidents or data breaches?
+    - id: FS-F11-002
+      question: Have there been any material cybersecurity incidents or data breaches?
       priority: critical
       detail: Incident history, breach notifications, remediation
       cot_hint: List incidents → assess impact → check remediation
-    - question: Are BCP/DR arrangements adequate and tested?
+    - id: FS-F11-003
+      question: Are BCP/DR arrangements adequate and tested?
       priority: high
       detail: BCP documentation, testing results, RTO/RPO
       cot_hint: Review plans → check testing → assess adequacy
@@ -912,7 +1764,8 @@ folder_questions:
     display_name: Needs Review
     relevance: low
     questions:
-    - question: What financial services issues does this document raise?
+    - id: FS-F99-001
+      question: What financial services issues does this document raise?
       priority: medium
       detail: Documents requiring manual classification review
       cot_hint: Identify FS content → flag for review
@@ -1036,6 +1889,776 @@ cot_questions:
   - Are there key person dependencies in investment team?
 
 # ============================================================================
+# WARRANTY CATEGORIES
+# Financial services-specific warranty categories for SPA protection
+# ============================================================================
+
+warranty_categories:
+  # ---------------------------------------------------------------------------
+  # TITLE & CAPACITY WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Title & Capacity"
+    description: "Warranties relating to share ownership, corporate capacity, and authority"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-TC-001"
+        description: "Seller has full legal and beneficial ownership of the sale shares"
+        detailed_wording: "The Seller is the sole legal and beneficial owner of the Sale Shares, free from any encumbrances, liens, charges, pledges, or third-party rights whatsoever"
+        typical_cap: "Purchase price"
+        survival_period: "3 years from Closing Date"
+        priority: critical
+        dd_triggers:
+          - "Share certificate review"
+          - "Securities register check"
+          - "CIPC records verification"
+      - id: "W-TC-002"
+        description: "Sale shares are fully paid up and non-assessable"
+        detailed_wording: "The Sale Shares are validly issued, fully paid up, and non-assessable, and no further amounts are payable in respect thereof"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-TC-003"
+        description: "No options, pre-emptive rights, or rights of first refusal over the sale shares"
+        detailed_wording: "There are no outstanding options, warrants, convertible securities, pre-emptive rights, rights of first refusal, tag-along rights, drag-along rights, or other rights to acquire any of the Sale Shares"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Shareholders agreement review"
+          - "Option agreements"
+      - id: "W-TC-004"
+        description: "Seller has full power and authority to enter into and perform the transaction"
+        detailed_wording: "The Seller has full corporate power and authority to enter into this Agreement and to perform its obligations hereunder, and all necessary corporate approvals have been obtained"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-TC-005"
+        description: "Transaction does not conflict with constitutional documents or material agreements"
+        detailed_wording: "The execution, delivery, and performance of this Agreement will not result in a breach of, or constitute a default under, the MOI, any shareholders agreement, or any material contract to which the Seller or Target is a party"
+        typical_cap: "Purchase price"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # REGULATORY & LICENSING WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Regulatory & Licensing"
+    description: "Warranties specific to FSP licensing, PA approvals, and regulatory standing"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    financial_services_specific: true
+    standard_warranties:
+      - id: "W-REG-001"
+        description: "All FSP licences are valid and in good standing"
+        detailed_wording: "All licences issued under FAIS, the Insurance Act, the Banks Act, or CISCA held by the Target are valid and subsisting, are not subject to any suspension, cancellation, or conditions limiting operations, and the Target is in compliance with all licence conditions"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "FSP licence certificates"
+          - "FSCA licence conditions"
+          - "PA correspondence"
+      - id: "W-REG-002"
+        description: "Key individuals meet fit and proper requirements"
+        detailed_wording: "All key individuals and representatives of the Target meet the fit and proper requirements prescribed by the FSCA, and all required fit and proper declarations have been submitted and accepted"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Fit and proper declarations"
+          - "Key individual appointments"
+          - "FSCA correspondence on KI status"
+      - id: "W-REG-003"
+        description: "No pending regulatory investigations or enforcement actions"
+        detailed_wording: "There are no pending or threatened regulatory investigations, enforcement actions, debarments, or licence reviews by the PA, FSCA, SARB, or FIC against the Target, its directors, or key individuals"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-REG-004"
+        description: "All regulatory returns and submissions are current"
+        detailed_wording: "All regulatory returns, reports, and submissions required by the PA, FSCA, SARB, FIC, or any other regulatory authority have been filed on time, are accurate and complete, and there are no outstanding queries"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: high
+      - id: "W-REG-005"
+        description: "Compliance frameworks are adequate and operational"
+        detailed_wording: "The Target has established and maintains compliance frameworks, including a compliance function, compliance monitoring programme, and compliance risk management plan as required by the FSCA and PA"
+        typical_cap: "25% of purchase price"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # CAPITAL ADEQUACY & SOLVENCY WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Capital Adequacy & Solvency"
+    description: "Warranties relating to regulatory capital requirements and solvency"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    financial_services_specific: true
+    standard_warranties:
+      - id: "W-CAP-001"
+        description: "Target meets minimum capital adequacy requirements"
+        detailed_wording: "The Target meets all minimum capital adequacy requirements prescribed by the PA, including CAR for banks, SCR for insurers, and minimum capital for FSPs, and has not breached any capital requirement in the 12 months preceding Closing"
+        typical_cap: "Capital shortfall amount"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Capital adequacy returns"
+          - "PA correspondence"
+          - "Solvency calculations"
+      - id: "W-CAP-002"
+        description: "No PA directives on capital or solvency outstanding"
+        detailed_wording: "No directive, instruction, or requirement has been issued by the PA requiring the Target to increase its capital, restrict distributions, or take any corrective action in relation to capital adequacy or solvency"
+        typical_cap: "Amount of required capital injection"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-CAP-003"
+        description: "Liquidity position meets regulatory requirements"
+        detailed_wording: "The Target meets all applicable liquidity requirements including LCR and NSFR for banks, and has adequate liquid assets to meet policyholder and client obligations as they fall due"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # CONDUCT & MARKET PRACTICE WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Conduct & Market Practice"
+    description: "Warranties relating to TCF, market conduct, and fair treatment of customers"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    financial_services_specific: true
+    standard_warranties:
+      - id: "W-CON-001"
+        description: "Target complies with TCF principles and conduct standards"
+        detailed_wording: "The Target has implemented and complies with the TCF outcomes and all applicable conduct standards prescribed by the FSCA, and no material TCF deficiencies have been identified by internal audit, compliance, or the FSCA"
+        typical_cap: "25% of purchase price"
+        survival_period: "3 years"
+        priority: high
+        dd_triggers:
+          - "TCF assessment reports"
+          - "FSCA conduct findings"
+          - "Customer complaints analysis"
+      - id: "W-CON-002"
+        description: "Customer complaints are within acceptable parameters"
+        detailed_wording: "The Target's customer complaints profile is within industry norms, all material complaints have been resolved or are being addressed, and the Target has not been subject to any FSCA intervention relating to customer complaints"
+        typical_cap: "25% of purchase price"
+        survival_period: "2 years"
+        priority: high
+      - id: "W-CON-003"
+        description: "Product governance processes are compliant"
+        detailed_wording: "All financial products offered by the Target have been designed and are marketed in compliance with applicable product governance requirements, and no products are the subject of regulatory scrutiny or product intervention notices"
+        typical_cap: "25% of purchase price"
+        survival_period: "3 years"
+        priority: high
+      - id: "W-CON-004"
+        description: "Conflicts of interest properly managed"
+        detailed_wording: "The Target has established and maintains a conflicts of interest management policy compliant with FAIS and applicable conduct standards, and all material conflicts have been identified, disclosed, and managed"
+        typical_cap: "25% of purchase price"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # AML/CFT COMPLIANCE WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "AML/CFT Compliance"
+    description: "Warranties relating to FIC Act compliance, RMCP, and anti-money laundering"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    financial_services_specific: true
+    standard_warranties:
+      - id: "W-AML-001"
+        description: "RMCP is adequate and current"
+        detailed_wording: "The Target's Risk Management and Compliance Programme complies with the FIC Act and FIC guidance, has been reviewed within the last 12 months, and covers all required elements including CDD, reporting, and sanctions screening"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "RMCP document"
+          - "FIC inspection reports"
+          - "AML compliance audit"
+      - id: "W-AML-002"
+        description: "KYC/CDD processes are compliant"
+        detailed_wording: "The Target's customer due diligence processes comply with the FIC Act, all existing customers have been subjected to adequate CDD, and the Target maintains up-to-date records as required"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-AML-003"
+        description: "No FIC findings or AML investigations outstanding"
+        detailed_wording: "There are no outstanding findings from FIC inspections, no pending AML/CFT investigations, and no FIC administrative sanctions or enforcement actions against the Target"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-AML-004"
+        description: "STR reporting processes are adequate"
+        detailed_wording: "The Target has adequate processes for identifying and reporting suspicious and unusual transactions, and has complied with all reporting obligations under the FIC Act"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # INSURANCE-SPECIFIC WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Insurance Specific"
+    description: "Warranties specific to insurance operations, reserves, and reinsurance"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    financial_services_specific: true
+    standard_warranties:
+      - id: "W-INS-001"
+        description: "Insurance reserves and technical provisions are adequate"
+        detailed_wording: "The Target's insurance reserves and technical provisions have been calculated in accordance with applicable actuarial standards and regulatory requirements, are adequate to meet all policyholder obligations, and the most recent actuarial valuation confirms adequacy"
+        typical_cap: "Reserve deficiency amount"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "Actuarial valuation report"
+          - "Reserve adequacy certificate"
+          - "SAM returns"
+        quantification_required: true
+      - id: "W-INS-002"
+        description: "Reinsurance programme is adequate and effective"
+        detailed_wording: "The Target has adequate reinsurance arrangements in place, all reinsurance contracts are valid and enforceable, all reinsurance premiums are current, and reinsurers meet minimum credit quality standards"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Reinsurance treaties"
+          - "Reinsurer credit ratings"
+          - "Reinsurance recoverables"
+      - id: "W-INS-003"
+        description: "No material adverse claims experience undisclosed"
+        detailed_wording: "There has been no material adverse change in the Target's claims experience since the last audited financial statements, and the Target is not aware of any event or circumstance likely to result in a material increase in claims"
+        typical_cap: "25% of purchase price"
+        survival_period: "2 years"
+        priority: high
+      - id: "W-INS-004"
+        description: "Policyholder protection rules complied with"
+        detailed_wording: "The Target has complied with all applicable Policyholder Protection Rules, including requirements for policy documentation, disclosure, cooling-off periods, and fair value"
+        typical_cap: "25% of purchase price"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # FINANCIAL WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Financial"
+    description: "Warranties relating to financial statements, debt, and financial position"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-FIN-001"
+        description: "Financial statements fairly present the financial position"
+        detailed_wording: "The audited financial statements for the financial year ended [date] have been prepared in accordance with IFRS and fairly present the financial position, results of operations, and cash flows of the Target"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Audited AFS"
+          - "Audit report"
+          - "Management accounts"
+      - id: "W-FIN-002"
+        description: "No undisclosed liabilities"
+        detailed_wording: "The Target has no liabilities (actual, contingent, or otherwise) other than liabilities reflected in the Accounts, liabilities incurred in the ordinary course since the Accounts Date, or liabilities disclosed in the Disclosure Schedule"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-FIN-003"
+        description: "Complete disclosure of all indebtedness"
+        detailed_wording: "Complete and accurate details of all borrowings, loan facilities, shareholder loans, subordinated debt, and other indebtedness of the Target have been disclosed, including outstanding amounts, interest rates, maturity dates, and all covenants"
+        typical_cap: "Full amount of undisclosed debt"
+        survival_period: "3 years"
+        priority: critical
+        dd_triggers:
+          - "Facility agreements"
+          - "Subordinated debt instruments"
+          - "Inter-company loan agreements"
+      - id: "W-FIN-004"
+        description: "Regulatory returns are consistent with financial statements"
+        detailed_wording: "All regulatory returns submitted to the PA, FSCA, or SARB are materially consistent with the audited financial statements and management accounts"
+        typical_cap: "50% of purchase price"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-FIN-005"
+        description: "No covenant breaches or events of default"
+        detailed_wording: "No event of default, covenant breach, or event which with notice or lapse of time would constitute an event of default, has occurred under any facility agreement, subordinated debt instrument, or other financing document"
+        typical_cap: "Acceleration amount at risk"
+        survival_period: "3 years"
+        priority: critical
+
+  # ---------------------------------------------------------------------------
+  # EMPLOYMENT WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Employment"
+    description: "Warranties relating to employees, key individuals, and labour matters"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-EMP-001"
+        description: "Complete employee information disclosed"
+        detailed_wording: "Complete and accurate details of all employees have been disclosed including remuneration, benefits, notice periods, and any special terms, and there are no undisclosed arrangements"
+        typical_cap: "12 months total remuneration"
+        survival_period: "2 years"
+        priority: high
+      - id: "W-EMP-002"
+        description: "Compliance with labour legislation"
+        detailed_wording: "The Target has complied in all material respects with all applicable labour legislation including the LRA, BCEA, and EEA, and all statutory returns have been filed"
+        typical_cap: "25% of purchase price"
+        survival_period: "3 years"
+        priority: high
+      - id: "W-EMP-003"
+        description: "Key individual continuity arrangements in place"
+        detailed_wording: "The Target has appropriate employment contracts with all key individuals as required by the FSCA, and no key individual has given notice of resignation or indicated an intention to resign post-transaction"
+        typical_cap: "Replacement cost of key individuals"
+        survival_period: "2 years"
+        priority: high
+        dd_triggers:
+          - "Employment contracts"
+          - "Key individual appointments"
+          - "Restraint of trade agreements"
+
+  # ---------------------------------------------------------------------------
+  # TAX WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Tax"
+    description: "Warranties relating to tax compliance and liabilities"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-TAX-001"
+        description: "All tax returns filed and taxes paid"
+        detailed_wording: "All tax returns required to be filed by the Target have been filed on time, all taxes due have been paid, and adequate provision has been made in the Accounts for taxes not yet due"
+        typical_cap: "Amount of underpaid taxes + penalties"
+        survival_period: "5 years (statute of limitations)"
+        priority: critical
+      - id: "W-TAX-002"
+        description: "No tax disputes or audits outstanding"
+        detailed_wording: "There are no pending or threatened tax audits, disputes, or assessments, and the Target has not received any notice of intention to audit from SARS"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "5 years"
+        priority: critical
+      - id: "W-TAX-003"
+        description: "VAT on financial services correctly applied"
+        detailed_wording: "The Target has correctly applied VAT exemptions and zero-ratings applicable to financial services, and there are no disputes with SARS regarding the VAT treatment of any products or services"
+        typical_cap: "VAT exposure amount"
+        survival_period: "5 years"
+        priority: high
+        financial_services_specific: true
+
+  # ---------------------------------------------------------------------------
+  # LITIGATION WARRANTIES
+  # ---------------------------------------------------------------------------
+  - category: "Litigation"
+    description: "Warranties relating to disputes, claims, and legal proceedings"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-LIT-001"
+        description: "No material litigation pending or threatened"
+        detailed_wording: "There is no litigation, arbitration, regulatory proceeding, or FAIS Ombud complaint pending or threatened against the Target with a value exceeding R[X], other than as disclosed in the Disclosure Schedule"
+        typical_cap: "Claim value"
+        survival_period: "3 years"
+        priority: high
+      - id: "W-LIT-002"
+        description: "No class actions or collective customer claims"
+        detailed_wording: "There are no pending or threatened class actions, collective complaints, or coordinated customer claims against the Target, and the Target is not aware of any circumstances that may give rise to such action"
+        typical_cap: "As negotiated (significant exposure)"
+        survival_period: "5 years"
+        priority: critical
+        dd_triggers:
+          - "Litigation register"
+          - "FAIS Ombud complaints"
+          - "Customer complaints trends"
+
+# ============================================================================
+# INDEMNITY CATEGORIES
+# Financial services-specific indemnity categories for buyer protection
+# ============================================================================
+
+indemnity_categories:
+  # ---------------------------------------------------------------------------
+  # REGULATORY PENALTIES & SANCTIONS INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Regulatory Penalties & Sanctions"
+    description: "Indemnities for regulatory fines, sanctions, and enforcement costs"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    financial_services_specific: true
+    triggers:
+      - "Regulatory non-compliance identified during DD"
+      - "Pending FSCA or PA investigation"
+      - "FIC inspection findings outstanding"
+      - "Licence condition breaches identified"
+    standard_indemnities:
+      - id: "I-REG-001"
+        description: "Pre-Closing regulatory penalties and fines"
+        detailed_wording: "The Seller shall indemnify the Buyer against all administrative penalties, fines, and enforcement costs imposed by the PA, FSCA, SARB, or FIC arising from non-compliance that occurred prior to the Closing Date"
+        typical_cap: "Uncapped or large escrow"
+        survival_period: "5 years"
+        priority: critical
+        escrow_recommendation: "10-15% of purchase price in escrow for 3 years"
+      - id: "I-REG-002"
+        description: "Licence revocation or restriction costs"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any revocation, suspension, or restriction of any FSP licence resulting from pre-Closing conduct or non-compliance"
+        typical_cap: "Purchase price"
+        survival_period: "5 years"
+        priority: critical
+      - id: "I-REG-003"
+        description: "Key individual debarment consequences"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from the debarment of any key individual resulting from conduct or omissions occurring prior to Closing, including costs of replacement and business disruption"
+        typical_cap: "As negotiated"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # CUSTOMER REMEDIATION INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Customer Remediation"
+    description: "Indemnities for customer remediation programmes and mis-selling"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    financial_services_specific: true
+    triggers:
+      - "TCF deficiencies identified"
+      - "Mis-selling indicators detected"
+      - "Customer complaints trending upward"
+      - "Product design flaws identified"
+    standard_indemnities:
+      - id: "I-CUS-001"
+        description: "Pre-Closing customer remediation costs"
+        detailed_wording: "The Seller shall indemnify the Buyer against all costs of any customer remediation programme required by the FSCA or arising from mis-selling, product deficiencies, or unfair practices that occurred prior to Closing"
+        typical_cap: "Quantified remediation exposure"
+        survival_period: "5 years"
+        priority: critical
+        calculation_basis: "Affected customer base x average remediation cost"
+      - id: "I-CUS-002"
+        description: "FAIS Ombud determinations"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from FAIS Ombud determinations relating to complaints about conduct that occurred prior to Closing"
+        typical_cap: "As negotiated"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # CAPITAL DEFICIENCY INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Capital Deficiency"
+    description: "Indemnities for capital adequacy shortfalls and required capital injections"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    financial_services_specific: true
+    triggers:
+      - "Capital ratio below minimum requirement"
+      - "PA directive requiring capital injection"
+      - "Solvency capital concerns identified"
+      - "Insurance reserve deficiency"
+    standard_indemnities:
+      - id: "I-CAP-001"
+        description: "Capital adequacy shortfall"
+        detailed_wording: "The Seller shall indemnify the Buyer against any capital injection required by the PA where the shortfall arises from pre-Closing losses, provisions, or misstatement of capital position"
+        typical_cap: "Capital shortfall amount + 25% buffer"
+        survival_period: "3 years"
+        priority: critical
+        quantification_required: true
+      - id: "I-CAP-002"
+        description: "Insurance reserve deficiency"
+        detailed_wording: "The Seller shall indemnify the Buyer against any shortfall between the insurance reserves as at Closing Date and the reserves required by the actuarial valuation, to the extent such shortfall arises from pre-Closing underwriting or claims experience"
+        typical_cap: "Quantified reserve gap"
+        survival_period: "5 years"
+        priority: critical
+        quantification_required: true
+        calculation_basis: "Actuarial valuation gap analysis"
+
+  # ---------------------------------------------------------------------------
+  # AML/CFT VIOLATION INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "AML/CFT Violations"
+    description: "Indemnities for FIC Act non-compliance and AML failures"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    financial_services_specific: true
+    triggers:
+      - "FIC inspection findings"
+      - "RMCP deficiencies identified"
+      - "KYC/CDD gaps in customer base"
+      - "STR reporting failures"
+    standard_indemnities:
+      - id: "I-AML-001"
+        description: "FIC administrative sanctions"
+        detailed_wording: "The Seller shall indemnify the Buyer against all administrative sanctions imposed by the FIC relating to non-compliance with the FIC Act that occurred prior to Closing, including penalties up to R50 million per contravention"
+        typical_cap: "Uncapped or significant escrow"
+        survival_period: "5 years"
+        priority: critical
+      - id: "I-AML-002"
+        description: "KYC remediation costs"
+        detailed_wording: "The Seller shall indemnify the Buyer for the cost of remediating any deficiencies in the Target's KYC/CDD records that existed as at Closing and require rectification to comply with FIC Act requirements"
+        typical_cap: "Quantified remediation cost"
+        survival_period: "3 years"
+        priority: high
+        calculation_basis: "Number of affected accounts x per-account remediation cost"
+
+  # ---------------------------------------------------------------------------
+  # CYBERSECURITY & DATA BREACH INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Cybersecurity & Data Breach"
+    description: "Indemnities for cyber incidents and data breaches occurring pre-closing"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Cybersecurity vulnerabilities identified"
+      - "Data breach history"
+      - "POPIA non-compliance"
+      - "Inadequate cyber controls"
+    standard_indemnities:
+      - id: "I-CYB-001"
+        description: "Pre-Closing data breach and cyber incident"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any data breach, cyber incident, or POPIA non-compliance that occurred prior to Closing, including notification costs, regulatory penalties, and customer remediation"
+        typical_cap: "As negotiated (consider cyber insurance)"
+        survival_period: "3 years"
+        priority: high
+      - id: "I-CYB-002"
+        description: "Information Regulator penalties"
+        detailed_wording: "The Seller shall indemnify the Buyer against any penalties imposed by the Information Regulator under POPIA relating to data processing activities prior to Closing"
+        typical_cap: "R10 million per contravention"
+        survival_period: "3 years"
+        priority: high
+
+  # ---------------------------------------------------------------------------
+  # TAX INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Tax"
+    description: "Indemnities for tax liabilities arising from pre-closing periods"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Tax audit findings"
+      - "Uncertain tax positions"
+      - "VAT treatment disputes"
+      - "Transfer pricing exposure"
+    standard_indemnities:
+      - id: "I-TAX-001"
+        description: "Pre-Closing tax liabilities"
+        detailed_wording: "The Seller shall indemnify the Buyer against any tax liability of the Target relating to any period ending on or before the Closing Date, to the extent not provided for in the Closing Accounts"
+        typical_cap: "Unlimited for tax"
+        survival_period: "5 years (statute of limitations)"
+        priority: critical
+      - id: "I-TAX-002"
+        description: "VAT on financial services reassessments"
+        detailed_wording: "The Seller shall indemnify the Buyer against any additional VAT payable following SARS reassessment of the VAT treatment of financial services products for periods prior to Closing"
+        typical_cap: "VAT amount plus penalties and interest"
+        survival_period: "5 years"
+        priority: high
+        financial_services_specific: true
+
+  # ---------------------------------------------------------------------------
+  # THIRD PARTY CLAIMS INDEMNITIES
+  # ---------------------------------------------------------------------------
+  - category: "Third Party Claims"
+    description: "Indemnities for claims by third parties arising from pre-closing matters"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Pending litigation identified"
+      - "FAIS Ombud complaints outstanding"
+      - "Customer class action risk"
+    standard_indemnities:
+      - id: "I-3P-001"
+        description: "Undisclosed litigation and claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from any litigation, claim, regulatory proceeding, or Ombud complaint that was pending or threatened as at Closing but not disclosed in the Disclosure Schedule"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "3 years"
+        priority: critical
+      - id: "I-3P-002"
+        description: "Class action and collective claims"
+        detailed_wording: "The Seller shall indemnify the Buyer against all Losses arising from class actions or collective claims relating to products sold or conduct occurring prior to Closing"
+        typical_cap: "As negotiated (potentially very significant)"
+        survival_period: "5 years"
+        priority: critical
+
+# ============================================================================
+# WARRANTY & INDEMNITY DETECTION PATTERNS
+# ============================================================================
+
+warranty_indemnity_patterns:
+  warranty_patterns:
+    - pattern: "represents and warrants|seller warrants|vendor warrants"
+      type: warranty
+      category: General
+    - pattern: "warranted that|representation that"
+      type: warranty
+      category: General
+    - pattern: "title to|ownership of|free from encumbrance|unencumbered"
+      type: warranty
+      category: "Title & Capacity"
+    - pattern: "FSP.*licen[cs]e.*valid|licence.*good standing|FAIS.*compli"
+      type: warranty
+      category: "Regulatory & Licensing"
+    - pattern: "fit and proper|key individual.*qualified"
+      type: warranty
+      category: "Regulatory & Licensing"
+    - pattern: "capital adequacy|solvency.*requirement|CAR.*meets|SCR.*meets"
+      type: warranty
+      category: "Capital Adequacy & Solvency"
+    - pattern: "TCF.*compli|treating customers fairly|conduct.*standard"
+      type: warranty
+      category: "Conduct & Market Practice"
+    - pattern: "RMCP.*adequate|FIC Act.*compli|AML.*compli|KYC.*compli"
+      type: warranty
+      category: "AML/CFT Compliance"
+    - pattern: "insurance.*reserve.*adequate|actuarial.*valuation|reinsurance.*adequate"
+      type: warranty
+      category: "Insurance Specific"
+    - pattern: "financial statements.*fair|prepared in accordance"
+      type: warranty
+      category: Financial
+    - pattern: "no.*undisclosed.*liabilit"
+      type: warranty
+      category: Financial
+    - pattern: "tax.*return.*filed|taxes.*paid"
+      type: warranty
+      category: Tax
+    - pattern: "no.*litigation|no.*claims.*pending"
+      type: warranty
+      category: Litigation
+    - pattern: "employee.*compli|labour.*compli"
+      type: warranty
+      category: Employment
+    - pattern: "policyholder protection|PPR.*compli"
+      type: warranty
+      category: "Insurance Specific"
+
+  indemnity_patterns:
+    - pattern: "indemnify|hold harmless|indemnification"
+      type: indemnity
+      category: General
+    - pattern: "shall indemnify.*against"
+      type: indemnity
+      category: General
+    - pattern: "regulatory.*penalty|regulatory.*fine|enforcement.*cost"
+      type: indemnity
+      category: "Regulatory Penalties & Sanctions"
+    - pattern: "customer remediation|mis-selling.*indemnity"
+      type: indemnity
+      category: "Customer Remediation"
+    - pattern: "capital.*shortfall|capital.*injection|solvency.*indemnity"
+      type: indemnity
+      category: "Capital Deficiency"
+    - pattern: "FIC.*sanction|AML.*fine|money laundering.*indemnity"
+      type: indemnity
+      category: "AML/CFT Violations"
+    - pattern: "data breach.*indemnity|cyber.*indemnity|POPIA.*penalty"
+      type: indemnity
+      category: "Cybersecurity & Data Breach"
+    - pattern: "tax.*indemnity|pre-closing.*tax"
+      type: indemnity
+      category: Tax
+    - pattern: "reserve.*shortfall|reserve.*deficiency"
+      type: indemnity
+      category: "Capital Deficiency"
+
+# ============================================================================
+# COT QUESTIONS - WARRANTY & INDEMNITY ANALYSIS
+# ============================================================================
+
+cot_questions_warranty_indemnity:
+  warranties_analysis:
+    - What title and capacity risks exist that require warranty protection (share ownership, encumbrances, authority)?
+    - What regulatory and licensing risks require warranty coverage (FSP validity, fit and proper, licence conditions)?
+    - What capital adequacy and solvency risks need warranty protection (CAR, SCR, liquidity)?
+    - What conduct and TCF risks require warranty coverage (customer complaints, product governance, conflicts)?
+    - What AML/CFT risks need warranty protection (RMCP adequacy, KYC compliance, STR reporting)?
+    - What insurance-specific risks require warranty coverage (reserves, reinsurance, claims experience)?
+    - What financial statement issues require warranty protection (AFS accuracy, undisclosed liabilities, debt disclosure)?
+    - What employment issues require warranty protection (employee disclosure, labour compliance, key individuals)?
+    - What tax issues require warranty coverage (returns filed, taxes paid, VAT on financial services)?
+    - What litigation risks require warranty coverage (pending claims, FAIS Ombud, class actions)?
+    - For each identified warranty, what is the appropriate cap and survival period?
+    - Which warranties should be fundamental (longer survival, higher/no cap)?
+
+  indemnities_analysis:
+    - Based on DD findings, what specific risks require indemnity protection rather than just warranty?
+    - What regulatory penalty exposure exists and does it warrant a regulatory indemnity?
+    - Is there evidence of mis-selling or TCF failure requiring a customer remediation indemnity?
+    - What is the capital adequacy position — does it warrant a capital shortfall indemnity?
+    - What is the insurance reserve position — is a reserve deficiency indemnity needed (calculate gap)?
+    - What are the FIC findings — does AML/CFT non-compliance warrant a specific indemnity?
+    - What is the cybersecurity posture — are data breach indemnities required?
+    - What is the tax audit history — are specific tax indemnities required?
+    - Are there pending regulatory proceedings that warrant specific indemnities?
+    - For each indemnity, what is the appropriate cap, survival period, and basket/deductible?
+    - Should escrow be recommended for regulatory or capital-related indemnities?
+    - What indemnities should be uncapped or have extended survival?
+
+  warranty_indemnity_structuring:
+    - What aggregate warranty cap is appropriate for this transaction (typically 20-50% of purchase price)?
+    - What mini-basket and basket thresholds are appropriate (typically 0.1% and 1% of purchase price)?
+    - Which warranties should be carved out from limitations (title, capacity, tax, regulatory, fraud)?
+    - What is the appropriate general warranty survival period (typically 18-36 months)?
+    - Which warranties require extended survival (regulatory 5 years, tax 5 years, title 5+ years)?
+    - Should W&I insurance be recommended and what implications does this have for scope?
+    - What disclosure mechanism is appropriate (data room deemed disclosure vs specific schedule)?
+    - How should indemnities interact with purchase price adjustments (no double recovery)?
+    - Are any indemnities time-limited (e.g., capital indemnity until next PA assessment)?
+
+# ============================================================================
+# OUTPUT REQUIREMENTS
+# ============================================================================
+
+output_requirements:
+  must_include:
+    - Deal blocker identification with full reasoning
+    - Financial exposure quantification with calculations shown
+    - Conditions precedent register
+    - Consent matrix
+    - Key risk summary
+    - Recommendations
+    - CoT reasoning audit trail for critical findings
+    - Warranties register (recommended warranties for client protection)
+    - Indemnities register (recommended indemnities based on DD findings)
+    - W&I structuring recommendations (caps, baskets, survival periods, escrow)
+  format:
+    - Executive summary (1-2 pages)
+    - Detailed findings by category with reasoning
+    - Financial exposure schedule
+    - CP checklist
+    - Warranties schedule by category with detailed wording suggestions
+    - Indemnities schedule with triggers, caps, and survival periods
+    - W&I negotiation matrix (critical vs negotiable items)
+
+# ============================================================================
 # STATUTORY FRAMEWORK
 # Detailed statutory citation framework for financial services regulatory findings
 # ============================================================================
@@ -1051,21 +2674,25 @@ statutory_framework:
             criminal: "Fine or imprisonment"
             administrative: "License suspension or revocation"
           criticality: critical
+          application_to_dd: "Verify all required licences held and in good standing. Confirm licence conditions are being complied with."
         - section: "Section 135"
           description: "Administrative penalties"
           penalties:
             administrative: "Fine up to R10 million per contravention"
           criticality: critical
+          application_to_dd: "Review regulatory enforcement history. Check for outstanding penalties or compliance orders."
         - section: "Section 144"
           description: "Significant owner approval"
           penalties:
             administrative: "PA approval required for ownership changes"
           criticality: critical
+          application_to_dd: "Determine whether transaction triggers significant owner thresholds (>15%, >25%, >49%). Map approval timeline."
         - section: "Section 153"
           description: "Fit and proper requirements"
           penalties:
             administrative: "Debarment, disqualification"
           criticality: critical
+          application_to_dd: "Verify all key individuals meet fit and proper requirements. Check for any disqualification or debarment history."
 
     - act: "Financial Advisory and Intermediary Services Act 37 of 2002"
       acronym: "FAIS"
@@ -1076,26 +2703,31 @@ statutory_framework:
           penalties:
             criminal: "Fine up to R10 million or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Confirm FSP licence is valid and covers all financial services being rendered. Check for unlicensed activities."
         - section: "Section 8"
           description: "Categories of licenses"
           penalties:
             administrative: "License conditions"
           criticality: high
+          application_to_dd: "Verify licence categories match products and services offered. Identify any category gaps requiring new licence applications."
         - section: "Section 13"
           description: "Fit and proper requirements"
           penalties:
             administrative: "License withdrawal, debarment"
           criticality: critical
+          application_to_dd: "Review fit and proper declarations for all key individuals. Check currency of qualifications and CPD compliance."
         - section: "Section 14"
           description: "Approval of representatives"
           penalties:
             administrative: "Representative debarment"
           criticality: high
+          application_to_dd: "Verify all representatives are properly appointed and recorded. Check debarment register for any issues."
         - section: "Section 16"
           description: "General duties of provider"
           penalties:
             administrative: "Enforcement action, compensation"
           criticality: critical
+          application_to_dd: "Assess compliance with general duties including disclosure, suitability analysis, and record-keeping obligations."
 
     - act: "Insurance Act 18 of 2017"
       acronym: "Insurance Act"
@@ -1106,31 +2738,37 @@ statutory_framework:
           penalties:
             criminal: "Fine up to R50 million or imprisonment up to 15 years"
           criticality: critical
+          application_to_dd: "Confirm insurance licence is valid. Verify classes of insurance authorised match business being conducted."
         - section: "Section 26"
           description: "Governance requirements"
           penalties:
             administrative: "License conditions, suspension"
           criticality: critical
+          application_to_dd: "Assess governance framework against Insurance Act requirements. Review board composition and committee structures."
         - section: "Section 27"
           description: "Risk management requirements"
           penalties:
             administrative: "Supervisory intervention"
           criticality: critical
+          application_to_dd: "Review risk management framework including ORSA. Assess adequacy of risk identification and mitigation."
         - section: "Section 28"
           description: "Internal audit and actuarial function"
           penalties:
             administrative: "Compliance orders"
           criticality: high
+          application_to_dd: "Verify internal audit function and head of actuarial function are properly established and independent."
         - section: "Section 39"
           description: "Capital requirements"
           penalties:
             administrative: "Curatorship, license suspension"
           criticality: critical
+          application_to_dd: "Verify SCR and MCR compliance. Review capital buffer above minimum and assess sustainability."
         - section: "Section 54"
           description: "Significant owner approval"
           penalties:
             administrative: "PA approval required"
           criticality: critical
+          application_to_dd: "Determine whether transaction constitutes change of control requiring PA approval under Section 54."
 
     - act: "Long-term Insurance Act 52 of 1998"
       acronym: "LTIA"
@@ -1141,11 +2779,13 @@ statutory_framework:
           penalties:
             criminal: "Fine or imprisonment"
           criticality: critical
+          application_to_dd: "Confirm long-term insurer registration is valid and in good standing."
         - section: "Section 29"
           description: "Actuarial valuation"
           penalties:
             administrative: "Compliance orders"
           criticality: high
+          application_to_dd: "Review most recent actuarial valuation. Assess reserve adequacy and any actuarial concerns."
 
     - act: "Short-term Insurance Act 53 of 1998"
       acronym: "STIA"
@@ -1156,11 +2796,13 @@ statutory_framework:
           penalties:
             criminal: "Fine or imprisonment"
           criticality: critical
+          application_to_dd: "Confirm short-term insurer registration is valid and in good standing."
         - section: "Section 28"
           description: "Technical provisions"
           penalties:
             administrative: "Compliance orders"
           criticality: high
+          application_to_dd: "Verify technical provisions are adequate and calculated in accordance with applicable standards."
 
     - act: "Collective Investment Schemes Control Act 45 of 2002"
       acronym: "CISCA"
@@ -1171,21 +2813,25 @@ statutory_framework:
           penalties:
             criminal: "Fine or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Verify CIS manager registration. Confirm all schemes are registered with FSCA."
         - section: "Section 5"
           description: "Approval of manager"
           penalties:
             administrative: "Withdrawal of approval"
           criticality: critical
+          application_to_dd: "Confirm manager approval is current and not subject to conditions. Check change of control implications."
         - section: "Section 42"
           description: "Investment restrictions"
           penalties:
             administrative: "Compliance notice, manager removal"
           criticality: high
+          application_to_dd: "Review portfolio holdings for investment restriction compliance. Check for any breaches and remediation status."
         - section: "Section 65"
           description: "Trustee/custodian requirements"
           penalties:
             administrative: "Replacement of trustee"
           criticality: high
+          application_to_dd: "Verify trustee/custodian arrangements are compliant. Check custodian independence and asset safeguarding."
 
     - act: "Financial Intelligence Centre Act 38 of 2001"
       acronym: "FICA"
@@ -1197,21 +2843,25 @@ statutory_framework:
             administrative: "Fine up to R50 million"
             criminal: "Imprisonment up to 15 years"
           criticality: critical
+          application_to_dd: "Assess CDD processes and completeness of customer records. Identify any gaps in KYC documentation."
         - section: "Section 21A"
           description: "Risk management and compliance programme"
           penalties:
             administrative: "Directive, fine"
           criticality: critical
+          application_to_dd: "Review RMCP adequacy. Confirm board approval and annual review. Check FIC registration status."
         - section: "Section 28"
           description: "Record keeping"
           penalties:
             administrative: "Fine up to R10 million"
           criticality: high
+          application_to_dd: "Verify AML record-keeping practices meet FIC Act retention requirements (5 years post-relationship)."
         - section: "Section 29"
           description: "Suspicious transaction reporting"
           penalties:
             criminal: "Fine up to R100 million or imprisonment up to 15 years"
           criticality: critical
+          application_to_dd: "Review STR filing processes and volumes. Assess transaction monitoring effectiveness and alert handling."
 
     - act: "Pension Funds Act 24 of 1956"
       acronym: "PFA"
@@ -1222,22 +2872,26 @@ statutory_framework:
           penalties:
             administrative: "Curatorship, deregistration"
           criticality: critical
+          application_to_dd: "Verify pension fund administration is registered and compliant. Check for any curatorship history."
         - section: "Section 7A"
           description: "Board of fund composition"
           penalties:
             administrative: "Compliance notice"
           criticality: high
+          application_to_dd: "Review board of fund composition for compliance including member-elected trustees."
         - section: "Section 13A"
           description: "Payment of contributions"
           penalties:
             criminal: "Fine or imprisonment"
             civil: "Directors personally liable"
           criticality: critical
+          application_to_dd: "Verify all pension fund contributions are current. Check for any arrears and director exposure."
         - section: "Section 36"
           description: "Investment rules (Regulation 28)"
           penalties:
             administrative: "Compliance notice, reporting to PA"
           criticality: critical
+          application_to_dd: "Review fund investments for Regulation 28 compliance. Check asset allocation limits and any breaches."
 
     - act: "Financial Markets Act 19 of 2012"
       acronym: "FMA"
@@ -1248,11 +2902,13 @@ statutory_framework:
           penalties:
             criminal: "Fine up to R50 million or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Review for any market manipulation allegations or investigations. Check FSCA enforcement history."
         - section: "Section 82"
           description: "Insider trading"
           penalties:
             criminal: "Fine up to R50 million or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Check for insider trading investigations or allegations. Review information barrier procedures."
 
     - act: "National Credit Act 34 of 2005"
       acronym: "NCA"
@@ -1263,12 +2919,14 @@ statutory_framework:
           penalties:
             criminal: "Fine up to R1 million or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Verify credit provider registration if target extends credit. Confirm registration covers all credit activities."
         - section: "Section 81"
           description: "Reckless credit"
           penalties:
             civil: "Agreement may be set aside"
             administrative: "Registration cancellation"
           criticality: critical
+          application_to_dd: "Review affordability assessment processes. Check for reckless lending complaints or NCR investigations."
 
     - act: "Consumer Protection Act 68 of 2008"
       acronym: "CPA"
@@ -1279,11 +2937,13 @@ statutory_framework:
           penalties:
             civil: "Terms void"
           criticality: high
+          application_to_dd: "Review standard client agreements for potentially unfair terms. Note CPA applies where FAIS does not cover."
         - section: "Section 54"
           description: "Consumer's right to quality services"
           penalties:
             civil: "Refund, redo service"
           criticality: high
+          application_to_dd: "Assess service quality standards and customer satisfaction metrics for non-FAIS services."
 
   sector_specific:
     prudential_standards:
@@ -1348,3 +3008,135 @@ statutory_framework:
         trigger: "Material change in business"
         consequence: "Notification to Authority"
         processing_time: "30 days prior notice"
+
+  secondary_legislation:
+    - name: "Prudential Standards"
+      issuing_body: "Prudential Authority"
+      relevance: "Capital adequacy, governance, risk management requirements for banks and insurers"
+      key_standards:
+        - "GOI 1 — Governance of Insurers"
+        - "GOI 2 — Risk Management and Internal Controls for Insurers"
+        - "GOI 3 — Fit and Proper Requirements for Insurers"
+        - "Banks Act Regulations — Capital, liquidity, and large exposures"
+    - name: "Conduct Standards"
+      issuing_body: "FSCA"
+      relevance: "Market conduct, TCF, product governance for all FSPs"
+      key_standards:
+        - "General Code of Conduct for FSPs"
+        - "Specific Codes of Conduct (per licence category)"
+        - "Policyholder Protection Rules"
+        - "Conduct Standard 1 of 2020 — Fit and Proper"
+    - name: "FIC Guidance Notes"
+      issuing_body: "Financial Intelligence Centre"
+      relevance: "AML/CFT compliance requirements and interpretation"
+      key_guidance:
+        - "Guidance Note 7 — Risk Management and Compliance Programme"
+        - "Guidance Note 4A — Customer Due Diligence"
+        - "Guidance Note 5B — Suspicious Transaction Reporting"
+    - name: "Regulation 28 under PFA"
+      issuing_body: "National Treasury / FSCA"
+      relevance: "Investment restrictions for pension fund assets"
+    - name: "SAM Framework"
+      issuing_body: "Prudential Authority"
+      relevance: "Solvency Assessment and Management framework for insurers"
+    - name: "Basel III Framework (as adopted)"
+      issuing_body: "SARB / PA"
+      relevance: "Capital adequacy, leverage, and liquidity standards for banks"
+
+  regulatory_bodies:
+    - name: "Prudential Authority (PA)"
+      parent: "South African Reserve Bank"
+      jurisdiction: "Safety and soundness of banks, insurers, and financial conglomerates"
+      key_powers:
+        - "Licence issuance and revocation"
+        - "Significant owner approval"
+        - "Capital directives"
+        - "Curatorship and resolution"
+      relevance_to_dd: "Primary regulator for prudential matters — approvals required for change of control"
+    - name: "Financial Sector Conduct Authority (FSCA)"
+      parent: "Independent statutory body"
+      jurisdiction: "Market conduct of all financial institutions and licensing of FSPs"
+      key_powers:
+        - "FSP licence issuance and withdrawal"
+        - "Debarment of representatives"
+        - "Product intervention"
+        - "Administrative penalties up to R10 million"
+      relevance_to_dd: "Primary conduct regulator — FSP licence implications and key individual approvals"
+    - name: "South African Reserve Bank (SARB)"
+      parent: "Constitutional institution"
+      jurisdiction: "Financial stability and banking supervision"
+      key_powers:
+        - "Concurrence required for banking acquisitions"
+        - "Exchange control approvals"
+        - "Financial stability oversight"
+      relevance_to_dd: "Concurrence required for bank acquisitions. Exchange control for cross-border elements."
+    - name: "Financial Intelligence Centre (FIC)"
+      parent: "National Treasury"
+      jurisdiction: "AML/CFT supervision and enforcement"
+      key_powers:
+        - "Inspections and administrative sanctions"
+        - "Fines up to R50 million per contravention"
+        - "Directive powers"
+      relevance_to_dd: "AML/CFT compliance assessment. FIC inspection history review."
+    - name: "National Credit Regulator (NCR)"
+      parent: "DTI"
+      jurisdiction: "Credit market regulation"
+      key_powers:
+        - "Credit provider registration"
+        - "Compliance notices"
+        - "Referral to National Consumer Tribunal"
+      relevance_to_dd: "Relevant if target provides credit facilities or lending products."
+    - name: "Information Regulator"
+      parent: "Independent statutory body"
+      jurisdiction: "Data protection under POPIA"
+      key_powers:
+        - "Enforcement notices"
+        - "Administrative fines up to R10 million"
+        - "Assessment and compliance monitoring"
+      relevance_to_dd: "Data protection compliance assessment for customer data handling."
+
+# ============================================================================
+# OUTPUT TEMPLATES
+# ============================================================================
+
+output_templates:
+  executive_summary:
+    max_items: 15
+    sections:
+      - "Transaction Overview"
+      - "Deal Blockers"
+      - "Critical Findings"
+      - "Financial Exposure Summary"
+      - "Conditions Precedent"
+      - "Key Recommendations"
+    required_elements:
+      - "Total quantified exposure amount"
+      - "Number of deal blockers identified"
+      - "Number of conditions precedent"
+      - "BEE compliance status (FSC compliant / non-compliant / at risk)"
+      - "Regulatory approval requirements and timeline"
+      - "Capital adequacy status"
+      - "Insurance reserve adequacy"
+  full_report:
+    sections:
+      - "Transaction Context & Parties"
+      - "Regulatory & Licensing"
+      - "Capital Adequacy & Solvency"
+      - "Conduct & Market Practice"
+      - "AML/CFT Compliance"
+      - "Insurance Operations"
+      - "Financial Analysis"
+      - "Change of Control & Approvals"
+      - "BEE & Transformation"
+      - "Warranties & Indemnities"
+  finding_format:
+    required_fields:
+      - finding_id
+      - category
+      - severity
+      - description
+      - statutory_basis
+      - financial_exposure
+      - recommendation
+      - warranty_implication
+      - indemnity_implication

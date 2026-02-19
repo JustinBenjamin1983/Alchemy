@@ -7,6 +7,295 @@ description: 'Due diligence blueprint for securities offerings, listings, and ca
   Covers JSE Listings Requirements, prospectus requirements, and ongoing obligations.
 
   '
+jurisdiction: South Africa
+
+# ============================================================================
+# TRANSACTION CONTEXT
+# ============================================================================
+transaction_context:
+  deal_structures:
+    - id: ipo_listing
+      description: "Initial public offering and listing on JSE"
+      typical_considerations:
+        - "JSE listing requirements (capital, spread, track record)"
+        - "Prospectus preparation and Companies Act compliance"
+        - "Sponsor appointment and due diligence"
+        - "Underwriting and bookbuild arrangements"
+    - id: rights_issue
+      description: "Rights offer to existing shareholders"
+      typical_considerations:
+        - "Renounceable vs non-renounceable rights"
+        - "Underwriting for shortfall"
+        - "JSE circular and announcement requirements"
+        - "BEE shareholder follow-on capacity"
+    - id: bond_issuance
+      description: "Listed or unlisted debt securities issuance"
+      typical_considerations:
+        - "Credit rating and investor presentation"
+        - "Programme memorandum vs standalone prospectus"
+        - "Listing on interest rate market"
+        - "Covenant package and event of default provisions"
+    - id: secondary_offering
+      description: "Secondary sale of listed securities"
+      typical_considerations:
+        - "Bookbuild and accelerated offering mechanics"
+        - "Lock-up arrangements for selling shareholders"
+        - "JSE announcement requirements"
+        - "Insider trading compliance during offering period"
+    - id: delisting
+      description: "Voluntary or mandatory delisting from JSE"
+      typical_considerations:
+        - "Shareholder approval (75% for voluntary)"
+        - "Independent expert fair and reasonable opinion"
+        - "Minority shareholder protection"
+        - "TRP jurisdiction and mandatory offer requirements"
+  typical_parties:
+    - role: issuer
+      description: "Company issuing securities or seeking listing"
+    - role: sponsor
+      description: "JSE-approved sponsor responsible for regulatory compliance and due diligence"
+    - role: underwriter
+      description: "Investment bank(s) underwriting the offering"
+    - role: selling_shareholder
+      description: "Existing shareholders selling in the offering"
+    - role: reporting_accountant
+      description: "Auditors providing reporting accountant opinion on prospectus financials"
+    - role: legal_advisers
+      description: "Legal counsel to issuer and underwriters"
+    - role: trp
+      description: "Takeover Regulation Panel — jurisdiction for regulated companies"
+
+primary_legislation:
+- Financial Markets Act 19 of 2012
+- Companies Act 71 of 2008
+- JSE Listings Requirements
+- Financial Intelligence Centre Act 38 of 2001
+- Collective Investment Schemes Control Act 45 of 2002
+- Broad-Based Black Economic Empowerment Act 53 of 2003
+- Securities Transfer Tax Act 25 of 2007
+
+reference_documents:
+  always_include:
+  - pattern: Prospectus|Pre-listing Statement|Circular
+    reason: Core offering document requiring verification
+  - pattern: Underwriting Agreement|Subscription Agreement
+    reason: Offering terms and commitments
+  - pattern: Sponsor Due Diligence|Sponsor Report
+    reason: Sponsor regulatory compliance
+  - pattern: Working Capital Report|Working Capital Statement
+    reason: Sufficiency verification for listing
+  - pattern: Reporting Accountant Report|Independent Auditor
+    reason: Financial information verification
+  - pattern: Verification Notes|Prospectus Verification
+    reason: Statement-by-statement verification of prospectus
+  - pattern: Lock-up Agreement|Escrow Agreement
+    reason: Post-listing trading restrictions
+
+# ============================================================================
+# FOLDER STRUCTURE
+# ============================================================================
+folder_structure:
+  01_Corporate_Governance:
+    relevance: critical
+    subcategories:
+    - Constitutional Documents
+    - Board Composition
+    - Board Committees
+    - King IV Compliance
+    expected_documents:
+    - MOI
+    - Board Resolutions
+    - Committee Charters
+    - Director Declarations
+    - King IV Application Register
+    - CIPC Records
+    document_expectations:
+      MOI:
+        importance: critical
+        review_focus: "JSE compliance — share classes, transfer restrictions, pre-emptive rights, director appointments, meeting quorums"
+        red_flags: ["Non-compliant provisions requiring amendment before listing", "Entrenchment clauses conflicting with JSE requirements"]
+      Director_Declarations:
+        importance: critical
+        review_focus: "Director backgrounds, other directorships, criminal records, insolvency history — all required for prospectus disclosure"
+        red_flags: ["Undisclosed director history", "Failed background checks", "Disqualification issues"]
+
+  02_Commercial:
+    relevance: high
+    subcategories:
+    - Material Contracts
+    - Related Party Transactions
+    - Customer Agreements
+    expected_documents:
+    - Material Contracts Schedule
+    - Related Party Contracts
+    - Customer Agreements
+    - Supplier Agreements
+    document_expectations:
+      Material_Contracts:
+        importance: critical
+        review_focus: "Completeness for prospectus disclosure, CoC provisions, materiality assessment"
+        red_flags: ["Undisclosed material contracts", "CoC termination rights triggered by listing"]
+
+  03_Financial:
+    relevance: critical
+    subcategories:
+    - Audited Financials
+    - Working Capital
+    - Pro Forma Financial Information
+    - Profit Forecasts
+    expected_documents:
+    - Audited Financial Statements
+    - Working Capital Report
+    - Pro Forma Financial Information
+    - Profit Forecast
+    - Reporting Accountant Report
+    - Management Accounts
+    document_expectations:
+      Working_Capital_Report:
+        importance: critical
+        review_focus: "Sufficiency of working capital for 12 months post-listing, assumptions, stress testing, board sign-off"
+        red_flags: ["Working capital insufficiency", "Unreasonable assumptions", "Missing board sign-off"]
+      Reporting_Accountant_Report:
+        importance: critical
+        review_focus: "Scope of engagement, qualifications, emphasis of matter, consistency with prospectus financials"
+        red_flags: ["Qualified opinion", "Emphasis of matter on going concern", "Scope limitations"]
+
+  04_Regulatory:
+    relevance: critical
+    subcategories:
+    - JSE Application
+    - FSCA Approvals
+    - Sponsor Documentation
+    - TRP Documentation
+    expected_documents:
+    - JSE Application
+    - FSCA Correspondence
+    - Sponsor Agreement
+    - Sponsor Due Diligence Report
+    - TRP Correspondence
+    document_expectations:
+      Sponsor_Due_Diligence:
+        importance: critical
+        review_focus: "Scope of sponsor DD, findings, conditions, JSE requirements compliance"
+        red_flags: ["Outstanding sponsor concerns", "Conditions not addressed", "Incomplete DD"]
+
+  05_Employment:
+    relevance: medium
+    subcategories:
+    - Director Service Contracts
+    - Remuneration Policy
+    - Share Incentive Schemes
+    expected_documents:
+    - Director Service Contracts
+    - Remuneration Policy
+    - Share Incentive Scheme Rules
+    - Director Emoluments Schedule
+    document_expectations:
+      Director_Service_Contracts:
+        importance: high
+        review_focus: "Terms, notice periods, restraints, change of control provisions — all disclosed in prospectus"
+        red_flags: ["Unusual terms not market standard", "Excessive golden parachutes"]
+
+  06_Property:
+    relevance: low
+    subcategories:
+    - Property Valuations
+    - Lease Agreements
+    expected_documents:
+    - Property Valuations
+    - Lease Agreements
+
+  07_Insurance:
+    relevance: medium
+    subcategories:
+    - D&O Insurance
+    - POSI Insurance
+    expected_documents:
+    - D&O Insurance Policy
+    - POSI Insurance
+    - Insurance Schedule
+    document_expectations:
+      DO_Insurance:
+        importance: high
+        review_focus: "Coverage limits for listed company, securities claims coverage, run-off provisions"
+        red_flags: ["No D&O for listed entity", "Inadequate limits for market cap", "Securities claims exclusion"]
+
+  08_Litigation:
+    relevance: high
+    subcategories:
+    - Active Litigation
+    - Regulatory Proceedings
+    - Contingent Liabilities
+    expected_documents:
+    - Litigation Schedule
+    - Legal Opinions
+    - Provision Analysis
+    - Regulatory Correspondence
+    document_expectations:
+      Litigation_Schedule:
+        importance: critical
+        review_focus: "Completeness for prospectus disclosure, quantum, provisions adequacy, material contingencies"
+        red_flags: ["Undisclosed material litigation", "Inadequate provisions", "Regulatory proceedings not disclosed"]
+
+  09_Tax:
+    relevance: medium
+    subcategories:
+    - Tax Compliance
+    - STT Analysis
+    - Investor Tax Section
+    expected_documents:
+    - Tax Compliance Certificates
+    - STT Analysis
+    - Investor Tax Section Draft
+    - Tax Returns
+
+  10_Underwriting:
+    relevance: critical
+    subcategories:
+    - Underwriting Agreement
+    - Bookbuild Documentation
+    - Selling Restrictions
+    expected_documents:
+    - Underwriting Agreement
+    - Pricing Supplement
+    - Allocation Policy
+    - Selling Restrictions
+    - Bookbuild Results
+    document_expectations:
+      Underwriting_Agreement:
+        importance: critical
+        review_focus: "Commitment level, conditions precedent, material adverse change clause, fees, termination rights"
+        red_flags: ["Uncommitted underwriting", "Broad MAC clause", "Excessive termination rights"]
+
+  11_Prospectus:
+    relevance: critical
+    subcategories:
+    - Draft Prospectus
+    - Verification Notes
+    - Expert Reports
+    - FSCA Submissions
+    expected_documents:
+    - Draft Prospectus
+    - Verification Notes
+    - Expert Consents
+    - FSCA Submission
+    - Comfort Letters
+    document_expectations:
+      Verification_Notes:
+        importance: critical
+        review_focus: "Statement-by-statement verification, back-up documentation, sign-off chain"
+        red_flags: ["Incomplete verification", "Missing back-up for material statements", "Unsigned verification notes"]
+
+  99_Needs_Review:
+    relevance: low
+    subcategories:
+    - Uncategorised
+    expected_documents:
+    - Uncategorised Documents
+
+# ============================================================================
+# RISK CATEGORIES
+# ============================================================================
 risk_categories:
 - name: Listing & Regulatory Compliance
   description: JSE Listings Requirements and regulatory authority approvals
@@ -661,20 +950,283 @@ deal_blockers:
   condition: Key underwriter withdrawal
   severity: high
   mitigation: Diversified underwriting syndicate, alternative arrangements
+
+# ============================================================================
+# ENTITY RELATIONSHIP PATTERNS
+# ============================================================================
+entity_relationship_patterns:
+  typical_structures:
+    - name: "IPO Listing"
+      description: "Company listing on JSE with primary and/or secondary offering"
+      entities: ["Issuer", "Sponsor", "Underwriter(s)", "Selling Shareholders", "Reporting Accountant", "Legal Advisers"]
+      typical_issues: ["Prospectus liability allocation", "Underwriting conditionality", "Lock-up enforcement"]
+    - name: "Rights Issue"
+      description: "Listed company raising capital via rights offer to existing shareholders"
+      entities: ["Issuer", "Sponsor", "Underwriter", "Shareholders", "Sub-underwriters"]
+      typical_issues: ["Shortfall management", "BEE follow-on capacity", "Related party participation"]
+    - name: "Bond Programme"
+      description: "Establishment of DMTN programme for debt issuances"
+      entities: ["Issuer", "Arranger", "Dealers", "Trustee", "Rating Agency", "Calculation Agent"]
+      typical_issues: ["Covenant compliance", "Event of default triggers", "Rating downgrade risk"]
+    - name: "Takeover / Scheme"
+      description: "Acquisition of listed company via takeover offer or scheme of arrangement"
+      entities: ["Offeror", "Target", "Target Board", "TRP", "Independent Expert", "Shareholders"]
+      typical_issues: ["TRP compliance", "Fair and reasonable opinion", "Mandatory offer trigger"]
+    - name: "Delisting"
+      description: "Voluntary or mandatory delisting from JSE"
+      entities: ["Company", "Controlling Shareholder", "Minorities", "TRP", "Independent Expert"]
+      typical_issues: ["Minority protection", "Fair value determination", "75% approval threshold"]
+  entity_roles:
+    - "Issuer / Listed Company"
+    - "JSE-Approved Sponsor"
+    - "Underwriter / Bookrunner"
+    - "Selling Shareholder"
+    - "Reporting Accountant"
+    - "Takeover Regulation Panel"
+    - "Independent Expert"
+    - "Legal Adviser"
+  common_related_parties:
+    - type: "Controlling Shareholder"
+      risk: "Conflicts in related party transactions, influence over offer terms"
+    - type: "Sponsor (if also underwriter)"
+      risk: "Dual role conflicts between regulatory and commercial interests"
+    - type: "Director with interests"
+      risk: "Personal interest in transaction outcome affecting fiduciary duties"
+
+# ============================================================================
+# MATERIALITY THRESHOLDS
+# ============================================================================
+materiality_thresholds:
+  default_when_value_unknown: "R5,000,000"
+  when_value_known:
+    percentage_tiers:
+      - threshold: "5%"
+        applies_to: "Market capitalisation or offer size up to R500 million"
+      - threshold: "2%"
+        applies_to: "Market capitalisation or offer size R500 million to R5 billion"
+      - threshold: "1%"
+        applies_to: "Market capitalisation or offer size above R5 billion"
+  jse_transaction_categories:
+    category_1: "30% or more — shareholder approval required"
+    category_2: "5% to 30% — announcement and circular"
+    related_party: "Any value — fair and reasonable opinion required"
+  qualitative_overrides:
+    always_material:
+      - "Prospectus misstatement or omission"
+      - "JSE listing requirement non-compliance"
+      - "Insider trading during offering period"
+      - "Working capital insufficiency"
+      - "Qualified reporting accountant opinion"
+      - "Mandatory offer trigger"
+      - "BEE fronting in prospectus disclosures"
+      - "Director disqualification or criminal record"
+      - "Undisclosed related party transaction"
+    never_immaterial:
+      - "Prospectus Accuracy"
+      - "Working Capital Sufficiency"
+      - "JSE Compliance"
+      - "Insider Trading"
+      - "Director Disclosure"
+
+# ============================================================================
+# CROSS-REFERENCE EXPECTATIONS
+# ============================================================================
+cross_reference_expectations:
+  primary_documents:
+    - document: "Prospectus / Pre-Listing Statement"
+      must_cross_reference:
+        - "Audited Financial Statements"
+        - "Reporting Accountant Report"
+        - "Verification Notes"
+        - "Material Contracts"
+        - "Director Declarations"
+        - "Working Capital Report"
+      validation: "Every material statement in prospectus must be verified against source documentation"
+    - document: "Underwriting Agreement"
+      must_cross_reference:
+        - "Prospectus"
+        - "Working Capital Report"
+        - "Comfort Letters"
+        - "Legal Opinions"
+      validation: "Underwriting conditions must be consistent with prospectus disclosures and offering timeline"
+    - document: "Verification Notes"
+      must_cross_reference:
+        - "Prospectus (every material statement)"
+        - "Back-up documentation"
+        - "Expert reports"
+        - "Director confirmations"
+      validation: "Complete verification trail from prospectus statement to source document"
+    - document: "Working Capital Report"
+      must_cross_reference:
+        - "Financial Model / Projections"
+        - "Management Accounts"
+        - "Facility Agreements"
+        - "Board Resolution (sign-off)"
+      validation: "Working capital projections must be supported by underlying financial data and board approval"
+    - document: "Sponsor Due Diligence Report"
+      must_cross_reference:
+        - "JSE Application"
+        - "Prospectus"
+        - "All DD workstreams"
+      validation: "Sponsor DD must cover all JSE listing requirements"
+    - document: "Fair and Reasonable Opinion"
+      must_cross_reference:
+        - "Valuation report"
+        - "Financial statements"
+        - "Market data"
+        - "Comparable transactions"
+      validation: "Independent expert opinion must be based on verifiable data and accepted methodology"
+
+# ============================================================================
+# RED FLAG PATTERNS
+# ============================================================================
+red_flag_patterns:
+  prospectus_disclosure:
+    - id: CM-RF-PROS-001
+      pattern: "Material prospectus statement cannot be verified"
+      severity: critical
+      action_category: terminal
+      typical_response: "Statement must be verified, amended, or removed. Cannot list with unverified material statements."
+    - id: CM-RF-PROS-002
+      pattern: "Working capital insufficient for 12 months post-listing"
+      severity: critical
+      action_category: terminal
+      typical_response: "Secure additional funding, adjust offer size, or delay listing until working capital sufficient."
+    - id: CM-RF-PROS-003
+      pattern: "Qualified or adverse reporting accountant opinion"
+      severity: critical
+      action_category: terminal
+      typical_response: "Resolve qualification matters. JSE unlikely to approve listing with qualified opinion."
+
+  regulatory:
+    - id: CM-RF-REG-001
+      pattern: "JSE listing requirements not met (capital, spread, track record)"
+      severity: critical
+      action_category: terminal
+      typical_response: "Address deficiency or apply for AltX listing. Consider postponement."
+    - id: CM-RF-REG-002
+      pattern: "Insider trading during offering period"
+      severity: critical
+      action_category: terminal
+      typical_response: "Immediate investigation. FSCA notification. Transaction may need to be aborted."
+    - id: CM-RF-REG-003
+      pattern: "Mandatory offer threshold triggered without compliance"
+      severity: critical
+      action_category: condition_precedent
+      typical_response: "File with TRP. Extend mandatory offer to all shareholders."
+
+  corporate_governance:
+    - id: CM-RF-GOV-001
+      pattern: "Board composition does not meet King IV or JSE requirements"
+      severity: high
+      action_category: condition_precedent
+      typical_response: "Appoint additional independent directors before listing."
+    - id: CM-RF-GOV-002
+      pattern: "Director background check reveals undisclosed adverse history"
+      severity: critical
+      action_category: terminal
+      typical_response: "Full disclosure in prospectus required. Consider director removal if disqualifying."
+
+  financial:
+    - id: CM-RF-FIN-001
+      pattern: "Material changes since last audited accounts not disclosed"
+      severity: critical
+      action_category: condition_precedent
+      typical_response: "Prepare trading statement. Update prospectus disclosures. May need supplementary prospectus."
+    - id: CM-RF-FIN-002
+      pattern: "Going concern uncertainty in financial statements"
+      severity: critical
+      action_category: terminal
+      typical_response: "Resolve going concern issues before listing. Auditor emphasis of matter will block listing."
+
+  underwriting:
+    - id: CM-RF-UW-001
+      pattern: "Underwriting commitment conditional on material adverse change clause"
+      severity: high
+      action_category: price_adjustment
+      typical_response: "Negotiate tighter MAC definition. Consider sub-underwriting or alternative arrangements."
+    - id: CM-RF-UW-002
+      pattern: "Insufficient investor demand or bookbuild failure"
+      severity: critical
+      action_category: terminal
+      typical_response: "Reduce offer size, adjust pricing, or postpone offering."
+
+# ============================================================================
+# CALCULATION FORMULAS
+# ============================================================================
+calculation_formulas:
+  listing_requirements:
+    - name: "JSE Market Capitalisation"
+      formula: "Shares in issue x Listing price"
+      required_inputs: ["Total shares in issue", "Proposed listing price"]
+    - name: "Public Spread Percentage"
+      formula: "(Public shares / Total shares) x 100"
+      required_inputs: ["Public shareholding", "Total shares in issue"]
+  transaction_categories:
+    - name: "JSE Category Percentage Ratio"
+      formula: "Max of (assets ratio, profits ratio, consideration ratio, market cap ratio)"
+      required_inputs: ["Transaction value metrics", "Issuer corresponding metrics"]
+    - name: "Mandatory Offer Threshold"
+      formula: "Shares acquired / Total voting rights"
+      required_inputs: ["Shares to be acquired", "Total voting shares"]
+  financial:
+    - name: "Working Capital Sufficiency"
+      formula: "Projected cash + Facilities - Committed outflows for 12 months"
+      required_inputs: ["Cash balance", "Available facilities", "12-month projections"]
+    - name: "Dilution from New Issue"
+      formula: "New shares / (Existing shares + New shares)"
+      required_inputs: ["Existing shares", "New shares to be issued"]
+  bee:
+    - name: "Post-Listing BEE Dilution"
+      formula: "Post-listing BEE % = (BEE shares - BEE sold) / (Total + New primary shares)"
+      required_inputs: ["BEE shares pre-listing", "BEE shares sold", "Total shares", "New shares"]
+
+# ============================================================================
+# CONDITIONS PRECEDENT PATTERNS
+# ============================================================================
+conditions_precedent_patterns:
+  - pattern: "JSE approval|listing approval|exchange approval"
+    cp_type: regulatory
+    typical_timeline: "JSE review 4-6 weeks"
+    blocker_if_not_met: true
+  - pattern: "FSCA approval|prospectus registration"
+    cp_type: regulatory
+    typical_timeline: "FSCA review 2-4 weeks"
+    blocker_if_not_met: true
+  - pattern: "TRP approval|takeover panel|mandatory offer"
+    cp_type: regulatory
+    typical_timeline: "TRP review 5-10 business days"
+    blocker_if_not_met: true
+  - pattern: "shareholder approval|general meeting|special resolution"
+    cp_type: corporate
+    typical_timeline: "Notice period 15 business days + meeting"
+    blocker_if_not_met: true
+  - pattern: "underwriting|minimum subscription|bookbuild"
+    cp_type: commercial
+    typical_timeline: "Bookbuild 1-3 days; settlement T+3"
+    blocker_if_not_met: true
+  - pattern: "Competition Commission|merger filing|competition approval"
+    cp_type: regulatory
+    typical_timeline: "Intermediate 20-60 days; Large 40-120 days"
+    blocker_if_not_met: true
+
 folder_questions:
   01_Corporate_Governance:
     display_name: Corporate & Governance
     relevance: critical
     questions:
-    - question: Does the board composition meet JSE and King IV requirements?
+    - id: CM-F01-001
+      question: Does the board composition meet JSE and King IV requirements?
       priority: critical
       detail: Independent directors, board committees, diversity
       cot_hint: Review board → check independence → assess compliance
-    - question: Does the MOI comply with JSE Listings Requirements?
+    - id: CM-F01-002
+      question: Does the MOI comply with JSE Listings Requirements?
       priority: critical
       detail: MOI provisions, JSE checklist, required amendments
       cot_hint: Check MOI → compare JSE requirements → identify gaps
-    - question: Are all board committees properly constituted?
+    - id: CM-F01-003
+      question: Are all board committees properly constituted?
       priority: high
       detail: Audit, remuneration, social and ethics, nomination committees
       cot_hint: Review committees → check composition → verify charters
@@ -687,15 +1239,18 @@ folder_questions:
     display_name: Commercial Contracts
     relevance: high
     questions:
-    - question: Have all material contracts been identified and summarized?
+    - id: CM-F02-001
+      question: Have all material contracts been identified and summarized?
       priority: critical
       detail: Material contracts for prospectus disclosure
       cot_hint: List contracts → assess materiality → prepare summaries
-    - question: Are there any change of control provisions triggered by listing?
+    - id: CM-F02-002
+      question: Are there any change of control provisions triggered by listing?
       priority: high
       detail: CoC in material contracts affecting listing
       cot_hint: Review contracts → find CoC → assess impact
-    - question: What related party transactions require disclosure?
+    - id: CM-F02-003
+      question: What related party transactions require disclosure?
       priority: high
       detail: Related party contracts, arm's length analysis
       cot_hint: Identify related parties → list transactions → check disclosure
@@ -708,19 +1263,23 @@ folder_questions:
     display_name: Financial & Banking
     relevance: critical
     questions:
-    - question: Is the working capital statement supportable?
+    - id: CM-F03-001
+      question: Is the working capital statement supportable?
       priority: critical
       detail: Working capital report, cash flow projections, stress testing
       cot_hint: Review projections → stress test → assess sufficiency
-    - question: Are there material changes since last audited accounts?
+    - id: CM-F03-002
+      question: Are there material changes since last audited accounts?
       priority: critical
       detail: Trading update, material change statement
       cot_hint: Check for changes → assess materiality → prepare disclosure
-    - question: What is the quality of earnings and are there normalizations?
+    - id: CM-F03-003
+      question: What is the quality of earnings and are there normalizations?
       priority: high
       detail: QofE analysis, one-off items, pro forma adjustments
       cot_hint: Review earnings → identify adjustments → prepare pro formas
-    - question: Are there any contingent liabilities or off-balance sheet items?
+    - id: CM-F03-004
+      question: Are there any contingent liabilities or off-balance sheet items?
       priority: high
       detail: Contingencies, guarantees, off-balance sheet
       cot_hint: Identify contingencies → assess disclosure → quantify exposure
@@ -733,19 +1292,23 @@ folder_questions:
     display_name: Regulatory & Compliance
     relevance: critical
     questions:
-    - question: Does the issuer meet all JSE listing requirements?
+    - id: CM-F04-001
+      question: Does the issuer meet all JSE listing requirements?
       priority: critical
       detail: Capital requirements, spread, track record
       cot_hint: Check requirements → verify compliance → identify gaps
-    - question: Has FSCA approval been obtained where required?
+    - id: CM-F04-002
+      question: Has FSCA approval been obtained where required?
       priority: critical
       detail: Prospectus registration, exemptions
       cot_hint: Check requirements → verify submissions → track approval
-    - question: Are sponsor arrangements in place?
+    - id: CM-F04-003
+      question: Are sponsor arrangements in place?
       priority: high
       detail: Sponsor appointment, due diligence, independence
       cot_hint: Verify sponsor → check accreditation → confirm independence
-    - question: Are there any ongoing regulatory investigations?
+    - id: CM-F04-004
+      question: Are there any ongoing regulatory investigations?
       priority: high
       detail: Regulatory matters affecting listing eligibility
       cot_hint: Check for investigations → assess impact → prepare disclosure
@@ -758,11 +1321,13 @@ folder_questions:
     display_name: Employment & Labour
     relevance: medium
     questions:
-    - question: Are director and key executive disclosures complete?
+    - id: CM-F05-001
+      question: Are director and key executive disclosures complete?
       priority: high
       detail: Director declarations, service contracts, remuneration
       cot_hint: Collect declarations → verify accuracy → prepare disclosure
-    - question: Is the remuneration policy compliant and disclosed?
+    - id: CM-F05-002
+      question: Is the remuneration policy compliant and disclosed?
       priority: high
       detail: King IV remuneration, shareholder vote, disclosure
       cot_hint: Review policy → check compliance → prepare disclosure
@@ -775,7 +1340,8 @@ folder_questions:
     display_name: Property & Assets
     relevance: low
     questions:
-    - question: Are material properties properly valued and disclosed?
+    - id: CM-F06-001
+      question: Are material properties properly valued and disclosed?
       priority: medium
       detail: Property valuations for prospectus purposes
       cot_hint: Check valuations → verify methodology → assess disclosure
@@ -784,11 +1350,13 @@ folder_questions:
     display_name: Insurance
     relevance: medium
     questions:
-    - question: Is there adequate D&O insurance for listed company?
+    - id: CM-F07-001
+      question: Is there adequate D&O insurance for listed company?
       priority: high
       detail: D&O coverage for securities claims
       cot_hint: Review D&O → check limits → assess adequacy
-    - question: Is there prospectus liability insurance?
+    - id: CM-F07-002
+      question: Is there prospectus liability insurance?
       priority: medium
       detail: POSI coverage, limits, exclusions
       cot_hint: Check POSI → verify coverage → assess adequacy
@@ -797,15 +1365,18 @@ folder_questions:
     display_name: Litigation & Disputes
     relevance: high
     questions:
-    - question: Are all pending or threatened litigation matters disclosed?
+    - id: CM-F08-001
+      question: Are all pending or threatened litigation matters disclosed?
       priority: critical
       detail: Litigation schedule, materiality, provision adequacy
       cot_hint: List matters → assess materiality → prepare disclosure
-    - question: Are adequate provisions made for known claims?
+    - id: CM-F08-002
+      question: Are adequate provisions made for known claims?
       priority: high
       detail: Provision analysis, contingent disclosure
       cot_hint: Review provisions → check adequacy → verify disclosure
-    - question: Are there any regulatory proceedings requiring disclosure?
+    - id: CM-F08-003
+      question: Are there any regulatory proceedings requiring disclosure?
       priority: high
       detail: Regulatory matters, investigations, enforcement
       cot_hint: Identify proceedings → assess impact → prepare disclosure
@@ -818,11 +1389,13 @@ folder_questions:
     display_name: Tax
     relevance: medium
     questions:
-    - question: Are securities transfer tax implications properly addressed?
+    - id: CM-F09-001
+      question: Are securities transfer tax implications properly addressed?
       priority: high
       detail: STT on primary and secondary issuances
       cot_hint: Calculate STT → check exemptions → verify treatment
-    - question: Have investor tax implications been disclosed?
+    - id: CM-F09-002
+      question: Have investor tax implications been disclosed?
       priority: medium
       detail: Investor tax section, dividend withholding
       cot_hint: Review tax disclosure → check accuracy → verify completeness
@@ -831,15 +1404,18 @@ folder_questions:
     display_name: Underwriting & Distribution
     relevance: critical
     questions:
-    - question: Are underwriting arrangements appropriate and committed?
+    - id: CM-F10-001
+      question: Are underwriting arrangements appropriate and committed?
       priority: critical
       detail: Underwriting agreement, conditions, fees
       cot_hint: Review agreement → check commitments → assess conditionality
-    - question: Is the pricing and bookbuild process appropriate?
+    - id: CM-F10-002
+      question: Is the pricing and bookbuild process appropriate?
       priority: high
       detail: Pricing methodology, allocation policy, conflicts
       cot_hint: Review process → check for conflicts → verify fairness
-    - question: Have selling restrictions been properly documented?
+    - id: CM-F10-003
+      question: Have selling restrictions been properly documented?
       priority: high
       detail: Jurisdictional restrictions, US securities law
       cot_hint: Check restrictions → verify documentation → confirm compliance
@@ -852,23 +1428,28 @@ folder_questions:
     display_name: Prospectus & Disclosure
     relevance: critical
     questions:
-    - question: Does the prospectus contain all required Companies Act disclosures?
+    - id: CM-F11-001
+      question: Does the prospectus contain all required Companies Act disclosures?
       priority: critical
       detail: Regulation 50-55, Schedule 3, completeness
       cot_hint: Check requirements → verify completeness → identify gaps
-    - question: Has proper verification of prospectus statements been conducted?
+    - id: CM-F11-002
+      question: Has proper verification of prospectus statements been conducted?
       priority: critical
       detail: Verification notes, back-up documentation
       cot_hint: Review verification → check documentation → identify gaps
-    - question: Are profit forecasts properly supported and reported on?
+    - id: CM-F11-003
+      question: Are profit forecasts properly supported and reported on?
       priority: high
       detail: Forecast assumptions, reporting accountant report
       cot_hint: Review forecasts → check support → verify report
-    - question: Is the use of proceeds clearly specified?
+    - id: CM-F11-004
+      question: Is the use of proceeds clearly specified?
       priority: high
       detail: Use of proceeds disclosure, permitted purposes
       cot_hint: Check disclosure → verify permitted use → assess adequacy
-    - question: Are all risk factors adequately disclosed?
+    - id: CM-F11-005
+      question: Are all risk factors adequately disclosed?
       priority: high
       detail: Risk factors section, materiality, specificity
       cot_hint: Review risks → check completeness → assess disclosure
@@ -880,7 +1461,8 @@ folder_questions:
     display_name: Needs Review
     relevance: low
     questions:
-    - question: What capital markets issues does this document raise?
+    - id: CM-F99-001
+      question: What capital markets issues does this document raise?
       priority: medium
       detail: Documents requiring manual classification review
       cot_hint: Identify CM content → flag for review
@@ -983,6 +1565,322 @@ cot_questions:
   - What is the timeline for scheme implementation?
 
 # ============================================================================
+# WARRANTY CATEGORIES
+# Capital markets-specific warranty categories for offering protection
+# ============================================================================
+
+warranty_categories:
+  - category: "Title & Capacity"
+    description: "Warranties relating to issuer authority and share ownership"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-TC-001"
+        description: "Issuer has authority to issue securities and list"
+        detailed_wording: "The Issuer has full corporate power and authority to issue the Offer Shares, apply for listing, and execute all transaction documents, and all necessary corporate approvals have been obtained"
+        typical_cap: "Offer size"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-TC-002"
+        description: "Offer Shares are validly issued, fully paid up, and freely transferable"
+        detailed_wording: "The Offer Shares have been validly allotted and issued in compliance with the Companies Act and MOI, are fully paid up, and are freely transferable without restriction"
+        typical_cap: "Offer size"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-TC-003"
+        description: "Selling shareholders have full title to their sale shares"
+        detailed_wording: "Each Selling Shareholder is the sole legal and beneficial owner of the Sale Shares, free from encumbrances, and has full authority to transfer them"
+        typical_cap: "Sale proceeds per seller"
+        survival_period: "3 years"
+        priority: critical
+
+  - category: "Prospectus & Disclosure"
+    description: "Warranties relating to accuracy and completeness of prospectus"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    capital_markets_specific: true
+    standard_warranties:
+      - id: "W-PROS-001"
+        description: "Prospectus is true, accurate, and complete in all material respects"
+        detailed_wording: "The Prospectus does not contain any untrue statement of a material fact or omit to state a material fact necessary to make the statements therein not misleading"
+        typical_cap: "Offer size (prospectus liability is joint and several)"
+        survival_period: "3 years (Companies Act prescription)"
+        priority: critical
+      - id: "W-PROS-002"
+        description: "Financial information in prospectus fairly presents financial position"
+        detailed_wording: "The historical financial information in the Prospectus has been accurately extracted from the audited financial statements and fairly presents the financial position and results of the Issuer"
+        typical_cap: "Offer size"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-PROS-003"
+        description: "Working capital statement is accurate and supportable"
+        detailed_wording: "The working capital statement in the Prospectus is accurate, the Issuer will have sufficient working capital for at least 12 months from the date of listing, and the underlying assumptions are reasonable"
+        typical_cap: "Offer size"
+        survival_period: "2 years"
+        priority: critical
+      - id: "W-PROS-004"
+        description: "No material adverse change since last audited accounts"
+        detailed_wording: "Since the date of the most recent audited financial statements, there has been no material adverse change in the financial position, results, or prospects of the Issuer"
+        typical_cap: "Offer size"
+        survival_period: "2 years"
+        priority: critical
+
+  - category: "Regulatory Compliance"
+    description: "Warranties relating to JSE compliance and regulatory standing"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    capital_markets_specific: true
+    standard_warranties:
+      - id: "W-REG-001"
+        description: "Issuer meets all JSE listing requirements"
+        detailed_wording: "The Issuer satisfies all applicable JSE Listings Requirements for the relevant board, including minimum capital, shareholder spread, and track record requirements"
+        typical_cap: "Offer size"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-REG-002"
+        description: "No regulatory investigations or sanctions affecting listing"
+        detailed_wording: "There are no pending or threatened regulatory investigations, sanctions, or enforcement actions that could affect the Issuer's listing eligibility or require disclosure in the Prospectus"
+        typical_cap: "Unlimited for undisclosed"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-REG-003"
+        description: "Compliance with insider trading requirements during offering"
+        detailed_wording: "No director, officer, or person associated with the Issuer has dealt in the Issuer's securities while in possession of inside information relating to the offering"
+        typical_cap: "Unlimited"
+        survival_period: "5 years (FMA prescription)"
+        priority: critical
+
+  - category: "Financial"
+    description: "Warranties relating to financial position and statements"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-FIN-001"
+        description: "Financial statements prepared in accordance with IFRS"
+        detailed_wording: "The audited financial statements have been prepared in accordance with IFRS and fairly present the financial position, results, and cash flows of the Issuer"
+        typical_cap: "50% of offer size"
+        survival_period: "3 years"
+        priority: critical
+      - id: "W-FIN-002"
+        description: "No undisclosed liabilities"
+        detailed_wording: "The Issuer has no material liabilities other than those reflected in the financial statements or disclosed in the Prospectus"
+        typical_cap: "50% of offer size"
+        survival_period: "3 years"
+        priority: critical
+
+  - category: "Tax"
+    description: "Warranties relating to tax compliance"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-TAX-001"
+        description: "All tax returns filed and taxes paid"
+        detailed_wording: "All tax returns have been filed on time, all taxes due have been paid, and there are no outstanding SARS disputes or assessments"
+        typical_cap: "Tax exposure"
+        survival_period: "5 years"
+        priority: critical
+      - id: "W-TAX-002"
+        description: "STT obligations properly addressed"
+        detailed_wording: "All securities transfer tax obligations arising from the offering have been correctly calculated and will be discharged"
+        typical_cap: "STT amount"
+        survival_period: "3 years"
+        priority: high
+
+  - category: "Litigation"
+    description: "Warranties relating to disputes and claims"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    standard_warranties:
+      - id: "W-LIT-001"
+        description: "All material litigation disclosed in prospectus"
+        detailed_wording: "All pending or threatened litigation, arbitration, or regulatory proceedings material to the Issuer have been disclosed in the Prospectus, and adequate provisions have been made"
+        typical_cap: "Claim value"
+        survival_period: "3 years"
+        priority: critical
+
+# ============================================================================
+# INDEMNITY CATEGORIES
+# ============================================================================
+
+indemnity_categories:
+  - category: "Prospectus Liability"
+    description: "Indemnities for prospectus misstatements and omissions"
+    weight: critical
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    capital_markets_specific: true
+    triggers:
+      - "Material misstatement in prospectus"
+      - "Omission of material fact"
+      - "Investor claims under Companies Act"
+    standard_indemnities:
+      - id: "I-PROS-001"
+        description: "Director and officer indemnity for prospectus liability"
+        detailed_wording: "The Issuer shall indemnify each Director against all Losses arising from claims under Section 104 of the Companies Act relating to the Prospectus, except where the Director knew the statement was false"
+        typical_cap: "D&O policy limits"
+        survival_period: "3 years (Companies Act prescription)"
+        priority: critical
+      - id: "I-PROS-002"
+        description: "Underwriter indemnity for prospectus-related claims"
+        detailed_wording: "The Issuer shall indemnify the Underwriters against all Losses arising from any claim relating to a misstatement or omission in the Prospectus, except to the extent caused by information provided by the Underwriters"
+        typical_cap: "Underwriting fees (with carve-outs for gross negligence)"
+        survival_period: "3 years"
+        priority: critical
+
+  - category: "Selling Shareholder"
+    description: "Indemnities from selling shareholders for pre-offering matters"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Selling shareholder information inaccurate"
+      - "Title defect in sale shares"
+    standard_indemnities:
+      - id: "I-SS-001"
+        description: "Selling shareholder indemnity for information provided"
+        detailed_wording: "Each Selling Shareholder shall indemnify the Issuer and Underwriters against Losses arising from inaccuracy of information provided by that Selling Shareholder for inclusion in the Prospectus"
+        typical_cap: "Sale proceeds received"
+        survival_period: "3 years"
+        priority: high
+
+  - category: "Tax"
+    description: "Indemnities for tax liabilities"
+    weight: high
+    applies_when_client_is:
+      buyer: true
+      seller: false
+    triggers:
+      - "Pre-listing tax issues"
+      - "STT disputes"
+    standard_indemnities:
+      - id: "I-TAX-001"
+        description: "Pre-listing tax liability indemnity"
+        detailed_wording: "The Selling Shareholders/Issuer shall indemnify against any tax liability relating to periods before listing not provided for in the prospectus financial information"
+        typical_cap: "Tax exposure"
+        survival_period: "5 years"
+        priority: critical
+
+# ============================================================================
+# WARRANTY & INDEMNITY DETECTION PATTERNS
+# ============================================================================
+
+warranty_indemnity_patterns:
+  warranty_patterns:
+    - pattern: "represents and warrants|issuer warrants"
+      type: warranty
+      category: General
+    - pattern: "prospectus.*true|prospectus.*accurate|no.*misstatement"
+      type: warranty
+      category: "Prospectus & Disclosure"
+    - pattern: "working capital.*sufficient|working capital.*adequate"
+      type: warranty
+      category: "Prospectus & Disclosure"
+    - pattern: "listing requirements.*met|JSE.*compli"
+      type: warranty
+      category: "Regulatory Compliance"
+    - pattern: "insider trading|inside information|market manipulation"
+      type: warranty
+      category: "Regulatory Compliance"
+    - pattern: "financial statements.*fair|prepared in accordance"
+      type: warranty
+      category: Financial
+    - pattern: "title to|ownership of|free from encumbrance"
+      type: warranty
+      category: "Title & Capacity"
+    - pattern: "tax.*return.*filed|taxes.*paid"
+      type: warranty
+      category: Tax
+    - pattern: "no.*litigation|no.*claims.*pending"
+      type: warranty
+      category: Litigation
+
+  indemnity_patterns:
+    - pattern: "indemnify|hold harmless|indemnification"
+      type: indemnity
+      category: General
+    - pattern: "prospectus.*liability|Section 104.*indemnity"
+      type: indemnity
+      category: "Prospectus Liability"
+    - pattern: "underwriter.*indemnity|bookrunner.*indemnity"
+      type: indemnity
+      category: "Prospectus Liability"
+    - pattern: "selling shareholder.*indemnity"
+      type: indemnity
+      category: "Selling Shareholder"
+    - pattern: "tax.*indemnity|pre-listing.*tax"
+      type: indemnity
+      category: Tax
+
+# ============================================================================
+# COT QUESTIONS - WARRANTY & INDEMNITY ANALYSIS
+# ============================================================================
+
+cot_questions_warranty_indemnity:
+  warranties_analysis:
+    - What prospectus disclosure risks require warranty protection (accuracy, completeness, no misstatement)?
+    - What title and capacity risks exist for selling shareholders (ownership, encumbrances)?
+    - What regulatory compliance risks need warranty coverage (JSE requirements, insider trading)?
+    - What financial risks require warranty protection (AFS accuracy, working capital, undisclosed liabilities)?
+    - What tax risks need warranty coverage (returns, STT obligations)?
+    - What litigation risks require warranty coverage (pending claims, regulatory proceedings)?
+    - For each warranty, what is the appropriate cap and survival period?
+    - Which warranties should be fundamental (prospectus accuracy, title, tax)?
+
+  indemnities_analysis:
+    - What prospectus liability exposure exists and how should it be allocated (issuer, directors, underwriters)?
+    - Do selling shareholders need to provide specific indemnities for their prospectus information?
+    - What pre-listing tax liabilities require indemnity coverage?
+    - Should the issuer indemnify directors and underwriters for prospectus claims?
+    - For each indemnity, what is the appropriate cap and survival period?
+    - Is POSI (public offering of securities insurance) available and recommended?
+
+  warranty_indemnity_structuring:
+    - How should prospectus liability be allocated among issuer, directors, and underwriters?
+    - What aggregate cap applies to selling shareholder warranties?
+    - What disclosure mechanism applies (prospectus as deemed disclosure)?
+    - Should D&O insurance requirements be specified in the underwriting agreement?
+    - How do warranties survive listing and interact with continuous disclosure obligations?
+
+# ============================================================================
+# OUTPUT REQUIREMENTS
+# ============================================================================
+
+output_requirements:
+  must_include:
+    - Deal blocker identification with full reasoning
+    - Financial exposure quantification with calculations shown
+    - Conditions precedent register
+    - Key risk summary
+    - Prospectus verification status
+    - Recommendations
+    - CoT reasoning audit trail for critical findings
+    - Warranties register (recommended warranties for offering protection)
+    - Indemnities register (recommended indemnities based on DD findings)
+    - Prospectus liability allocation recommendations
+  format:
+    - Executive summary (1-2 pages)
+    - Detailed findings by category with reasoning
+    - Financial exposure schedule
+    - CP checklist
+    - Prospectus verification status tracker
+    - Warranties schedule by category
+    - Indemnities schedule with triggers, caps, and survival periods
+
+# ============================================================================
 # STATUTORY FRAMEWORK
 # Detailed statutory citation framework for capital markets regulatory findings
 # ============================================================================
@@ -998,27 +1896,32 @@ statutory_framework:
             criminal: "Fine or imprisonment"
             administrative: "License conditions or revocation"
           criticality: critical
+          application_to_dd: "Verify exchange licensing status. Confirm issuer meets exchange requirements."
         - section: "Section 8"
           description: "Licensing of central securities depositories"
           penalties:
             administrative: "License suspension or revocation"
           criticality: critical
+          application_to_dd: "Verify CSD arrangements for dematerialised securities."
         - section: "Section 78"
           description: "Market manipulation prohibition"
           penalties:
             criminal: "Fine up to R50 million or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Review for any market manipulation allegations. Assess price stabilisation compliance."
         - section: "Section 80"
           description: "False or misleading statements"
           penalties:
             criminal: "Fine up to R50 million or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Critical for prospectus — verify no false or misleading statements. Review verification notes."
         - section: "Section 82"
           description: "Insider trading prohibition"
           penalties:
             criminal: "Fine up to R50 million or imprisonment up to 10 years"
             civil: "Disgorgement of profits"
           criticality: critical
+          application_to_dd: "Implement insider trading compliance during offering. Review dealing policies and restricted periods."
 
     - act: "Companies Act 71 of 2008"
       acronym: "Companies Act"
@@ -1030,41 +1933,49 @@ statutory_framework:
             civil: "Directors personally liable for misleading prospectus"
             criminal: "Fine or imprisonment"
           criticality: critical
+          application_to_dd: "Verify prospectus compliance with Regulation 50-55 and Schedule 3. Confirm all required disclosures."
         - section: "Section 100"
           description: "Offers to public - supplementary liability"
           penalties:
             civil: "Compensation for losses"
           criticality: high
+          application_to_dd: "Assess supplementary prospectus liability exposure. Review D&O and POSI insurance."
         - section: "Section 118"
           description: "Takeover Regulations applicability"
           penalties:
             administrative: "TRP compliance orders"
           criticality: critical
+          application_to_dd: "Determine whether TRP has jurisdiction. Assess regulated company status."
         - section: "Section 119"
           description: "Mandatory offers"
           penalties:
             civil: "Forced extension of offer to all shareholders"
           criticality: critical
+          application_to_dd: "Calculate whether mandatory offer threshold (35%) is triggered. Plan compliance if so."
         - section: "Section 121"
           description: "Comparable and partial offers"
           penalties:
             administrative: "TRP intervention"
           criticality: high
+          application_to_dd: "Assess partial offer requirements and TRP conditions."
         - section: "Section 123"
           description: "Consideration requirements"
           penalties:
             civil: "Fair value determination"
           criticality: high
+          application_to_dd: "Verify consideration is fair. Assess need for independent expert opinion."
         - section: "Section 126"
           description: "Regulated companies definition"
           penalties:
             administrative: "TRP jurisdiction triggered"
           criticality: high
+          application_to_dd: "Determine regulated company status and TRP jurisdiction triggers."
         - section: "Section 127"
           description: "Panel regulation powers"
           penalties:
             administrative: "Compliance orders, cost orders"
           criticality: high
+          application_to_dd: "Review TRP compliance requirements. Assess cost exposure for non-compliance."
 
     - act: "JSE Listings Requirements"
       acronym: "JSE LR"
@@ -1075,36 +1986,43 @@ statutory_framework:
           penalties:
             administrative: "Public censure, fine up to R7.5 million"
           criticality: high
+          application_to_dd: "Review general JSE principles. Verify definitions and applicability."
         - section: "Section 3"
           description: "Continuing obligations"
           penalties:
             administrative: "Suspension, public censure, fine"
           criticality: critical
+          application_to_dd: "Assess continuing obligations compliance. Check SENS announcement history and annual filings."
         - section: "Section 7"
           description: "Methods of bringing securities to listing"
           penalties:
             administrative: "Rejection of application"
           criticality: high
+          application_to_dd: "Determine appropriate method of listing (offer for subscription, offer for sale, introduction)."
         - section: "Section 9"
           description: "Transactions"
           penalties:
             administrative: "Public censure, fine, suspension"
           criticality: critical
+          application_to_dd: "Calculate transaction category percentage ratios. Determine shareholder approval requirements."
         - section: "Section 10"
           description: "Related party transactions"
           penalties:
             administrative: "Transaction may be voided, censure"
           criticality: critical
+          application_to_dd: "Identify related party transactions. Assess need for independent opinion and shareholder vote."
         - section: "Section 11"
           description: "Documents and circulars"
           penalties:
             administrative: "Rejection, required amendments"
           criticality: high
+          application_to_dd: "Review draft circular/prospectus against JSE document requirements."
         - section: "Section 13"
           description: "Circulars and announcements"
           penalties:
             administrative: "Rejection, trading suspension"
           criticality: high
+          application_to_dd: "Verify announcement and circular compliance. Check SENS submission requirements."
 
     - act: "Financial Intelligence Centre Act 38 of 2001"
       acronym: "FICA"
@@ -1115,11 +2033,13 @@ statutory_framework:
           penalties:
             administrative: "Fine up to R50 million"
           criticality: critical
+          application_to_dd: "Verify CDD compliance for all offering participants."
         - section: "Section 29"
           description: "Suspicious transaction reporting"
           penalties:
             criminal: "Fine up to R100 million or imprisonment"
           criticality: critical
+          application_to_dd: "Assess suspicious transaction reporting compliance."
 
     - act: "Collective Investment Schemes Control Act 45 of 2002"
       acronym: "CISCA"
@@ -1130,11 +2050,13 @@ statutory_framework:
           penalties:
             criminal: "Fine or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Verify CIS registration if applicable. Check CISCA exemption for offering structure."
         - section: "Section 5"
           description: "Approval of managers"
           penalties:
             administrative: "Withdrawal of approval"
           criticality: critical
+          application_to_dd: "Confirm manager approval status if CIS involved."
 
     - act: "Broad-Based Black Economic Empowerment Act 53 of 2003"
       acronym: "B-BBEE Act"
@@ -1145,11 +2067,13 @@ statutory_framework:
           penalties:
             criminal: "Fine up to 10% of turnover or imprisonment up to 10 years"
           criticality: critical
+          application_to_dd: "Assess BEE disclosures in prospectus for fronting risk."
         - section: "Section 13G"
           description: "Misrepresentation"
           penalties:
             criminal: "Fine or imprisonment"
           criticality: critical
+          application_to_dd: "Verify BEE representations in offering documents are accurate."
 
   sector_specific:
     jse_categories:
@@ -1209,3 +2133,110 @@ statutory_framework:
         trigger: "Price sensitive information"
         consequence: "Immediate SENS announcement required"
         processing_time: "Without delay"
+
+  secondary_legislation:
+    - name: "JSE Listings Requirements"
+      issuing_body: "JSE Limited"
+      relevance: "Primary rules governing listed companies — listing, continuing obligations, transactions, related parties"
+    - name: "Companies Act Regulations (Prospectus Regulations)"
+      issuing_body: "DTI"
+      relevance: "Regulations 50-55 and Schedule 3 prescribing prospectus content requirements"
+    - name: "Takeover Regulations"
+      issuing_body: "DTI / TRP"
+      relevance: "Regulations governing affected transactions, mandatory offers, and squeeze-outs"
+    - name: "FMA Regulations"
+      issuing_body: "FSCA"
+      relevance: "Market conduct regulations including insider trading and market manipulation"
+    - name: "STT Act Regulations"
+      issuing_body: "SARS"
+      relevance: "Securities transfer tax administration and exemptions"
+    - name: "King IV Report on Corporate Governance"
+      issuing_body: "IoDSA"
+      relevance: "Corporate governance standards applied through JSE Listings Requirements"
+
+  regulatory_bodies:
+    - name: "JSE Limited"
+      parent: "Self-regulatory organisation"
+      jurisdiction: "Listing, trading, and continuing obligations of listed companies"
+      key_powers:
+        - "Listing approval and rejection"
+        - "Public censure and fines up to R7.5 million"
+        - "Trading suspension and delisting"
+      relevance_to_dd: "Primary regulator for listing — all requirements must be satisfied"
+    - name: "Financial Sector Conduct Authority (FSCA)"
+      parent: "Independent statutory body"
+      jurisdiction: "Market conduct, prospectus registration, insider trading enforcement"
+      key_powers:
+        - "Prospectus registration"
+        - "Market manipulation and insider trading enforcement"
+        - "Administrative penalties"
+      relevance_to_dd: "Prospectus approval and securities law compliance"
+    - name: "Takeover Regulation Panel (TRP)"
+      parent: "Statutory body under Companies Act"
+      jurisdiction: "Regulation of affected transactions and offers"
+      key_powers:
+        - "Compliance orders"
+        - "Transaction approval or prohibition"
+        - "Cost orders"
+      relevance_to_dd: "Jurisdiction for mandatory offers, schemes, and going-private transactions"
+    - name: "Competition Commission"
+      parent: "Independent statutory body"
+      jurisdiction: "Merger control and competition enforcement"
+      key_powers:
+        - "Merger approval, conditions, or prohibition"
+        - "Administrative penalties up to 10% of turnover"
+      relevance_to_dd: "Merger filing assessment for acquisitions and schemes"
+    - name: "South African Revenue Service (SARS)"
+      parent: "National Treasury"
+      jurisdiction: "Tax administration including STT"
+      key_powers:
+        - "Tax assessments and audits"
+        - "STT collection"
+      relevance_to_dd: "Tax compliance verification and STT calculations"
+
+# ============================================================================
+# OUTPUT TEMPLATES
+# ============================================================================
+
+output_templates:
+  executive_summary:
+    max_items: 15
+    sections:
+      - "Transaction Overview"
+      - "Deal Blockers"
+      - "Critical Findings"
+      - "Financial Exposure Summary"
+      - "Conditions Precedent"
+      - "Key Recommendations"
+    required_elements:
+      - "Total quantified exposure amount"
+      - "Number of deal blockers identified"
+      - "Number of conditions precedent"
+      - "BEE compliance status (compliant / non-compliant / at risk)"
+      - "JSE listing requirements status"
+      - "Working capital sufficiency status"
+      - "Prospectus verification completeness"
+  full_report:
+    sections:
+      - "Transaction Context & Offering Structure"
+      - "Listing & Regulatory Compliance"
+      - "Prospectus & Disclosure"
+      - "Corporate Governance"
+      - "Financial Due Diligence"
+      - "Material Contracts"
+      - "Underwriting & Distribution"
+      - "Tax Considerations"
+      - "BEE & Transformation"
+      - "Warranties & Indemnities"
+  finding_format:
+    required_fields:
+      - finding_id
+      - category
+      - severity
+      - description
+      - statutory_basis
+      - financial_exposure
+      - recommendation
+      - prospectus_disclosure_required
+      - warranty_implication
+      - indemnity_implication

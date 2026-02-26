@@ -8,6 +8,7 @@
  * - Synthesis: Synthesise Report
  */
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import {
   Loader2,
   FolderCog,
@@ -171,15 +172,15 @@ interface DDPipelineTimelineProps {
 const getStateStyles = (state: StepState): string => {
   switch (state) {
     case 'completed':
-      return "bg-emerald-200 border-2 border-emerald-600 text-emerald-700 cursor-pointer hover:bg-emerald-300";
+      return "bg-emerald-200 border-2 border-emerald-600 text-emerald-700 cursor-pointer hover:bg-emerald-400 hover:shadow-md";
     case 'active':
-      return "bg-amber-200 border-2 border-amber-500 text-amber-700";
+      return "bg-amber-200 border-2 border-amber-500 text-amber-700 hover:shadow-md";
     case 'available':
-      return "bg-amber-200 border-2 border-amber-500 text-amber-700 cursor-pointer hover:bg-amber-300";
+      return "bg-amber-200 border-2 border-amber-500 text-amber-700 cursor-pointer hover:bg-amber-400 hover:shadow-md";
     case 'failed':
-      return "bg-red-200 border-2 border-red-600 text-red-700 cursor-pointer hover:bg-red-300";
+      return "bg-red-200 border-2 border-red-600 text-red-700 cursor-pointer hover:bg-red-400 hover:shadow-md";
     case 'optional':
-      return "bg-slate-200 border-2 border-slate-400 text-slate-600 cursor-pointer hover:bg-slate-300";
+      return "bg-slate-200 border-2 border-slate-400 text-slate-600 cursor-pointer hover:bg-slate-400 hover:shadow-md";
     case 'locked':
       return "bg-slate-200 border-2 border-slate-300 text-slate-400 cursor-not-allowed";
     default:
@@ -217,8 +218,6 @@ export const DDPipelineTimeline: React.FC<DDPipelineTimelineProps> = ({
   hasAnalysisResults = false,
   className,
 }) => {
-  const [hoveredStep, setHoveredStep] = useState<string | null>(null);
-  const [isAnalysisHovered, setIsAnalysisHovered] = useState(false);
   const [pendingRerunStep, setPendingRerunStep] = useState<PipelineStep | null>(null);
 
   const handleStepClick = (step: PipelineStep) => {
@@ -255,17 +254,19 @@ export const DDPipelineTimeline: React.FC<DDPipelineTimelineProps> = ({
         {/* Chevron Steps Row - Full Width */}
         <div className="flex items-center">
           {steps.map((step, index) => {
-            const isHovered = hoveredStep === step.id;
             const isClickable = step.state === 'available' || step.state === 'optional' || step.state === 'completed' || step.state === 'failed';
 
             return (
               <Tooltip key={step.id}>
                 <TooltipTrigger asChild>
                   <div
+                    role="button"
+                    tabIndex={isClickable ? 0 : -1}
+                    aria-label={`${step.label}${step.count ? ` (${step.count})` : ''} — ${step.tooltip}`}
                     className={cn(
-                      "relative flex items-center justify-center gap-2 py-2.5 transition-all duration-150 flex-1",
+                      "relative flex items-center justify-center gap-2 py-2.5 transition-all duration-150 flex-1 outline-none",
+                      "focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-1",
                       getStateStyles(step.state),
-                      isHovered && isClickable && "brightness-110"
                     )}
                     style={{
                       clipPath: index === 0
@@ -276,26 +277,37 @@ export const DDPipelineTimeline: React.FC<DDPipelineTimelineProps> = ({
                       marginLeft: index === 0 ? '0' : '-8px',
                       zIndex: steps.length - index + 1,
                     }}
-                    onMouseEnter={() => setHoveredStep(step.id)}
-                    onMouseLeave={() => setHoveredStep(null)}
                     onClick={() => handleStepClick(step)}
+                    onKeyDown={(e) => {
+                      if ((e.key === 'Enter' || e.key === ' ') && isClickable) {
+                        e.preventDefault();
+                        handleStepClick(step);
+                      }
+                    }}
                   >
-                    {/* Icon */}
-                    <span className="flex-shrink-0">
-                      {getIcon(step)}
-                    </span>
-
-                    {/* Label */}
-                    <span className="font-semibold text-base whitespace-nowrap">
-                      {step.label}
-                    </span>
-
-                    {/* Count badge */}
-                    {step.count !== undefined && step.count > 0 && (
-                      <span className="text-sm opacity-70 ml-0.5">
-                        ({step.count})
+                    <motion.span
+                      className="flex items-center justify-center gap-2"
+                      whileHover={isClickable ? { scale: 1.08 } : undefined}
+                      whileTap={isClickable ? { scale: 0.93 } : undefined}
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    >
+                      {/* Icon */}
+                      <span className="flex-shrink-0">
+                        {getIcon(step)}
                       </span>
-                    )}
+
+                      {/* Label */}
+                      <span className="font-semibold text-base whitespace-nowrap">
+                        {step.label}
+                      </span>
+
+                      {/* Count badge */}
+                      {step.count !== undefined && step.count > 0 && (
+                        <span className="text-sm opacity-70 ml-0.5">
+                          ({step.count})
+                        </span>
+                      )}
+                    </motion.span>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent
@@ -342,14 +354,11 @@ export const DDPipelineTimeline: React.FC<DDPipelineTimelineProps> = ({
               <button
                 onClick={onViewAnalysis}
                 disabled={!hasAnalysisResults}
-                onMouseEnter={() => setIsAnalysisHovered(true)}
-                onMouseLeave={() => setIsAnalysisHovered(false)}
                 className={cn(
                   "relative flex items-center justify-center gap-2 py-2.5 px-4 transition-all duration-150 flex-shrink-0",
                   hasAnalysisResults
-                    ? "bg-amber-500 border-2 border-amber-600 text-white cursor-pointer hover:bg-amber-400"
+                    ? "bg-amber-500 border-2 border-amber-600 text-white cursor-pointer hover:bg-amber-400 hover:shadow-md active:scale-[0.97]"
                     : "bg-white border-2 border-slate-300 text-slate-400 cursor-not-allowed",
-                  isAnalysisHovered && hasAnalysisResults && "brightness-110"
                 )}
                 style={{
                   clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%, 12px 50%)',
